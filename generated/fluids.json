@@ -1,0 +1,216 @@
+{
+  "schema_version": "1",
+  "model_version": "2026-03-02",
+  "artifact_type": "fluids",
+  "items": [
+    {
+      "key": "Air",
+      "name": "Air",
+      "aliases": [
+        "atmosphere"
+      ]
+    },
+    {
+      "key": "Ar",
+      "name": "Argon",
+      "aliases": [
+        "argon"
+      ]
+    },
+    {
+      "key": "CH4",
+      "name": "Methane",
+      "aliases": [
+        "methane"
+      ]
+    },
+    {
+      "key": "CO",
+      "name": "Carbon Monoxide",
+      "aliases": [
+        "carbon monoxide"
+      ]
+    },
+    {
+      "key": "CO2",
+      "name": "Carbon Dioxide",
+      "aliases": [
+        "carbon dioxide"
+      ]
+    },
+    {
+      "key": "Ethane",
+      "name": "Ethane",
+      "aliases": [
+        "c2h6"
+      ]
+    },
+    {
+      "key": "Ethylene",
+      "name": "Ethylene",
+      "aliases": [
+        "c2h4"
+      ]
+    },
+    {
+      "key": "H2",
+      "name": "Hydrogen",
+      "aliases": [
+        "hydrogen"
+      ]
+    },
+    {
+      "key": "H2O",
+      "name": "Water",
+      "aliases": [
+        "water"
+      ]
+    },
+    {
+      "key": "He",
+      "name": "Helium",
+      "aliases": [
+        "helium"
+      ]
+    },
+    {
+      "key": "Isobutane",
+      "name": "Isobutane",
+      "aliases": [
+        "i-butane"
+      ]
+    },
+    {
+      "key": "Isopentane",
+      "name": "Isopentane",
+      "aliases": [
+        "i-pentane"
+      ]
+    },
+    {
+      "key": "Kr",
+      "name": "Krypton",
+      "aliases": [
+        "krypton"
+      ]
+    },
+    {
+      "key": "N2",
+      "name": "Nitrogen",
+      "aliases": [
+        "nitrogen"
+      ]
+    },
+    {
+      "key": "N2O",
+      "name": "Nitrous Oxide",
+      "aliases": [
+        "nitrous oxide"
+      ]
+    },
+    {
+      "key": "NH3",
+      "name": "Ammonia",
+      "aliases": [
+        "ammonia"
+      ]
+    },
+    {
+      "key": "Ne",
+      "name": "Neon",
+      "aliases": [
+        "neon"
+      ]
+    },
+    {
+      "key": "O2",
+      "name": "Oxygen",
+      "aliases": [
+        "oxygen"
+      ]
+    },
+    {
+      "key": "Propane",
+      "name": "Propane",
+      "aliases": [
+        "c3h8",
+        "n-propane"
+      ]
+    },
+    {
+      "key": "Propylene",
+      "name": "Propylene",
+      "aliases": [
+        "c3h6"
+      ]
+    },
+    {
+      "key": "R1234yf",
+      "name": "R1234yf",
+      "aliases": []
+    },
+    {
+      "key": "R125",
+      "name": "R125",
+      "aliases": []
+    },
+    {
+      "key": "R134a",
+      "name": "R134a",
+      "aliases": []
+    },
+    {
+      "key": "R152a",
+      "name": "R152a",
+      "aliases": []
+    },
+    {
+      "key": "R245fa",
+      "name": "R245fa",
+      "aliases": []
+    },
+    {
+      "key": "R32",
+      "name": "R32",
+      "aliases": []
+    },
+    {
+      "key": "SO2",
+      "name": "Sulfur Dioxide",
+      "aliases": [
+        "sulfur dioxide"
+      ]
+    },
+    {
+      "key": "Xe",
+      "name": "Xenon",
+      "aliases": [
+        "xenon"
+      ]
+    },
+    {
+      "key": "nButane",
+      "name": "n-Butane",
+      "aliases": [
+        "butane",
+        "n-butane"
+      ]
+    },
+    {
+      "key": "nHexane",
+      "name": "n-Hexane",
+      "aliases": [
+        "hexane",
+        "n-hexane"
+      ]
+    },
+    {
+      "key": "nPentane",
+      "name": "n-Pentane",
+      "aliases": [
+        "pentane",
+        "n-pentane"
+      ]
+    }
+  ]
+}

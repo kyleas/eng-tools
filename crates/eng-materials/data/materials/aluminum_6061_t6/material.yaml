@@ -1,0 +1,21 @@
+key: aluminum_6061_t6
+name: Aluminum 6061-T6
+aliases: [al6061_t6, 6061_t6]
+description: Heat-treated aluminum alloy with dense temperature-property series.
+source: Representative handbook values for interpolation demonstrations.
+properties:
+  elastic_modulus:
+    dimension: pressure
+    unit: Pa
+    data: elastic_modulus.csv
+    interpolation: linear
+  yield_strength:
+    dimension: pressure
+    unit: Pa
+    data: yield_strength.csv
+    interpolation: linear
+  thermal_conductivity:
+    dimension: thermal_conductivity
+    unit: W/(m*K)
+    data: thermal_conductivity.csv
+    interpolation: linear

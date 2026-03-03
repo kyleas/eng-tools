@@ -1,0 +1,21 @@
+key: stainless_304
+name: Stainless Steel 304
+aliases: [ss304, aisi304]
+description: Austenitic stainless steel with temperature-dependent mechanical and thermal properties.
+source: Representative handbook values for interpolation demonstrations.
+properties:
+  elastic_modulus:
+    dimension: pressure
+    unit: Pa
+    data: elastic_modulus.csv
+    interpolation: linear
+  yield_strength:
+    dimension: pressure
+    unit: Pa
+    data: yield_strength.csv
+    interpolation: linear
+  thermal_conductivity:
+    dimension: thermal_conductivity
+    unit: W/(m*K)
+    data: thermal_conductivity.csv
+    interpolation: linear

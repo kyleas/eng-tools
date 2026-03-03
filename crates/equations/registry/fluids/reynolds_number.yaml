@@ -1,0 +1,45 @@
+key: reynolds_number
+taxonomy:
+  category: fluids
+name: Reynolds Number
+display:
+  latex: 'Re = \frac{\rho V D}{\mu}'
+variables:
+  Re: { name: Reynolds number, dimension: ratio }
+  rho:
+    name: Fluid density
+    symbol: '\rho'
+    dimension: density
+    resolver:
+      source: fluid
+      kind: fluid_property
+      property: density
+  V: { name: Mean velocity, dimension: velocity }
+  D: { name: Hydraulic diameter, dimension: length }
+  mu:
+    name: Dynamic viscosity
+    symbol: '\mu'
+    dimension: viscosity
+    resolver:
+      source: fluid
+      kind: fluid_property
+      property: dynamic_viscosity
+residual: "Re - (rho * V * D / mu)"
+solve:
+  explicit_forms:
+    Re: rho * V * D / mu
+    rho: Re * mu / (V * D)
+    V: Re * mu / (rho * D)
+    D: Re * mu / (rho * V)
+    mu: rho * V * D / Re
+  numerical:
+    unsupported_targets: [Re, rho, V, D, mu]
+assumptions:
+  - Internal-flow characteristic length is represented by hydraulic diameter.
+tests:
+  - full_state:
+      Re: 249500
+      rho: "998 kg/m3"
+      V: "2.5 m/s"
+      D: "0.1 m"
+      mu: "0.001 Pa*s"

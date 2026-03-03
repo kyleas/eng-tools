@@ -1,0 +1,29 @@
+# fluids
+key: continuity_mass_flow
+taxonomy:
+  category: fluids
+name: Continuity Mass Flow
+display:
+  latex: '\dot{m} = \rho A V'
+variables:
+  m_dot: { name: Mass flow rate, dimension: mass_flow_rate }
+  rho: { name: Fluid density, symbol: '\rho', dimension: density }
+  A: { name: Flow area, dimension: area }
+  V: { name: Mean velocity, dimension: velocity }
+residual: "m_dot - (rho * A * V)"
+solve:
+  explicit_forms:
+    m_dot: rho * A * V
+    rho: m_dot / (A * V)
+    A: m_dot / (rho * V)
+    V: m_dot / (rho * A)
+  numerical:
+    unsupported_targets: [m_dot, rho, A, V]
+assumptions:
+  - One-dimensional mean properties represent cross-section averages.
+tests:
+  - full_state:
+      m_dot: "299.4 kg/s"
+      rho: "998 kg/m3"
+      A: "0.1 m2"
+      V: "3 m/s"

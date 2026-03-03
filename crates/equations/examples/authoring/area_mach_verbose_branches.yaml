@@ -1,0 +1,110 @@
+# Full annotated verbose example with branches:
+# shows how to define branch conditions and branch-targeted test cases.
+
+key: area_mach_branching                  # required
+slug: area_mach                           # optional; defaults to key if omitted
+
+taxonomy:                                 # required
+  category: compressible                  # required
+  subcategories: [nozzles]                # optional; defaults to []
+
+aliases:                                  # optional
+  - isentropic_area_mach
+
+name: Isentropic Area-Mach Relation       # required
+
+display:
+  latex: "A_Astar = (1/M) * ((2/(gamma+1))*(1+((gamma-1)/2)M^2))^((gamma+1)/(2(gamma-1)))" # required
+  unicode: "A/A* = (1/M) * ((2/(gamma+1))*(1+((gamma-1)/2)M^2))^((gamma+1)/(2(gamma-1)))"   # optional
+  ascii: "area_ratio = (1/M) * ((2/(gamma+1))*(1+((gamma-1)/2)*M^2))^((gamma+1)/(2*(gamma-1)))" # optional
+  description: Isentropic nozzle area ratio as a function of Mach number. # optional
+
+variables:                                 # required
+  area_ratio:
+    name: Area ratio
+    symbol: "A/A*"
+    dimension: ratio
+    constraints:
+      positive: true
+  M:
+    name: Mach number
+    symbol: M
+    dimension: mach
+    constraints:
+      nonzero: true
+  gamma:
+    name: Specific heat ratio
+    symbol: "\\gamma"
+    dimension: dimensionless
+    constraints:
+      min: 1.01
+
+residual: "area_ratio - ((1 / M) * pow((2 / (gamma + 1)) * (1 + ((gamma - 1) / 2) * M^2), (gamma + 1) / (2 * (gamma - 1))))" # required
+
+solve:                                     # optional block, recommended
+  default_target: M                        # optional
+  explicit_forms:                          # optional
+    area_ratio: (1 / M) * pow((2 / (gamma + 1)) * (1 + ((gamma - 1) / 2) * M^2), (gamma + 1) / (2 * (gamma - 1)))
+  numerical:                               # optional
+    unsupported_targets: [area_ratio, gamma] # optional
+    solver: bisection
+    initial_guess: 1.2
+    bracket: [0.01, 20.0]
+    tolerance_abs: 1e-12
+    tolerance_rel: 1e-10
+    max_iter: 400
+
+branches:                                  # optional
+  - name: subsonic                         # required when branch is defined
+    condition: 1 - M                       # required boolean-ish expression (>0 means active)
+    preferred: false                       # optional
+  - name: supersonic
+    condition: M - 1
+    preferred: true
+
+assumptions:                               # optional but recommended
+  - Quasi-one-dimensional isentropic flow.
+  - Calorically perfect gas with constant gamma.
+
+references:                                # optional
+  - source: Anderson, Modern Compressible Flow
+    note: Isentropic flow function tables.
+
+diagram:                                   # optional
+  template: converging_diverging_nozzle
+  labels:                                  # optional
+    - variable: area_ratio
+      label: A/A*
+    - variable: M
+      label: Mach number
+    - variable: gamma
+      label: Specific heat ratio
+
+tests:                                     # required
+  units_policy: auto_convert_to_si         # optional
+  relation_tolerance: { abs: 1e-11, rel: 1e-9 } # optional
+  cases:
+    - id: subsonic_branch                  # optional; auto-generated if omitted
+      description: Invert Mach from area ratio on subsonic branch. # optional
+      branch: subsonic                     # optional; required if you need branch pinning
+      full_state:
+        gamma: 1.4
+        M: 0.3
+        area_ratio: 2.0350652623456793
+      verify:
+        solve_targets:
+          - target: area_ratio
+            methods: [explicit]
+          - target: M
+            methods: [numerical]
+    - id: supersonic_branch
+      description: Invert Mach from area ratio on supersonic branch.
+      branch: supersonic
+      full_state:
+        gamma: 1.4
+        M: 2.2
+        area_ratio: 2.0049745454545462
+      verify:
+        solve_targets:
+          - target: M
+            methods: [numerical]

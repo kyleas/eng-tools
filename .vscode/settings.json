@@ -1,0 +1,8 @@
+{
+  "yaml.schemas": {
+    "./crates/equations/schemas/equation.schema.json": [
+      "crates/equations/registry/**/*.yaml",
+      "crates/equations/registry/**/*.yml"
+    ]
+  }
+}

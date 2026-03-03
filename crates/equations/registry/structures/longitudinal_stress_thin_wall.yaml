@@ -1,0 +1,28 @@
+key: longitudinal_stress_thin_wall
+taxonomy:
+  category: structures
+name: Thin-Wall Longitudinal Stress
+display:
+  latex: '\sigma_l = \frac{P r}{2 t}'
+variables:
+  sigma_l: { name: Longitudinal stress, symbol: '\sigma_l', dimension: stress }
+  P: { name: Internal pressure, dimension: pressure }
+  r: { name: Mean radius, dimension: length }
+  t: { name: Wall thickness, dimension: length, constraints: { nonzero: true } }
+residual: "sigma_l - (P * r / (2 * t))"
+solve:
+  explicit_forms:
+    sigma_l: P * r / (2 * t)
+    P: 2 * sigma_l * t / r
+    r: 2 * sigma_l * t / P
+    t: P * r / (2 * sigma_l)
+  numerical:
+    unsupported_targets: [sigma_l, P, r, t]
+assumptions:
+  - Thin-wall cylindrical vessel behavior.
+tests:
+  - full_state:
+      sigma_l: "31.25 MPa"
+      P: "2.5 MPa"
+      r: "0.2 m"
+      t: "8 mm"

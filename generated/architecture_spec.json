@@ -1,0 +1,120 @@
+{
+  "schema_version": "1",
+  "model_version": "2026-03-02",
+  "artifact_type": "architecture_spec",
+  "items": {
+    "layers": [
+      {
+        "key": "atomic_equation",
+        "definition": "one physical relation with scalar-first solve behavior"
+      },
+      {
+        "key": "equation_family",
+        "definition": "canonical law with multiple documented/discoverable variants"
+      },
+      {
+        "key": "component_model",
+        "definition": "multi-equation iterative engineering model"
+      },
+      {
+        "key": "solve_graph",
+        "definition": "node/edge chaining across equations/components/sources"
+      },
+      {
+        "key": "external_binding",
+        "definition": "generated Python/Excel surfaces over Rust-owned logic"
+      }
+    ],
+    "ownership": [
+      {
+        "layer": "atomic_equation",
+        "owner": "equations",
+        "owns": [
+          "equation registry + validation",
+          "scalar solve behavior",
+          "equation docs fragments"
+        ],
+        "does_not_own": [
+          "component orchestration",
+          "graph scheduling",
+          "binding runtime logic"
+        ]
+      },
+      {
+        "layer": "equation_family",
+        "owner": "equations",
+        "owns": [
+          "family identity + variant metadata",
+          "family discoverability/docs"
+        ],
+        "does_not_own": [
+          "component iteration",
+          "graph orchestration"
+        ]
+      },
+      {
+        "layer": "component_model",
+        "owner": "eng",
+        "owns": [
+          "multi-equation orchestration",
+          "iterative convergence policy",
+          "context-aware high-level IO"
+        ],
+        "does_not_own": [
+          "atomic law definitions",
+          "graph scheduling"
+        ]
+      },
+      {
+        "layer": "solve_graph",
+        "owner": "eng",
+        "owns": [
+          "dependency ordering",
+          "node/edge solve execution",
+          "chained workflow diagnostics"
+        ],
+        "does_not_own": [
+          "atomic law definitions",
+          "component constitutive details"
+        ]
+      },
+      {
+        "layer": "external_binding",
+        "owner": "eng",
+        "owns": [
+          "binding generation spec",
+          "naming/signature adaptation",
+          "catalog-driven surface generation"
+        ],
+        "does_not_own": [
+          "solver/unit reimplementation"
+        ]
+      }
+    ],
+    "prototypes": [
+      {
+        "key": "ideal_gas_family",
+        "layer": "equation_family",
+        "description": "P*V=m*R*T canonical identity with pressure-volume and density variants"
+      },
+      {
+        "key": "two_orifice_component",
+        "layer": "component_model",
+        "description": "iterative pressure split model using orifice + continuity equations"
+      }
+    ],
+    "catalog_plan": {
+      "new_sections": [
+        "equation_families",
+        "components",
+        "binding_surfaces"
+      ],
+      "required_links": [
+        "family_variant_maps_to_equation",
+        "component_uses_equation",
+        "component_requires_context",
+        "binding_exposes_entity"
+      ]
+    }
+  }
+}

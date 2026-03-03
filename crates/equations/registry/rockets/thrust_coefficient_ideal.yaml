@@ -1,0 +1,27 @@
+key: thrust_coefficient_ideal
+taxonomy:
+  category: rockets
+name: Ideal Thrust Coefficient
+display:
+  latex: 'C_f = \sqrt{\frac{2\gamma^2}{\gamma-1}\left(\frac{2}{\gamma+1}\right)^{(\gamma+1)/(\gamma-1)}\left(1-\left(\frac{p_e}{p_c}\right)^{(\gamma-1)/\gamma}\right)} + \left(\frac{p_e}{p_c}-\frac{p_a}{p_c}\right)\frac{A_e}{A_t}'
+variables:
+  C_f: { name: Thrust coefficient, dimension: ratio }
+  gamma: { name: Specific heat ratio, symbol: '\gamma', dimension: dimensionless, constraints: { min: 1.01 } }
+  p_e_p_c: { name: Exit-to-chamber pressure ratio, dimension: ratio }
+  p_a_p_c: { name: Ambient-to-chamber pressure ratio, dimension: ratio }
+  A_e_A_t: { name: Area expansion ratio, dimension: ratio }
+residual: "C_f - (sqrt((2 * gamma^2 / (gamma - 1)) * pow(2 / (gamma + 1), (gamma + 1) / (gamma - 1)) * (1 - pow(p_e_p_c, (gamma - 1) / gamma))) + (p_e_p_c - p_a_p_c) * A_e_A_t)"
+solve:
+  explicit_forms:
+    C_f: sqrt((2 * gamma^2 / (gamma - 1)) * pow(2 / (gamma + 1), (gamma + 1) / (gamma - 1)) * (1 - pow(p_e_p_c, (gamma - 1) / gamma))) + (p_e_p_c - p_a_p_c) * A_e_A_t
+  numerical:
+    unsupported_targets: [C_f, gamma, p_e_p_c, p_a_p_c, A_e_A_t]
+assumptions:
+  - Ideal isentropic nozzle expansion.
+tests:
+  - full_state:
+      C_f: 1.6256523975121535
+      gamma: 1.22
+      p_e_p_c: 0.02
+      p_a_p_c: 0.01
+      A_e_A_t: 8.0

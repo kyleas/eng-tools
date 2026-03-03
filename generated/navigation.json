@@ -1,0 +1,77 @@
+{
+  "schema_version": "1",
+  "model_version": "2026-03-02",
+  "artifact_type": "navigation",
+  "items": [
+    {
+      "category": "compressible",
+      "subcategories": {
+        "_root": [
+          "area_mach",
+          "choked_mass_flux",
+          "isentropic_density_ratio",
+          "isentropic_pressure_ratio",
+          "isentropic_temperature_ratio"
+        ]
+      }
+    },
+    {
+      "category": "fluids",
+      "subcategories": {
+        "_root": [
+          "circular_pipe_area",
+          "colebrook",
+          "continuity_mass_flow",
+          "darcy_weisbach_pressure_drop",
+          "orifice_mass_flow_incompressible",
+          "reynolds_number"
+        ]
+      }
+    },
+    {
+      "category": "heat_transfer",
+      "subcategories": {
+        "_root": [
+          "conduction_plane_wall_heat_rate",
+          "convection_heat_rate",
+          "log_mean_temperature_difference",
+          "thermal_resistance_conduction",
+          "thermal_resistance_convection"
+        ]
+      }
+    },
+    {
+      "category": "rockets",
+      "subcategories": {
+        "_root": [
+          "cstar_ideal",
+          "specific_impulse_ideal",
+          "thrust_coefficient_ideal",
+          "thrust_from_mass_flow"
+        ]
+      }
+    },
+    {
+      "category": "structures",
+      "subcategories": {
+        "_root": [
+          "axial_stress",
+          "beam_bending_stress",
+          "euler_buckling_load",
+          "hoop_stress",
+          "longitudinal_stress_thin_wall",
+          "shaft_torsion_stress"
+        ]
+      }
+    },
+    {
+      "category": "thermo",
+      "subcategories": {
+        "ideal_gas": [
+          "density",
+          "mass_volume"
+        ]
+      }
+    }
+  ]
+}

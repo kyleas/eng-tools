@@ -1,0 +1,22 @@
+/target
+**/*.rs.bk
+.DS_Store
+.vscode/
+!.vscode/
+!.vscode/settings.json
+.idea/
+**/.thermoflow/runs/
+
+# Build and test outputs
+*.log
+build_*.txt
+check_*.txt
+clippy_*.txt
+test_*.txt
+*_output.txt
+
+# Generated data files (keep in exports/ instead)
+/*.csv
+/*.jpg
+/*.png
+/*.pdf

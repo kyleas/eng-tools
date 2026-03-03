@@ -1,0 +1,19 @@
+[package]
+name = "tf-cea-sys"
+version = "0.1.0"
+edition = "2021"
+authors = ["Thermoflow Contributors"]
+license = "MIT OR Apache-2.0"
+description = "Raw FFI bindings to NASA CEA (Chemical Equilibrium with Applications)"
+repository = "https://github.com/yourusername/thermoflow"
+keywords = ["nasa", "cea", "thermodynamics", "rocket", "ffi"]
+categories = ["external-ffi-bindings", "science", "aerospace"]
+
+[dependencies]
+libc = "0.2"
+
+[lib]
+name = "tf_cea_sys"
+path = "src/lib.rs"
+
+# No features needed - prebuilt binaries are always linked

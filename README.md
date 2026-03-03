@@ -1,0 +1,292 @@
+# Thermoflow
+
+A unified **thermo-fluid and propulsion engineering workbench** for designing, analyzing, and optimizing thermal systems.
+
+Thermoflow combines:
+
+- **System Simulation**: Steady-state and transient modeling of fluid networks (pumps, turbines, pipes, orifices, valves)
+- **Fluid Properties**: RefProp-compatible thermodynamic and transport property calculations
+- **Cycle Analysis**: Engine design, turbopump matching, and parametric studies
+- **Interactive Plotting**: Time-series visualization for nodes, components, and control blocks; arbitrary curve plotting for valve characteristics and actuator responses; result comparison and parameter sweeps
+
+## Quick Start
+
+### Build
+
+```bash
+cargo build
+```
+
+### Run the GUI
+
+```bash
+cargo run -p tf-ui
+```
+
+Open or create a project file (YAML format). Design a P&ID, execute a simulation, and explore results.
+
+### Run the CLI
+
+```bash
+# Validate a project
+cargo run -p tf-cli -- validate examples/projects/01_orifice_steady.yaml
+
+# List systems
+cargo run -p tf-cli -- systems examples/projects/01_orifice_steady.yaml
+
+# Run a steady-state simulation
+cargo run -p tf-cli -- run steady examples/projects/01_orifice_steady.yaml s1
+
+# Run a transient simulation
+cargo run -p tf-cli -- run transient --dt 0.1 --t-end 1.0 examples/projects/03_simple_vent_transient.yaml s1
+
+# List cached runs
+cargo run -p tf-cli -- runs examples/projects/01_orifice_steady.yaml s1
+
+# Export a result as CSV
+cargo run -p tf-cli -- export-series examples/projects/01_orifice_steady.yaml <run-id> n1 pressure -o result.csv
+```
+
+### Run Observability
+
+CLI and GUI runs report:
+- current phase/stage (compile, build, solve, save)
+- initialization strategy (`Strict` or `Relaxed`)
+- steady iteration/residual or transient simulated-time progress
+- cutbacks/retries and fallback usage (transient)
+- final timing breakdown with phase percentages
+- real-fluid attempts/successes and surrogate update counts for transient diagnostics
+
+For transient debugging, set `THERMOFLOW_TRANSIENT_LOG=verbose` to enable detailed per-step traces.
+
+### Benchmarking
+
+Run the performance baseline suite to measure and compare workflow execution times:
+
+```bash
+cargo build -p tf-bench --release
+target/release/tf-bench.exe
+```
+
+This will:
+1. Execute each supported example 5 times with fresh computation (no cache)
+2. Collect wall-clock timing metrics for compile, build, solve, and save phases
+3. Print a human-readable summary to the terminal
+4. Save detailed metrics to `benchmarks/baseline.json` for programmatic analysis
+
+Results include:
+- **Median, min, max** timings for robust comparison
+- **Phase breakdown** (time spent in each stage)
+- **Solver diagnostics** (iterations, steps, real-fluid success %, fallback usage)
+- **Aggregates** for trend detection and optimization validation
+
+See [benchmarks/README.md](benchmarks/README.md) for detailed interpretation and [docs/PERFORMANCE_BASELINE.md](docs/PERFORMANCE_BASELINE.md) for initial baseline results and hotspot analysis.
+
+## Project Structure
+
+```text
+thermoflow/
+|- crates/
+|  |- engcore/                  # eng-core package: shared engineering core
+|  |- tf-core/                  # Compatibility shim re-exporting eng-core
+|  |- equations/                # Engineering equation registry, validation, solver and exports
+|  |- tf-graph/                 # Network topology representation
+|  |- tf-project/               # Project schema and validation
+|  |- tf-fluids/                # Thermodynamic properties (RefProp)
+|  |- tf-components/            # Component models (orifice, pump, etc.)
+|  |- tf-solver/                # Steady-state nonlinear solver
+|  |- tf-sim/                   # Transient integration solver
+|  |- tf-controls/              # Control systems (signal graph, controllers, actuators)
+|  |- tf-results/               # Run storage and caching
+|  `- tf-app/                   # Shared application services (for CLI and GUI)
+|- apps/
+|  |- tf-cli/                   # Command-line interface
+|  `- tf-ui/                    # Desktop GUI application
+|- docs/
+|  |- ARCHITECTURE.md           # Detailed architecture and design
+|  |- ENG_EQUATIONS_WORKFLOW.md # Equations registry workflow
+|  `- ROADMAP.md                # Development phases and timeline
+`- examples/
+   `- projects/                 # Example project files (YAML)
+```
+
+## Documentation
+
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Core architecture, workspace model, design principles, and crate responsibilities
+- **[ENG_EQUATIONS_WORKFLOW.md](docs/ENG_EQUATIONS_WORKFLOW.md)** - Equation registry workflow, schema, validation/testing, and CLI commands
+- **[ROADMAP.md](docs/ROADMAP.md)** - Development phases, feature timeline, and dependencies
+- **[TRANSIENT_CAPABILITIES.md](docs/TRANSIENT_CAPABILITIES.md)** - Supported, unsupported, and experimental transient workflows
+- **[STABILIZATION_AUDIT.md](docs/STABILIZATION_AUDIT.md)** - Canonical paths, superseded paths, and current support matrix
+
+## Workspace Model
+
+Thermoflow is one unified application with multiple **workspaces**:
+
+### System Workspace
+
+Define and simulate fluid networks. Draw P&ID diagrams, set boundary conditions, execute simulations, and inspect results. Deploy state overlays on the diagram to visualize pressure, temperature, and flow.
+
+### Fluid Workspace (MVP)
+
+Single-state fluid calculator. Select a species, choose an input pair (`P-T`, `P-h`, `rho-h`, `P-s`), compute equilibrium state, and inspect a full property table.
+
+### Cycle Workspace (Phase 6)
+
+Design propulsion cycles. Perform turbopump matching, parametric sweeps, and component sizing. Includes CEA integration for combustion equilibrium (Phase 5).
+
+### Analysis Workspace (Phase 7)
+
+Compare results across multiple runs. Create parameter sweeps, sensitivity matrices, and optimization studies. Export plots and data.
+
+## Features
+
+### Current (✅)
+
+- Steady-state fluid network simulation
+- Transient simulation for fixed-topology systems (single-CV and supported multi-CV benchmarks)
+- Closed-loop transient controls (measured variable, sampled PI/PID, actuator-driven valve)
+- P&ID editor (node/component creation, control block placement, signal wiring, control parameter tuning)
+- Control history plotting (visualize control block outputs, setpoints, and actuator positions over time)
+- Arbitrary curve plotting (valve characteristic curves, actuator response curves)
+- Fluid Workspace MVP (single-state RefProp-style calculator with persistent workspace state)
+- Project file format (YAML)
+- Run caching and time-series storage
+- CLI with full command set
+- GUI with System workspace
+- RefProp-compatible fluid properties
+- Component models: orifice, pipe, pump, turbine, valve
+- Timed valve schedules remain explicitly unsupported (validation rejects them)
+
+### Control Examples
+
+- `examples/projects/09_pressure_controlled_vent.yaml` — pressure-regulated vent with PI + first-order actuator
+- `examples/projects/10_flow_controlled_valve.yaml` — mass-flow control with sampled PI + actuator lag/rate limit
+
+### Planned
+
+- Phase 3: Drag-and-drop P&ID editor, state overlays
+- Phase 4: Fluid workspace expansion (property sweeps, plotting, state libraries)
+- Phase 5: CEA integration, combustion support
+- Phase 6: Cycle workspace, turbopump matching
+- Phase 7: Advanced analysis, optimization framework
+
+## Development
+
+### Testing
+
+```bash
+# Run all tests
+cargo test --workspace
+
+# Run tests for a specific crate
+cargo test -p tf-solver
+
+# Run integration tests
+cargo test -p tf-app --test integration_steady
+```
+
+### Code Quality
+
+```bash
+# Format code
+cargo fmt --all
+
+# Check for lint issues
+cargo clippy --workspace --all-targets -- -D warnings
+```
+
+### Architecture Principles
+
+1. **Backend first**: All business logic lives in library crates; UI is thin
+2. **CLI gold standard**: Command-line interface is the source of truth for reproducibility
+3. **No duplication**: Logic shared between CLI and GUI lives in tf-app
+4. **Shared services**: One project, one run cache, one simulation backend
+
+See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full design philosophy.
+
+## Targets and Replacements
+
+Thermoflow is designed to eventually replace:
+
+- **Visio**: for P&ID and system diagrams
+- **RefProp**: for fluid property calculations
+- **RPA**: for engine design and cycle analysis
+- **Excel**: for thermo-fluid modeling workflows
+
+## License
+
+TBD
+
+## Contributing
+
+1. Read [ARCHITECTURE.md](docs/ARCHITECTURE.md) and [ROADMAP.md](docs/ROADMAP.md)
+2. Follow Rust conventions (cargo fmt, cargo clippy)
+3. Add tests for new functionality
+4. Update documentation as needed
+5. See [DEVELOPMENT_CONVENTIONS.md](docs/DEVELOPMENT_CONVENTIONS.md) for coding standards (if present)
+
+---
+
+**Status**: Active development (Phase 2 complete; controls integrated for transient closed-loop path)  
+**Last updated**: 2026-02-27
+
+## CEA backend status (new backend foundation)
+
+Thermoflow now includes a new `tf-cea` crate that provides Rust-side domain models and a backend adapter for CEA-style equilibrium and rocket analysis. The crate is backend-first and intentionally does **not** implement new equilibrium physics.
+
+- Selected path: subprocess adapter to an existing CEA backend bridge executable (`TF_CEA_BACKEND_EXECUTABLE`)
+- Implemented slices: equilibrium execution path + rocket-performance execution path through `CeaBackend`
+- Future-ready seams: nozzle model and combustor model enums for shifting/frozen and finite/infinite area extensions
+
+## RPA backend slice status
+
+Thermoflow now includes `tf-rpa`, a backend-first crate for RPA-style chamber/nozzle performance orchestration built on top of `tf-cea`.
+
+- `tf-cea` remains the thermochemistry backend boundary.
+- `tf-rpa` owns rocket analysis problem/result models, validation, and assumption-aware solve orchestration.
+- Current slice computes chamber + integrated performance values and keeps throat/exit station details as explicit future seams.
+
+## Rocket app (first GUI slice)
+
+Thermoflow now includes a top-level **Rocket** tab with explicit subtabs for:
+
+- Performance (functional)
+- Geometry (functional first-pass sizing + preview)
+- Propellants (functional preset workflow)
+- Studies (functional single-variable sweeps)
+- Thermal (functional first-pass thermal estimates + profile)
+- Data (functional assumptions/provenance/diagnostics summary)
+
+The Performance subtab solves backend-driven cases via `tf-rpa` on top of `tf-cea`, with clear unsupported-mode errors for assumptions not yet implemented.
+
+## Rocket Studies (single-variable sweeps)
+
+The Rocket tab now includes a functional **Studies** subtab that runs single-variable sweeps from the current Performance case and shows outputs in both a table and a shared multi-series plot helper aligned with Rocket/Fluid plotting patterns.
+
+## Rocket Geometry (first-pass sizing)
+
+The Rocket tab now includes a functional **Geometry** subtab that derives from the current Performance case and computes first-pass throat/exit/chamber sizing outputs using a canonical engine geometry model (chamber, converging section, throat, diverging contour, exit). The preview now supports conical, bell-parabolic, and truncated-ideal contour styles with truncation control.
+
+## Rocket Propellants presets
+
+The Rocket tab now includes a functional **Propellants** subtab with a searchable library of common propellant presets and a one-click apply flow into the current Performance case.
+
+
+## Rocket Thermal Design (regen + film + channel optimizer)
+
+The Rocket tab now includes a functional **Thermal Design** workflow that derives from active Performance + Geometry inputs and computes:
+
+- station-wise gas-side heating, wall conduction, and coolant-side heat removal
+- regenerative/film/combined cooling modes
+- coolant pressure-drop tracking against a user-set maximum limit
+- automated channel sizing to reduce peak wall temperature under the pressure-drop constraint
+- multi-series plots for heat flux, wall/coolant temperatures, coolant pressure, channel geometry, and film effectiveness
+- explicit equations/correlation trace, assumptions, and optimizer iteration log
+
+See `docs/ROCKET_THERMAL_DESIGN_MODEL.md` for model equations, assumptions, and deferred fidelity.
+
+
+## Rocket Data (assumptions + provenance)
+
+The Rocket tab now includes a functional **Data** subtab that aggregates active assumptions, provenance labels (`Native backend`, `Derived in Rust`, `Estimated`, `Unavailable`), and warnings/deferred limitations across Performance/Geometry/Thermal state.
+

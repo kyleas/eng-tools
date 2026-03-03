@@ -1,0 +1,31 @@
+key: convection_heat_rate
+taxonomy:
+  category: heat_transfer
+name: Convection Heat Transfer Rate
+display:
+  latex: '\dot{Q} = h A (T_s - T_\infty)'
+variables:
+  Q_dot: { name: Heat transfer rate, dimension: heat_rate }
+  h: { name: Convective heat transfer coefficient, dimension: heat_transfer_coefficient }
+  A: { name: Surface area, dimension: area }
+  T_s: { name: Surface temperature, dimension: temperature }
+  T_inf: { name: Free-stream temperature, symbol: 'T_\infty', dimension: temperature }
+residual: "Q_dot - (h * A * (T_s - T_inf))"
+solve:
+  explicit_forms:
+    Q_dot: h * A * (T_s - T_inf)
+    h: Q_dot / (A * (T_s - T_inf))
+    A: Q_dot / (h * (T_s - T_inf))
+    T_s: (Q_dot / (h * A)) + T_inf
+    T_inf: T_s - (Q_dot / (h * A))
+  numerical:
+    unsupported_targets: [Q_dot, h, A, T_s, T_inf]
+assumptions:
+  - Newton's law of cooling with uniform h and area.
+tests:
+  - full_state:
+      Q_dot: "10500 W"
+      h: "35 W/(m2*K)"
+      A: "3 m2"
+      T_s: "400 K"
+      T_inf: "300 K"

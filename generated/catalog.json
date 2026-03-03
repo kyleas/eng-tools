@@ -1,0 +1,1055 @@
+{
+  "schema_version": "1",
+  "model_version": "2026-03-02",
+  "artifact_type": "catalog",
+  "items": {
+    "equations": [
+      {
+        "key": "area_mach",
+        "path_id": "compressible.area_mach",
+        "name": "Isentropic Area-Mach Relation",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "choked_mass_flux",
+        "path_id": "compressible.choked_mass_flux",
+        "name": "Choked Mass Flux",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "isentropic_density_ratio",
+        "path_id": "compressible.isentropic_density_ratio",
+        "name": "Isentropic Density Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "isentropic_pressure_ratio",
+        "path_id": "compressible.isentropic_pressure_ratio",
+        "name": "Isentropic Pressure Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "isentropic_temperature_ratio",
+        "path_id": "compressible.isentropic_temperature_ratio",
+        "name": "Isentropic Temperature Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "circular_pipe_area",
+        "path_id": "fluids.circular_pipe_area",
+        "name": "Circular Pipe Flow Area",
+        "category": "fluids",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [
+          "pi"
+        ],
+        "resolver_contexts": []
+      },
+      {
+        "key": "colebrook",
+        "path_id": "fluids.colebrook",
+        "name": "Colebrook-White Friction Factor",
+        "category": "fluids",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "continuity_mass_flow",
+        "path_id": "fluids.continuity_mass_flow",
+        "name": "Continuity Mass Flow",
+        "category": "fluids",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "darcy_weisbach_pressure_drop",
+        "path_id": "fluids.darcy_weisbach_pressure_drop",
+        "name": "Darcy-Weisbach Pressure Drop",
+        "category": "fluids",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "orifice_mass_flow_incompressible",
+        "path_id": "fluids.orifice_mass_flow_incompressible",
+        "name": "Incompressible Orifice Mass Flow",
+        "category": "fluids",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "reynolds_number",
+        "path_id": "fluids.reynolds_number",
+        "name": "Reynolds Number",
+        "category": "fluids",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": [
+          "fluid"
+        ]
+      },
+      {
+        "key": "conduction_plane_wall_heat_rate",
+        "path_id": "heat_transfer.conduction_plane_wall_heat_rate",
+        "name": "Plane-Wall Conduction Heat Rate",
+        "category": "heat_transfer",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": [
+          "material"
+        ]
+      },
+      {
+        "key": "convection_heat_rate",
+        "path_id": "heat_transfer.convection_heat_rate",
+        "name": "Convection Heat Transfer Rate",
+        "category": "heat_transfer",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "log_mean_temperature_difference",
+        "path_id": "heat_transfer.log_mean_temperature_difference",
+        "name": "Log-Mean Temperature Difference",
+        "category": "heat_transfer",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "thermal_resistance_conduction",
+        "path_id": "heat_transfer.thermal_resistance_conduction",
+        "name": "Conduction Thermal Resistance",
+        "category": "heat_transfer",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "thermal_resistance_convection",
+        "path_id": "heat_transfer.thermal_resistance_convection",
+        "name": "Convection Thermal Resistance",
+        "category": "heat_transfer",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "cstar_ideal",
+        "path_id": "rockets.cstar_ideal",
+        "name": "Ideal Characteristic Velocity",
+        "category": "rockets",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "specific_impulse_ideal",
+        "path_id": "rockets.specific_impulse_ideal",
+        "name": "Ideal Specific Impulse",
+        "category": "rockets",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [
+          "g0"
+        ],
+        "resolver_contexts": []
+      },
+      {
+        "key": "thrust_coefficient_ideal",
+        "path_id": "rockets.thrust_coefficient_ideal",
+        "name": "Ideal Thrust Coefficient",
+        "category": "rockets",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "thrust_from_mass_flow",
+        "path_id": "rockets.thrust_from_mass_flow",
+        "name": "Thrust From Mass Flow and Effective Exhaust Velocity",
+        "category": "rockets",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "axial_stress",
+        "path_id": "structures.axial_stress",
+        "name": "Axial Normal Stress",
+        "category": "structures",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "beam_bending_stress",
+        "path_id": "structures.beam_bending_stress",
+        "name": "Beam Bending Stress",
+        "category": "structures",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "euler_buckling_load",
+        "path_id": "structures.euler_buckling_load",
+        "name": "Euler Buckling Critical Load",
+        "category": "structures",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [
+          "pi"
+        ],
+        "resolver_contexts": [
+          "material"
+        ]
+      },
+      {
+        "key": "hoop_stress",
+        "path_id": "structures.hoop_stress",
+        "name": "Thin-Wall Hoop Stress",
+        "category": "structures",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "longitudinal_stress_thin_wall",
+        "path_id": "structures.longitudinal_stress_thin_wall",
+        "name": "Thin-Wall Longitudinal Stress",
+        "category": "structures",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "shaft_torsion_stress",
+        "path_id": "structures.shaft_torsion_stress",
+        "name": "Circular Shaft Torsion Stress",
+        "category": "structures",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "ideal_gas_density",
+        "path_id": "thermo.ideal_gas.density",
+        "name": "Ideal Gas Law (Density Form)",
+        "category": "thermo",
+        "subcategories": [
+          "ideal_gas"
+        ],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "ideal_gas_mass_volume",
+        "path_id": "thermo.ideal_gas.mass_volume",
+        "name": "Ideal Gas Law (Mass-Volume Form)",
+        "category": "thermo",
+        "subcategories": [
+          "ideal_gas"
+        ],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      }
+    ],
+    "families": [
+      {
+        "key": "ideal_gas",
+        "name": "Ideal Gas Law",
+        "description": "Common engineering forms of the ideal-gas law under one canonical family.",
+        "canonical_law": "P * V = m * R * T",
+        "canonical_equation": "thermo.ideal_gas.mass_volume",
+        "assumptions": [
+          "Thermally and calorically ideal gas behavior.",
+          "Constant gas constant R in the operating range."
+        ],
+        "references": [
+          "Fundamentals of Thermodynamics (ideal-gas state relation)"
+        ],
+        "variants": [
+          {
+            "key": "mass_volume",
+            "name": "Mass-Volume Form",
+            "equation_id": "thermo.ideal_gas.mass_volume",
+            "display_latex": "P V = m R T",
+            "description": "",
+            "when_to_use": "Use when total mass and control-volume size are primary knowns.",
+            "assumptions": [],
+            "references": []
+          },
+          {
+            "key": "density",
+            "name": "Density Form",
+            "equation_id": "thermo.ideal_gas.density",
+            "display_latex": "P = \\rho R T",
+            "description": "",
+            "when_to_use": "Use when density-based flow/property calculations are primary.",
+            "assumptions": [],
+            "references": []
+          }
+        ]
+      }
+    ],
+    "constants": [
+      {
+        "key": "boltzmann",
+        "name": "Boltzmann Constant",
+        "symbol_latex": "k_B",
+        "symbol_unicode": "k_B",
+        "symbol_ascii": "k_B",
+        "dimension": "boltzmann_constant",
+        "unit": "J/K",
+        "value": 1.380649e-23,
+        "exact": true,
+        "source": "SI 2019 definition",
+        "note": "Exact defining constant.",
+        "description": "Boltzmann constant linking thermal energy and temperature.",
+        "aliases": [
+          "k_b"
+        ]
+      },
+      {
+        "key": "g0",
+        "name": "Standard Gravity",
+        "symbol_latex": "g_0",
+        "symbol_unicode": "g₀",
+        "symbol_ascii": "g0",
+        "dimension": "acceleration",
+        "unit": "m/s2",
+        "value": 9.80665,
+        "exact": false,
+        "source": "CODATA 2018 / ISO 80000 conventional standard gravity",
+        "note": "Conventional reference value (not local measured gravity).",
+        "description": "Standard gravitational acceleration at Earth sea level.",
+        "aliases": [
+          "standard_gravity"
+        ]
+      },
+      {
+        "key": "pi",
+        "name": "Archimedes Constant",
+        "symbol_latex": "\\pi",
+        "symbol_unicode": "π",
+        "symbol_ascii": "pi",
+        "dimension": "dimensionless",
+        "unit": "1",
+        "value": 3.141592653589793,
+        "exact": false,
+        "source": "Mathematical constant",
+        "note": "Irrational constant represented in f64 precision for evaluation.",
+        "description": "Ratio of a circle's circumference to its diameter.",
+        "aliases": []
+      },
+      {
+        "key": "stefan_boltzmann",
+        "name": "Stefan-Boltzmann Constant",
+        "symbol_latex": "\\sigma",
+        "symbol_unicode": "σ",
+        "symbol_ascii": "sigma_sb",
+        "dimension": "stefan_boltzmann_constant",
+        "unit": "W/(m2*K4)",
+        "value": 5.670374419e-8,
+        "exact": false,
+        "source": "CODATA 2018",
+        "note": "Derived from exact constants; finite reported decimal precision.",
+        "description": "Stefan-Boltzmann radiation constant.",
+        "aliases": [
+          "sigma_sb"
+        ]
+      },
+      {
+        "key": "universal_gas_constant",
+        "name": "Universal Gas Constant",
+        "symbol_latex": "R_u",
+        "symbol_unicode": "Rᵤ",
+        "symbol_ascii": "R_u",
+        "dimension": "universal_gas_constant",
+        "unit": "J/(mol*K)",
+        "value": 8.314462618,
+        "exact": true,
+        "source": "SI 2019 redefinition via fixed Boltzmann constant and Avogadro constant",
+        "note": "Exact derived SI constant.",
+        "description": "Universal gas constant used in thermodynamics.",
+        "aliases": [
+          "gas_constant_universal"
+        ]
+      }
+    ],
+    "fluids": [
+      {
+        "key": "Air",
+        "name": "Air",
+        "aliases": [
+          "atmosphere"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "Ar",
+        "name": "Argon",
+        "aliases": [
+          "argon"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "CH4",
+        "name": "Methane",
+        "aliases": [
+          "methane"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "CO",
+        "name": "Carbon Monoxide",
+        "aliases": [
+          "carbon monoxide"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "CO2",
+        "name": "Carbon Dioxide",
+        "aliases": [
+          "carbon dioxide"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "Ethane",
+        "name": "Ethane",
+        "aliases": [
+          "c2h6"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "Ethylene",
+        "name": "Ethylene",
+        "aliases": [
+          "c2h4"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "H2",
+        "name": "Hydrogen",
+        "aliases": [
+          "hydrogen"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "H2O",
+        "name": "Water",
+        "aliases": [
+          "water"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "He",
+        "name": "Helium",
+        "aliases": [
+          "helium"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "Isobutane",
+        "name": "Isobutane",
+        "aliases": [
+          "i-butane"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "Isopentane",
+        "name": "Isopentane",
+        "aliases": [
+          "i-pentane"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "Kr",
+        "name": "Krypton",
+        "aliases": [
+          "krypton"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "N2",
+        "name": "Nitrogen",
+        "aliases": [
+          "nitrogen"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "N2O",
+        "name": "Nitrous Oxide",
+        "aliases": [
+          "nitrous oxide"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "NH3",
+        "name": "Ammonia",
+        "aliases": [
+          "ammonia"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "Ne",
+        "name": "Neon",
+        "aliases": [
+          "neon"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "O2",
+        "name": "Oxygen",
+        "aliases": [
+          "oxygen"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "Propane",
+        "name": "Propane",
+        "aliases": [
+          "c3h8",
+          "n-propane"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "Propylene",
+        "name": "Propylene",
+        "aliases": [
+          "c3h6"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "R1234yf",
+        "name": "R1234yf",
+        "aliases": [],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "R125",
+        "name": "R125",
+        "aliases": [],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "R134a",
+        "name": "R134a",
+        "aliases": [],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "R152a",
+        "name": "R152a",
+        "aliases": [],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "R245fa",
+        "name": "R245fa",
+        "aliases": [],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "R32",
+        "name": "R32",
+        "aliases": [],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "SO2",
+        "name": "Sulfur Dioxide",
+        "aliases": [
+          "sulfur dioxide"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "Xe",
+        "name": "Xenon",
+        "aliases": [
+          "xenon"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "nButane",
+        "name": "n-Butane",
+        "aliases": [
+          "butane",
+          "n-butane"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "nHexane",
+        "name": "n-Hexane",
+        "aliases": [
+          "hexane",
+          "n-hexane"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      },
+      {
+        "key": "nPentane",
+        "name": "n-Pentane",
+        "aliases": [
+          "pentane",
+          "n-pentane"
+        ],
+        "supported_properties": [
+          "density",
+          "specific_heat_capacity",
+          "specific_heat_capacity_cv",
+          "gamma",
+          "speed_of_sound",
+          "dynamic_viscosity",
+          "thermal_conductivity",
+          "temperature",
+          "pressure"
+        ]
+      }
+    ],
+    "materials": [
+      {
+        "key": "aluminum_6061_t6",
+        "name": "Aluminum 6061-T6",
+        "aliases": [
+          "al6061_t6",
+          "6061_t6"
+        ],
+        "properties": [
+          "elastic_modulus",
+          "thermal_conductivity",
+          "yield_strength"
+        ]
+      },
+      {
+        "key": "stainless_304",
+        "name": "Stainless Steel 304",
+        "aliases": [
+          "ss304",
+          "aisi304"
+        ],
+        "properties": [
+          "elastic_modulus",
+          "thermal_conductivity",
+          "yield_strength"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "relation": "equation_uses_constant",
+        "from": "fluids.circular_pipe_area",
+        "to": "pi"
+      },
+      {
+        "relation": "equation_uses_constant",
+        "from": "rockets.specific_impulse_ideal",
+        "to": "g0"
+      },
+      {
+        "relation": "equation_uses_constant",
+        "from": "structures.euler_buckling_load",
+        "to": "pi"
+      },
+      {
+        "relation": "equation_uses_context",
+        "from": "fluids.reynolds_number",
+        "to": "fluid"
+      },
+      {
+        "relation": "equation_uses_context",
+        "from": "heat_transfer.conduction_plane_wall_heat_rate",
+        "to": "material"
+      },
+      {
+        "relation": "equation_uses_context",
+        "from": "structures.euler_buckling_load",
+        "to": "material"
+      },
+      {
+        "relation": "family_canonical_equation",
+        "from": "ideal_gas",
+        "to": "thermo.ideal_gas.mass_volume"
+      },
+      {
+        "relation": "family_variant_maps_to_equation",
+        "from": "ideal_gas.density",
+        "to": "thermo.ideal_gas.density"
+      },
+      {
+        "relation": "family_variant_maps_to_equation",
+        "from": "ideal_gas.mass_volume",
+        "to": "thermo.ideal_gas.mass_volume"
+      }
+    ]
+  }
+}

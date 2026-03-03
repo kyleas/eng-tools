@@ -1,0 +1,25 @@
+key: axial_stress
+taxonomy:
+  category: structures
+name: Axial Normal Stress
+display:
+  latex: '\sigma = \frac{F}{A}'
+variables:
+  sigma: { name: Axial stress, symbol: '\sigma', dimension: stress }
+  F: { name: Axial force, dimension: force }
+  A: { name: Cross-sectional area, dimension: area }
+residual: "sigma - (F / A)"
+solve:
+  explicit_forms:
+    sigma: F / A
+    F: sigma * A
+    A: F / sigma
+  numerical:
+    unsupported_targets: [sigma, F, A]
+assumptions:
+  - Uniform axial loading and stress distribution.
+tests:
+  - full_state:
+      sigma: "50 MPa"
+      F: "10000 N"
+      A: "200 mm2"

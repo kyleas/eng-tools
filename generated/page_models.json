@@ -1,0 +1,5084 @@
+{
+  "schema_version": "1",
+  "model_version": "2026-03-02",
+  "artifact_type": "page_models",
+  "items": [
+    {
+      "key": "area_mach",
+      "path_id": "compressible.area_mach",
+      "slug": "area_mach",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Isentropic Area-Mach Relation",
+      "description": "Isentropic nozzle area ratio as a function of Mach number.",
+      "latex": "\\frac{A}{A^*} = \\frac{1}{M}\\left(\\frac{2}{\\gamma+1}\\left(1+\\frac{\\gamma-1}{2}M^2\\right)\\right)^{\\frac{\\gamma+1}{2(\\gamma-1)}}",
+      "unicode": "A/A* = (1/M) * ((2/(gamma+1))*(1+((gamma-1)/2)M^2))^((gamma+1)/(2(gamma-1)))",
+      "ascii": "area_ratio = (1/M) * ((2/(gamma+1))*(1+((gamma-1)/2)*M^2))^((gamma+1)/(2*(gamma-1)))",
+      "aliases": [
+        "isentropic_area_mach"
+      ],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "M",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "area_ratio",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [
+        {
+          "name": "subsonic",
+          "condition": "1 - M",
+          "preferred": false
+        },
+        {
+          "name": "supersonic",
+          "condition": "M - 1",
+          "preferred": true
+        }
+      ],
+      "diagram_labels": [
+        {
+          "variable": "area_ratio",
+          "label": "A/A*"
+        },
+        {
+          "variable": "M",
+          "label": "Mach number"
+        },
+        {
+          "variable": "gamma",
+          "label": "Specific heat ratio"
+        }
+      ],
+      "assumptions": [
+        "Quasi-one-dimensional isentropic flow.",
+        "Calorically perfect gas with constant gamma."
+      ],
+      "references": [
+        {
+          "source": "Anderson, Modern Compressible Flow",
+          "note": "Isentropic flow function tables."
+        }
+      ],
+      "variables": [
+        {
+          "key": "area_ratio",
+          "name": "Area ratio",
+          "symbol": "\\frac{A}{A^*}",
+          "symbol_authored": true,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M",
+          "name": "Mach number",
+          "symbol": "M",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::area_mach::equation())\n    .target_area_ratio()\n    .branch_subsonic()\n    .given_m(0.3)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_area_ratio",
+          "style": "convenience",
+          "code": "let value = equations::compressible::area_mach::solve_area_ratio(\n    0.3,\n    1.4,\n)?;",
+          "target": "area_ratio",
+          "signature": "equations::compressible::area_mach::solve_area_ratio(M, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M",
+              "description": "Mach number"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        },
+        {
+          "label": "typed_builder_branch",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::area_mach::equation())\n    .target_area_ratio()\n    .branch_supersonic()\n    .given_m(2.2)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        }
+      ]
+    },
+    {
+      "key": "choked_mass_flux",
+      "path_id": "compressible.choked_mass_flux",
+      "slug": "choked_mass_flux",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Choked Mass Flux",
+      "description": "Choked Mass Flux",
+      "latex": "G^* = \\frac{p_0}{\\sqrt{T_0}} \\sqrt{\\frac{\\gamma}{R}} \\left(\\frac{2}{\\gamma+1}\\right)^{(\\gamma+1)/(2(\\gamma-1))}",
+      "unicode": "G_star = (p0 / √(T0)) · √(γ / R) · pow(2 / (γ + 1), (γ + 1) / (2 · (γ - 1)))",
+      "ascii": "G_star = (p0 / sqrt(T0)) * sqrt(gamma / R) * pow(2 / (gamma + 1), (gamma + 1) / (2 * (gamma - 1)))",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "G_star",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "One-dimensional isentropic converging nozzle at critical condition (M=1 at throat).",
+        "Perfect gas with constant gamma and R."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "G_star",
+          "name": "Choked mass flux",
+          "symbol": "G_star",
+          "symbol_authored": false,
+          "dimension": "mass_flux",
+          "default_unit": "kg/(m2*s)",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "p0",
+          "name": "Stagnation pressure",
+          "symbol": "p0",
+          "symbol_authored": false,
+          "dimension": "pressure",
+          "default_unit": "Pa",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "T0",
+          "name": "Stagnation temperature",
+          "symbol": "T0",
+          "symbol_authored": false,
+          "dimension": "temperature",
+          "default_unit": "K",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "R",
+          "name": "Gas constant",
+          "symbol": "R",
+          "symbol_authored": false,
+          "dimension": "gas_constant",
+          "default_unit": "J/(kg*K)",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::choked_mass_flux::equation())\n    .target_g_star()\n    .given_p0(5e5)\n    .given_t0(300.0)\n    .given_gamma(1.4)\n    .given_r(287.0)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::choked_mass_flux::equation())\n    .target_g_star()\n    .given_p0(\"500000 Pa\")\n    .given_t0(\"300 K\")\n    .given_gamma(1.4)\n    .given_r(\"287 J/(kg*K)\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_g_star",
+          "style": "convenience",
+          "code": "let value = equations::compressible::choked_mass_flux::solve_g_star(\n    \"500000 Pa\",\n    \"300 K\",\n    1.4,\n    \"287 J/(kg*K)\",\n)?;",
+          "target": "G_star",
+          "signature": "equations::compressible::choked_mass_flux::solve_g_star(p0, T0, gamma, R) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "p0",
+              "description": "Stagnation pressure"
+            },
+            {
+              "name": "T0",
+              "description": "Stagnation temperature"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            },
+            {
+              "name": "R",
+              "description": "Gas constant"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "isentropic_density_ratio",
+      "path_id": "compressible.isentropic_density_ratio",
+      "slug": "isentropic_density_ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Isentropic Density Ratio",
+      "description": "Isentropic Density Ratio",
+      "latex": "\\frac{\\rho}{\\rho_0} = \\left(1+\\frac{\\gamma-1}{2}M^2\\right)^{-1/(\\gamma-1)}",
+      "unicode": "\\frac{ρ}{ρ_0} = pow(1 + ((γ - 1) / 2) · M², - 1 / (γ - 1))",
+      "ascii": "rho_rho0 = pow(1 + ((gamma - 1) / 2) * M^2, - 1 / (gamma - 1))",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "M",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "rho_rho0",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Isentropic perfect-gas flow with constant gamma."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "rho_rho0",
+          "name": "Static-to-stagnation density ratio",
+          "symbol": "\\frac{\\rho}{\\rho_0}",
+          "symbol_authored": true,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M",
+          "name": "Mach number",
+          "symbol": "M",
+          "symbol_authored": false,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::isentropic_density_ratio::equation())\n    .target_rho_rho0()\n    .given_m(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_rho_rho0",
+          "style": "convenience",
+          "code": "let value = equations::compressible::isentropic_density_ratio::solve_rho_rho0(\n    2.0,\n    1.4,\n)?;",
+          "target": "rho_rho0",
+          "signature": "equations::compressible::isentropic_density_ratio::solve_rho_rho0(M, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M",
+              "description": "Mach number"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "isentropic_pressure_ratio",
+      "path_id": "compressible.isentropic_pressure_ratio",
+      "slug": "isentropic_pressure_ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Isentropic Pressure Ratio",
+      "description": "Isentropic Pressure Ratio",
+      "latex": "\\frac{p}{p_0} = \\left(1+\\frac{\\gamma-1}{2}M^2\\right)^{-\\gamma/(\\gamma-1)}",
+      "unicode": "p_p0 = pow(1 + ((γ - 1) / 2) · M², - γ / (γ - 1))",
+      "ascii": "p_p0 = pow(1 + ((gamma - 1) / 2) * M^2, - gamma / (gamma - 1))",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "M",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "p_p0",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "One-dimensional isentropic flow of a calorically perfect gas."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "p_p0",
+          "name": "Static-to-stagnation pressure ratio",
+          "symbol": "p_p0",
+          "symbol_authored": false,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M",
+          "name": "Mach number",
+          "symbol": "M",
+          "symbol_authored": false,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::isentropic_pressure_ratio::equation())\n    .target_p_p0()\n    .given_m(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_p_p0",
+          "style": "convenience",
+          "code": "let value = equations::compressible::isentropic_pressure_ratio::solve_p_p0(\n    2.0,\n    1.4,\n)?;",
+          "target": "p_p0",
+          "signature": "equations::compressible::isentropic_pressure_ratio::solve_p_p0(M, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M",
+              "description": "Mach number"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "isentropic_temperature_ratio",
+      "path_id": "compressible.isentropic_temperature_ratio",
+      "slug": "isentropic_temperature_ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Isentropic Temperature Ratio",
+      "description": "Isentropic Temperature Ratio",
+      "latex": "\\frac{T}{T_0} = \\left(1+\\frac{\\gamma-1}{2}M^2\\right)^{-1}",
+      "unicode": "T_T0 = 1 / (1 + ((γ - 1) / 2) · M²)",
+      "ascii": "T_T0 = 1 / (1 + ((gamma - 1) / 2) * M^2)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "M",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "T_T0",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Isentropic perfect-gas flow with constant gamma."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "T_T0",
+          "name": "Static-to-stagnation temperature ratio",
+          "symbol": "T_T0",
+          "symbol_authored": false,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M",
+          "name": "Mach number",
+          "symbol": "M",
+          "symbol_authored": false,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::isentropic_temperature_ratio::equation())\n    .target_t_t0()\n    .given_m(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_t_t0",
+          "style": "convenience",
+          "code": "let value = equations::compressible::isentropic_temperature_ratio::solve_t_t0(\n    2.0,\n    1.4,\n)?;",
+          "target": "T_T0",
+          "signature": "equations::compressible::isentropic_temperature_ratio::solve_t_t0(M, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M",
+              "description": "Mach number"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "circular_pipe_area",
+      "path_id": "fluids.circular_pipe_area",
+      "slug": "circular_pipe_area",
+      "category": "fluids",
+      "subcategories": [],
+      "name": "Circular Pipe Flow Area",
+      "description": "Circular Pipe Flow Area",
+      "latex": "A = \\frac{\\pi D^2}{4}",
+      "unicode": "A = (π / 4) · D²",
+      "ascii": "A = (pi / 4) * D^2",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "A",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        },
+        {
+          "target": "D",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Cross-section is circular and unobstructed."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "A",
+          "name": "Area",
+          "symbol": "A",
+          "symbol_authored": false,
+          "dimension": "area",
+          "default_unit": "m2",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "D",
+          "name": "Diameter",
+          "symbol": "D",
+          "symbol_authored": false,
+          "dimension": "length",
+          "default_unit": "m",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [
+        {
+          "key": "pi",
+          "name": "Archimedes Constant",
+          "symbol_latex": "\\pi",
+          "symbol_unicode": "π",
+          "symbol_ascii": "pi"
+        }
+      ],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(fluids::circular_pipe_area::equation())\n    .target_a()\n    .given_d(0.1)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(fluids::circular_pipe_area::equation())\n    .target_a()\n    .given_d(\"0.1 m\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_a",
+          "style": "convenience",
+          "code": "let value = equations::fluids::circular_pipe_area::solve_a(\n    \"0.1 m\",\n)?;",
+          "target": "A",
+          "signature": "equations::fluids::circular_pipe_area::solve_a(D) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "D",
+              "description": "Diameter"
+            }
+          ]
+        },
+        {
+          "label": "convenience_d",
+          "style": "convenience",
+          "code": "let value = equations::fluids::circular_pipe_area::solve_d(\n    \"0.007853981633974483 m2\",\n)?;",
+          "target": "D",
+          "signature": "equations::fluids::circular_pipe_area::solve_d(A) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "A",
+              "description": "Area"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "colebrook",
+      "path_id": "fluids.colebrook",
+      "slug": "colebrook",
+      "category": "fluids",
+      "subcategories": [],
+      "name": "Colebrook-White Friction Factor",
+      "description": "Implicit turbulent pipe-flow friction factor relation.",
+      "latex": "\\frac{1}{\\sqrt{f}} + 2\\log_{10}\\left(\\frac{\\varepsilon_D}{3.7} + \\frac{2.51}{Re\\sqrt{f}}\\right) = 0",
+      "unicode": "1/sqrt(f) + 2 log10(eps_D/3.7 + 2.51/(Re sqrt(f))) = 0",
+      "ascii": "1/sqrt(f) + 2*log10((eps_D/3.7) + (2.51/(Re*sqrt(f)))) = 0",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "f",
+          "methods": [
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [
+        {
+          "variable": "f",
+          "label": "Friction factor"
+        },
+        {
+          "variable": "eps_D",
+          "label": "Relative roughness"
+        },
+        {
+          "variable": "Re",
+          "label": "Reynolds number"
+        }
+      ],
+      "assumptions": [
+        "Fully developed turbulent internal flow.",
+        "Incompressible flow behavior."
+      ],
+      "references": [
+        {
+          "source": "Colebrook, C. F. (1939)",
+          "note": "Turbulent flow in pipes with rough walls."
+        }
+      ],
+      "variables": [
+        {
+          "key": "f",
+          "name": "Darcy friction factor",
+          "symbol": "f",
+          "symbol_authored": false,
+          "dimension": "friction_factor",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "eps_D",
+          "name": "Relative roughness",
+          "symbol": "\\epsilon_D",
+          "symbol_authored": true,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "Re",
+          "name": "Reynolds number",
+          "symbol": "Re",
+          "symbol_authored": false,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(fluids::colebrook::equation())\n    .target_f()\n    .given_eps_d(4.214317085279759e-4)\n    .given_re(1e5)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        }
+      ]
+    },
+    {
+      "key": "continuity_mass_flow",
+      "path_id": "fluids.continuity_mass_flow",
+      "slug": "continuity_mass_flow",
+      "category": "fluids",
+      "subcategories": [],
+      "name": "Continuity Mass Flow",
+      "description": "Continuity Mass Flow",
+      "latex": "\\dot{m} = \\rho A V",
+      "unicode": "m_dot = ρ · A · V",
+      "ascii": "m_dot = rho * A * V",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "A",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "V",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "m_dot",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "rho",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "One-dimensional mean properties represent cross-section averages."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "m_dot",
+          "name": "Mass flow rate",
+          "symbol": "m_dot",
+          "symbol_authored": false,
+          "dimension": "mass_flow_rate",
+          "default_unit": "kg/s",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "rho",
+          "name": "Fluid density",
+          "symbol": "\\rho",
+          "symbol_authored": true,
+          "dimension": "density",
+          "default_unit": "kg/m3",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "A",
+          "name": "Flow area",
+          "symbol": "A",
+          "symbol_authored": false,
+          "dimension": "area",
+          "default_unit": "m2",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "V",
+          "name": "Mean velocity",
+          "symbol": "V",
+          "symbol_authored": false,
+          "dimension": "velocity",
+          "default_unit": "m/s",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(fluids::continuity_mass_flow::equation())\n    .target_m_dot()\n    .given_rho(998.0)\n    .given_a(0.1)\n    .given_v(3.0)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(fluids::continuity_mass_flow::equation())\n    .target_m_dot()\n    .given_rho(\"998 kg/m3\")\n    .given_a(\"0.1 m2\")\n    .given_v(\"3 m/s\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_m_dot",
+          "style": "convenience",
+          "code": "let value = equations::fluids::continuity_mass_flow::solve_m_dot(\n    \"998 kg/m3\",\n    \"0.1 m2\",\n    \"3 m/s\",\n)?;",
+          "target": "m_dot",
+          "signature": "equations::fluids::continuity_mass_flow::solve_m_dot(rho, A, V) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "rho",
+              "description": "Fluid density"
+            },
+            {
+              "name": "A",
+              "description": "Flow area"
+            },
+            {
+              "name": "V",
+              "description": "Mean velocity"
+            }
+          ]
+        },
+        {
+          "label": "convenience_rho",
+          "style": "convenience",
+          "code": "let value = equations::fluids::continuity_mass_flow::solve_rho(\n    \"299.4 kg/s\",\n    \"0.1 m2\",\n    \"3 m/s\",\n)?;",
+          "target": "rho",
+          "signature": "equations::fluids::continuity_mass_flow::solve_rho(m_dot, A, V) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "m_dot",
+              "description": "Mass flow rate"
+            },
+            {
+              "name": "A",
+              "description": "Flow area"
+            },
+            {
+              "name": "V",
+              "description": "Mean velocity"
+            }
+          ]
+        },
+        {
+          "label": "convenience_a",
+          "style": "convenience",
+          "code": "let value = equations::fluids::continuity_mass_flow::solve_a(\n    \"299.4 kg/s\",\n    \"998 kg/m3\",\n    \"3 m/s\",\n)?;",
+          "target": "A",
+          "signature": "equations::fluids::continuity_mass_flow::solve_a(m_dot, rho, V) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "m_dot",
+              "description": "Mass flow rate"
+            },
+            {
+              "name": "rho",
+              "description": "Fluid density"
+            },
+            {
+              "name": "V",
+              "description": "Mean velocity"
+            }
+          ]
+        },
+        {
+          "label": "convenience_v",
+          "style": "convenience",
+          "code": "let value = equations::fluids::continuity_mass_flow::solve_v(\n    \"299.4 kg/s\",\n    \"998 kg/m3\",\n    \"0.1 m2\",\n)?;",
+          "target": "V",
+          "signature": "equations::fluids::continuity_mass_flow::solve_v(m_dot, rho, A) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "m_dot",
+              "description": "Mass flow rate"
+            },
+            {
+              "name": "rho",
+              "description": "Fluid density"
+            },
+            {
+              "name": "A",
+              "description": "Flow area"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "darcy_weisbach_pressure_drop",
+      "path_id": "fluids.darcy_weisbach_pressure_drop",
+      "slug": "darcy_weisbach_pressure_drop",
+      "category": "fluids",
+      "subcategories": [],
+      "name": "Darcy-Weisbach Pressure Drop",
+      "description": "Darcy-Weisbach Pressure Drop",
+      "latex": "\\Delta p = f \\frac{L}{D} \\frac{\\rho V^2}{2}",
+      "unicode": "Δ p = f · (L / D) · (ρ · V² / 2)",
+      "ascii": "delta_p = f * (L / D) * (rho * V^2 / 2)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "D",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "L",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "V",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "delta_p",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "f",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "rho",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Fully developed internal flow in a constant-diameter conduit."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "delta_p",
+          "name": "Pressure drop",
+          "symbol": "\\Delta p",
+          "symbol_authored": true,
+          "dimension": "pressure",
+          "default_unit": "Pa",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "f",
+          "name": "Darcy friction factor",
+          "symbol": "f",
+          "symbol_authored": false,
+          "dimension": "friction_factor",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "L",
+          "name": "Pipe length",
+          "symbol": "L",
+          "symbol_authored": false,
+          "dimension": "length",
+          "default_unit": "m",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "D",
+          "name": "Pipe diameter",
+          "symbol": "D",
+          "symbol_authored": false,
+          "dimension": "length",
+          "default_unit": "m",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "rho",
+          "name": "Fluid density",
+          "symbol": "\\rho",
+          "symbol_authored": true,
+          "dimension": "density",
+          "default_unit": "kg/m3",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "V",
+          "name": "Mean velocity",
+          "symbol": "V",
+          "symbol_authored": false,
+          "dimension": "velocity",
+          "default_unit": "m/s",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(fluids::darcy_weisbach_pressure_drop::equation())\n    .target_delta_p()\n    .given_f(0.02)\n    .given_l(10.0)\n    .given_d(0.1)\n    .given_rho(1000.0)\n    .given_v(3.0)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(fluids::darcy_weisbach_pressure_drop::equation())\n    .target_delta_p()\n    .given_f(0.02)\n    .given_l(\"10 m\")\n    .given_d(\"0.1 m\")\n    .given_rho(\"1000 kg/m3\")\n    .given_v(\"3 m/s\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_delta_p",
+          "style": "convenience",
+          "code": "let value = equations::fluids::darcy_weisbach_pressure_drop::solve_delta_p(\n    0.02,\n    \"10 m\",\n    \"0.1 m\",\n    \"1000 kg/m3\",\n    \"3 m/s\",\n)?;",
+          "target": "delta_p",
+          "signature": "equations::fluids::darcy_weisbach_pressure_drop::solve_delta_p(f, L, D, rho, V) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "f",
+              "description": "Darcy friction factor"
+            },
+            {
+              "name": "L",
+              "description": "Pipe length"
+            },
+            {
+              "name": "D",
+              "description": "Pipe diameter"
+            },
+            {
+              "name": "rho",
+              "description": "Fluid density"
+            },
+            {
+              "name": "V",
+              "description": "Mean velocity"
+            }
+          ]
+        },
+        {
+          "label": "convenience_f",
+          "style": "convenience",
+          "code": "let value = equations::fluids::darcy_weisbach_pressure_drop::solve_f(\n    \"9000 Pa\",\n    \"10 m\",\n    \"0.1 m\",\n    \"1000 kg/m3\",\n    \"3 m/s\",\n)?;",
+          "target": "f",
+          "signature": "equations::fluids::darcy_weisbach_pressure_drop::solve_f(delta_p, L, D, rho, V) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "delta_p",
+              "description": "Pressure drop"
+            },
+            {
+              "name": "L",
+              "description": "Pipe length"
+            },
+            {
+              "name": "D",
+              "description": "Pipe diameter"
+            },
+            {
+              "name": "rho",
+              "description": "Fluid density"
+            },
+            {
+              "name": "V",
+              "description": "Mean velocity"
+            }
+          ]
+        },
+        {
+          "label": "convenience_l",
+          "style": "convenience",
+          "code": "let value = equations::fluids::darcy_weisbach_pressure_drop::solve_l(\n    \"9000 Pa\",\n    0.02,\n    \"0.1 m\",\n    \"1000 kg/m3\",\n    \"3 m/s\",\n)?;",
+          "target": "L",
+          "signature": "equations::fluids::darcy_weisbach_pressure_drop::solve_l(delta_p, f, D, rho, V) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "delta_p",
+              "description": "Pressure drop"
+            },
+            {
+              "name": "f",
+              "description": "Darcy friction factor"
+            },
+            {
+              "name": "D",
+              "description": "Pipe diameter"
+            },
+            {
+              "name": "rho",
+              "description": "Fluid density"
+            },
+            {
+              "name": "V",
+              "description": "Mean velocity"
+            }
+          ]
+        },
+        {
+          "label": "convenience_d",
+          "style": "convenience",
+          "code": "let value = equations::fluids::darcy_weisbach_pressure_drop::solve_d(\n    \"9000 Pa\",\n    0.02,\n    \"10 m\",\n    \"1000 kg/m3\",\n    \"3 m/s\",\n)?;",
+          "target": "D",
+          "signature": "equations::fluids::darcy_weisbach_pressure_drop::solve_d(delta_p, f, L, rho, V) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "delta_p",
+              "description": "Pressure drop"
+            },
+            {
+              "name": "f",
+              "description": "Darcy friction factor"
+            },
+            {
+              "name": "L",
+              "description": "Pipe length"
+            },
+            {
+              "name": "rho",
+              "description": "Fluid density"
+            },
+            {
+              "name": "V",
+              "description": "Mean velocity"
+            }
+          ]
+        },
+        {
+          "label": "convenience_rho",
+          "style": "convenience",
+          "code": "let value = equations::fluids::darcy_weisbach_pressure_drop::solve_rho(\n    \"9000 Pa\",\n    0.02,\n    \"10 m\",\n    \"0.1 m\",\n    \"3 m/s\",\n)?;",
+          "target": "rho",
+          "signature": "equations::fluids::darcy_weisbach_pressure_drop::solve_rho(delta_p, f, L, D, V) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "delta_p",
+              "description": "Pressure drop"
+            },
+            {
+              "name": "f",
+              "description": "Darcy friction factor"
+            },
+            {
+              "name": "L",
+              "description": "Pipe length"
+            },
+            {
+              "name": "D",
+              "description": "Pipe diameter"
+            },
+            {
+              "name": "V",
+              "description": "Mean velocity"
+            }
+          ]
+        },
+        {
+          "label": "convenience_v",
+          "style": "convenience",
+          "code": "let value = equations::fluids::darcy_weisbach_pressure_drop::solve_v(\n    \"9000 Pa\",\n    0.02,\n    \"10 m\",\n    \"0.1 m\",\n    \"1000 kg/m3\",\n)?;",
+          "target": "V",
+          "signature": "equations::fluids::darcy_weisbach_pressure_drop::solve_v(delta_p, f, L, D, rho) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "delta_p",
+              "description": "Pressure drop"
+            },
+            {
+              "name": "f",
+              "description": "Darcy friction factor"
+            },
+            {
+              "name": "L",
+              "description": "Pipe length"
+            },
+            {
+              "name": "D",
+              "description": "Pipe diameter"
+            },
+            {
+              "name": "rho",
+              "description": "Fluid density"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "orifice_mass_flow_incompressible",
+      "path_id": "fluids.orifice_mass_flow_incompressible",
+      "slug": "orifice_mass_flow_incompressible",
+      "category": "fluids",
+      "subcategories": [],
+      "name": "Incompressible Orifice Mass Flow",
+      "description": "Incompressible Orifice Mass Flow",
+      "latex": "\\dot{m} = C_d A \\sqrt{2 \\rho \\Delta p}",
+      "unicode": "m_dot = C_d · A · √(2 · ρ · Δ p)",
+      "ascii": "m_dot = C_d * A * sqrt(2 * rho * delta_p)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "A",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "C_d",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "delta_p",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "m_dot",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "rho",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Incompressible single-phase flow through a sharp-edged restriction."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "m_dot",
+          "name": "Mass flow rate",
+          "symbol": "m_dot",
+          "symbol_authored": false,
+          "dimension": "mass_flow_rate",
+          "default_unit": "kg/s",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "C_d",
+          "name": "Discharge coefficient",
+          "symbol": "C_d",
+          "symbol_authored": false,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "A",
+          "name": "Orifice area",
+          "symbol": "A",
+          "symbol_authored": false,
+          "dimension": "area",
+          "default_unit": "m2",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "rho",
+          "name": "Fluid density",
+          "symbol": "\\rho",
+          "symbol_authored": true,
+          "dimension": "density",
+          "default_unit": "kg/m3",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "delta_p",
+          "name": "Pressure drop",
+          "symbol": "\\Delta p",
+          "symbol_authored": true,
+          "dimension": "pressure",
+          "default_unit": "Pa",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(fluids::orifice_mass_flow_incompressible::equation())\n    .target_m_dot()\n    .given_c_d(1.0)\n    .given_a(1.0)\n    .given_rho(1.0)\n    .given_delta_p(0.5)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(fluids::orifice_mass_flow_incompressible::equation())\n    .target_m_dot()\n    .given_c_d(1.0)\n    .given_a(\"1 m2\")\n    .given_rho(\"1 kg/m3\")\n    .given_delta_p(\"0.5 Pa\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_m_dot",
+          "style": "convenience",
+          "code": "let value = equations::fluids::orifice_mass_flow_incompressible::solve_m_dot(\n    1.0,\n    \"1 m2\",\n    \"1 kg/m3\",\n    \"0.5 Pa\",\n)?;",
+          "target": "m_dot",
+          "signature": "equations::fluids::orifice_mass_flow_incompressible::solve_m_dot(C_d, A, rho, delta_p) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "C_d",
+              "description": "Discharge coefficient"
+            },
+            {
+              "name": "A",
+              "description": "Orifice area"
+            },
+            {
+              "name": "rho",
+              "description": "Fluid density"
+            },
+            {
+              "name": "delta_p",
+              "description": "Pressure drop"
+            }
+          ]
+        },
+        {
+          "label": "convenience_c_d",
+          "style": "convenience",
+          "code": "let value = equations::fluids::orifice_mass_flow_incompressible::solve_c_d(\n    \"1 kg/s\",\n    \"1 m2\",\n    \"1 kg/m3\",\n    \"0.5 Pa\",\n)?;",
+          "target": "C_d",
+          "signature": "equations::fluids::orifice_mass_flow_incompressible::solve_c_d(m_dot, A, rho, delta_p) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "m_dot",
+              "description": "Mass flow rate"
+            },
+            {
+              "name": "A",
+              "description": "Orifice area"
+            },
+            {
+              "name": "rho",
+              "description": "Fluid density"
+            },
+            {
+              "name": "delta_p",
+              "description": "Pressure drop"
+            }
+          ]
+        },
+        {
+          "label": "convenience_a",
+          "style": "convenience",
+          "code": "let value = equations::fluids::orifice_mass_flow_incompressible::solve_a(\n    \"1 kg/s\",\n    1.0,\n    \"1 kg/m3\",\n    \"0.5 Pa\",\n)?;",
+          "target": "A",
+          "signature": "equations::fluids::orifice_mass_flow_incompressible::solve_a(m_dot, C_d, rho, delta_p) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "m_dot",
+              "description": "Mass flow rate"
+            },
+            {
+              "name": "C_d",
+              "description": "Discharge coefficient"
+            },
+            {
+              "name": "rho",
+              "description": "Fluid density"
+            },
+            {
+              "name": "delta_p",
+              "description": "Pressure drop"
+            }
+          ]
+        },
+        {
+          "label": "convenience_rho",
+          "style": "convenience",
+          "code": "let value = equations::fluids::orifice_mass_flow_incompressible::solve_rho(\n    \"1 kg/s\",\n    1.0,\n    \"1 m2\",\n    \"0.5 Pa\",\n)?;",
+          "target": "rho",
+          "signature": "equations::fluids::orifice_mass_flow_incompressible::solve_rho(m_dot, C_d, A, delta_p) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "m_dot",
+              "description": "Mass flow rate"
+            },
+            {
+              "name": "C_d",
+              "description": "Discharge coefficient"
+            },
+            {
+              "name": "A",
+              "description": "Orifice area"
+            },
+            {
+              "name": "delta_p",
+              "description": "Pressure drop"
+            }
+          ]
+        },
+        {
+          "label": "convenience_delta_p",
+          "style": "convenience",
+          "code": "let value = equations::fluids::orifice_mass_flow_incompressible::solve_delta_p(\n    \"1 kg/s\",\n    1.0,\n    \"1 m2\",\n    \"1 kg/m3\",\n)?;",
+          "target": "delta_p",
+          "signature": "equations::fluids::orifice_mass_flow_incompressible::solve_delta_p(m_dot, C_d, A, rho) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "m_dot",
+              "description": "Mass flow rate"
+            },
+            {
+              "name": "C_d",
+              "description": "Discharge coefficient"
+            },
+            {
+              "name": "A",
+              "description": "Orifice area"
+            },
+            {
+              "name": "rho",
+              "description": "Fluid density"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "reynolds_number",
+      "path_id": "fluids.reynolds_number",
+      "slug": "reynolds_number",
+      "category": "fluids",
+      "subcategories": [],
+      "name": "Reynolds Number",
+      "description": "Reynolds Number",
+      "latex": "Re = \\frac{\\rho V D}{\\mu}",
+      "unicode": "Re = ρ · V · D / μ",
+      "ascii": "Re = rho * V * D / mu",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "D",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "Re",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "V",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "mu",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "rho",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Internal-flow characteristic length is represented by hydraulic diameter."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "Re",
+          "name": "Reynolds number",
+          "symbol": "Re",
+          "symbol_authored": false,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "rho",
+          "name": "Fluid density",
+          "symbol": "\\rho",
+          "symbol_authored": true,
+          "dimension": "density",
+          "default_unit": "kg/m3",
+          "description": "",
+          "resolver_source": "fluid",
+          "resolver_kind": "fluid_property",
+          "resolver_property": "density"
+        },
+        {
+          "key": "V",
+          "name": "Mean velocity",
+          "symbol": "V",
+          "symbol_authored": false,
+          "dimension": "velocity",
+          "default_unit": "m/s",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "D",
+          "name": "Hydraulic diameter",
+          "symbol": "D",
+          "symbol_authored": false,
+          "dimension": "length",
+          "default_unit": "m",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "mu",
+          "name": "Dynamic viscosity",
+          "symbol": "\\mu",
+          "symbol_authored": true,
+          "dimension": "viscosity",
+          "default_unit": "Pa*s",
+          "description": "",
+          "resolver_source": "fluid",
+          "resolver_kind": "fluid_property",
+          "resolver_property": "dynamic_viscosity"
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(fluids::reynolds_number::equation())\n    .target_re()\n    .given_v(2.5)\n    .given_d(0.1)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(fluids::reynolds_number::equation())\n    .target_re()\n    .given_v(\"2.5 m/s\")\n    .given_d(\"0.1 m\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_context",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve_with_context(fluids::reynolds_number::equation())\n    .fluid(eng_fluids::water().state_tp(\"300 K\", \"1 bar\")?)\n    .target_re()\n    .given_v(\"2.5 m/s\")\n    .given_d(\"0.1 m\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_re",
+          "style": "convenience",
+          "code": "let value = equations::fluids::reynolds_number::solve_re(\n    \"2.5 m/s\",\n    \"0.1 m\",\n)?;",
+          "target": "Re",
+          "signature": "equations::fluids::reynolds_number::solve_re(V, D) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "V",
+              "description": "Mean velocity"
+            },
+            {
+              "name": "D",
+              "description": "Hydraulic diameter"
+            }
+          ]
+        },
+        {
+          "label": "convenience_rho",
+          "style": "convenience",
+          "code": "let value = equations::fluids::reynolds_number::solve_rho(\n    2.495e5,\n    \"2.5 m/s\",\n    \"0.1 m\",\n)?;",
+          "target": "rho",
+          "signature": "equations::fluids::reynolds_number::solve_rho(Re, V, D) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "Re",
+              "description": "Reynolds number"
+            },
+            {
+              "name": "V",
+              "description": "Mean velocity"
+            },
+            {
+              "name": "D",
+              "description": "Hydraulic diameter"
+            }
+          ]
+        },
+        {
+          "label": "convenience_v",
+          "style": "convenience",
+          "code": "let value = equations::fluids::reynolds_number::solve_v(\n    2.495e5,\n    \"0.1 m\",\n)?;",
+          "target": "V",
+          "signature": "equations::fluids::reynolds_number::solve_v(Re, D) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "Re",
+              "description": "Reynolds number"
+            },
+            {
+              "name": "D",
+              "description": "Hydraulic diameter"
+            }
+          ]
+        },
+        {
+          "label": "convenience_d",
+          "style": "convenience",
+          "code": "let value = equations::fluids::reynolds_number::solve_d(\n    2.495e5,\n    \"2.5 m/s\",\n)?;",
+          "target": "D",
+          "signature": "equations::fluids::reynolds_number::solve_d(Re, V) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "Re",
+              "description": "Reynolds number"
+            },
+            {
+              "name": "V",
+              "description": "Mean velocity"
+            }
+          ]
+        },
+        {
+          "label": "convenience_mu",
+          "style": "convenience",
+          "code": "let value = equations::fluids::reynolds_number::solve_mu(\n    2.495e5,\n    \"2.5 m/s\",\n    \"0.1 m\",\n)?;",
+          "target": "mu",
+          "signature": "equations::fluids::reynolds_number::solve_mu(Re, V, D) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "Re",
+              "description": "Reynolds number"
+            },
+            {
+              "name": "V",
+              "description": "Mean velocity"
+            },
+            {
+              "name": "D",
+              "description": "Hydraulic diameter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "conduction_plane_wall_heat_rate",
+      "path_id": "heat_transfer.conduction_plane_wall_heat_rate",
+      "slug": "conduction_plane_wall_heat_rate",
+      "category": "heat_transfer",
+      "subcategories": [],
+      "name": "Plane-Wall Conduction Heat Rate",
+      "description": "Plane-Wall Conduction Heat Rate",
+      "latex": "\\dot{Q} = k A \\frac{T_h - T_c}{L}",
+      "unicode": "Q_dot = k · A · (T_h - T_c) / L",
+      "ascii": "Q_dot = k * A * (T_h - T_c) / L",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "A",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "L",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "Q_dot",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "T_c",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "T_h",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "k",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "One-dimensional steady conduction through a homogeneous plane wall."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "Q_dot",
+          "name": "Heat transfer rate",
+          "symbol": "Q_dot",
+          "symbol_authored": false,
+          "dimension": "heat_rate",
+          "default_unit": "W",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "k",
+          "name": "Thermal conductivity",
+          "symbol": "k",
+          "symbol_authored": false,
+          "dimension": "thermal_conductivity",
+          "default_unit": "W/(m*K)",
+          "description": "",
+          "resolver_source": "material",
+          "resolver_kind": "material_property",
+          "resolver_property": "thermal_conductivity"
+        },
+        {
+          "key": "A",
+          "name": "Area normal to heat flow",
+          "symbol": "A",
+          "symbol_authored": false,
+          "dimension": "area",
+          "default_unit": "m2",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "T_h",
+          "name": "Hot-side temperature",
+          "symbol": "T_h",
+          "symbol_authored": false,
+          "dimension": "temperature",
+          "default_unit": "K",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "T_c",
+          "name": "Cold-side temperature",
+          "symbol": "T_c",
+          "symbol_authored": false,
+          "dimension": "temperature",
+          "default_unit": "K",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "L",
+          "name": "Wall thickness",
+          "symbol": "L",
+          "symbol_authored": false,
+          "dimension": "length",
+          "default_unit": "m",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(heat_transfer::conduction_plane_wall_heat_rate::equation())\n    .target_q_dot()\n    .given_a(2.0)\n    .given_t_h(330.0)\n    .given_t_c(280.0)\n    .given_l(1.0)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(heat_transfer::conduction_plane_wall_heat_rate::equation())\n    .target_q_dot()\n    .given_a(\"2 m2\")\n    .given_t_h(\"330 K\")\n    .given_t_c(\"280 K\")\n    .given_l(\"1 m\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_context",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve_with_context(heat_transfer::conduction_plane_wall_heat_rate::equation())\n    .material(eng_materials::stainless_304().temperature(\"350 K\")?)\n    .target_q_dot()\n    .given_a(\"2 m2\")\n    .given_t_h(\"330 K\")\n    .given_t_c(\"280 K\")\n    .given_l(\"1 m\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_q_dot",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_q_dot(\n    \"2 m2\",\n    \"330 K\",\n    \"280 K\",\n    \"1 m\",\n)?;",
+          "target": "Q_dot",
+          "signature": "equations::heat_transfer::conduction_plane_wall_heat_rate::solve_q_dot(A, T_h, T_c, L) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "A",
+              "description": "Area normal to heat flow"
+            },
+            {
+              "name": "T_h",
+              "description": "Hot-side temperature"
+            },
+            {
+              "name": "T_c",
+              "description": "Cold-side temperature"
+            },
+            {
+              "name": "L",
+              "description": "Wall thickness"
+            }
+          ]
+        },
+        {
+          "label": "convenience_k",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_k(\n    \"1600 W\",\n    \"2 m2\",\n    \"330 K\",\n    \"280 K\",\n    \"1 m\",\n)?;",
+          "target": "k",
+          "signature": "equations::heat_transfer::conduction_plane_wall_heat_rate::solve_k(Q_dot, A, T_h, T_c, L) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "Q_dot",
+              "description": "Heat transfer rate"
+            },
+            {
+              "name": "A",
+              "description": "Area normal to heat flow"
+            },
+            {
+              "name": "T_h",
+              "description": "Hot-side temperature"
+            },
+            {
+              "name": "T_c",
+              "description": "Cold-side temperature"
+            },
+            {
+              "name": "L",
+              "description": "Wall thickness"
+            }
+          ]
+        },
+        {
+          "label": "convenience_a",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_a(\n    \"1600 W\",\n    \"330 K\",\n    \"280 K\",\n    \"1 m\",\n)?;",
+          "target": "A",
+          "signature": "equations::heat_transfer::conduction_plane_wall_heat_rate::solve_a(Q_dot, T_h, T_c, L) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "Q_dot",
+              "description": "Heat transfer rate"
+            },
+            {
+              "name": "T_h",
+              "description": "Hot-side temperature"
+            },
+            {
+              "name": "T_c",
+              "description": "Cold-side temperature"
+            },
+            {
+              "name": "L",
+              "description": "Wall thickness"
+            }
+          ]
+        },
+        {
+          "label": "convenience_t_h",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_t_h(\n    \"1600 W\",\n    \"2 m2\",\n    \"280 K\",\n    \"1 m\",\n)?;",
+          "target": "T_h",
+          "signature": "equations::heat_transfer::conduction_plane_wall_heat_rate::solve_t_h(Q_dot, A, T_c, L) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "Q_dot",
+              "description": "Heat transfer rate"
+            },
+            {
+              "name": "A",
+              "description": "Area normal to heat flow"
+            },
+            {
+              "name": "T_c",
+              "description": "Cold-side temperature"
+            },
+            {
+              "name": "L",
+              "description": "Wall thickness"
+            }
+          ]
+        },
+        {
+          "label": "convenience_t_c",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_t_c(\n    \"1600 W\",\n    \"2 m2\",\n    \"330 K\",\n    \"1 m\",\n)?;",
+          "target": "T_c",
+          "signature": "equations::heat_transfer::conduction_plane_wall_heat_rate::solve_t_c(Q_dot, A, T_h, L) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "Q_dot",
+              "description": "Heat transfer rate"
+            },
+            {
+              "name": "A",
+              "description": "Area normal to heat flow"
+            },
+            {
+              "name": "T_h",
+              "description": "Hot-side temperature"
+            },
+            {
+              "name": "L",
+              "description": "Wall thickness"
+            }
+          ]
+        },
+        {
+          "label": "convenience_l",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_l(\n    \"1600 W\",\n    \"2 m2\",\n    \"330 K\",\n    \"280 K\",\n)?;",
+          "target": "L",
+          "signature": "equations::heat_transfer::conduction_plane_wall_heat_rate::solve_l(Q_dot, A, T_h, T_c) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "Q_dot",
+              "description": "Heat transfer rate"
+            },
+            {
+              "name": "A",
+              "description": "Area normal to heat flow"
+            },
+            {
+              "name": "T_h",
+              "description": "Hot-side temperature"
+            },
+            {
+              "name": "T_c",
+              "description": "Cold-side temperature"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "convection_heat_rate",
+      "path_id": "heat_transfer.convection_heat_rate",
+      "slug": "convection_heat_rate",
+      "category": "heat_transfer",
+      "subcategories": [],
+      "name": "Convection Heat Transfer Rate",
+      "description": "Convection Heat Transfer Rate",
+      "latex": "\\dot{Q} = h A (T_s - T_\\infty)",
+      "unicode": "Q_dot = h · A · (T_s - T_\\infty)",
+      "ascii": "Q_dot = h * A * (T_s - T_inf)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "A",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "Q_dot",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "T_inf",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "T_s",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "h",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Newton's law of cooling with uniform h and area."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "Q_dot",
+          "name": "Heat transfer rate",
+          "symbol": "Q_dot",
+          "symbol_authored": false,
+          "dimension": "heat_rate",
+          "default_unit": "W",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "h",
+          "name": "Convective heat transfer coefficient",
+          "symbol": "h",
+          "symbol_authored": false,
+          "dimension": "heat_transfer_coefficient",
+          "default_unit": "W/(m2*K)",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "A",
+          "name": "Surface area",
+          "symbol": "A",
+          "symbol_authored": false,
+          "dimension": "area",
+          "default_unit": "m2",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "T_s",
+          "name": "Surface temperature",
+          "symbol": "T_s",
+          "symbol_authored": false,
+          "dimension": "temperature",
+          "default_unit": "K",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "T_inf",
+          "name": "Free-stream temperature",
+          "symbol": "T_\\infty",
+          "symbol_authored": true,
+          "dimension": "temperature",
+          "default_unit": "K",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(heat_transfer::convection_heat_rate::equation())\n    .target_q_dot()\n    .given_h(35.0)\n    .given_a(3.0)\n    .given_t_s(400.0)\n    .given_t_inf(300.0)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(heat_transfer::convection_heat_rate::equation())\n    .target_q_dot()\n    .given_h(\"35 W/(m2*K)\")\n    .given_a(\"3 m2\")\n    .given_t_s(\"400 K\")\n    .given_t_inf(\"300 K\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_q_dot",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::convection_heat_rate::solve_q_dot(\n    \"35 W/(m2*K)\",\n    \"3 m2\",\n    \"400 K\",\n    \"300 K\",\n)?;",
+          "target": "Q_dot",
+          "signature": "equations::heat_transfer::convection_heat_rate::solve_q_dot(h, A, T_s, T_inf) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "h",
+              "description": "Convective heat transfer coefficient"
+            },
+            {
+              "name": "A",
+              "description": "Surface area"
+            },
+            {
+              "name": "T_s",
+              "description": "Surface temperature"
+            },
+            {
+              "name": "T_inf",
+              "description": "Free-stream temperature"
+            }
+          ]
+        },
+        {
+          "label": "convenience_h",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::convection_heat_rate::solve_h(\n    \"10500 W\",\n    \"3 m2\",\n    \"400 K\",\n    \"300 K\",\n)?;",
+          "target": "h",
+          "signature": "equations::heat_transfer::convection_heat_rate::solve_h(Q_dot, A, T_s, T_inf) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "Q_dot",
+              "description": "Heat transfer rate"
+            },
+            {
+              "name": "A",
+              "description": "Surface area"
+            },
+            {
+              "name": "T_s",
+              "description": "Surface temperature"
+            },
+            {
+              "name": "T_inf",
+              "description": "Free-stream temperature"
+            }
+          ]
+        },
+        {
+          "label": "convenience_a",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::convection_heat_rate::solve_a(\n    \"10500 W\",\n    \"35 W/(m2*K)\",\n    \"400 K\",\n    \"300 K\",\n)?;",
+          "target": "A",
+          "signature": "equations::heat_transfer::convection_heat_rate::solve_a(Q_dot, h, T_s, T_inf) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "Q_dot",
+              "description": "Heat transfer rate"
+            },
+            {
+              "name": "h",
+              "description": "Convective heat transfer coefficient"
+            },
+            {
+              "name": "T_s",
+              "description": "Surface temperature"
+            },
+            {
+              "name": "T_inf",
+              "description": "Free-stream temperature"
+            }
+          ]
+        },
+        {
+          "label": "convenience_t_s",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::convection_heat_rate::solve_t_s(\n    \"10500 W\",\n    \"35 W/(m2*K)\",\n    \"3 m2\",\n    \"300 K\",\n)?;",
+          "target": "T_s",
+          "signature": "equations::heat_transfer::convection_heat_rate::solve_t_s(Q_dot, h, A, T_inf) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "Q_dot",
+              "description": "Heat transfer rate"
+            },
+            {
+              "name": "h",
+              "description": "Convective heat transfer coefficient"
+            },
+            {
+              "name": "A",
+              "description": "Surface area"
+            },
+            {
+              "name": "T_inf",
+              "description": "Free-stream temperature"
+            }
+          ]
+        },
+        {
+          "label": "convenience_t_inf",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::convection_heat_rate::solve_t_inf(\n    \"10500 W\",\n    \"35 W/(m2*K)\",\n    \"3 m2\",\n    \"400 K\",\n)?;",
+          "target": "T_inf",
+          "signature": "equations::heat_transfer::convection_heat_rate::solve_t_inf(Q_dot, h, A, T_s) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "Q_dot",
+              "description": "Heat transfer rate"
+            },
+            {
+              "name": "h",
+              "description": "Convective heat transfer coefficient"
+            },
+            {
+              "name": "A",
+              "description": "Surface area"
+            },
+            {
+              "name": "T_s",
+              "description": "Surface temperature"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "log_mean_temperature_difference",
+      "path_id": "heat_transfer.log_mean_temperature_difference",
+      "slug": "log_mean_temperature_difference",
+      "category": "heat_transfer",
+      "subcategories": [],
+      "name": "Log-Mean Temperature Difference",
+      "description": "Log-Mean Temperature Difference",
+      "latex": "\\Delta T_{lm} = \\frac{\\Delta T_1 - \\Delta T_2}{\\ln(\\Delta T_1 / \\Delta T_2)}",
+      "unicode": "Δ T_{lm} = (Δ T_1 - Δ T_2) / ln(Δ T_1 / Δ T_2)",
+      "ascii": "delta_T_lm = (delta_T_1 - delta_T_2) / ln(delta_T_1 / delta_T_2)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "delta_T_lm",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "End-point temperature differences remain positive and unequal."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "delta_T_lm",
+          "name": "Log-mean temperature difference",
+          "symbol": "\\Delta T_{lm}",
+          "symbol_authored": true,
+          "dimension": "temperature",
+          "default_unit": "K",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "delta_T_1",
+          "name": "End temperature difference 1",
+          "symbol": "\\Delta T_1",
+          "symbol_authored": true,
+          "dimension": "temperature",
+          "default_unit": "K",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "delta_T_2",
+          "name": "End temperature difference 2",
+          "symbol": "\\Delta T_2",
+          "symbol_authored": true,
+          "dimension": "temperature",
+          "default_unit": "K",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(heat_transfer::log_mean_temperature_difference::equation())\n    .target_delta_t_lm()\n    .given_delta_t_1(40.0)\n    .given_delta_t_2(20.0)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(heat_transfer::log_mean_temperature_difference::equation())\n    .target_delta_t_lm()\n    .given_delta_t_1(\"40 K\")\n    .given_delta_t_2(\"20 K\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_delta_t_lm",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::log_mean_temperature_difference::solve_delta_t_lm(\n    \"40 K\",\n    \"20 K\",\n)?;",
+          "target": "delta_T_lm",
+          "signature": "equations::heat_transfer::log_mean_temperature_difference::solve_delta_t_lm(delta_T_1, delta_T_2) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "delta_T_1",
+              "description": "End temperature difference 1"
+            },
+            {
+              "name": "delta_T_2",
+              "description": "End temperature difference 2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "thermal_resistance_conduction",
+      "path_id": "heat_transfer.thermal_resistance_conduction",
+      "slug": "thermal_resistance_conduction",
+      "category": "heat_transfer",
+      "subcategories": [],
+      "name": "Conduction Thermal Resistance",
+      "description": "Conduction Thermal Resistance",
+      "latex": "R_{th} = \\frac{L}{k A}",
+      "unicode": "R_th = L / (k · A)",
+      "ascii": "R_th = L / (k * A)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "A",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "L",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "R_th",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "k",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "One-dimensional steady conduction with constant properties."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "R_th",
+          "name": "Thermal resistance",
+          "symbol": "R_th",
+          "symbol_authored": false,
+          "dimension": "thermal_resistance",
+          "default_unit": "K/W",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "L",
+          "name": "Wall thickness",
+          "symbol": "L",
+          "symbol_authored": false,
+          "dimension": "length",
+          "default_unit": "m",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "k",
+          "name": "Thermal conductivity",
+          "symbol": "k",
+          "symbol_authored": false,
+          "dimension": "thermal_conductivity",
+          "default_unit": "W/(m*K)",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "A",
+          "name": "Area",
+          "symbol": "A",
+          "symbol_authored": false,
+          "dimension": "area",
+          "default_unit": "m2",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(heat_transfer::thermal_resistance_conduction::equation())\n    .target_r_th()\n    .given_l(0.1)\n    .given_k(10.0)\n    .given_a(0.2)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(heat_transfer::thermal_resistance_conduction::equation())\n    .target_r_th()\n    .given_l(\"0.1 m\")\n    .given_k(\"10 W/(m*K)\")\n    .given_a(\"0.2 m2\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_r_th",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::thermal_resistance_conduction::solve_r_th(\n    \"0.1 m\",\n    \"10 W/(m*K)\",\n    \"0.2 m2\",\n)?;",
+          "target": "R_th",
+          "signature": "equations::heat_transfer::thermal_resistance_conduction::solve_r_th(L, k, A) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "L",
+              "description": "Wall thickness"
+            },
+            {
+              "name": "k",
+              "description": "Thermal conductivity"
+            },
+            {
+              "name": "A",
+              "description": "Area"
+            }
+          ]
+        },
+        {
+          "label": "convenience_l",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::thermal_resistance_conduction::solve_l(\n    \"0.05 K/W\",\n    \"10 W/(m*K)\",\n    \"0.2 m2\",\n)?;",
+          "target": "L",
+          "signature": "equations::heat_transfer::thermal_resistance_conduction::solve_l(R_th, k, A) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "R_th",
+              "description": "Thermal resistance"
+            },
+            {
+              "name": "k",
+              "description": "Thermal conductivity"
+            },
+            {
+              "name": "A",
+              "description": "Area"
+            }
+          ]
+        },
+        {
+          "label": "convenience_k",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::thermal_resistance_conduction::solve_k(\n    \"0.05 K/W\",\n    \"0.1 m\",\n    \"0.2 m2\",\n)?;",
+          "target": "k",
+          "signature": "equations::heat_transfer::thermal_resistance_conduction::solve_k(R_th, L, A) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "R_th",
+              "description": "Thermal resistance"
+            },
+            {
+              "name": "L",
+              "description": "Wall thickness"
+            },
+            {
+              "name": "A",
+              "description": "Area"
+            }
+          ]
+        },
+        {
+          "label": "convenience_a",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::thermal_resistance_conduction::solve_a(\n    \"0.05 K/W\",\n    \"0.1 m\",\n    \"10 W/(m*K)\",\n)?;",
+          "target": "A",
+          "signature": "equations::heat_transfer::thermal_resistance_conduction::solve_a(R_th, L, k) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "R_th",
+              "description": "Thermal resistance"
+            },
+            {
+              "name": "L",
+              "description": "Wall thickness"
+            },
+            {
+              "name": "k",
+              "description": "Thermal conductivity"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "thermal_resistance_convection",
+      "path_id": "heat_transfer.thermal_resistance_convection",
+      "slug": "thermal_resistance_convection",
+      "category": "heat_transfer",
+      "subcategories": [],
+      "name": "Convection Thermal Resistance",
+      "description": "Convection Thermal Resistance",
+      "latex": "R_{th} = \\frac{1}{h A}",
+      "unicode": "R_th = 1 / (h · A)",
+      "ascii": "R_th = 1 / (h * A)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "A",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "R_th",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "h",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Uniform convection coefficient over the area."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "R_th",
+          "name": "Thermal resistance",
+          "symbol": "R_th",
+          "symbol_authored": false,
+          "dimension": "thermal_resistance",
+          "default_unit": "K/W",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "h",
+          "name": "Convective heat transfer coefficient",
+          "symbol": "h",
+          "symbol_authored": false,
+          "dimension": "heat_transfer_coefficient",
+          "default_unit": "W/(m2*K)",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "A",
+          "name": "Surface area",
+          "symbol": "A",
+          "symbol_authored": false,
+          "dimension": "area",
+          "default_unit": "m2",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(heat_transfer::thermal_resistance_convection::equation())\n    .target_r_th()\n    .given_h(35.0)\n    .given_a(3.0)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(heat_transfer::thermal_resistance_convection::equation())\n    .target_r_th()\n    .given_h(\"35 W/(m2*K)\")\n    .given_a(\"3 m2\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_r_th",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::thermal_resistance_convection::solve_r_th(\n    \"35 W/(m2*K)\",\n    \"3 m2\",\n)?;",
+          "target": "R_th",
+          "signature": "equations::heat_transfer::thermal_resistance_convection::solve_r_th(h, A) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "h",
+              "description": "Convective heat transfer coefficient"
+            },
+            {
+              "name": "A",
+              "description": "Surface area"
+            }
+          ]
+        },
+        {
+          "label": "convenience_h",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::thermal_resistance_convection::solve_h(\n    \"0.0095238095238 K/W\",\n    \"3 m2\",\n)?;",
+          "target": "h",
+          "signature": "equations::heat_transfer::thermal_resistance_convection::solve_h(R_th, A) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "R_th",
+              "description": "Thermal resistance"
+            },
+            {
+              "name": "A",
+              "description": "Surface area"
+            }
+          ]
+        },
+        {
+          "label": "convenience_a",
+          "style": "convenience",
+          "code": "let value = equations::heat_transfer::thermal_resistance_convection::solve_a(\n    \"0.0095238095238 K/W\",\n    \"35 W/(m2*K)\",\n)?;",
+          "target": "A",
+          "signature": "equations::heat_transfer::thermal_resistance_convection::solve_a(R_th, h) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "R_th",
+              "description": "Thermal resistance"
+            },
+            {
+              "name": "h",
+              "description": "Convective heat transfer coefficient"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "cstar_ideal",
+      "path_id": "rockets.cstar_ideal",
+      "slug": "cstar_ideal",
+      "category": "rockets",
+      "subcategories": [],
+      "name": "Ideal Characteristic Velocity",
+      "description": "Ideal Characteristic Velocity",
+      "latex": "c^* = \\sqrt{\\frac{R T_c}{\\gamma}} \\left(\\frac{\\gamma+1}{2}\\right)^{(\\gamma+1)/(2(\\gamma-1))}",
+      "unicode": "c_star = √(R · T_c / γ) · pow((γ + 1) / 2, (γ + 1) / (2 · (γ - 1)))",
+      "ascii": "c_star = sqrt(R * T_c / gamma) * pow((gamma + 1) / 2, (gamma + 1) / (2 * (gamma - 1)))",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "c_star",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Ideal nozzle flow with calorically perfect combustion products."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "c_star",
+          "name": "Characteristic velocity",
+          "symbol": "c_star",
+          "symbol_authored": false,
+          "dimension": "velocity",
+          "default_unit": "m/s",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "R",
+          "name": "Gas constant",
+          "symbol": "R",
+          "symbol_authored": false,
+          "dimension": "gas_constant",
+          "default_unit": "J/(kg*K)",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "T_c",
+          "name": "Chamber temperature",
+          "symbol": "T_c",
+          "symbol_authored": false,
+          "dimension": "temperature",
+          "default_unit": "K",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(rockets::cstar_ideal::equation())\n    .target_c_star()\n    .given_r(355.0)\n    .given_t_c(3500.0)\n    .given_gamma(1.22)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(rockets::cstar_ideal::equation())\n    .target_c_star()\n    .given_r(\"355 J/(kg*K)\")\n    .given_t_c(\"3500 K\")\n    .given_gamma(1.22)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_c_star",
+          "style": "convenience",
+          "code": "let value = equations::rockets::cstar_ideal::solve_c_star(\n    \"355 J/(kg*K)\",\n    \"3500 K\",\n    1.22,\n)?;",
+          "target": "c_star",
+          "signature": "equations::rockets::cstar_ideal::solve_c_star(R, T_c, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "R",
+              "description": "Gas constant"
+            },
+            {
+              "name": "T_c",
+              "description": "Chamber temperature"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "specific_impulse_ideal",
+      "path_id": "rockets.specific_impulse_ideal",
+      "slug": "specific_impulse_ideal",
+      "category": "rockets",
+      "subcategories": [],
+      "name": "Ideal Specific Impulse",
+      "description": "Ideal Specific Impulse",
+      "latex": "I_{sp} = \\frac{C_f c^*}{g_0}",
+      "unicode": "I_sp = C_f · c_star / g₀",
+      "ascii": "I_sp = C_f * c_star / g0",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "C_f",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "I_sp",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "c_star",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Vacuum-equivalent ideal performance relation."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "I_sp",
+          "name": "Specific impulse",
+          "symbol": "I_sp",
+          "symbol_authored": false,
+          "dimension": "specific_impulse",
+          "default_unit": "s",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "C_f",
+          "name": "Thrust coefficient",
+          "symbol": "C_f",
+          "symbol_authored": false,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "c_star",
+          "name": "Characteristic velocity",
+          "symbol": "c_star",
+          "symbol_authored": false,
+          "dimension": "velocity",
+          "default_unit": "m/s",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [
+        {
+          "key": "g0",
+          "name": "Standard Gravity",
+          "symbol_latex": "g_0",
+          "symbol_unicode": "g₀",
+          "symbol_ascii": "g0"
+        }
+      ],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(rockets::specific_impulse_ideal::equation())\n    .target_i_sp()\n    .given_c_f(1.7684408757)\n    .given_c_star(1718.7683350153)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(rockets::specific_impulse_ideal::equation())\n    .target_i_sp()\n    .given_c_f(1.7684408757)\n    .given_c_star(\"1718.7683350153386 m/s\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_i_sp",
+          "style": "convenience",
+          "code": "let value = equations::rockets::specific_impulse_ideal::solve_i_sp(\n    1.7684408757,\n    \"1718.7683350153386 m/s\",\n)?;",
+          "target": "I_sp",
+          "signature": "equations::rockets::specific_impulse_ideal::solve_i_sp(C_f, c_star) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "C_f",
+              "description": "Thrust coefficient"
+            },
+            {
+              "name": "c_star",
+              "description": "Characteristic velocity"
+            }
+          ]
+        },
+        {
+          "label": "convenience_c_f",
+          "style": "convenience",
+          "code": "let value = equations::rockets::specific_impulse_ideal::solve_c_f(\n    \"309.94684010132147 s\",\n    \"1718.7683350153386 m/s\",\n)?;",
+          "target": "C_f",
+          "signature": "equations::rockets::specific_impulse_ideal::solve_c_f(I_sp, c_star) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "I_sp",
+              "description": "Specific impulse"
+            },
+            {
+              "name": "c_star",
+              "description": "Characteristic velocity"
+            }
+          ]
+        },
+        {
+          "label": "convenience_c_star",
+          "style": "convenience",
+          "code": "let value = equations::rockets::specific_impulse_ideal::solve_c_star(\n    \"309.94684010132147 s\",\n    1.7684408757,\n)?;",
+          "target": "c_star",
+          "signature": "equations::rockets::specific_impulse_ideal::solve_c_star(I_sp, C_f) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "I_sp",
+              "description": "Specific impulse"
+            },
+            {
+              "name": "C_f",
+              "description": "Thrust coefficient"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "thrust_coefficient_ideal",
+      "path_id": "rockets.thrust_coefficient_ideal",
+      "slug": "thrust_coefficient_ideal",
+      "category": "rockets",
+      "subcategories": [],
+      "name": "Ideal Thrust Coefficient",
+      "description": "Ideal Thrust Coefficient",
+      "latex": "C_f = \\sqrt{\\frac{2\\gamma^2}{\\gamma-1}\\left(\\frac{2}{\\gamma+1}\\right)^{(\\gamma+1)/(\\gamma-1)}\\left(1-\\left(\\frac{p_e}{p_c}\\right)^{(\\gamma-1)/\\gamma}\\right)} + \\left(\\frac{p_e}{p_c}-\\frac{p_a}{p_c}\\right)\\frac{A_e}{A_t}",
+      "unicode": "C_f = √((2 · γ² / (γ - 1)) · pow(2 / (γ + 1), (γ + 1) / (γ - 1)) · (1 - pow(p_e_p_c, (γ - 1) / γ))) + (p_e_p_c - p_a_p_c) · A_e_A_t",
+      "ascii": "C_f = sqrt((2 * gamma^2 / (gamma - 1)) * pow(2 / (gamma + 1), (gamma + 1) / (gamma - 1)) * (1 - pow(p_e_p_c, (gamma - 1) / gamma))) + (p_e_p_c - p_a_p_c) * A_e_A_t",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "C_f",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Ideal isentropic nozzle expansion."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "C_f",
+          "name": "Thrust coefficient",
+          "symbol": "C_f",
+          "symbol_authored": false,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "p_e_p_c",
+          "name": "Exit-to-chamber pressure ratio",
+          "symbol": "p_e_p_c",
+          "symbol_authored": false,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "p_a_p_c",
+          "name": "Ambient-to-chamber pressure ratio",
+          "symbol": "p_a_p_c",
+          "symbol_authored": false,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "A_e_A_t",
+          "name": "Area expansion ratio",
+          "symbol": "A_e_A_t",
+          "symbol_authored": false,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(rockets::thrust_coefficient_ideal::equation())\n    .target_c_f()\n    .given_gamma(1.22)\n    .given_p_e_p_c(0.02)\n    .given_p_a_p_c(0.01)\n    .given_a_e_a_t(8.0)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_c_f",
+          "style": "convenience",
+          "code": "let value = equations::rockets::thrust_coefficient_ideal::solve_c_f(\n    1.22,\n    0.02,\n    0.01,\n    8.0,\n)?;",
+          "target": "C_f",
+          "signature": "equations::rockets::thrust_coefficient_ideal::solve_c_f(gamma, p_e_p_c, p_a_p_c, A_e_A_t) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            },
+            {
+              "name": "p_e_p_c",
+              "description": "Exit-to-chamber pressure ratio"
+            },
+            {
+              "name": "p_a_p_c",
+              "description": "Ambient-to-chamber pressure ratio"
+            },
+            {
+              "name": "A_e_A_t",
+              "description": "Area expansion ratio"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "thrust_from_mass_flow",
+      "path_id": "rockets.thrust_from_mass_flow",
+      "slug": "thrust_from_mass_flow",
+      "category": "rockets",
+      "subcategories": [],
+      "name": "Thrust From Mass Flow and Effective Exhaust Velocity",
+      "description": "Thrust From Mass Flow and Effective Exhaust Velocity",
+      "latex": "F = \\dot{m} c_{eff}",
+      "unicode": "F = m_dot · c_eff",
+      "ascii": "F = m_dot * c_eff",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "F",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "c_eff",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "m_dot",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Pressure-thrust contribution is embedded in effective exhaust velocity."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "F",
+          "name": "Thrust",
+          "symbol": "F",
+          "symbol_authored": false,
+          "dimension": "force",
+          "default_unit": "N",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "m_dot",
+          "name": "Mass flow rate",
+          "symbol": "m_dot",
+          "symbol_authored": false,
+          "dimension": "mass_flow_rate",
+          "default_unit": "kg/s",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "c_eff",
+          "name": "Effective exhaust velocity",
+          "symbol": "c_eff",
+          "symbol_authored": false,
+          "dimension": "velocity",
+          "default_unit": "m/s",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(rockets::thrust_from_mass_flow::equation())\n    .target_f()\n    .given_m_dot(250.0)\n    .given_c_eff(2000.0)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(rockets::thrust_from_mass_flow::equation())\n    .target_f()\n    .given_m_dot(\"250 kg/s\")\n    .given_c_eff(\"2000 m/s\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_f",
+          "style": "convenience",
+          "code": "let value = equations::rockets::thrust_from_mass_flow::solve_f(\n    \"250 kg/s\",\n    \"2000 m/s\",\n)?;",
+          "target": "F",
+          "signature": "equations::rockets::thrust_from_mass_flow::solve_f(m_dot, c_eff) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "m_dot",
+              "description": "Mass flow rate"
+            },
+            {
+              "name": "c_eff",
+              "description": "Effective exhaust velocity"
+            }
+          ]
+        },
+        {
+          "label": "convenience_m_dot",
+          "style": "convenience",
+          "code": "let value = equations::rockets::thrust_from_mass_flow::solve_m_dot(\n    \"500000 N\",\n    \"2000 m/s\",\n)?;",
+          "target": "m_dot",
+          "signature": "equations::rockets::thrust_from_mass_flow::solve_m_dot(F, c_eff) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "F",
+              "description": "Thrust"
+            },
+            {
+              "name": "c_eff",
+              "description": "Effective exhaust velocity"
+            }
+          ]
+        },
+        {
+          "label": "convenience_c_eff",
+          "style": "convenience",
+          "code": "let value = equations::rockets::thrust_from_mass_flow::solve_c_eff(\n    \"500000 N\",\n    \"250 kg/s\",\n)?;",
+          "target": "c_eff",
+          "signature": "equations::rockets::thrust_from_mass_flow::solve_c_eff(F, m_dot) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "F",
+              "description": "Thrust"
+            },
+            {
+              "name": "m_dot",
+              "description": "Mass flow rate"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "axial_stress",
+      "path_id": "structures.axial_stress",
+      "slug": "axial_stress",
+      "category": "structures",
+      "subcategories": [],
+      "name": "Axial Normal Stress",
+      "description": "Axial Normal Stress",
+      "latex": "\\sigma = \\frac{F}{A}",
+      "unicode": "σ = F / A",
+      "ascii": "sigma = F / A",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "A",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "F",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "sigma",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Uniform axial loading and stress distribution."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "sigma",
+          "name": "Axial stress",
+          "symbol": "\\sigma",
+          "symbol_authored": true,
+          "dimension": "stress",
+          "default_unit": "Pa",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "F",
+          "name": "Axial force",
+          "symbol": "F",
+          "symbol_authored": false,
+          "dimension": "force",
+          "default_unit": "N",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "A",
+          "name": "Cross-sectional area",
+          "symbol": "A",
+          "symbol_authored": false,
+          "dimension": "area",
+          "default_unit": "m2",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(structures::axial_stress::equation())\n    .target_sigma()\n    .given_f(10000.0)\n    .given_a(1.9999999999999998e-4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(structures::axial_stress::equation())\n    .target_sigma()\n    .given_f(\"10000 N\")\n    .given_a(\"200 mm2\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_sigma",
+          "style": "convenience",
+          "code": "let value = equations::structures::axial_stress::solve_sigma(\n    \"10000 N\",\n    \"200 mm2\",\n)?;",
+          "target": "sigma",
+          "signature": "equations::structures::axial_stress::solve_sigma(F, A) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "F",
+              "description": "Axial force"
+            },
+            {
+              "name": "A",
+              "description": "Cross-sectional area"
+            }
+          ]
+        },
+        {
+          "label": "convenience_f",
+          "style": "convenience",
+          "code": "let value = equations::structures::axial_stress::solve_f(\n    \"50 MPa\",\n    \"200 mm2\",\n)?;",
+          "target": "F",
+          "signature": "equations::structures::axial_stress::solve_f(sigma, A) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "sigma",
+              "description": "Axial stress"
+            },
+            {
+              "name": "A",
+              "description": "Cross-sectional area"
+            }
+          ]
+        },
+        {
+          "label": "convenience_a",
+          "style": "convenience",
+          "code": "let value = equations::structures::axial_stress::solve_a(\n    \"50 MPa\",\n    \"10000 N\",\n)?;",
+          "target": "A",
+          "signature": "equations::structures::axial_stress::solve_a(sigma, F) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "sigma",
+              "description": "Axial stress"
+            },
+            {
+              "name": "F",
+              "description": "Axial force"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "beam_bending_stress",
+      "path_id": "structures.beam_bending_stress",
+      "slug": "beam_bending_stress",
+      "category": "structures",
+      "subcategories": [],
+      "name": "Beam Bending Stress",
+      "description": "Beam Bending Stress",
+      "latex": "\\sigma_b = \\frac{M c}{I}",
+      "unicode": "σ_b = M · c / I",
+      "ascii": "sigma_b = M * c / I",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "I",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "M",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "c",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "sigma_b",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Linear elastic beam bending with small strains."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "sigma_b",
+          "name": "Bending stress",
+          "symbol": "\\sigma_b",
+          "symbol_authored": true,
+          "dimension": "stress",
+          "default_unit": "Pa",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M",
+          "name": "Bending moment",
+          "symbol": "M",
+          "symbol_authored": false,
+          "dimension": "moment",
+          "default_unit": "N*m",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "c",
+          "name": "Distance to outer fiber",
+          "symbol": "c",
+          "symbol_authored": false,
+          "dimension": "length",
+          "default_unit": "m",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "I",
+          "name": "Area moment of inertia",
+          "symbol": "I",
+          "symbol_authored": false,
+          "dimension": "area_moment_of_inertia",
+          "default_unit": "m4",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(structures::beam_bending_stress::equation())\n    .target_sigma_b()\n    .given_m(5000.0)\n    .given_c(0.05)\n    .given_i(5e-6)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(structures::beam_bending_stress::equation())\n    .target_sigma_b()\n    .given_m(\"5000 N*m\")\n    .given_c(\"0.05 m\")\n    .given_i(\"5e-6 m4\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_sigma_b",
+          "style": "convenience",
+          "code": "let value = equations::structures::beam_bending_stress::solve_sigma_b(\n    \"5000 N*m\",\n    \"0.05 m\",\n    \"5e-6 m4\",\n)?;",
+          "target": "sigma_b",
+          "signature": "equations::structures::beam_bending_stress::solve_sigma_b(M, c, I) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M",
+              "description": "Bending moment"
+            },
+            {
+              "name": "c",
+              "description": "Distance to outer fiber"
+            },
+            {
+              "name": "I",
+              "description": "Area moment of inertia"
+            }
+          ]
+        },
+        {
+          "label": "convenience_m",
+          "style": "convenience",
+          "code": "let value = equations::structures::beam_bending_stress::solve_m(\n    \"50 MPa\",\n    \"0.05 m\",\n    \"5e-6 m4\",\n)?;",
+          "target": "M",
+          "signature": "equations::structures::beam_bending_stress::solve_m(sigma_b, c, I) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "sigma_b",
+              "description": "Bending stress"
+            },
+            {
+              "name": "c",
+              "description": "Distance to outer fiber"
+            },
+            {
+              "name": "I",
+              "description": "Area moment of inertia"
+            }
+          ]
+        },
+        {
+          "label": "convenience_c",
+          "style": "convenience",
+          "code": "let value = equations::structures::beam_bending_stress::solve_c(\n    \"50 MPa\",\n    \"5000 N*m\",\n    \"5e-6 m4\",\n)?;",
+          "target": "c",
+          "signature": "equations::structures::beam_bending_stress::solve_c(sigma_b, M, I) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "sigma_b",
+              "description": "Bending stress"
+            },
+            {
+              "name": "M",
+              "description": "Bending moment"
+            },
+            {
+              "name": "I",
+              "description": "Area moment of inertia"
+            }
+          ]
+        },
+        {
+          "label": "convenience_i",
+          "style": "convenience",
+          "code": "let value = equations::structures::beam_bending_stress::solve_i(\n    \"50 MPa\",\n    \"5000 N*m\",\n    \"0.05 m\",\n)?;",
+          "target": "I",
+          "signature": "equations::structures::beam_bending_stress::solve_i(sigma_b, M, c) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "sigma_b",
+              "description": "Bending stress"
+            },
+            {
+              "name": "M",
+              "description": "Bending moment"
+            },
+            {
+              "name": "c",
+              "description": "Distance to outer fiber"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "euler_buckling_load",
+      "path_id": "structures.euler_buckling_load",
+      "slug": "euler_buckling_load",
+      "category": "structures",
+      "subcategories": [],
+      "name": "Euler Buckling Critical Load",
+      "description": "Euler Buckling Critical Load",
+      "latex": "P_{cr} = \\frac{\\pi^2 E I}{(K L)^2}",
+      "unicode": "P_cr = (π² · E · I) / ((K · L)²)",
+      "ascii": "P_cr = (pi^2 * E * I) / ((K * L)^2)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "E",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "I",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "K",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "L",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "P_cr",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Ideal slender column with elastic buckling."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "P_cr",
+          "name": "Critical buckling load",
+          "symbol": "P_cr",
+          "symbol_authored": false,
+          "dimension": "force",
+          "default_unit": "N",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "E",
+          "name": "Elastic modulus",
+          "symbol": "E",
+          "symbol_authored": false,
+          "dimension": "pressure",
+          "default_unit": "Pa",
+          "description": "",
+          "resolver_source": "material",
+          "resolver_kind": "material_property",
+          "resolver_property": "elastic_modulus"
+        },
+        {
+          "key": "I",
+          "name": "Area moment of inertia",
+          "symbol": "I",
+          "symbol_authored": false,
+          "dimension": "area_moment_of_inertia",
+          "default_unit": "m4",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "K",
+          "name": "Effective length factor",
+          "symbol": "K",
+          "symbol_authored": false,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "L",
+          "name": "Unbraced length",
+          "symbol": "L",
+          "symbol_authored": false,
+          "dimension": "length",
+          "default_unit": "m",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [
+        {
+          "key": "pi",
+          "name": "Archimedes Constant",
+          "symbol_latex": "\\pi",
+          "symbol_unicode": "π",
+          "symbol_ascii": "pi"
+        }
+      ],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(structures::euler_buckling_load::equation())\n    .target_p_cr()\n    .given_i(8e-6)\n    .given_k(1.0)\n    .given_l(2.0)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(structures::euler_buckling_load::equation())\n    .target_p_cr()\n    .given_i(\"8e-6 m4\")\n    .given_k(1.0)\n    .given_l(\"2 m\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_context",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve_with_context(structures::euler_buckling_load::equation())\n    .material(eng_materials::stainless_304().temperature(\"350 K\")?)\n    .target_p_cr()\n    .given_i(\"8e-6 m4\")\n    .given_k(1.0)\n    .given_l(\"2 m\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_p_cr",
+          "style": "convenience",
+          "code": "let value = equations::structures::euler_buckling_load::solve_p_cr(\n    \"8e-6 m4\",\n    1.0,\n    \"2 m\",\n)?;",
+          "target": "P_cr",
+          "signature": "equations::structures::euler_buckling_load::solve_p_cr(I, K, L) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "I",
+              "description": "Area moment of inertia"
+            },
+            {
+              "name": "K",
+              "description": "Effective length factor"
+            },
+            {
+              "name": "L",
+              "description": "Unbraced length"
+            }
+          ]
+        },
+        {
+          "label": "convenience_e",
+          "style": "convenience",
+          "code": "let value = equations::structures::euler_buckling_load::solve_e(\n    \"3947841.760435743 N\",\n    \"8e-6 m4\",\n    1.0,\n    \"2 m\",\n)?;",
+          "target": "E",
+          "signature": "equations::structures::euler_buckling_load::solve_e(P_cr, I, K, L) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "P_cr",
+              "description": "Critical buckling load"
+            },
+            {
+              "name": "I",
+              "description": "Area moment of inertia"
+            },
+            {
+              "name": "K",
+              "description": "Effective length factor"
+            },
+            {
+              "name": "L",
+              "description": "Unbraced length"
+            }
+          ]
+        },
+        {
+          "label": "convenience_i",
+          "style": "convenience",
+          "code": "let value = equations::structures::euler_buckling_load::solve_i(\n    \"3947841.760435743 N\",\n    1.0,\n    \"2 m\",\n)?;",
+          "target": "I",
+          "signature": "equations::structures::euler_buckling_load::solve_i(P_cr, K, L) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "P_cr",
+              "description": "Critical buckling load"
+            },
+            {
+              "name": "K",
+              "description": "Effective length factor"
+            },
+            {
+              "name": "L",
+              "description": "Unbraced length"
+            }
+          ]
+        },
+        {
+          "label": "convenience_k",
+          "style": "convenience",
+          "code": "let value = equations::structures::euler_buckling_load::solve_k(\n    \"3947841.760435743 N\",\n    \"8e-6 m4\",\n    \"2 m\",\n)?;",
+          "target": "K",
+          "signature": "equations::structures::euler_buckling_load::solve_k(P_cr, I, L) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "P_cr",
+              "description": "Critical buckling load"
+            },
+            {
+              "name": "I",
+              "description": "Area moment of inertia"
+            },
+            {
+              "name": "L",
+              "description": "Unbraced length"
+            }
+          ]
+        },
+        {
+          "label": "convenience_l",
+          "style": "convenience",
+          "code": "let value = equations::structures::euler_buckling_load::solve_l(\n    \"3947841.760435743 N\",\n    \"8e-6 m4\",\n    1.0,\n)?;",
+          "target": "L",
+          "signature": "equations::structures::euler_buckling_load::solve_l(P_cr, I, K) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "P_cr",
+              "description": "Critical buckling load"
+            },
+            {
+              "name": "I",
+              "description": "Area moment of inertia"
+            },
+            {
+              "name": "K",
+              "description": "Effective length factor"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "hoop_stress",
+      "path_id": "structures.hoop_stress",
+      "slug": "hoop_stress",
+      "category": "structures",
+      "subcategories": [],
+      "name": "Thin-Wall Hoop Stress",
+      "description": "Thin-Wall Hoop Stress",
+      "latex": "\\sigma_h = \\frac{P r}{t}",
+      "unicode": "σ_h = P · r / t",
+      "ascii": "sigma_h = P * r / t",
+      "aliases": [
+        "thin_wall_hoop_stress"
+      ],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "P",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        },
+        {
+          "target": "r",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        },
+        {
+          "target": "sigma_h",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        },
+        {
+          "target": "t",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [
+        {
+          "variable": "sigma_h",
+          "label": "Hoop stress"
+        },
+        {
+          "variable": "P",
+          "label": "Internal pressure"
+        },
+        {
+          "variable": "r",
+          "label": "Mean radius"
+        },
+        {
+          "variable": "t",
+          "label": "Wall thickness"
+        }
+      ],
+      "assumptions": [
+        "Thin-wall approximation is valid (t << r).",
+        "Material behavior remains in the elastic membrane-stress regime."
+      ],
+      "references": [
+        {
+          "source": "Roark's Formulas for Stress and Strain",
+          "note": "Thin-walled cylindrical pressure vessel relations."
+        }
+      ],
+      "variables": [
+        {
+          "key": "sigma_h",
+          "name": "Hoop stress",
+          "symbol": "\\sigma_h",
+          "symbol_authored": true,
+          "dimension": "stress",
+          "default_unit": "Pa",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "P",
+          "name": "Internal pressure",
+          "symbol": "P",
+          "symbol_authored": false,
+          "dimension": "pressure",
+          "default_unit": "Pa",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "r",
+          "name": "Mean radius",
+          "symbol": "r",
+          "symbol_authored": false,
+          "dimension": "length",
+          "default_unit": "m",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "t",
+          "name": "Wall thickness",
+          "symbol": "t",
+          "symbol_authored": false,
+          "dimension": "length",
+          "default_unit": "m",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(structures::hoop_stress::equation())\n    .target_sigma_h()\n    .given_p(2.5e6)\n    .given_r(0.2)\n    .given_t(0.008)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(structures::hoop_stress::equation())\n    .target_sigma_h()\n    .given_p(\"2.5 MPa\")\n    .given_r(\"0.2 m\")\n    .given_t(\"8 mm\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_sigma_h",
+          "style": "convenience",
+          "code": "let value = equations::structures::hoop_stress::solve_sigma_h(\n    \"2.5 MPa\",\n    \"0.2 m\",\n    \"8 mm\",\n)?;",
+          "target": "sigma_h",
+          "signature": "equations::structures::hoop_stress::solve_sigma_h(P, r, t) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "P",
+              "description": "Internal pressure"
+            },
+            {
+              "name": "r",
+              "description": "Mean radius"
+            },
+            {
+              "name": "t",
+              "description": "Wall thickness"
+            }
+          ]
+        },
+        {
+          "label": "convenience_p",
+          "style": "convenience",
+          "code": "let value = equations::structures::hoop_stress::solve_p(\n    \"62.5 MPa\",\n    \"0.2 m\",\n    \"8 mm\",\n)?;",
+          "target": "P",
+          "signature": "equations::structures::hoop_stress::solve_p(sigma_h, r, t) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "sigma_h",
+              "description": "Hoop stress"
+            },
+            {
+              "name": "r",
+              "description": "Mean radius"
+            },
+            {
+              "name": "t",
+              "description": "Wall thickness"
+            }
+          ]
+        },
+        {
+          "label": "convenience_r",
+          "style": "convenience",
+          "code": "let value = equations::structures::hoop_stress::solve_r(\n    \"62.5 MPa\",\n    \"2.5 MPa\",\n    \"8 mm\",\n)?;",
+          "target": "r",
+          "signature": "equations::structures::hoop_stress::solve_r(sigma_h, P, t) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "sigma_h",
+              "description": "Hoop stress"
+            },
+            {
+              "name": "P",
+              "description": "Internal pressure"
+            },
+            {
+              "name": "t",
+              "description": "Wall thickness"
+            }
+          ]
+        },
+        {
+          "label": "convenience_t",
+          "style": "convenience",
+          "code": "let value = equations::structures::hoop_stress::solve_t(\n    \"62.5 MPa\",\n    \"2.5 MPa\",\n    \"0.2 m\",\n)?;",
+          "target": "t",
+          "signature": "equations::structures::hoop_stress::solve_t(sigma_h, P, r) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "sigma_h",
+              "description": "Hoop stress"
+            },
+            {
+              "name": "P",
+              "description": "Internal pressure"
+            },
+            {
+              "name": "r",
+              "description": "Mean radius"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "longitudinal_stress_thin_wall",
+      "path_id": "structures.longitudinal_stress_thin_wall",
+      "slug": "longitudinal_stress_thin_wall",
+      "category": "structures",
+      "subcategories": [],
+      "name": "Thin-Wall Longitudinal Stress",
+      "description": "Thin-Wall Longitudinal Stress",
+      "latex": "\\sigma_l = \\frac{P r}{2 t}",
+      "unicode": "σ_l = P · r / (2 · t)",
+      "ascii": "sigma_l = P * r / (2 * t)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "P",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "r",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "sigma_l",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "t",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Thin-wall cylindrical vessel behavior."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "sigma_l",
+          "name": "Longitudinal stress",
+          "symbol": "\\sigma_l",
+          "symbol_authored": true,
+          "dimension": "stress",
+          "default_unit": "Pa",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "P",
+          "name": "Internal pressure",
+          "symbol": "P",
+          "symbol_authored": false,
+          "dimension": "pressure",
+          "default_unit": "Pa",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "r",
+          "name": "Mean radius",
+          "symbol": "r",
+          "symbol_authored": false,
+          "dimension": "length",
+          "default_unit": "m",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "t",
+          "name": "Wall thickness",
+          "symbol": "t",
+          "symbol_authored": false,
+          "dimension": "length",
+          "default_unit": "m",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(structures::longitudinal_stress_thin_wall::equation())\n    .target_sigma_l()\n    .given_p(2.5e6)\n    .given_r(0.2)\n    .given_t(0.008)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(structures::longitudinal_stress_thin_wall::equation())\n    .target_sigma_l()\n    .given_p(\"2.5 MPa\")\n    .given_r(\"0.2 m\")\n    .given_t(\"8 mm\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_sigma_l",
+          "style": "convenience",
+          "code": "let value = equations::structures::longitudinal_stress_thin_wall::solve_sigma_l(\n    \"2.5 MPa\",\n    \"0.2 m\",\n    \"8 mm\",\n)?;",
+          "target": "sigma_l",
+          "signature": "equations::structures::longitudinal_stress_thin_wall::solve_sigma_l(P, r, t) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "P",
+              "description": "Internal pressure"
+            },
+            {
+              "name": "r",
+              "description": "Mean radius"
+            },
+            {
+              "name": "t",
+              "description": "Wall thickness"
+            }
+          ]
+        },
+        {
+          "label": "convenience_p",
+          "style": "convenience",
+          "code": "let value = equations::structures::longitudinal_stress_thin_wall::solve_p(\n    \"31.25 MPa\",\n    \"0.2 m\",\n    \"8 mm\",\n)?;",
+          "target": "P",
+          "signature": "equations::structures::longitudinal_stress_thin_wall::solve_p(sigma_l, r, t) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "sigma_l",
+              "description": "Longitudinal stress"
+            },
+            {
+              "name": "r",
+              "description": "Mean radius"
+            },
+            {
+              "name": "t",
+              "description": "Wall thickness"
+            }
+          ]
+        },
+        {
+          "label": "convenience_r",
+          "style": "convenience",
+          "code": "let value = equations::structures::longitudinal_stress_thin_wall::solve_r(\n    \"31.25 MPa\",\n    \"2.5 MPa\",\n    \"8 mm\",\n)?;",
+          "target": "r",
+          "signature": "equations::structures::longitudinal_stress_thin_wall::solve_r(sigma_l, P, t) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "sigma_l",
+              "description": "Longitudinal stress"
+            },
+            {
+              "name": "P",
+              "description": "Internal pressure"
+            },
+            {
+              "name": "t",
+              "description": "Wall thickness"
+            }
+          ]
+        },
+        {
+          "label": "convenience_t",
+          "style": "convenience",
+          "code": "let value = equations::structures::longitudinal_stress_thin_wall::solve_t(\n    \"31.25 MPa\",\n    \"2.5 MPa\",\n    \"0.2 m\",\n)?;",
+          "target": "t",
+          "signature": "equations::structures::longitudinal_stress_thin_wall::solve_t(sigma_l, P, r) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "sigma_l",
+              "description": "Longitudinal stress"
+            },
+            {
+              "name": "P",
+              "description": "Internal pressure"
+            },
+            {
+              "name": "r",
+              "description": "Mean radius"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "shaft_torsion_stress",
+      "path_id": "structures.shaft_torsion_stress",
+      "slug": "shaft_torsion_stress",
+      "category": "structures",
+      "subcategories": [],
+      "name": "Circular Shaft Torsion Stress",
+      "description": "Circular Shaft Torsion Stress",
+      "latex": "\\tau = \\frac{T r}{J}",
+      "unicode": "\\tau = T · r / J",
+      "ascii": "tau = T * r / J",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "J",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "T",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "r",
+          "methods": [
+            "explicit"
+          ]
+        },
+        {
+          "target": "tau",
+          "methods": [
+            "explicit"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Circular shaft in Saint-Venant torsion."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "tau",
+          "name": "Shear stress",
+          "symbol": "\\tau",
+          "symbol_authored": true,
+          "dimension": "stress",
+          "default_unit": "Pa",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "T",
+          "name": "Torque",
+          "symbol": "T",
+          "symbol_authored": false,
+          "dimension": "moment",
+          "default_unit": "N*m",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "r",
+          "name": "Radius",
+          "symbol": "r",
+          "symbol_authored": false,
+          "dimension": "length",
+          "default_unit": "m",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "J",
+          "name": "Polar moment of inertia",
+          "symbol": "J",
+          "symbol_authored": false,
+          "dimension": "polar_moment_of_inertia",
+          "default_unit": "m4",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(structures::shaft_torsion_stress::equation())\n    .target_tau()\n    .given_t(1200.0)\n    .given_r(0.04)\n    .given_j(1.6e-5)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(structures::shaft_torsion_stress::equation())\n    .target_tau()\n    .given_t(\"1200 N*m\")\n    .given_r(\"0.04 m\")\n    .given_j(\"1.6e-5 m4\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_tau",
+          "style": "convenience",
+          "code": "let value = equations::structures::shaft_torsion_stress::solve_tau(\n    \"1200 N*m\",\n    \"0.04 m\",\n    \"1.6e-5 m4\",\n)?;",
+          "target": "tau",
+          "signature": "equations::structures::shaft_torsion_stress::solve_tau(T, r, J) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "T",
+              "description": "Torque"
+            },
+            {
+              "name": "r",
+              "description": "Radius"
+            },
+            {
+              "name": "J",
+              "description": "Polar moment of inertia"
+            }
+          ]
+        },
+        {
+          "label": "convenience_t",
+          "style": "convenience",
+          "code": "let value = equations::structures::shaft_torsion_stress::solve_t(\n    \"3 MPa\",\n    \"0.04 m\",\n    \"1.6e-5 m4\",\n)?;",
+          "target": "T",
+          "signature": "equations::structures::shaft_torsion_stress::solve_t(tau, r, J) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "tau",
+              "description": "Shear stress"
+            },
+            {
+              "name": "r",
+              "description": "Radius"
+            },
+            {
+              "name": "J",
+              "description": "Polar moment of inertia"
+            }
+          ]
+        },
+        {
+          "label": "convenience_r",
+          "style": "convenience",
+          "code": "let value = equations::structures::shaft_torsion_stress::solve_r(\n    \"3 MPa\",\n    \"1200 N*m\",\n    \"1.6e-5 m4\",\n)?;",
+          "target": "r",
+          "signature": "equations::structures::shaft_torsion_stress::solve_r(tau, T, J) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "tau",
+              "description": "Shear stress"
+            },
+            {
+              "name": "T",
+              "description": "Torque"
+            },
+            {
+              "name": "J",
+              "description": "Polar moment of inertia"
+            }
+          ]
+        },
+        {
+          "label": "convenience_j",
+          "style": "convenience",
+          "code": "let value = equations::structures::shaft_torsion_stress::solve_j(\n    \"3 MPa\",\n    \"1200 N*m\",\n    \"0.04 m\",\n)?;",
+          "target": "J",
+          "signature": "equations::structures::shaft_torsion_stress::solve_j(tau, T, r) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "tau",
+              "description": "Shear stress"
+            },
+            {
+              "name": "T",
+              "description": "Torque"
+            },
+            {
+              "name": "r",
+              "description": "Radius"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ideal_gas_density",
+      "path_id": "thermo.ideal_gas.density",
+      "slug": "density",
+      "category": "thermo",
+      "subcategories": [
+        "ideal_gas"
+      ],
+      "name": "Ideal Gas Law (Density Form)",
+      "description": "Ideal Gas Law (Density Form)",
+      "latex": "P = \\rho R T",
+      "unicode": "P = ρ · R · T",
+      "ascii": "P = rho * R * T",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "P",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        },
+        {
+          "target": "R",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        },
+        {
+          "target": "T",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        },
+        {
+          "target": "rho",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Thermally and calorically ideal gas behavior.",
+        "Single-phase gas state."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "P",
+          "name": "Absolute pressure",
+          "symbol": "P",
+          "symbol_authored": false,
+          "dimension": "pressure",
+          "default_unit": "Pa",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "rho",
+          "name": "Density",
+          "symbol": "\\rho",
+          "symbol_authored": true,
+          "dimension": "density",
+          "default_unit": "kg/m3",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "R",
+          "name": "Specific gas constant",
+          "symbol": "R",
+          "symbol_authored": true,
+          "dimension": "gas_constant",
+          "default_unit": "J/(kg*K)",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "T",
+          "name": "Absolute temperature",
+          "symbol": "T",
+          "symbol_authored": true,
+          "dimension": "temperature",
+          "default_unit": "K",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(thermo::density::equation())\n    .target_p()\n    .given_rho(1.17683)\n    .given_r(287.0)\n    .given_t(300.0)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(thermo::density::equation())\n    .target_p()\n    .given_rho(\"1.17683 kg/m3\")\n    .given_r(\"287 J/(kg*K)\")\n    .given_t(\"300 K\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_p",
+          "style": "convenience",
+          "code": "let value = equations::thermo::density::solve_p(\n    \"1.17683 kg/m3\",\n    \"287 J/(kg*K)\",\n    \"300 K\",\n)?;",
+          "target": "P",
+          "signature": "equations::thermo::density::solve_p(rho, R, T) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "rho",
+              "description": "Density"
+            },
+            {
+              "name": "R",
+              "description": "Specific gas constant"
+            },
+            {
+              "name": "T",
+              "description": "Absolute temperature"
+            }
+          ]
+        },
+        {
+          "label": "convenience_rho",
+          "style": "convenience",
+          "code": "let value = equations::thermo::density::solve_rho(\n    \"101325.063 Pa\",\n    \"287 J/(kg*K)\",\n    \"300 K\",\n)?;",
+          "target": "rho",
+          "signature": "equations::thermo::density::solve_rho(P, R, T) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "P",
+              "description": "Absolute pressure"
+            },
+            {
+              "name": "R",
+              "description": "Specific gas constant"
+            },
+            {
+              "name": "T",
+              "description": "Absolute temperature"
+            }
+          ]
+        },
+        {
+          "label": "convenience_r",
+          "style": "convenience",
+          "code": "let value = equations::thermo::density::solve_r(\n    \"101325.063 Pa\",\n    \"1.17683 kg/m3\",\n    \"300 K\",\n)?;",
+          "target": "R",
+          "signature": "equations::thermo::density::solve_r(P, rho, T) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "P",
+              "description": "Absolute pressure"
+            },
+            {
+              "name": "rho",
+              "description": "Density"
+            },
+            {
+              "name": "T",
+              "description": "Absolute temperature"
+            }
+          ]
+        },
+        {
+          "label": "convenience_t",
+          "style": "convenience",
+          "code": "let value = equations::thermo::density::solve_t(\n    \"101325.063 Pa\",\n    \"1.17683 kg/m3\",\n    \"287 J/(kg*K)\",\n)?;",
+          "target": "T",
+          "signature": "equations::thermo::density::solve_t(P, rho, R) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "P",
+              "description": "Absolute pressure"
+            },
+            {
+              "name": "rho",
+              "description": "Density"
+            },
+            {
+              "name": "R",
+              "description": "Specific gas constant"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ideal_gas_mass_volume",
+      "path_id": "thermo.ideal_gas.mass_volume",
+      "slug": "mass_volume",
+      "category": "thermo",
+      "subcategories": [
+        "ideal_gas"
+      ],
+      "name": "Ideal Gas Law (Mass-Volume Form)",
+      "description": "Ideal Gas Law (Mass-Volume Form)",
+      "latex": "P V = m R T",
+      "unicode": "P = m · R · T / V",
+      "ascii": "P = m * R * T / V",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "P",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        },
+        {
+          "target": "R",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        },
+        {
+          "target": "T",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        },
+        {
+          "target": "V",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        },
+        {
+          "target": "m",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Thermally and calorically ideal gas behavior.",
+        "Gas is in equilibrium at a single representative state."
+      ],
+      "references": [],
+      "variables": [
+        {
+          "key": "P",
+          "name": "Absolute pressure",
+          "symbol": "P",
+          "symbol_authored": false,
+          "dimension": "pressure",
+          "default_unit": "Pa",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "V",
+          "name": "Control-volume",
+          "symbol": "V",
+          "symbol_authored": true,
+          "dimension": "volume",
+          "default_unit": "m3",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "m",
+          "name": "Gas mass",
+          "symbol": "m",
+          "symbol_authored": true,
+          "dimension": "mass",
+          "default_unit": "kg",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "R",
+          "name": "Specific gas constant",
+          "symbol": "R",
+          "symbol_authored": true,
+          "dimension": "gas_constant",
+          "default_unit": "J/(kg*K)",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "T",
+          "name": "Absolute temperature",
+          "symbol": "T",
+          "symbol_authored": true,
+          "dimension": "temperature",
+          "default_unit": "K",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(thermo::mass_volume::equation())\n    .target_p()\n    .given_v(0.1)\n    .given_m(0.1176829268)\n    .given_r(287.0)\n    .given_t(300.0)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(thermo::mass_volume::equation())\n    .target_p()\n    .given_v(\"0.1 m3\")\n    .given_m(\"0.1176829268292683 kg\")\n    .given_r(\"287 J/(kg*K)\")\n    .given_t(\"300 K\")\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_p",
+          "style": "convenience",
+          "code": "let value = equations::thermo::mass_volume::solve_p(\n    \"0.1 m3\",\n    \"0.1176829268292683 kg\",\n    \"287 J/(kg*K)\",\n    \"300 K\",\n)?;",
+          "target": "P",
+          "signature": "equations::thermo::mass_volume::solve_p(V, m, R, T) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "V",
+              "description": "Control-volume"
+            },
+            {
+              "name": "m",
+              "description": "Gas mass"
+            },
+            {
+              "name": "R",
+              "description": "Specific gas constant"
+            },
+            {
+              "name": "T",
+              "description": "Absolute temperature"
+            }
+          ]
+        },
+        {
+          "label": "convenience_v",
+          "style": "convenience",
+          "code": "let value = equations::thermo::mass_volume::solve_v(\n    \"101325 Pa\",\n    \"0.1176829268292683 kg\",\n    \"287 J/(kg*K)\",\n    \"300 K\",\n)?;",
+          "target": "V",
+          "signature": "equations::thermo::mass_volume::solve_v(P, m, R, T) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "P",
+              "description": "Absolute pressure"
+            },
+            {
+              "name": "m",
+              "description": "Gas mass"
+            },
+            {
+              "name": "R",
+              "description": "Specific gas constant"
+            },
+            {
+              "name": "T",
+              "description": "Absolute temperature"
+            }
+          ]
+        },
+        {
+          "label": "convenience_m",
+          "style": "convenience",
+          "code": "let value = equations::thermo::mass_volume::solve_m(\n    \"101325 Pa\",\n    \"0.1 m3\",\n    \"287 J/(kg*K)\",\n    \"300 K\",\n)?;",
+          "target": "m",
+          "signature": "equations::thermo::mass_volume::solve_m(P, V, R, T) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "P",
+              "description": "Absolute pressure"
+            },
+            {
+              "name": "V",
+              "description": "Control-volume"
+            },
+            {
+              "name": "R",
+              "description": "Specific gas constant"
+            },
+            {
+              "name": "T",
+              "description": "Absolute temperature"
+            }
+          ]
+        },
+        {
+          "label": "convenience_r",
+          "style": "convenience",
+          "code": "let value = equations::thermo::mass_volume::solve_r(\n    \"101325 Pa\",\n    \"0.1 m3\",\n    \"0.1176829268292683 kg\",\n    \"300 K\",\n)?;",
+          "target": "R",
+          "signature": "equations::thermo::mass_volume::solve_r(P, V, m, T) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "P",
+              "description": "Absolute pressure"
+            },
+            {
+              "name": "V",
+              "description": "Control-volume"
+            },
+            {
+              "name": "m",
+              "description": "Gas mass"
+            },
+            {
+              "name": "T",
+              "description": "Absolute temperature"
+            }
+          ]
+        },
+        {
+          "label": "convenience_t",
+          "style": "convenience",
+          "code": "let value = equations::thermo::mass_volume::solve_t(\n    \"101325 Pa\",\n    \"0.1 m3\",\n    \"0.1176829268292683 kg\",\n    \"287 J/(kg*K)\",\n)?;",
+          "target": "T",
+          "signature": "equations::thermo::mass_volume::solve_t(P, V, m, R) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "P",
+              "description": "Absolute pressure"
+            },
+            {
+              "name": "V",
+              "description": "Control-volume"
+            },
+            {
+              "name": "m",
+              "description": "Gas mass"
+            },
+            {
+              "name": "R",
+              "description": "Specific gas constant"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

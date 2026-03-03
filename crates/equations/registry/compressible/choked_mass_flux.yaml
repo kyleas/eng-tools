@@ -1,0 +1,28 @@
+key: choked_mass_flux
+taxonomy:
+  category: compressible
+name: Choked Mass Flux
+display:
+  latex: 'G^* = \frac{p_0}{\sqrt{T_0}} \sqrt{\frac{\gamma}{R}} \left(\frac{2}{\gamma+1}\right)^{(\gamma+1)/(2(\gamma-1))}'
+variables:
+  G_star: { name: Choked mass flux, dimension: mass_flux }
+  p0: { name: Stagnation pressure, dimension: pressure }
+  T0: { name: Stagnation temperature, dimension: temperature }
+  gamma: { name: Specific heat ratio, symbol: '\gamma', dimension: dimensionless, constraints: { min: 1.01 } }
+  R: { name: Gas constant, dimension: gas_constant }
+residual: "G_star - ((p0 / sqrt(T0)) * sqrt(gamma / R) * pow(2 / (gamma + 1), (gamma + 1) / (2 * (gamma - 1))))"
+solve:
+  explicit_forms:
+    G_star: (p0 / sqrt(T0)) * sqrt(gamma / R) * pow(2 / (gamma + 1), (gamma + 1) / (2 * (gamma - 1)))
+  numerical:
+    unsupported_targets: [p0, T0, gamma, R]
+assumptions:
+  - One-dimensional isentropic converging nozzle at critical condition (M=1 at throat).
+  - Perfect gas with constant gamma and R.
+tests:
+  - full_state:
+      G_star: "1166.779280303113 kg/(m2*s)"
+      p0: "500000 Pa"
+      T0: "300 K"
+      gamma: 1.4
+      R: "287 J/(kg*K)"

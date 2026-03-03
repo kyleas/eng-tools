@@ -1,0 +1,71 @@
+key: colebrook
+taxonomy:
+  category: fluids
+  subcategories: []
+name: Colebrook-White Friction Factor
+display:
+  latex: "\\frac{1}{\\sqrt{f}} + 2\\log_{10}\\left(\\frac{\\varepsilon_D}{3.7} + \\frac{2.51}{Re\\sqrt{f}}\\right) = 0"
+  unicode: "1/sqrt(f) + 2 log10(eps_D/3.7 + 2.51/(Re sqrt(f))) = 0"
+  ascii: "1/sqrt(f) + 2*log10((eps_D/3.7) + (2.51/(Re*sqrt(f)))) = 0"
+  description: Implicit turbulent pipe-flow friction factor relation.
+variables:
+  f:
+    name: Darcy friction factor
+    dimension: friction_factor
+    constraints:
+      positive: true
+  eps_D:
+    name: Relative roughness
+    symbol: '\epsilon_D'
+    dimension: ratio
+    constraints:
+      positive: true
+  Re:
+    name: Reynolds number
+    dimension: dimensionless
+    constraints:
+      positive: true
+relation:
+  form: residual
+  residual: (1 / sqrt(f)) + 2 * log10((eps_D / 3.7) + (2.51 / (Re * sqrt(f))))
+solve:
+  explicit_forms: {}
+  numerical:
+    unsupported_targets: [eps_D, Re]
+    solver: bisection
+    initial_guess: 0.02
+    bracket: [0.005, 0.2]
+    tolerance_abs: 1e-12
+    tolerance_rel: 1e-10
+    max_iter: 300
+assumptions:
+  - Fully developed turbulent internal flow.
+  - Incompressible flow behavior.
+references:
+  - source: Colebrook, C. F. (1939)
+    note: Turbulent flow in pipes with rough walls.
+diagram:
+  template: pipe_flow
+  labels:
+    - variable: f
+      label: Friction factor
+    - variable: eps_D
+      label: Relative roughness
+    - variable: Re
+      label: Reynolds number
+tests:
+  units_policy: auto_convert_to_si
+  relation_tolerance:
+    abs: 1e-11
+    rel: 1e-9
+  cases:
+    - id: baseline_turbulent
+      description: Typical turbulent flow point for solving f.
+      branch: null
+      full_state:
+        Re: 100000.0
+        eps_D: 0.0004214317085279759
+        f: 0.02
+      verify:
+        residual_zero: true
+        solve_targets: [f]

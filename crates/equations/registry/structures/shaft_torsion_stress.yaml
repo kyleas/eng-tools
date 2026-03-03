@@ -1,0 +1,28 @@
+key: shaft_torsion_stress
+taxonomy:
+  category: structures
+name: Circular Shaft Torsion Stress
+display:
+  latex: '\tau = \frac{T r}{J}'
+variables:
+  tau: { name: Shear stress, symbol: '\tau', dimension: stress }
+  T: { name: Torque, dimension: moment }
+  r: { name: Radius, dimension: length }
+  J: { name: Polar moment of inertia, dimension: polar_moment_of_inertia }
+residual: "tau - (T * r / J)"
+solve:
+  explicit_forms:
+    tau: T * r / J
+    T: tau * J / r
+    r: tau * J / T
+    J: T * r / tau
+  numerical:
+    unsupported_targets: [tau, T, r, J]
+assumptions:
+  - Circular shaft in Saint-Venant torsion.
+tests:
+  - full_state:
+      tau: "3 MPa"
+      T: "1200 N*m"
+      r: "0.04 m"
+      J: "1.6e-5 m4"

@@ -1,0 +1,103 @@
+# Full annotated verbose example:
+# every optional override is shown so authors can see what is required vs optional.
+
+key: hoop_stress                  # required
+slug: hoop_stress_alt            # optional; defaults to key if omitted
+
+taxonomy:                        # required
+  category: structures           # required
+  subcategories: [thin_wall]     # optional; defaults to []
+
+aliases:                         # optional
+  - thin_wall_hoop_stress
+
+name: Thin-Wall Hoop Stress      # required
+
+display:
+  latex: "\\sigma_h = \\frac{P r}{t}"    # required / primary authored display
+  unicode: "σ_h = P r / t"                # optional; auto-derived if omitted
+  ascii: "sigma_h = P * r / t"            # optional; auto-derived if omitted
+  description: Circumferential stress in a thin-walled pressure vessel. # optional
+
+variables:                        # required
+  sigma_h:
+    name: Hoop stress             # required
+    symbol: "\\sigma_h"           # optional; defaults to variable key
+    dimension: stress             # required
+    default_unit: Pa              # optional; defaults from dimension
+    aliases: [sh]                 # optional
+    constraints:                  # optional
+      positive: true              # optional (default true for stress)
+    description: Membrane stress  # optional
+  P:
+    name: Internal pressure
+    symbol: P
+    dimension: pressure
+    default_unit: Pa
+    constraints:
+      positive: true              # optional (default true for pressure)
+    description: Internal pressure.
+  r:
+    name: Mean radius
+    symbol: r
+    dimension: length
+    default_unit: m
+    constraints:
+      positive: true              # optional (default true for length)
+    description: Mean vessel radius.
+  t:
+    name: Wall thickness
+    symbol: t
+    dimension: length
+    default_unit: m
+    constraints:
+      nonzero: true               # useful explicit addition
+      positive: true              # optional (default true for length)
+    description: Wall thickness.
+
+residual: "sigma_h - (P * r / t)" # required
+
+solve:                             # optional block, recommended in most equations
+  default_target: sigma_h          # optional
+  explicit_forms:                  # optional
+    sigma_h: P * r / t
+    P: sigma_h * t / r
+    r: sigma_h * t / P
+    t: P * r / sigma_h
+  numerical:                       # optional; defaults apply if omitted
+    unsupported_targets: [t]       # optional
+    solver: bisection              # optional override
+    initial_guess: 1000000.0       # optional override
+    bracket: [1000.0, 1000000000.0] # optional override
+    tolerance_abs: 1e-10           # optional override
+    tolerance_rel: 1e-10           # optional override
+    max_iter: 300                  # optional override
+
+branches:                          # optional
+  []
+
+assumptions:                       # optional but recommended
+  - Thin-wall approximation is valid.
+
+references:                        # optional
+  - source: Roark's Formulas for Stress and Strain
+    note: Thin-walled vessel relation.
+
+diagram:                           # optional
+  template: thin_wall_cylinder
+  labels:                          # optional; defaults from variable names if omitted
+    - variable: P
+      label: Internal pressure
+
+tests:                             # required
+  units_policy: auto_convert_to_si # optional (default shown for clarity)
+  relation_tolerance: { abs: 1e-7, rel: 1e-8 } # optional override
+  solve_tolerance: { rel: 1e-8 }   # optional override
+  cases:
+    - id: baseline_metric           # optional; auto-generated if omitted
+      description: Baseline metric case. # optional
+      full_state:
+        P: "2.5 MPa"
+        r: "0.2 m"
+        t: "8 mm"
+        sigma_h: "62.5 MPa"

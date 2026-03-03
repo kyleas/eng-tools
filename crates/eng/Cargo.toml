@@ -1,0 +1,20 @@
+[package]
+name = "eng"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+equations.workspace = true
+eng-fluids.workspace = true
+eng-materials.workspace = true
+eng-core.workspace = true
+eng-qty-macros.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+printpdf.workspace = true
+
+[dev-dependencies]
+tempfile = "3"
+walkdir = "2"

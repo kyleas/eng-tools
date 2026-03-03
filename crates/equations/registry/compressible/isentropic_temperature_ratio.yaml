@@ -1,0 +1,23 @@
+key: isentropic_temperature_ratio
+taxonomy:
+  category: compressible
+name: Isentropic Temperature Ratio
+display:
+  latex: '\frac{T}{T_0} = \left(1+\frac{\gamma-1}{2}M^2\right)^{-1}'
+variables:
+  T_T0: { name: Static-to-stagnation temperature ratio, dimension: ratio }
+  M: { name: Mach number, dimension: mach }
+  gamma: { name: Specific heat ratio, symbol: '\gamma', dimension: dimensionless, constraints: { min: 1.01 } }
+residual: "T_T0 - (1 / (1 + ((gamma - 1) / 2) * M^2))"
+solve:
+  explicit_forms:
+    T_T0: 1 / (1 + ((gamma - 1) / 2) * M^2)
+  numerical:
+    unsupported_targets: [gamma]
+assumptions:
+  - Isentropic perfect-gas flow with constant gamma.
+tests:
+  - full_state:
+      T_T0: 0.5555555555555556
+      M: 2.0
+      gamma: 1.4

@@ -1,0 +1,13 @@
+[package]
+name = "eng-materials"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+thiserror.workspace = true
+serde.workspace = true
+serde_yaml.workspace = true
+eng-core.workspace = true
+

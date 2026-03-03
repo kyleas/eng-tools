@@ -1,0 +1,36 @@
+key: ideal_gas_mass_volume
+slug: mass_volume
+taxonomy:
+  category: thermo
+  subcategories: [ideal_gas]
+name: Ideal Gas Law (Mass-Volume Form)
+display:
+  latex: "P V = m R T"
+variables:
+  P: { name: Absolute pressure, dimension: pressure }
+  V: { name: Control-volume, symbol: "V", dimension: volume, default_unit: m3, constraints: { positive: true } }
+  m: { name: Gas mass, symbol: "m", dimension: mass, default_unit: kg, constraints: { positive: true } }
+  R: { name: Specific gas constant, symbol: "R", dimension: gas_constant, default_unit: "J/(kg*K)" }
+  T: { name: Absolute temperature, symbol: "T", dimension: temperature }
+residual: "P * V - m * R * T"
+solve:
+  explicit_forms:
+    P: m * R * T / V
+    V: m * R * T / P
+    m: P * V / (R * T)
+    R: P * V / (m * T)
+    T: P * V / (m * R)
+assumptions:
+  - Thermally and calorically ideal gas behavior.
+  - Gas is in equilibrium at a single representative state.
+tests:
+  units_policy: auto_convert_to_si
+  solve_tolerance: { abs: 1e-2, rel: 1e-8 }
+  cases:
+    - id: baseline
+      full_state:
+        P: "101325 Pa"
+        V: "0.1 m3"
+        m: "0.1176829268292683 kg"
+        R: "287 J/(kg*K)"
+        T: "300 K"

@@ -1,0 +1,69 @@
+- key: g0
+  name: Standard Gravity
+  symbol_latex: g_0
+  symbol_unicode: "g\u2080"
+  symbol_ascii: g0
+  dimension: acceleration
+  unit: m/s2
+  value: 9.80665
+  exact: false
+  source: CODATA 2018 / ISO 80000 conventional standard gravity
+  note: Conventional reference value (not local measured gravity).
+  description: Standard gravitational acceleration at Earth sea level.
+  aliases: [standard_gravity]
+
+- key: universal_gas_constant
+  name: Universal Gas Constant
+  symbol_latex: R_u
+  symbol_unicode: "R\u1D64"
+  symbol_ascii: R_u
+  dimension: universal_gas_constant
+  unit: J/(mol*K)
+  value: 8.314462618
+  exact: true
+  source: SI 2019 redefinition via fixed Boltzmann constant and Avogadro constant
+  note: Exact derived SI constant.
+  description: Universal gas constant used in thermodynamics.
+  aliases: [gas_constant_universal]
+
+- key: stefan_boltzmann
+  name: Stefan-Boltzmann Constant
+  symbol_latex: \sigma
+  symbol_unicode: "\u03C3"
+  symbol_ascii: sigma_sb
+  dimension: stefan_boltzmann_constant
+  unit: W/(m2*K4)
+  value: 5.670374419e-8
+  exact: false
+  source: CODATA 2018
+  note: Derived from exact constants; finite reported decimal precision.
+  description: Stefan-Boltzmann radiation constant.
+  aliases: [sigma_sb]
+
+- key: boltzmann
+  name: Boltzmann Constant
+  symbol_latex: k_B
+  symbol_unicode: k_B
+  symbol_ascii: k_B
+  dimension: boltzmann_constant
+  unit: J/K
+  value: 1.380649e-23
+  exact: true
+  source: SI 2019 definition
+  note: Exact defining constant.
+  description: Boltzmann constant linking thermal energy and temperature.
+  aliases: [k_b]
+
+- key: pi
+  name: Archimedes Constant
+  symbol_latex: \pi
+  symbol_unicode: "\u03C0"
+  symbol_ascii: pi
+  dimension: dimensionless
+  unit: "1"
+  value: 3.141592653589793
+  exact: false
+  source: Mathematical constant
+  note: Irrational constant represented in f64 precision for evaluation.
+  description: Ratio of a circle's circumference to its diameter.
+  aliases: []

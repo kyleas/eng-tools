@@ -1,0 +1,78 @@
+[workspace]
+resolver = "2"
+members = [
+  "crates/tf-core",
+  "crates/tf-graph",
+  "crates/tf-fluids",
+  "crates/tf-components",
+  "crates/tf-solver",
+  "crates/tf-sim",
+  "crates/tf-controls",
+  "crates/tf-project",
+  "crates/tf-results",
+  "crates/tf-app",
+  "crates/tf-bench",
+  "crates/tf-cea",
+  "crates/tf-rpa",
+  "crates/equations",
+  "crates/eng-core",
+  "crates/eng-unit-expr",
+  "crates/eng-qty-macros",
+  "crates/eng",
+  "crates/eng-fluids",
+  "crates/eng-materials",
+  "apps/tf-cli",
+  "apps/tf-ui",
+]
+
+[workspace.package]
+edition = "2024"
+license = "MIT OR Apache-2.0"
+authors = ["Your Name <you@example.com>"]
+repository = "https://example.com/thermoflow"
+rust-version = "1.95"
+
+[workspace.dependencies]
+thiserror = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+uom = { version = "0.36", features = ["f64", "si"] }
+proptest = "1"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+nalgebra = "0.33"
+rayon = "1"
+sha2 = "0.10"
+chrono = "0.4"
+eframe = "0.29"
+egui = "0.29"
+egui_plot = "0.29"
+egui_extras = "0.29"
+egui_graphs = "0.21"
+egui_graph = "0.12"
+egui-file-dialog = "0.7"
+petgraph = "0.8"
+uuid = { version = "1", features = ["v4", "serde"] }
+image = "0.25"
+printpdf = "0.7"
+
+tf-core = { path = "crates/tf-core" }
+tf-graph = { path = "crates/tf-graph" }
+tf-fluids = { path = "crates/tf-fluids" }
+tf-components = { path = "crates/tf-components" }
+tf-solver = { path = "crates/tf-solver" }
+tf-sim = { path = "crates/tf-sim" }
+tf-controls = { path = "crates/tf-controls" }
+tf-project = { path = "crates/tf-project" }
+tf-results = { path = "crates/tf-results" }
+tf-cea = { path = "crates/tf-cea" }
+
+tf-rpa = { path = "crates/tf-rpa" }
+equations = { path = "crates/equations" }
+eng-core = { path = "crates/eng-core" }
+eng-unit-expr = { path = "crates/eng-unit-expr" }
+eng-qty-macros = { path = "crates/eng-qty-macros" }
+eng = { path = "crates/eng" }
+eng-fluids = { path = "crates/eng-fluids" }
+eng-materials = { path = "crates/eng-materials" }

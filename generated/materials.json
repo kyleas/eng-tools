@@ -1,0 +1,35 @@
+{
+  "schema_version": "1",
+  "model_version": "2026-03-02",
+  "artifact_type": "materials",
+  "items": [
+    {
+      "key": "aluminum_6061_t6",
+      "name": "Aluminum 6061-T6",
+      "aliases": [
+        "al6061_t6",
+        "6061_t6"
+      ],
+      "source": "Representative handbook values for interpolation demonstrations.",
+      "properties": [
+        "elastic_modulus",
+        "thermal_conductivity",
+        "yield_strength"
+      ]
+    },
+    {
+      "key": "stainless_304",
+      "name": "Stainless Steel 304",
+      "aliases": [
+        "ss304",
+        "aisi304"
+      ],
+      "source": "Representative handbook values for interpolation demonstrations.",
+      "properties": [
+        "elastic_modulus",
+        "thermal_conductivity",
+        "yield_strength"
+      ]
+    }
+  ]
+}

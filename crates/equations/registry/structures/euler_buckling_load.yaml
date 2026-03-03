@@ -1,0 +1,37 @@
+key: euler_buckling_load
+taxonomy:
+  category: structures
+name: Euler Buckling Critical Load
+display:
+  latex: 'P_{cr} = \frac{\pi^2 E I}{(K L)^2}'
+variables:
+  P_cr: { name: Critical buckling load, dimension: force }
+  E:
+    name: Elastic modulus
+    dimension: pressure
+    resolver:
+      source: material
+      kind: material_property
+      property: elastic_modulus
+  I: { name: Area moment of inertia, dimension: area_moment_of_inertia }
+  K: { name: Effective length factor, dimension: ratio }
+  L: { name: Unbraced length, dimension: length }
+residual: "P_cr - ((pi^2 * E * I) / ((K * L)^2))"
+solve:
+  explicit_forms:
+    P_cr: (pi^2 * E * I) / ((K * L)^2)
+    E: P_cr * (K * L)^2 / (pi^2 * I)
+    I: P_cr * (K * L)^2 / (pi^2 * E)
+    K: sqrt((pi^2 * E * I) / P_cr) / L
+    L: sqrt((pi^2 * E * I) / P_cr) / K
+  numerical:
+    unsupported_targets: [P_cr, E, I, K, L]
+assumptions:
+  - Ideal slender column with elastic buckling.
+tests:
+  - full_state:
+      P_cr: "3947841.760435743 N"
+      E: "200000000000 Pa"
+      I: "8e-6 m4"
+      K: 1.0
+      L: "2 m"

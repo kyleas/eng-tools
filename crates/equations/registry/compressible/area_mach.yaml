@@ -1,0 +1,110 @@
+key: area_mach
+taxonomy:
+  category: compressible
+  subcategories: []
+aliases:
+  - isentropic_area_mach
+name: Isentropic Area-Mach Relation
+display:
+  latex: "\\frac{A}{A^*} = \\frac{1}{M}\\left(\\frac{2}{\\gamma+1}\\left(1+\\frac{\\gamma-1}{2}M^2\\right)\\right)^{\\frac{\\gamma+1}{2(\\gamma-1)}}"
+  unicode: "A/A* = (1/M) * ((2/(gamma+1))*(1+((gamma-1)/2)M^2))^((gamma+1)/(2(gamma-1)))"
+  ascii: "area_ratio = (1/M) * ((2/(gamma+1))*(1+((gamma-1)/2)*M^2))^((gamma+1)/(2*(gamma-1)))"
+  description: Isentropic nozzle area ratio as a function of Mach number.
+variables:
+  area_ratio:
+    name: Area ratio
+    symbol: "\\frac{A}{A^*}"
+    dimension: ratio
+    constraints:
+      positive: true
+  M:
+    name: Mach number
+    symbol: "M"
+    dimension: mach
+    constraints:
+      positive: true
+      nonzero: true
+  gamma:
+    name: Specific heat ratio
+    symbol: "\\gamma"
+    dimension: dimensionless
+    constraints:
+      positive: true
+      min: 1.01
+relation:
+  form: residual
+  residual: area_ratio - ((1 / M) * pow((2 / (gamma + 1)) * (1 + ((gamma - 1) / 2) * M^2), (gamma + 1) / (2 * (gamma - 1))))
+solve:
+  explicit_forms:
+    area_ratio: (1 / M) * pow((2 / (gamma + 1)) * (1 + ((gamma - 1) / 2) * M^2), (gamma + 1) / (2 * (gamma - 1)))
+  numerical:
+    unsupported_targets: [gamma]
+    solver: bisection
+    initial_guess: 1.2
+    bracket: [0.01, 20.0]
+    tolerance_abs: 1e-12
+    tolerance_rel: 1e-10
+    max_iter: 400
+branches:
+  - name: subsonic
+    condition: 1 - M
+    preferred: false
+  - name: supersonic
+    condition: M - 1
+    preferred: true
+assumptions:
+  - Quasi-one-dimensional isentropic flow.
+  - Calorically perfect gas with constant gamma.
+references:
+  - source: Anderson, Modern Compressible Flow
+    note: Isentropic flow function tables.
+diagram:
+  template: converging_diverging_nozzle
+  labels:
+    - variable: area_ratio
+      label: A/A*
+    - variable: M
+      label: Mach number
+    - variable: gamma
+      label: Specific heat ratio
+tests:
+  units_policy: auto_convert_to_si
+  relation_tolerance:
+    abs: 1e-11
+    rel: 1e-9
+  cases:
+    - id: subsonic_branch
+      description: Invert M from area ratio on subsonic branch.
+      branch: subsonic
+      full_state:
+        gamma: 1.4
+        M: 0.3
+        area_ratio: 2.0350652623456793
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: area_ratio
+            methods: [explicit]
+            tolerances:
+              abs: null
+              rel: 1e-10
+          - target: M
+            methods: [numerical]
+            tolerances:
+              abs: 1e-10
+              rel: 1e-8
+    - id: supersonic_branch
+      description: Invert M from area ratio on supersonic branch.
+      branch: supersonic
+      full_state:
+        gamma: 1.4
+        M: 2.2
+        area_ratio: 2.0049745454545462
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: M
+            methods: [numerical]
+            tolerances:
+              abs: 1e-10
+              rel: 1e-8

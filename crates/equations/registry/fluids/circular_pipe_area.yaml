@@ -1,0 +1,22 @@
+key: circular_pipe_area
+taxonomy:
+  category: fluids
+name: Circular Pipe Flow Area
+display:
+  latex: 'A = \frac{\pi D^2}{4}'
+variables:
+  A: { name: Area, dimension: area }
+  D: { name: Diameter, dimension: length }
+residual: "A - ((pi / 4) * D^2)"
+solve:
+  explicit_forms:
+    A: (pi / 4) * D^2
+    D: sqrt((4 * A) / pi)
+  numerical:
+    unsupported_targets: [D]
+assumptions:
+  - Cross-section is circular and unobstructed.
+tests:
+  - full_state:
+      A: "0.007853981633974483 m2"
+      D: "0.1 m"

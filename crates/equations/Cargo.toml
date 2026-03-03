@@ -1,0 +1,27 @@
+[package]
+name = "equations"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+thiserror.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml.workspace = true
+schemars = { version = "0.8", features = ["indexmap2"] }
+walkdir = "2"
+indexmap = { version = "2", features = ["serde"] }
+eng-core.workspace = true
+eng-fluids.workspace = true
+eng-materials.workspace = true
+printpdf = "0.7"
+
+[dev-dependencies]
+pretty_assertions = "1"
+tempfile = "3"
+
+[build-dependencies]
+serde_yaml.workspace = true
+walkdir = "2"

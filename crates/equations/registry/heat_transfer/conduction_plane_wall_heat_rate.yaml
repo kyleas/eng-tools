@@ -1,0 +1,40 @@
+key: conduction_plane_wall_heat_rate
+taxonomy:
+  category: heat_transfer
+name: Plane-Wall Conduction Heat Rate
+display:
+  latex: '\dot{Q} = k A \frac{T_h - T_c}{L}'
+variables:
+  Q_dot: { name: Heat transfer rate, dimension: heat_rate }
+  k:
+    name: Thermal conductivity
+    dimension: thermal_conductivity
+    resolver:
+      source: material
+      kind: material_property
+      property: thermal_conductivity
+  A: { name: Area normal to heat flow, dimension: area }
+  T_h: { name: Hot-side temperature, dimension: temperature }
+  T_c: { name: Cold-side temperature, dimension: temperature }
+  L: { name: Wall thickness, dimension: length }
+residual: "Q_dot - (k * A * (T_h - T_c) / L)"
+solve:
+  explicit_forms:
+    Q_dot: k * A * (T_h - T_c) / L
+    k: Q_dot * L / (A * (T_h - T_c))
+    A: Q_dot * L / (k * (T_h - T_c))
+    T_h: (Q_dot * L / (k * A)) + T_c
+    T_c: T_h - (Q_dot * L / (k * A))
+    L: k * A * (T_h - T_c) / Q_dot
+  numerical:
+    unsupported_targets: [Q_dot, k, A, T_h, T_c, L]
+assumptions:
+  - One-dimensional steady conduction through a homogeneous plane wall.
+tests:
+  - full_state:
+      Q_dot: "1600 W"
+      k: "16 W/(m*K)"
+      A: "2 m2"
+      T_h: "330 K"
+      T_c: "280 K"
+      L: "1 m"

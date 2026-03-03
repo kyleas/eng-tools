@@ -1,0 +1,725 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EquationDef",
+  "type": "object",
+  "required": [
+    "assumptions",
+    "display",
+    "key",
+    "name",
+    "solve",
+    "taxonomy",
+    "tests",
+    "variables"
+  ],
+  "properties": {
+    "aliases": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "branches": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/BranchDef"
+      }
+    },
+    "diagram": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/DiagramMetadata"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "display": {
+      "$ref": "#/definitions/DisplayMetadata"
+    },
+    "key": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "references": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Reference"
+      }
+    },
+    "relation": {
+      "default": {
+        "form": "residual",
+        "residual": ""
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/RelationDef"
+        }
+      ]
+    },
+    "residual": {
+      "description": "Shorthand for relation.residual when form is residual",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "slug": {
+      "default": null,
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "solve": {
+      "$ref": "#/definitions/SolveConfig"
+    },
+    "taxonomy": {
+      "$ref": "#/definitions/Taxonomy"
+    },
+    "tests": {
+      "$ref": "#/definitions/TestsSchema"
+    },
+    "variables": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/VariableDef"
+      }
+    }
+  },
+  "definitions": {
+    "BranchDef": {
+      "type": "object",
+      "required": [
+        "condition",
+        "name"
+      ],
+      "properties": {
+        "condition": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "preferred": {
+          "default": false,
+          "type": "boolean"
+        }
+      }
+    },
+    "CaseTolerance": {
+      "type": "object",
+      "properties": {
+        "abs": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        },
+        "rel": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        }
+      }
+    },
+    "DiagramLabel": {
+      "type": "object",
+      "required": [
+        "label",
+        "variable"
+      ],
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "variable": {
+          "type": "string"
+        }
+      }
+    },
+    "DiagramMetadata": {
+      "type": "object",
+      "required": [
+        "template"
+      ],
+      "properties": {
+        "labels": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DiagramLabel"
+          }
+        },
+        "notes": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "template": {
+          "type": "string"
+        }
+      }
+    },
+    "DisplayMetadata": {
+      "type": "object",
+      "required": [
+        "latex"
+      ],
+      "properties": {
+        "ascii": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "latex": {
+          "type": "string"
+        },
+        "unicode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "MethodKind": {
+      "type": "string",
+      "enum": [
+        "explicit",
+        "numerical"
+      ]
+    },
+    "NumericalConfig": {
+      "type": "object",
+      "properties": {
+        "bracket": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "number",
+            "format": "double"
+          },
+          "maxItems": 2,
+          "minItems": 2
+        },
+        "initial_guess": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        },
+        "max_iter": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0.0
+        },
+        "solver": {
+          "default": "bisection",
+          "allOf": [
+            {
+              "$ref": "#/definitions/SolverKind"
+            }
+          ]
+        },
+        "tolerance_abs": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        },
+        "tolerance_rel": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        },
+        "unsupported_targets": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "QuantityInput": {
+      "anyOf": [
+        {
+          "type": "number",
+          "format": "double"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "required": [
+            "unit",
+            "value"
+          ],
+          "properties": {
+            "unit": {
+              "type": "string"
+            },
+            "value": {
+              "type": "number",
+              "format": "double"
+            }
+          }
+        }
+      ]
+    },
+    "Reference": {
+      "type": "object",
+      "required": [
+        "source"
+      ],
+      "properties": {
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "RelationDef": {
+      "type": "object",
+      "required": [
+        "form",
+        "residual"
+      ],
+      "properties": {
+        "form": {
+          "$ref": "#/definitions/RelationForm"
+        },
+        "residual": {
+          "type": "string"
+        }
+      }
+    },
+    "RelationForm": {
+      "type": "string",
+      "enum": [
+        "residual"
+      ]
+    },
+    "RelationTolerance": {
+      "type": "object",
+      "required": [
+        "abs",
+        "rel"
+      ],
+      "properties": {
+        "abs": {
+          "type": "number",
+          "format": "double"
+        },
+        "rel": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "ResolverKind": {
+      "type": "string",
+      "enum": [
+        "fluid_property",
+        "material_property"
+      ]
+    },
+    "SolveConfig": {
+      "type": "object",
+      "properties": {
+        "default_target": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "explicit_forms": {
+          "default": {},
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "numerical": {
+          "default": {
+            "bracket": null,
+            "initial_guess": null,
+            "max_iter": null,
+            "solver": "bisection",
+            "tolerance_abs": null,
+            "tolerance_rel": null,
+            "unsupported_targets": []
+          },
+          "allOf": [
+            {
+              "$ref": "#/definitions/NumericalConfig"
+            }
+          ]
+        }
+      }
+    },
+    "SolverKind": {
+      "type": "string",
+      "enum": [
+        "bisection"
+      ]
+    },
+    "Taxonomy": {
+      "type": "object",
+      "required": [
+        "category"
+      ],
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "subcategories": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "TestCase": {
+      "type": "object",
+      "required": [
+        "full_state"
+      ],
+      "properties": {
+        "branch": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "default": "",
+          "type": "string"
+        },
+        "full_state": {
+          "description": "Full known-valid variable state; should include all equation variables.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/QuantityInput"
+          }
+        },
+        "id": {
+          "default": "case",
+          "type": "string"
+        },
+        "tolerances": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/CaseTolerance"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "verify": {
+          "default": {
+            "residual_zero": true,
+            "solve_targets": []
+          },
+          "allOf": [
+            {
+              "$ref": "#/definitions/TestCaseVerify"
+            }
+          ]
+        }
+      }
+    },
+    "TestCaseVerify": {
+      "type": "object",
+      "properties": {
+        "residual_zero": {
+          "default": true,
+          "type": "boolean"
+        },
+        "solve_targets": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TestSolveTargetSpec"
+          }
+        }
+      }
+    },
+    "TestSolveTarget": {
+      "type": "object",
+      "required": [
+        "target"
+      ],
+      "properties": {
+        "methods": {
+          "default": null,
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/MethodKind"
+          }
+        },
+        "target": {
+          "type": "string"
+        },
+        "tolerances": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/CaseTolerance"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "TestSolveTargetSpec": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/definitions/TestSolveTarget"
+        }
+      ]
+    },
+    "TestsConfig": {
+      "type": "object",
+      "required": [
+        "cases"
+      ],
+      "properties": {
+        "case": {
+          "description": "Single-case shorthand; equivalent to one entry in `cases`.",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/TestCase"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cases": {
+          "description": "List of test cases for this equation.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TestCase"
+          }
+        },
+        "relation_tolerance": {
+          "description": "Optional relation residual tolerance override.",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/RelationTolerance"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "solve_tolerance": {
+          "description": "Optional solve tolerance override.",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/CaseTolerance"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "units_policy": {
+          "description": "Unit normalization policy for test input values.",
+          "default": "auto_convert_to_si",
+          "allOf": [
+            {
+              "$ref": "#/definitions/UnitsPolicy"
+            }
+          ]
+        }
+      }
+    },
+    "TestsSchema": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/TestsConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TestCase"
+          }
+        }
+      ]
+    },
+    "UnitsPolicy": {
+      "type": "string",
+      "enum": [
+        "auto_convert_to_si"
+      ]
+    },
+    "VariableConstraint": {
+      "type": "object",
+      "properties": {
+        "integer": {
+          "default": false,
+          "type": "boolean"
+        },
+        "max": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        },
+        "min": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        },
+        "nonzero": {
+          "default": false,
+          "type": "boolean"
+        },
+        "positive": {
+          "default": false,
+          "type": "boolean"
+        }
+      }
+    },
+    "VariableDef": {
+      "type": "object",
+      "required": [
+        "dimension",
+        "name"
+      ],
+      "properties": {
+        "aliases": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "constraints": {
+          "default": {
+            "integer": false,
+            "max": null,
+            "min": null,
+            "nonzero": false,
+            "positive": false
+          },
+          "allOf": [
+            {
+              "$ref": "#/definitions/VariableConstraint"
+            }
+          ]
+        },
+        "default_unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dimension": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "resolver": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/VariableResolver"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "symbol": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "VariableResolver": {
+      "type": "object",
+      "required": [
+        "kind",
+        "property",
+        "source"
+      ],
+      "properties": {
+        "kind": {
+          "$ref": "#/definitions/ResolverKind"
+        },
+        "property": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

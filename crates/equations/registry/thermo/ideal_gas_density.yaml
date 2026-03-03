@@ -1,0 +1,29 @@
+key: ideal_gas_density
+slug: density
+taxonomy:
+  category: thermo
+  subcategories: [ideal_gas]
+name: Ideal Gas Law (Density Form)
+display:
+  latex: "P = \\rho R T"
+variables:
+  P: { name: Absolute pressure, dimension: pressure }
+  rho: { name: Density, symbol: "\\rho", dimension: density }
+  R: { name: Specific gas constant, symbol: "R", dimension: gas_constant, default_unit: "J/(kg*K)" }
+  T: { name: Absolute temperature, symbol: "T", dimension: temperature }
+residual: "P - rho * R * T"
+solve:
+  explicit_forms:
+    P: rho * R * T
+    rho: P / (R * T)
+    R: P / (rho * T)
+    T: P / (rho * R)
+assumptions:
+  - Thermally and calorically ideal gas behavior.
+  - Single-phase gas state.
+tests:
+  - full_state:
+      P: "101325.063 Pa"
+      rho: "1.17683 kg/m3"
+      R: "287 J/(kg*K)"
+      T: "300 K"

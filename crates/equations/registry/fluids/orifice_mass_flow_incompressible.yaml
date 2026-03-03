@@ -1,0 +1,31 @@
+key: orifice_mass_flow_incompressible
+taxonomy:
+  category: fluids
+name: Incompressible Orifice Mass Flow
+display:
+  latex: '\dot{m} = C_d A \sqrt{2 \rho \Delta p}'
+variables:
+  m_dot: { name: Mass flow rate, dimension: mass_flow_rate }
+  C_d: { name: Discharge coefficient, dimension: ratio }
+  A: { name: Orifice area, dimension: area }
+  rho: { name: Fluid density, symbol: '\rho', dimension: density }
+  delta_p: { name: Pressure drop, symbol: '\Delta p', dimension: pressure }
+residual: "m_dot - (C_d * A * sqrt(2 * rho * delta_p))"
+solve:
+  explicit_forms:
+    m_dot: C_d * A * sqrt(2 * rho * delta_p)
+    C_d: m_dot / (A * sqrt(2 * rho * delta_p))
+    A: m_dot / (C_d * sqrt(2 * rho * delta_p))
+    rho: (m_dot / (C_d * A))^2 / (2 * delta_p)
+    delta_p: (m_dot / (C_d * A))^2 / (2 * rho)
+  numerical:
+    unsupported_targets: [m_dot, C_d, A, rho, delta_p]
+assumptions:
+  - Incompressible single-phase flow through a sharp-edged restriction.
+tests:
+  - full_state:
+      m_dot: "1 kg/s"
+      C_d: 1.0
+      A: "1 m2"
+      rho: "1 kg/m3"
+      delta_p: "0.5 Pa"

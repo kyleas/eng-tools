@@ -1,0 +1,25 @@
+key: cstar_ideal
+taxonomy:
+  category: rockets
+name: Ideal Characteristic Velocity
+display:
+  latex: 'c^* = \sqrt{\frac{R T_c}{\gamma}} \left(\frac{\gamma+1}{2}\right)^{(\gamma+1)/(2(\gamma-1))}'
+variables:
+  c_star: { name: Characteristic velocity, dimension: velocity }
+  R: { name: Gas constant, dimension: gas_constant }
+  T_c: { name: Chamber temperature, dimension: temperature }
+  gamma: { name: Specific heat ratio, symbol: '\gamma', dimension: dimensionless, constraints: { min: 1.01 } }
+residual: "c_star - (sqrt(R * T_c / gamma) * pow((gamma + 1) / 2, (gamma + 1) / (2 * (gamma - 1))))"
+solve:
+  explicit_forms:
+    c_star: sqrt(R * T_c / gamma) * pow((gamma + 1) / 2, (gamma + 1) / (2 * (gamma - 1)))
+  numerical:
+    unsupported_targets: [c_star, R, T_c, gamma]
+assumptions:
+  - Ideal nozzle flow with calorically perfect combustion products.
+tests:
+  - full_state:
+      c_star: "1708.6114511913577 m/s"
+      R: "355 J/(kg*K)"
+      T_c: "3500 K"
+      gamma: 1.22

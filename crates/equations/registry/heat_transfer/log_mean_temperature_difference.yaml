@@ -1,0 +1,23 @@
+key: log_mean_temperature_difference
+taxonomy:
+  category: heat_transfer
+name: Log-Mean Temperature Difference
+display:
+  latex: '\Delta T_{lm} = \frac{\Delta T_1 - \Delta T_2}{\ln(\Delta T_1 / \Delta T_2)}'
+variables:
+  delta_T_lm: { name: Log-mean temperature difference, symbol: '\Delta T_{lm}', dimension: temperature }
+  delta_T_1: { name: End temperature difference 1, symbol: '\Delta T_1', dimension: temperature }
+  delta_T_2: { name: End temperature difference 2, symbol: '\Delta T_2', dimension: temperature }
+residual: "delta_T_lm - ((delta_T_1 - delta_T_2) / ln(delta_T_1 / delta_T_2))"
+solve:
+  explicit_forms:
+    delta_T_lm: (delta_T_1 - delta_T_2) / ln(delta_T_1 / delta_T_2)
+  numerical:
+    unsupported_targets: [delta_T_lm, delta_T_1, delta_T_2]
+assumptions:
+  - End-point temperature differences remain positive and unequal.
+tests:
+  - full_state:
+      delta_T_lm: "28.85390081777927 K"
+      delta_T_1: "40 K"
+      delta_T_2: "20 K"

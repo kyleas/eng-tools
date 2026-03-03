@@ -1,0 +1,25 @@
+key: thermal_resistance_convection
+taxonomy:
+  category: heat_transfer
+name: Convection Thermal Resistance
+display:
+  latex: 'R_{th} = \frac{1}{h A}'
+variables:
+  R_th: { name: Thermal resistance, dimension: thermal_resistance }
+  h: { name: Convective heat transfer coefficient, dimension: heat_transfer_coefficient }
+  A: { name: Surface area, dimension: area }
+residual: "R_th - (1 / (h * A))"
+solve:
+  explicit_forms:
+    R_th: 1 / (h * A)
+    h: 1 / (R_th * A)
+    A: 1 / (R_th * h)
+  numerical:
+    unsupported_targets: [R_th, h, A]
+assumptions:
+  - Uniform convection coefficient over the area.
+tests:
+  - full_state:
+      R_th: "0.0095238095238 K/W"
+      h: "35 W/(m2*K)"
+      A: "3 m2"

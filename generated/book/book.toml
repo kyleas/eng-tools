@@ -1,0 +1,8 @@
+[book]
+title = "Engineering Handbook"
+authors = ["eng-tools"]
+language = "en"
+src = "src"
+
+[output.html]
+mathjax-support = true

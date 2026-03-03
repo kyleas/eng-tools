@@ -1,0 +1,23 @@
+key: isentropic_pressure_ratio
+taxonomy:
+  category: compressible
+name: Isentropic Pressure Ratio
+display:
+  latex: '\frac{p}{p_0} = \left(1+\frac{\gamma-1}{2}M^2\right)^{-\gamma/(\gamma-1)}'
+variables:
+  p_p0: { name: Static-to-stagnation pressure ratio, dimension: ratio }
+  M: { name: Mach number, dimension: mach }
+  gamma: { name: Specific heat ratio, symbol: '\gamma', dimension: dimensionless, constraints: { min: 1.01 } }
+residual: "p_p0 - pow(1 + ((gamma - 1) / 2) * M^2, -gamma / (gamma - 1))"
+solve:
+  explicit_forms:
+    p_p0: pow(1 + ((gamma - 1) / 2) * M^2, -gamma / (gamma - 1))
+  numerical:
+    unsupported_targets: [gamma]
+assumptions:
+  - One-dimensional isentropic flow of a calorically perfect gas.
+tests:
+  - full_state:
+      p_p0: 0.1278045254629509
+      M: 2.0
+      gamma: 1.4

@@ -1,0 +1,415 @@
+{
+  "schema_version": "1",
+  "model_version": "2026-03-02",
+  "artifact_type": "search_index",
+  "items": [
+    {
+      "key": "area_mach",
+      "path_id": "compressible.area_mach",
+      "name": "Isentropic Area-Mach Relation",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Isentropic nozzle area ratio as a function of Mach number.",
+      "aliases": [
+        "isentropic_area_mach"
+      ],
+      "solve_targets": [
+        "area_ratio",
+        "M"
+      ]
+    },
+    {
+      "key": "choked_mass_flux",
+      "path_id": "compressible.choked_mass_flux",
+      "name": "Choked Mass Flux",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Choked Mass Flux",
+      "aliases": [],
+      "solve_targets": [
+        "G_star"
+      ]
+    },
+    {
+      "key": "isentropic_density_ratio",
+      "path_id": "compressible.isentropic_density_ratio",
+      "name": "Isentropic Density Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Isentropic Density Ratio",
+      "aliases": [],
+      "solve_targets": [
+        "rho_rho0",
+        "M"
+      ]
+    },
+    {
+      "key": "isentropic_pressure_ratio",
+      "path_id": "compressible.isentropic_pressure_ratio",
+      "name": "Isentropic Pressure Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Isentropic Pressure Ratio",
+      "aliases": [],
+      "solve_targets": [
+        "p_p0",
+        "M"
+      ]
+    },
+    {
+      "key": "isentropic_temperature_ratio",
+      "path_id": "compressible.isentropic_temperature_ratio",
+      "name": "Isentropic Temperature Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Isentropic Temperature Ratio",
+      "aliases": [],
+      "solve_targets": [
+        "T_T0",
+        "M"
+      ]
+    },
+    {
+      "key": "circular_pipe_area",
+      "path_id": "fluids.circular_pipe_area",
+      "name": "Circular Pipe Flow Area",
+      "category": "fluids",
+      "subcategories": [],
+      "description": "Circular Pipe Flow Area",
+      "aliases": [],
+      "solve_targets": [
+        "A",
+        "D"
+      ]
+    },
+    {
+      "key": "colebrook",
+      "path_id": "fluids.colebrook",
+      "name": "Colebrook-White Friction Factor",
+      "category": "fluids",
+      "subcategories": [],
+      "description": "Implicit turbulent pipe-flow friction factor relation.",
+      "aliases": [],
+      "solve_targets": [
+        "f"
+      ]
+    },
+    {
+      "key": "continuity_mass_flow",
+      "path_id": "fluids.continuity_mass_flow",
+      "name": "Continuity Mass Flow",
+      "category": "fluids",
+      "subcategories": [],
+      "description": "Continuity Mass Flow",
+      "aliases": [],
+      "solve_targets": [
+        "m_dot",
+        "rho",
+        "A",
+        "V"
+      ]
+    },
+    {
+      "key": "darcy_weisbach_pressure_drop",
+      "path_id": "fluids.darcy_weisbach_pressure_drop",
+      "name": "Darcy-Weisbach Pressure Drop",
+      "category": "fluids",
+      "subcategories": [],
+      "description": "Darcy-Weisbach Pressure Drop",
+      "aliases": [],
+      "solve_targets": [
+        "delta_p",
+        "f",
+        "L",
+        "D",
+        "rho",
+        "V"
+      ]
+    },
+    {
+      "key": "orifice_mass_flow_incompressible",
+      "path_id": "fluids.orifice_mass_flow_incompressible",
+      "name": "Incompressible Orifice Mass Flow",
+      "category": "fluids",
+      "subcategories": [],
+      "description": "Incompressible Orifice Mass Flow",
+      "aliases": [],
+      "solve_targets": [
+        "m_dot",
+        "C_d",
+        "A",
+        "rho",
+        "delta_p"
+      ]
+    },
+    {
+      "key": "reynolds_number",
+      "path_id": "fluids.reynolds_number",
+      "name": "Reynolds Number",
+      "category": "fluids",
+      "subcategories": [],
+      "description": "Reynolds Number",
+      "aliases": [],
+      "solve_targets": [
+        "Re",
+        "rho",
+        "V",
+        "D",
+        "mu"
+      ]
+    },
+    {
+      "key": "conduction_plane_wall_heat_rate",
+      "path_id": "heat_transfer.conduction_plane_wall_heat_rate",
+      "name": "Plane-Wall Conduction Heat Rate",
+      "category": "heat_transfer",
+      "subcategories": [],
+      "description": "Plane-Wall Conduction Heat Rate",
+      "aliases": [],
+      "solve_targets": [
+        "Q_dot",
+        "k",
+        "A",
+        "T_h",
+        "T_c",
+        "L"
+      ]
+    },
+    {
+      "key": "convection_heat_rate",
+      "path_id": "heat_transfer.convection_heat_rate",
+      "name": "Convection Heat Transfer Rate",
+      "category": "heat_transfer",
+      "subcategories": [],
+      "description": "Convection Heat Transfer Rate",
+      "aliases": [],
+      "solve_targets": [
+        "Q_dot",
+        "h",
+        "A",
+        "T_s",
+        "T_inf"
+      ]
+    },
+    {
+      "key": "log_mean_temperature_difference",
+      "path_id": "heat_transfer.log_mean_temperature_difference",
+      "name": "Log-Mean Temperature Difference",
+      "category": "heat_transfer",
+      "subcategories": [],
+      "description": "Log-Mean Temperature Difference",
+      "aliases": [],
+      "solve_targets": [
+        "delta_T_lm"
+      ]
+    },
+    {
+      "key": "thermal_resistance_conduction",
+      "path_id": "heat_transfer.thermal_resistance_conduction",
+      "name": "Conduction Thermal Resistance",
+      "category": "heat_transfer",
+      "subcategories": [],
+      "description": "Conduction Thermal Resistance",
+      "aliases": [],
+      "solve_targets": [
+        "R_th",
+        "L",
+        "k",
+        "A"
+      ]
+    },
+    {
+      "key": "thermal_resistance_convection",
+      "path_id": "heat_transfer.thermal_resistance_convection",
+      "name": "Convection Thermal Resistance",
+      "category": "heat_transfer",
+      "subcategories": [],
+      "description": "Convection Thermal Resistance",
+      "aliases": [],
+      "solve_targets": [
+        "R_th",
+        "h",
+        "A"
+      ]
+    },
+    {
+      "key": "cstar_ideal",
+      "path_id": "rockets.cstar_ideal",
+      "name": "Ideal Characteristic Velocity",
+      "category": "rockets",
+      "subcategories": [],
+      "description": "Ideal Characteristic Velocity",
+      "aliases": [],
+      "solve_targets": [
+        "c_star"
+      ]
+    },
+    {
+      "key": "specific_impulse_ideal",
+      "path_id": "rockets.specific_impulse_ideal",
+      "name": "Ideal Specific Impulse",
+      "category": "rockets",
+      "subcategories": [],
+      "description": "Ideal Specific Impulse",
+      "aliases": [],
+      "solve_targets": [
+        "I_sp",
+        "C_f",
+        "c_star"
+      ]
+    },
+    {
+      "key": "thrust_coefficient_ideal",
+      "path_id": "rockets.thrust_coefficient_ideal",
+      "name": "Ideal Thrust Coefficient",
+      "category": "rockets",
+      "subcategories": [],
+      "description": "Ideal Thrust Coefficient",
+      "aliases": [],
+      "solve_targets": [
+        "C_f"
+      ]
+    },
+    {
+      "key": "thrust_from_mass_flow",
+      "path_id": "rockets.thrust_from_mass_flow",
+      "name": "Thrust From Mass Flow and Effective Exhaust Velocity",
+      "category": "rockets",
+      "subcategories": [],
+      "description": "Thrust From Mass Flow and Effective Exhaust Velocity",
+      "aliases": [],
+      "solve_targets": [
+        "F",
+        "m_dot",
+        "c_eff"
+      ]
+    },
+    {
+      "key": "axial_stress",
+      "path_id": "structures.axial_stress",
+      "name": "Axial Normal Stress",
+      "category": "structures",
+      "subcategories": [],
+      "description": "Axial Normal Stress",
+      "aliases": [],
+      "solve_targets": [
+        "sigma",
+        "F",
+        "A"
+      ]
+    },
+    {
+      "key": "beam_bending_stress",
+      "path_id": "structures.beam_bending_stress",
+      "name": "Beam Bending Stress",
+      "category": "structures",
+      "subcategories": [],
+      "description": "Beam Bending Stress",
+      "aliases": [],
+      "solve_targets": [
+        "sigma_b",
+        "M",
+        "c",
+        "I"
+      ]
+    },
+    {
+      "key": "euler_buckling_load",
+      "path_id": "structures.euler_buckling_load",
+      "name": "Euler Buckling Critical Load",
+      "category": "structures",
+      "subcategories": [],
+      "description": "Euler Buckling Critical Load",
+      "aliases": [],
+      "solve_targets": [
+        "P_cr",
+        "E",
+        "I",
+        "K",
+        "L"
+      ]
+    },
+    {
+      "key": "hoop_stress",
+      "path_id": "structures.hoop_stress",
+      "name": "Thin-Wall Hoop Stress",
+      "category": "structures",
+      "subcategories": [],
+      "description": "Thin-Wall Hoop Stress",
+      "aliases": [
+        "thin_wall_hoop_stress"
+      ],
+      "solve_targets": [
+        "sigma_h",
+        "P",
+        "r",
+        "t"
+      ]
+    },
+    {
+      "key": "longitudinal_stress_thin_wall",
+      "path_id": "structures.longitudinal_stress_thin_wall",
+      "name": "Thin-Wall Longitudinal Stress",
+      "category": "structures",
+      "subcategories": [],
+      "description": "Thin-Wall Longitudinal Stress",
+      "aliases": [],
+      "solve_targets": [
+        "sigma_l",
+        "P",
+        "r",
+        "t"
+      ]
+    },
+    {
+      "key": "shaft_torsion_stress",
+      "path_id": "structures.shaft_torsion_stress",
+      "name": "Circular Shaft Torsion Stress",
+      "category": "structures",
+      "subcategories": [],
+      "description": "Circular Shaft Torsion Stress",
+      "aliases": [],
+      "solve_targets": [
+        "tau",
+        "T",
+        "r",
+        "J"
+      ]
+    },
+    {
+      "key": "ideal_gas_density",
+      "path_id": "thermo.ideal_gas.density",
+      "name": "Ideal Gas Law (Density Form)",
+      "category": "thermo",
+      "subcategories": [
+        "ideal_gas"
+      ],
+      "description": "Ideal Gas Law (Density Form)",
+      "aliases": [],
+      "solve_targets": [
+        "P",
+        "rho",
+        "R",
+        "T"
+      ]
+    },
+    {
+      "key": "ideal_gas_mass_volume",
+      "path_id": "thermo.ideal_gas.mass_volume",
+      "name": "Ideal Gas Law (Mass-Volume Form)",
+      "category": "thermo",
+      "subcategories": [
+        "ideal_gas"
+      ],
+      "description": "Ideal Gas Law (Mass-Volume Form)",
+      "aliases": [],
+      "solve_targets": [
+        "P",
+        "V",
+        "m",
+        "R",
+        "T"
+      ]
+    }
+  ]
+}

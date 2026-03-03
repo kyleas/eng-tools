@@ -1,0 +1,28 @@
+# Typical authoring example:
+# - stays compact
+# - includes a diagram template
+# - relies on defaults for constraints, units, display variants, and test verification behavior
+key: hoop_stress
+taxonomy:
+  category: structures
+name: Thin-Wall Hoop Stress
+display:
+  latex: "\\sigma_h = \\frac{P r}{t}"
+variables:
+  sigma_h: { name: Hoop stress, symbol: '\sigma_h', dimension: stress }
+  P: { name: Internal pressure, dimension: pressure }
+  r: { name: Mean radius, dimension: length }
+  t: { name: Wall thickness, dimension: length, constraints: { nonzero: true } }
+residual: "sigma_h - (P * r / t)"
+solve:
+  explicit_forms:
+    sigma_h: P * r / t
+    P: sigma_h * t / r
+    r: sigma_h * t / P
+    t: P * r / sigma_h
+assumptions:
+  - Thin-wall approximation is valid.
+diagram:
+  template: thin_wall_cylinder
+tests:
+  - full_state: { P: "2.5 MPa", r: "0.2 m", t: "8 mm", sigma_h: "62.5 MPa" }

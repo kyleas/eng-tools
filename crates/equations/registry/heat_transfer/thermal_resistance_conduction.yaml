@@ -1,0 +1,28 @@
+key: thermal_resistance_conduction
+taxonomy:
+  category: heat_transfer
+name: Conduction Thermal Resistance
+display:
+  latex: 'R_{th} = \frac{L}{k A}'
+variables:
+  R_th: { name: Thermal resistance, dimension: thermal_resistance }
+  L: { name: Wall thickness, dimension: length }
+  k: { name: Thermal conductivity, dimension: thermal_conductivity }
+  A: { name: Area, dimension: area }
+residual: "R_th - (L / (k * A))"
+solve:
+  explicit_forms:
+    R_th: L / (k * A)
+    L: R_th * k * A
+    k: L / (R_th * A)
+    A: L / (R_th * k)
+  numerical:
+    unsupported_targets: [R_th, L, k, A]
+assumptions:
+  - One-dimensional steady conduction with constant properties.
+tests:
+  - full_state:
+      R_th: "0.05 K/W"
+      L: "0.1 m"
+      k: "10 W/(m*K)"
+      A: "0.2 m2"

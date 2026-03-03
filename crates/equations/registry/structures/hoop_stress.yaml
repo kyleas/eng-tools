@@ -1,0 +1,64 @@
+key: hoop_stress
+taxonomy:
+  category: structures
+  subcategories: []
+aliases:
+  - thin_wall_hoop_stress
+name: Thin-Wall Hoop Stress
+display:
+  latex: "\\sigma_h = \\frac{P r}{t}"
+variables:
+  sigma_h:
+    name: Hoop stress
+    symbol: '\sigma_h'
+    dimension: stress
+  P:
+    name: Internal pressure
+    dimension: pressure
+  r:
+    name: Mean radius
+    dimension: length
+  t:
+    name: Wall thickness
+    dimension: length
+    constraints:
+      nonzero: true
+residual: "sigma_h - (P * r / t)"
+solve:
+  explicit_forms:
+    sigma_h: P * r / t
+    P: sigma_h * t / r
+    r: sigma_h * t / P
+    t: P * r / sigma_h
+assumptions:
+  - Thin-wall approximation is valid (t << r).
+  - Material behavior remains in the elastic membrane-stress regime.
+references:
+  - source: Roark's Formulas for Stress and Strain
+    note: Thin-walled cylindrical pressure vessel relations.
+diagram:
+  template: thin_wall_cylinder
+tests:
+  units_policy: auto_convert_to_si
+  relation_tolerance: { abs: 1e-7, rel: 1e-8 }
+  solve_tolerance: { rel: 1e-8 }
+  cases:
+    - id: baseline_metric
+      description: MPa pressure with metric length inputs.
+      full_state:
+        P: "2.5 MPa"
+        r: "0.2 m"
+        t: "8 mm"
+        sigma_h: "62.5 MPa"
+    - id: baseline_imperial
+      description: Imperial pressure/length inputs converted to SI.
+      full_state:
+        P: "725 psi"
+        r: "24 in"
+        t: "0.5 in"
+        sigma_h: "34800 psi"
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: sigma_h
+            methods: [explicit, numerical]

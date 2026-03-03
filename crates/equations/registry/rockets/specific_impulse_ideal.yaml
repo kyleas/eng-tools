@@ -1,0 +1,25 @@
+key: specific_impulse_ideal
+taxonomy:
+  category: rockets
+name: Ideal Specific Impulse
+display:
+  latex: 'I_{sp} = \frac{C_f c^*}{g_0}'
+variables:
+  I_sp: { name: Specific impulse, dimension: specific_impulse }
+  C_f: { name: Thrust coefficient, dimension: ratio }
+  c_star: { name: Characteristic velocity, dimension: velocity }
+residual: "I_sp - (C_f * c_star / g0)"
+solve:
+  explicit_forms:
+    I_sp: C_f * c_star / g0
+    C_f: I_sp * g0 / c_star
+    c_star: I_sp * g0 / C_f
+  numerical:
+    unsupported_targets: [I_sp, C_f, c_star]
+assumptions:
+  - Vacuum-equivalent ideal performance relation.
+tests:
+  - full_state:
+      I_sp: "309.94684010132147 s"
+      C_f: 1.7684408756881704
+      c_star: "1718.7683350153386 m/s"

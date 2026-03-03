@@ -1,0 +1,25 @@
+key: thrust_from_mass_flow
+taxonomy:
+  category: rockets
+name: Thrust From Mass Flow and Effective Exhaust Velocity
+display:
+  latex: 'F = \dot{m} c_{eff}'
+variables:
+  F: { name: Thrust, dimension: force }
+  m_dot: { name: Mass flow rate, dimension: mass_flow_rate }
+  c_eff: { name: Effective exhaust velocity, dimension: velocity }
+residual: "F - (m_dot * c_eff)"
+solve:
+  explicit_forms:
+    F: m_dot * c_eff
+    m_dot: F / c_eff
+    c_eff: F / m_dot
+  numerical:
+    unsupported_targets: [F, m_dot, c_eff]
+assumptions:
+  - Pressure-thrust contribution is embedded in effective exhaust velocity.
+tests:
+  - full_state:
+      F: "500000 N"
+      m_dot: "250 kg/s"
+      c_eff: "2000 m/s"

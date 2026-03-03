@@ -1,0 +1,43 @@
+{
+  "schema_version": "1",
+  "model_version": "2026-03-02",
+  "artifact_type": "families",
+  "items": [
+    {
+      "key": "ideal_gas",
+      "name": "Ideal Gas Law",
+      "description": "Common engineering forms of the ideal-gas law under one canonical family.",
+      "canonical_law": "P * V = m * R * T",
+      "canonical_equation": "thermo.ideal_gas.mass_volume",
+      "assumptions": [
+        "Thermally and calorically ideal gas behavior.",
+        "Constant gas constant R in the operating range."
+      ],
+      "references": [
+        "Fundamentals of Thermodynamics (ideal-gas state relation)"
+      ],
+      "variants": [
+        {
+          "key": "mass_volume",
+          "name": "Mass-Volume Form",
+          "equation_id": "thermo.ideal_gas.mass_volume",
+          "display_latex": "P V = m R T",
+          "description": "",
+          "when_to_use": "Use when total mass and control-volume size are primary knowns.",
+          "assumptions": [],
+          "references": []
+        },
+        {
+          "key": "density",
+          "name": "Density Form",
+          "equation_id": "thermo.ideal_gas.density",
+          "display_latex": "P = \\rho R T",
+          "description": "",
+          "when_to_use": "Use when density-based flow/property calculations are primary.",
+          "assumptions": [],
+          "references": []
+        }
+      ]
+    }
+  ]
+}
