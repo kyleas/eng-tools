@@ -42,7 +42,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let sigma_h_qty = eq
         .solve(structures::hoop_stress::equation())
         .target_sigma_h()
-        .given_p(qty!("5 MPa + 12 psi"))
+        .given_p(qty!("5 MPa + 12 psia"))
         .given_r(qty!("3 ft + 2 in"))
         .given_t(qty!("8 mm"))
         .value()?;

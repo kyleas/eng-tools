@@ -2,9 +2,9 @@
 
 **Path ID:** `fluids.darcy_weisbach_pressure_drop`
 
-\[
+$$
 \Delta p = f \frac{L}{D} \frac{\rho V^2}{2}
-\]
+$$
 
 - Unicode: `Δ p = f · (L / D) · (ρ · V² / 2)`
 - ASCII: `delta_p = f * (L / D) * (rho * V^2 / 2)`
@@ -136,10 +136,13 @@ let value = eq.solve(equations::fluids::darcy_weisbach_pressure_drop::equation()
 
 ### Python
 ```python
-engpy.equations.fluids.solve_d(delta_p="...", f="...", l="...", rho="...", v="...")
+engpy.equations.fluids.darcy_weisbach_pressure_drop.solve_d(delta_p="...", f="...", l="...", rho="...", v="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.fluids.solve_d(delta_p="...", f="...", l="...", rho="...", v="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.fluids.darcy_weisbach_pressure_drop.solve_d(delta_p="...", f="...", l="...", rho="...", v="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("fluids.darcy_weisbach_pressure_drop")
+engpy.helpers.equation_targets_text("fluids.darcy_weisbach_pressure_drop")
+engpy.helpers.equation_variables_table("fluids.darcy_weisbach_pressure_drop")
+engpy.helpers.equation_target_count("fluids.darcy_weisbach_pressure_drop")
 ```
 
 ### Excel
@@ -147,6 +150,9 @@ engpy.equations.meta.equation_ascii("fluids.darcy_weisbach_pressure_drop")
 =ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_D("...","...","...","...","...")
 =ENG_FORMAT(ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_D("...","...","...","...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("fluids.darcy_weisbach_pressure_drop")
+=ENG_EQUATION_TARGETS_TEXT("fluids.darcy_weisbach_pressure_drop")
+=ENG_EQUATION_VARIABLES_TABLE("fluids.darcy_weisbach_pressure_drop")
+=ENG_EQUATION_TARGET_COUNT("fluids.darcy_weisbach_pressure_drop")
 ```
 
 **Excel arguments**

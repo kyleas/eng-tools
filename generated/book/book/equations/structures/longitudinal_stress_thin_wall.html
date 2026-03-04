@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-b9b2989c.js";
+            window.path_to_searchindex_js = "../../searchindex-cb405dff.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e22846d2.js"></script>
+        <script src="../../toc-3fe63638.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -178,9 +178,9 @@
                     <main>
                         <h1 id="thin-wall-longitudinal-stress"><a class="header" href="#thin-wall-longitudinal-stress">Thin-Wall Longitudinal Stress</a></h1>
 <p><strong>Path ID:</strong> <code>structures.longitudinal_stress_thin_wall</code></p>
-<p>[
+<p>$$
 \sigma_l = \frac{P r}{2 t}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>σ_l = P · r / (2 · t)</code></li>
 <li>ASCII: <code>sigma_l = P * r / (2 * t)</code></li>
@@ -272,15 +272,21 @@
 </span>let value = eq.solve(equations::structures::longitudinal_stress_thin_wall::equation()).for_target("P").value()?;
 <span class="boring">}</span></code></pre>
 <h3 id="python"><a class="header" href="#python">Python</a></h3>
-<pre><code class="language-python">engpy.equations.structures.solve_p(sigma_l="...", r="...", t="...")
+<pre><code class="language-python">engpy.equations.structures.longitudinal_stress_thin_wall.solve_p(sigma_l="...", r="...", t="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.structures.solve_p(sigma_l="...", r="...", t="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.structures.longitudinal_stress_thin_wall.solve_p(sigma_l="...", r="...", t="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("structures.longitudinal_stress_thin_wall")
+engpy.helpers.equation_targets_text("structures.longitudinal_stress_thin_wall")
+engpy.helpers.equation_variables_table("structures.longitudinal_stress_thin_wall")
+engpy.helpers.equation_target_count("structures.longitudinal_stress_thin_wall")
 </code></pre>
 <h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
 <pre><code class="language-excel">=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_P("...","...","...")
 =ENG_FORMAT(ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_P("...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("structures.longitudinal_stress_thin_wall")
+=ENG_EQUATION_TARGETS_TEXT("structures.longitudinal_stress_thin_wall")
+=ENG_EQUATION_VARIABLES_TABLE("structures.longitudinal_stress_thin_wall")
+=ENG_EQUATION_TARGET_COUNT("structures.longitudinal_stress_thin_wall")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>

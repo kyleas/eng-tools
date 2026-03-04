@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-b9b2989c.js";
+            window.path_to_searchindex_js = "../../searchindex-cb405dff.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e22846d2.js"></script>
+        <script src="../../toc-3fe63638.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -178,9 +178,9 @@
                     <main>
                         <h1 id="isentropic-temperature-ratio"><a class="header" href="#isentropic-temperature-ratio">Isentropic Temperature Ratio</a></h1>
 <p><strong>Path ID:</strong> <code>compressible.isentropic_temperature_ratio</code></p>
-<p>[
+<p>$$
 \frac{T}{T_0} = \left(1+\frac{\gamma-1}{2}M^2\right)^{-1}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>T_T0 = 1 / (1 + ((γ - 1) / 2) · M²)</code></li>
 <li>ASCII: <code>T_T0 = 1 / (1 + ((gamma - 1) / 2) * M^2)</code></li>
@@ -230,15 +230,21 @@
 </span>let value = eq.solve(equations::compressible::isentropic_temperature_ratio::equation()).for_target("M").value()?;
 <span class="boring">}</span></code></pre>
 <h3 id="python"><a class="header" href="#python">Python</a></h3>
-<pre><code class="language-python">engpy.equations.compressible.solve_m(t_t0="...", gamma="...")
+<pre><code class="language-python">engpy.equations.compressible.isentropic_temperature_ratio.solve_m(t_t0="...", gamma="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.compressible.solve_m(t_t0="...", gamma="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.compressible.isentropic_temperature_ratio.solve_m(t_t0="...", gamma="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("compressible.isentropic_temperature_ratio")
+engpy.helpers.equation_targets_text("compressible.isentropic_temperature_ratio")
+engpy.helpers.equation_variables_table("compressible.isentropic_temperature_ratio")
+engpy.helpers.equation_target_count("compressible.isentropic_temperature_ratio")
 </code></pre>
 <h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
 <pre><code class="language-excel">=ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_M("...","...")
 =ENG_FORMAT(ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_M("...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("compressible.isentropic_temperature_ratio")
+=ENG_EQUATION_TARGETS_TEXT("compressible.isentropic_temperature_ratio")
+=ENG_EQUATION_VARIABLES_TABLE("compressible.isentropic_temperature_ratio")
+=ENG_EQUATION_TARGET_COUNT("compressible.isentropic_temperature_ratio")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -254,7 +260,7 @@ engpy.equations.meta.equation_ascii("compressible.isentropic_temperature_ratio")
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../equations/fluids/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../equations/compressible/mach_angle.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -268,7 +274,7 @@ engpy.equations.meta.equation_ascii("compressible.isentropic_temperature_ratio")
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../equations/fluids/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../equations/compressible/mach_angle.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

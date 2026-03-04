@@ -2,9 +2,9 @@
 
 **Path ID:** `rockets.specific_impulse_ideal`
 
-\[
+$$
 I_{sp} = \frac{C_f c^*}{g_0}
-\]
+$$
 
 - Unicode: `I_sp = C_f · c_star / g₀`
 - ASCII: `I_sp = C_f * c_star / g0`
@@ -86,10 +86,13 @@ let value = eq.solve(equations::rockets::specific_impulse_ideal::equation()).for
 
 ### Python
 ```python
-engpy.equations.rockets.solve_c_f(i_sp="...", c_star="...")
+engpy.equations.rockets.specific_impulse_ideal.solve_c_f(i_sp="...", c_star="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.rockets.solve_c_f(i_sp="...", c_star="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.rockets.specific_impulse_ideal.solve_c_f(i_sp="...", c_star="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("rockets.specific_impulse_ideal")
+engpy.helpers.equation_targets_text("rockets.specific_impulse_ideal")
+engpy.helpers.equation_variables_table("rockets.specific_impulse_ideal")
+engpy.helpers.equation_target_count("rockets.specific_impulse_ideal")
 ```
 
 ### Excel
@@ -97,6 +100,9 @@ engpy.equations.meta.equation_ascii("rockets.specific_impulse_ideal")
 =ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_F("...","...")
 =ENG_FORMAT(ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_F("...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("rockets.specific_impulse_ideal")
+=ENG_EQUATION_TARGETS_TEXT("rockets.specific_impulse_ideal")
+=ENG_EQUATION_VARIABLES_TABLE("rockets.specific_impulse_ideal")
+=ENG_EQUATION_TARGET_COUNT("rockets.specific_impulse_ideal")
 ```
 
 **Excel arguments**

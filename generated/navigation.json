@@ -11,7 +11,8 @@
           "choked_mass_flux",
           "isentropic_density_ratio",
           "isentropic_pressure_ratio",
-          "isentropic_temperature_ratio"
+          "isentropic_temperature_ratio",
+          "mach_angle"
         ]
       }
     },

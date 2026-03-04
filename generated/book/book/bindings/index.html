@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b9b2989c.js";
+            window.path_to_searchindex_js = "../searchindex-cb405dff.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-e22846d2.js"></script>
+        <script src="../toc-3fe63638.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -190,9 +190,9 @@
 <p><code>binding_spec.json</code> is transport-agnostic (function names, args, returns, help, examples). <code>invoke_protocol.json</code> documents the current runtime transport contract.</p>
 <h2 id="naming-rules"><a class="header" href="#naming-rules">Naming Rules</a></h2>
 <ul>
-<li>Python: namespaced modules (<code>engpy.equations.&lt;category&gt;.*</code>, <code>engpy.devices.*</code>, <code>engpy.fluids.*</code>, <code>engpy.materials.*</code>, <code>engpy.constants.*</code>).</li>
+<li>Python: namespaced modules (<code>engpy.equations.&lt;category&gt;.&lt;equation_slug&gt;.*</code>, <code>engpy.devices.*</code>, <code>engpy.fluids.*</code>, <code>engpy.materials.*</code>, <code>engpy.constants.*</code>).</li>
 <li>Excel: flat worksheet-friendly functions (<code>ENG_*</code>).</li>
-<li>Families are exposed under <code>engpy.equations.families.&lt;family&gt;</code>.</li>
+<li>Families are exposed under <code>engpy.equations.families.&lt;family&gt;.&lt;variant&gt;</code>.</li>
 </ul>
 <h2 id="metadata-and-diagnostics-functions"><a class="header" href="#metadata-and-diagnostics-functions">Metadata and Diagnostics Functions</a></h2>
 <ul>
@@ -208,33 +208,113 @@
 <li><code>engpy.equations.meta.equation_description(path_id)</code></li>
 <li><code>engpy.equations.meta.equation_family(path_id)</code></li>
 <li><code>engpy.equations.meta.equation_default_unit(path_id, variable)</code></li>
+<li><code>engpy.helpers.equation_targets_text(path_id)</code></li>
+<li><code>engpy.helpers.equation_variables_text(path_id)</code></li>
+<li><code>engpy.helpers.equation_branches_text(path_id)</code></li>
+<li><code>engpy.helpers.fluid_properties_text(key)</code></li>
+<li><code>engpy.helpers.material_properties_text(key)</code></li>
+<li><code>engpy.helpers.device_modes_text(key)</code></li>
+<li><code>engpy.helpers.equation_targets_table(path_id)</code></li>
+<li><code>engpy.helpers.equation_variables_table(path_id)</code></li>
+<li><code>engpy.helpers.equation_branches_table(path_id)</code></li>
+<li><code>engpy.helpers.fluid_properties_table(key)</code></li>
+<li><code>engpy.helpers.material_properties_table(key)</code></li>
+<li><code>engpy.helpers.equation_target_count(path_id)</code></li>
+<li><code>engpy.helpers.equation_variable_count(path_id)</code></li>
+<li><code>engpy.helpers.fluid_property_count(key)</code></li>
+<li><code>engpy.helpers.material_property_count(key)</code></li>
+<li><code>engpy.helpers.device_mode_count(key)</code></li>
 <li><code>engpy.helpers.format_value(value, in_unit, out_unit)</code></li>
 <li><code>engpy.helpers.meta_get(entity, key, field)</code></li>
 </ul>
 </li>
 <li>Excel:
 <ul>
-<li><code>ENG_FORMAT(value, in_unit, out_unit)</code></li>
-<li><code>ENG_META(entity, key, field)</code></li>
-<li><code>ENG_EQUATION_META(path_id)</code></li>
-<li><code>ENG_EQUATION_ASCII(path_id)</code></li>
-<li><code>ENG_EQUATION_UNICODE(path_id)</code></li>
-<li><code>ENG_EQUATION_LATEX(path_id)</code></li>
-<li><code>ENG_EQUATION_TARGETS(path_id)</code></li>
-<li><code>ENG_EQUATION_VARIABLES(path_id)</code></li>
-<li><code>ENG_EQUATION_NAME(path_id)</code></li>
-<li><code>ENG_EQUATION_DESCRIPTION(path_id)</code></li>
-<li><code>ENG_EQUATION_FAMILY(path_id)</code></li>
-<li><code>ENG_EQUATION_DEFAULT_UNIT(path_id, variable)</code></li>
+<li>
+<p><code>ENG_FORMAT(value, in_unit, out_unit)</code></p>
+</li>
+<li>
+<p><code>ENG_META(entity, key, field)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_META(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_ASCII(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_UNICODE(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_LATEX(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_TARGETS(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_VARIABLES(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_NAME(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_DESCRIPTION(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_FAMILY(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_DEFAULT_UNIT(path_id, variable)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_TARGETS_TEXT(path_id)</code> / <code>ENG_EQUATION_VARIABLES_TEXT(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_BRANCHES_TEXT(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_FLUID_PROPERTIES_TEXT(fluid_key)</code> / <code>ENG_MATERIAL_PROPERTIES_TEXT(material_key)</code> / <code>ENG_DEVICE_MODES_TEXT(device_key)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_TARGETS_TABLE(path_id)</code> / <code>ENG_EQUATION_VARIABLES_TABLE(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_BRANCHES_TABLE(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_FLUID_PROPERTIES_TABLE(fluid_key)</code> / <code>ENG_MATERIAL_PROPERTIES_TABLE(material_key)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_TARGET_COUNT(path_id)</code> / <code>ENG_EQUATION_VARIABLE_COUNT(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_FLUID_PROPERTY_COUNT(fluid_key)</code> / <code>ENG_MATERIAL_PROPERTY_COUNT(material_key)</code> / <code>ENG_DEVICE_MODE_COUNT(device_key)</code></p>
+</li>
 </ul>
 </li>
 </ul>
+<p>Delimited TEXT helpers use <code>; </code> as a deterministic separator.</p>
 <p>Use these helpers for a composable workflow: keep core engineering calls simple, then layer formatting/reference metadata as needed.</p>
 <h3 id="clean-excel-pattern"><a class="header" href="#clean-excel-pattern">Clean Excel Pattern</a></h3>
 <pre><code class="language-excel">=ENG_HOOP_STRESS_SIGMA_H(P, r, t)
 =ENG_FORMAT(ENG_HOOP_STRESS_SIGMA_H(P, r, t), "Pa", "psia")
 =ENG_EQUATION_ASCII("structures.hoop_stress")
 =ENG_META("equation", "structures.hoop_stress", "targets")
+</code></pre>
+<h3 id="excel-single-cell-text-helpers"><a class="header" href="#excel-single-cell-text-helpers">Excel single-cell text helpers</a></h3>
+<pre><code class="language-excel">=ENG_EQUATION_TARGETS_TEXT("structures.hoop_stress")
+=ENG_EQUATION_VARIABLES_TEXT("structures.hoop_stress")
+=ENG_EQUATION_BRANCHES_TEXT("compressible.area_mach")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_MATERIAL_PROPERTIES_TEXT("stainless_304")
+=ENG_DEVICE_MODES_TEXT("pipe_loss")
+</code></pre>
+<h3 id="excel-spill-range-table-helpers"><a class="header" href="#excel-spill-range-table-helpers">Excel spill-range table helpers</a></h3>
+<pre><code class="language-excel">=ENG_EQUATION_VARIABLES_TABLE("structures.hoop_stress")
+=ENG_EQUATION_TARGETS_TABLE("structures.hoop_stress")
+=ENG_EQUATION_BRANCHES_TABLE("compressible.area_mach")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_MATERIAL_PROPERTIES_TABLE("stainless_304")
 </code></pre>
 <p>Native in-process runtime supports Python usage on Linux and Windows without requiring a platform-specific executable per call.</p>
 <h2 id="build--install-native-python-runtime"><a class="header" href="#build--install-native-python-runtime">Build / Install (Native Python Runtime)</a></h2>

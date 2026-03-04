@@ -15,9 +15,9 @@ Rust remains the authoritative implementation. Generated Python and Excel bindin
 
 ## Naming Rules
 
-- Python: namespaced modules (`engpy.equations.<category>.*`, `engpy.devices.*`, `engpy.fluids.*`, `engpy.materials.*`, `engpy.constants.*`).
+- Python: namespaced modules (`engpy.equations.<category>.<equation_slug>.*`, `engpy.devices.*`, `engpy.fluids.*`, `engpy.materials.*`, `engpy.constants.*`).
 - Excel: flat worksheet-friendly functions (`ENG_*`).
-- Families are exposed under `engpy.equations.families.<family>`.
+- Families are exposed under `engpy.equations.families.<family>.<variant>`.
 
 ## Metadata and Diagnostics Functions
 
@@ -32,6 +32,22 @@ Rust remains the authoritative implementation. Generated Python and Excel bindin
   - `engpy.equations.meta.equation_description(path_id)`
   - `engpy.equations.meta.equation_family(path_id)`
   - `engpy.equations.meta.equation_default_unit(path_id, variable)`
+  - `engpy.helpers.equation_targets_text(path_id)`
+  - `engpy.helpers.equation_variables_text(path_id)`
+  - `engpy.helpers.equation_branches_text(path_id)`
+  - `engpy.helpers.fluid_properties_text(key)`
+  - `engpy.helpers.material_properties_text(key)`
+  - `engpy.helpers.device_modes_text(key)`
+  - `engpy.helpers.equation_targets_table(path_id)`
+  - `engpy.helpers.equation_variables_table(path_id)`
+  - `engpy.helpers.equation_branches_table(path_id)`
+  - `engpy.helpers.fluid_properties_table(key)`
+  - `engpy.helpers.material_properties_table(key)`
+  - `engpy.helpers.equation_target_count(path_id)`
+  - `engpy.helpers.equation_variable_count(path_id)`
+  - `engpy.helpers.fluid_property_count(key)`
+  - `engpy.helpers.material_property_count(key)`
+  - `engpy.helpers.device_mode_count(key)`
   - `engpy.helpers.format_value(value, in_unit, out_unit)`
   - `engpy.helpers.meta_get(entity, key, field)`
 - Excel:
@@ -48,6 +64,17 @@ Rust remains the authoritative implementation. Generated Python and Excel bindin
   - `ENG_EQUATION_FAMILY(path_id)`
   - `ENG_EQUATION_DEFAULT_UNIT(path_id, variable)`
 
+  - `ENG_EQUATION_TARGETS_TEXT(path_id)` / `ENG_EQUATION_VARIABLES_TEXT(path_id)`
+  - `ENG_EQUATION_BRANCHES_TEXT(path_id)`
+  - `ENG_FLUID_PROPERTIES_TEXT(fluid_key)` / `ENG_MATERIAL_PROPERTIES_TEXT(material_key)` / `ENG_DEVICE_MODES_TEXT(device_key)`
+  - `ENG_EQUATION_TARGETS_TABLE(path_id)` / `ENG_EQUATION_VARIABLES_TABLE(path_id)`
+  - `ENG_EQUATION_BRANCHES_TABLE(path_id)`
+  - `ENG_FLUID_PROPERTIES_TABLE(fluid_key)` / `ENG_MATERIAL_PROPERTIES_TABLE(material_key)`
+  - `ENG_EQUATION_TARGET_COUNT(path_id)` / `ENG_EQUATION_VARIABLE_COUNT(path_id)`
+  - `ENG_FLUID_PROPERTY_COUNT(fluid_key)` / `ENG_MATERIAL_PROPERTY_COUNT(material_key)` / `ENG_DEVICE_MODE_COUNT(device_key)`
+
+Delimited TEXT helpers use `; ` as a deterministic separator.
+
 Use these helpers for a composable workflow: keep core engineering calls simple, then layer formatting/reference metadata as needed.
 
 ### Clean Excel Pattern
@@ -57,6 +84,27 @@ Use these helpers for a composable workflow: keep core engineering calls simple,
 =ENG_FORMAT(ENG_HOOP_STRESS_SIGMA_H(P, r, t), "Pa", "psia")
 =ENG_EQUATION_ASCII("structures.hoop_stress")
 =ENG_META("equation", "structures.hoop_stress", "targets")
+```
+
+### Excel single-cell text helpers
+
+```excel
+=ENG_EQUATION_TARGETS_TEXT("structures.hoop_stress")
+=ENG_EQUATION_VARIABLES_TEXT("structures.hoop_stress")
+=ENG_EQUATION_BRANCHES_TEXT("compressible.area_mach")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_MATERIAL_PROPERTIES_TEXT("stainless_304")
+=ENG_DEVICE_MODES_TEXT("pipe_loss")
+```
+
+### Excel spill-range table helpers
+
+```excel
+=ENG_EQUATION_VARIABLES_TABLE("structures.hoop_stress")
+=ENG_EQUATION_TARGETS_TABLE("structures.hoop_stress")
+=ENG_EQUATION_BRANCHES_TABLE("compressible.area_mach")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_MATERIAL_PROPERTIES_TABLE("stainless_304")
 ```
 
 Native in-process runtime supports Python usage on Linux and Windows without requiring a platform-specific executable per call.

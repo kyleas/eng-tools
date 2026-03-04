@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-b9b2989c.js";
+            window.path_to_searchindex_js = "../../searchindex-cb405dff.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e22846d2.js"></script>
+        <script src="../../toc-3fe63638.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -178,9 +178,9 @@
                     <main>
                         <h1 id="reynolds-number"><a class="header" href="#reynolds-number">Reynolds Number</a></h1>
 <p><strong>Path ID:</strong> <code>fluids.reynolds_number</code></p>
-<p>[
+<p>$$
 Re = \frac{\rho V D}{\mu}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>Re = ρ · V · D / μ</code></li>
 <li>ASCII: <code>Re = rho * V * D / mu</code></li>
@@ -289,15 +289,21 @@ Re = \frac{\rho V D}{\mu}
 </span>let value = eq.solve(equations::fluids::reynolds_number::equation()).for_target("D").value()?;
 <span class="boring">}</span></code></pre>
 <h3 id="python"><a class="header" href="#python">Python</a></h3>
-<pre><code class="language-python">engpy.equations.fluids.solve_d(re="...", rho="...", v="...", mu="...")
+<pre><code class="language-python">engpy.equations.fluids.reynolds_number.solve_d(re="...", rho="...", v="...", mu="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.fluids.solve_d(re="...", rho="...", v="...", mu="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.fluids.reynolds_number.solve_d(re="...", rho="...", v="...", mu="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("fluids.reynolds_number")
+engpy.helpers.equation_targets_text("fluids.reynolds_number")
+engpy.helpers.equation_variables_table("fluids.reynolds_number")
+engpy.helpers.equation_target_count("fluids.reynolds_number")
 </code></pre>
 <h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUIDS_REYNOLDS_NUMBER_D("...","...","...","...")
 =ENG_FORMAT(ENG_FLUIDS_REYNOLDS_NUMBER_D("...","...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("fluids.reynolds_number")
+=ENG_EQUATION_TARGETS_TEXT("fluids.reynolds_number")
+=ENG_EQUATION_VARIABLES_TABLE("fluids.reynolds_number")
+=ENG_EQUATION_TARGET_COUNT("fluids.reynolds_number")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>

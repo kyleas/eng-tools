@@ -604,6 +604,118 @@
       ]
     },
     {
+      "key": "mach_angle",
+      "path_id": "compressible.mach_angle",
+      "slug": "mach_angle",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Mach Angle",
+      "description": "Mach angle as a function of Mach number for supersonic flow.",
+      "latex": "\\mu = \\arcsin\\left(\\frac{1}{M}\\right)",
+      "unicode": "mu = asin(1/M)",
+      "ascii": "mu = asin(1/M)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "M",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        },
+        {
+          "target": "mu",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Calorically perfect gas, isentropic context.",
+        "Mach angle is defined for M >= 1."
+      ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
+      "references": [],
+      "variables": [
+        {
+          "key": "mu",
+          "name": "Mach angle",
+          "symbol": "\\mu",
+          "symbol_authored": true,
+          "dimension": "angle",
+          "default_unit": "rad",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M",
+          "name": "Mach number",
+          "symbol": "M",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::mach_angle::equation())\n    .target_mu()\n    .given_m(1.1)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::mach_angle::equation())\n    .target_mu()\n    .given_m(1.1)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_mu",
+          "style": "convenience",
+          "code": "let value = equations::compressible::mach_angle::solve_mu(\n    1.1,\n)?;",
+          "target": "mu",
+          "signature": "equations::compressible::mach_angle::solve_mu(M) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M",
+              "description": "Mach number"
+            }
+          ]
+        },
+        {
+          "label": "convenience_m",
+          "style": "convenience",
+          "code": "let value = equations::compressible::mach_angle::solve_m(\n    1.1410966606,\n)?;",
+          "target": "M",
+          "signature": "equations::compressible::mach_angle::solve_m(mu) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "mu",
+              "description": "Mach angle"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "key": "circular_pipe_area",
       "path_id": "fluids.circular_pipe_area",
       "slug": "circular_pipe_area",
@@ -830,7 +942,7 @@
       "name": "Continuity Mass Flow",
       "description": "Continuity Mass Flow",
       "latex": "\\dot{m} = \\rho A V",
-      "unicode": "m_dot = ρ · A · V",
+      "unicode": "\\dot{m} = ρ · A · V",
       "ascii": "m_dot = rho * A * V",
       "aliases": [],
       "default_target": null,
@@ -874,8 +986,8 @@
         {
           "key": "m_dot",
           "name": "Mass flow rate",
-          "symbol": "m_dot",
-          "symbol_authored": false,
+          "symbol": "\\dot{m}",
+          "symbol_authored": true,
           "dimension": "mass_flow_rate",
           "default_unit": "kg/s",
           "description": "",

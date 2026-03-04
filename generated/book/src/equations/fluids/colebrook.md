@@ -2,9 +2,9 @@
 
 **Path ID:** `fluids.colebrook`
 
-\[
+$$
 \frac{1}{\sqrt{f}} + 2\log_{10}\left(\frac{\varepsilon_D}{3.7} + \frac{2.51}{Re\sqrt{f}}\right) = 0
-\]
+$$
 
 - Unicode: `1/sqrt(f) + 2 log10(eps_D/3.7 + 2.51/(Re sqrt(f))) = 0`
 - ASCII: `1/sqrt(f) + 2*log10((eps_D/3.7) + (2.51/(Re*sqrt(f)))) = 0`
@@ -45,10 +45,13 @@ let value = eq.solve(equations::fluids::colebrook::equation()).for_target("f").v
 
 ### Python
 ```python
-engpy.equations.fluids.solve_f(eps_d="...", re="...")
+engpy.equations.fluids.colebrook.solve_f(eps_d="...", re="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.fluids.solve_f(eps_d="...", re="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.fluids.colebrook.solve_f(eps_d="...", re="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("fluids.colebrook")
+engpy.helpers.equation_targets_text("fluids.colebrook")
+engpy.helpers.equation_variables_table("fluids.colebrook")
+engpy.helpers.equation_target_count("fluids.colebrook")
 ```
 
 ### Excel
@@ -56,6 +59,9 @@ engpy.equations.meta.equation_ascii("fluids.colebrook")
 =ENG_FLUIDS_COLEBROOK_F("...","...")
 =ENG_FORMAT(ENG_FLUIDS_COLEBROOK_F("...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("fluids.colebrook")
+=ENG_EQUATION_TARGETS_TEXT("fluids.colebrook")
+=ENG_EQUATION_VARIABLES_TABLE("fluids.colebrook")
+=ENG_EQUATION_TARGET_COUNT("fluids.colebrook")
 ```
 
 **Excel arguments**

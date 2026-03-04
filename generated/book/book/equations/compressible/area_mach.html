@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-b9b2989c.js";
+            window.path_to_searchindex_js = "../../searchindex-cb405dff.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e22846d2.js"></script>
+        <script src="../../toc-3fe63638.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -178,9 +178,9 @@
                     <main>
                         <h1 id="isentropic-area-mach-relation"><a class="header" href="#isentropic-area-mach-relation">Isentropic Area-Mach Relation</a></h1>
 <p><strong>Path ID:</strong> <code>compressible.area_mach</code></p>
-<p>[
+<p>$$
 \frac{A}{A^*} = \frac{1}{M}\left(\frac{2}{\gamma+1}\left(1+\frac{\gamma-1}{2}M^2\right)\right)^{\frac{\gamma+1}{2(\gamma-1)}}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>A/A* = (1/M) * ((2/(gamma+1))*(1+((gamma-1)/2)M^2))^((gamma+1)/(2(gamma-1)))</code></li>
 <li>ASCII: <code>area_ratio = (1/M) * ((2/(gamma+1))*(1+((gamma-1)/2)*M^2))^((gamma+1)/(2*(gamma-1)))</code></li>
@@ -243,21 +243,40 @@
 </span>let value = eq.solve(equations::compressible::area_mach::equation()).for_target("M").value()?;
 <span class="boring">}</span></code></pre>
 <h3 id="python"><a class="header" href="#python">Python</a></h3>
-<pre><code class="language-python">engpy.equations.compressible.solve_m(area_ratio="...", gamma="...")
+<pre><code class="language-python">engpy.equations.compressible.area_mach.solve_m(area_ratio="...", gamma="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.compressible.solve_m(area_ratio="...", gamma="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.compressible.area_mach.solve_m(area_ratio="...", gamma="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("compressible.area_mach")
+engpy.helpers.equation_targets_text("compressible.area_mach")
+engpy.helpers.equation_variables_table("compressible.area_mach")
+engpy.helpers.equation_target_count("compressible.area_mach")
 </code></pre>
 <h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
 <pre><code class="language-excel">=ENG_COMPRESSIBLE_AREA_MACH_M("...","...")
 =ENG_FORMAT(ENG_COMPRESSIBLE_AREA_MACH_M("...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("compressible.area_mach")
+=ENG_EQUATION_TARGETS_TEXT("compressible.area_mach")
+=ENG_EQUATION_VARIABLES_TABLE("compressible.area_mach")
+=ENG_EQUATION_TARGET_COUNT("compressible.area_mach")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
 <li><code>area_ratio</code>: Area ratio</li>
 <li><code>gamma</code>: Specific heat ratio</li>
 </ul>
+<p><strong>Branch behavior</strong></p>
+<ul>
+<li>Default solver behavior uses preferred branch (<code>supersonic</code>) when one is marked.</li>
+<li>Supported branches: <code>subsonic</code>, <code>supersonic</code></li>
+</ul>
+<h3 id="python-explicit-branch"><a class="header" href="#python-explicit-branch">Python (explicit branch)</a></h3>
+<pre><code class="language-python">engpy.equations.compressible.area_mach.solve_m(area_ratio="...", gamma="...", branch="supersonic")
+</code></pre>
+<h3 id="excel-explicit-branch"><a class="header" href="#excel-explicit-branch">Excel (explicit branch)</a></h3>
+<pre><code class="language-excel">=ENG_COMPRESSIBLE_AREA_MACH_M("...","...","supersonic")
+=ENG_EQUATION_BRANCHES_TEXT("compressible.area_mach")
+=ENG_EQUATION_BRANCHES_TABLE("compressible.area_mach")
+</code></pre>
 
                     </main>
 

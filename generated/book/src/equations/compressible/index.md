@@ -5,3 +5,4 @@
 - [Isentropic Density Ratio](./isentropic_density_ratio.md)
 - [Isentropic Pressure Ratio](./isentropic_pressure_ratio.md)
 - [Isentropic Temperature Ratio](./isentropic_temperature_ratio.md)
+- [Mach Angle](./mach_angle.md)

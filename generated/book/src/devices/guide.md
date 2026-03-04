@@ -57,4 +57,13 @@ Devices/components compose multiple atomic equations into a higher-level enginee
 }
 ```
 
+## Calculator Device: Isentropic
+
+- API entrypoint: `eng::devices::isentropic_calc()`
+- Uses deterministic Mach-pivot orchestration (`input_kind -> pivot Mach -> target_kind`).
+- All mathematical relations are resolved through registry-backed atomic equations.
+- Branch-sensitive inverse paths (such as `area_ratio -> mach`) require explicit branch selection.
+- Outputs include scalar value, pivot Mach, and step diagnostics/path text.
+
 See [Devices Index](./index.md) and [Pipe Pressure Drop](./pipe_loss.md).
+See also [Isentropic Calculator](./isentropic_calc.md).

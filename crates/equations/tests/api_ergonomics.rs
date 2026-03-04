@@ -93,7 +93,7 @@ fn builder_runtime_quantity_expression_path_returns_value() {
     let sigma_h = eq
         .solve("structures.hoop_stress")
         .for_target("sigma_h")
-        .given("P", "5 MPa + 12 psi")
+        .given("P", "5 MPa + 12 psia")
         .given("r", "3 ft + 2 in")
         .given("t", "8 mm")
         .value()
@@ -106,7 +106,7 @@ fn builder_qty_macro_expression_path_returns_value() {
     let sigma_h = eq
         .solve("structures.hoop_stress")
         .for_target("sigma_h")
-        .given("P", qty!("5 MPa + 12 psi"))
+        .given("P", qty!("5 MPa + 12 psia"))
         .given("r", qty!("3 ft + 2 in"))
         .given("t", qty!("8 mm"))
         .value()

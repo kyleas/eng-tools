@@ -2,17 +2,17 @@
 
 **Path ID:** `fluids.continuity_mass_flow`
 
-\[
+$$
 \dot{m} = \rho A V
-\]
+$$
 
-- Unicode: `m_dot = ρ · A · V`
+- Unicode: `\dot{m} = ρ · A · V`
 - ASCII: `m_dot = rho * A * V`
 
 ## Variables
 
 <table><thead><tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr></thead><tbody>
-<tr><td><code>m_dot</code></td><td>Mass flow rate</td><td>\(m_dot\)</td><td><code>mass_flow_rate</code></td><td><code>kg/s</code></td></tr>
+<tr><td><code>m_dot</code></td><td>Mass flow rate</td><td>\(\dot{m}\)</td><td><code>mass_flow_rate</code></td><td><code>kg/s</code></td></tr>
 <tr><td><code>rho</code></td><td>Fluid density</td><td>\(\rho\)</td><td><code>density</code></td><td><code>kg/m3</code></td></tr>
 <tr><td><code>A</code></td><td>Flow area</td><td>\(A\)</td><td><code>area</code></td><td><code>m2</code></td></tr>
 <tr><td><code>V</code></td><td>Mean velocity</td><td>\(V\)</td><td><code>velocity</code></td><td><code>m/s</code></td></tr>
@@ -98,10 +98,13 @@ let value = eq.solve(equations::fluids::continuity_mass_flow::equation()).for_ta
 
 ### Python
 ```python
-engpy.equations.fluids.solve_a(m_dot="...", rho="...", v="...")
+engpy.equations.fluids.continuity_mass_flow.solve_a(m_dot="...", rho="...", v="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.fluids.solve_a(m_dot="...", rho="...", v="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.fluids.continuity_mass_flow.solve_a(m_dot="...", rho="...", v="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("fluids.continuity_mass_flow")
+engpy.helpers.equation_targets_text("fluids.continuity_mass_flow")
+engpy.helpers.equation_variables_table("fluids.continuity_mass_flow")
+engpy.helpers.equation_target_count("fluids.continuity_mass_flow")
 ```
 
 ### Excel
@@ -109,6 +112,9 @@ engpy.equations.meta.equation_ascii("fluids.continuity_mass_flow")
 =ENG_FLUIDS_CONTINUITY_MASS_FLOW_A("...","...","...")
 =ENG_FORMAT(ENG_FLUIDS_CONTINUITY_MASS_FLOW_A("...","...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("fluids.continuity_mass_flow")
+=ENG_EQUATION_TARGETS_TEXT("fluids.continuity_mass_flow")
+=ENG_EQUATION_VARIABLES_TABLE("fluids.continuity_mass_flow")
+=ENG_EQUATION_TARGET_COUNT("fluids.continuity_mass_flow")
 ```
 
 **Excel arguments**

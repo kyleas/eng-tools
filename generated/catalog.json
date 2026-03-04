@@ -55,6 +55,16 @@
         "resolver_contexts": []
       },
       {
+        "key": "mach_angle",
+        "path_id": "compressible.mach_angle",
+        "name": "Mach Angle",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
         "key": "circular_pipe_area",
         "path_id": "fluids.circular_pipe_area",
         "name": "Circular Pipe Flow Area",
@@ -431,6 +441,21 @@
           "reynolds_number"
         ],
         "route": "devices/pipe_loss.md"
+      },
+      {
+        "key": "isentropic_calc",
+        "name": "Isentropic Calculator",
+        "summary": "Calculator-style compressible device: solve any supported isentropic input to any supported output through Mach pivot orchestration.",
+        "supported_modes": [
+          "Input kinds: Mach, MachAngle, p/p0, T/T0, rho/rho0, A/A*",
+          "Branch-aware inversion for A/A*"
+        ],
+        "outputs": [
+          "value_si",
+          "pivot_mach",
+          "path diagnostics"
+        ],
+        "route": "devices/isentropic_calc.md"
       }
     ],
     "fluids": [
@@ -1359,6 +1384,31 @@
       }
     ],
     "links": [
+      {
+        "relation": "device_uses_equation",
+        "from": "isentropic_calc",
+        "to": "compressible.area_mach"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "isentropic_calc",
+        "to": "compressible.isentropic_density_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "isentropic_calc",
+        "to": "compressible.isentropic_pressure_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "isentropic_calc",
+        "to": "compressible.isentropic_temperature_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "isentropic_calc",
+        "to": "compressible.mach_angle"
+      },
       {
         "relation": "device_uses_equation",
         "from": "pipe_loss",

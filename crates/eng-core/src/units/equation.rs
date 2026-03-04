@@ -86,6 +86,7 @@ pub fn default_unit_for_dimension(dimension: &str) -> Option<&'static str> {
     let dim = normalize_dimension(dimension);
     match dim.as_str() {
         "dimensionless" | "ratio" | "friction_factor" | "mach" => Some("1"),
+        "angle" => Some("rad"),
         "pressure" | "stress" => Some("Pa"),
         "length" | "diameter" | "distance" | "roughness" => Some("m"),
         "area" => Some("m2"),
@@ -126,6 +127,7 @@ fn expected_signature_for_dimension(
         "dimensionless" | "ratio" | "friction_factor" | "mach" => {
             (DimensionSignature::dimless(), "dimensionless")
         }
+        "angle" => (DimensionSignature::dimless(), "angle"),
         "pressure" | "stress" => (DimensionSignature::new(1, -1, -2, 0, 0), "pressure/stress"),
         "length" | "diameter" | "distance" | "roughness" => {
             (DimensionSignature::new(0, 1, 0, 0, 0), "length")
@@ -277,6 +279,19 @@ mod tests {
         let psia = convert_equation_value_from_si("pressure", "psia", 101_325.0).expect("convert");
         let expected = 101_325.0 / 6_894.757_293_168;
         assert!((psia - expected).abs() < 1e-12);
+    }
+
+    #[test]
+    fn converts_angle_deg_to_rad() {
+        let rad = convert_equation_value_to_si("angle", "deg", 180.0).expect("convert");
+        assert!((rad - std::f64::consts::PI).abs() < 1e-12);
+    }
+
+    #[test]
+    fn converts_angle_rad_to_deg() {
+        let deg = convert_equation_value_from_si("angle", "deg", std::f64::consts::PI)
+            .expect("convert");
+        assert!((deg - 180.0).abs() < 1e-12);
     }
 
     #[test]

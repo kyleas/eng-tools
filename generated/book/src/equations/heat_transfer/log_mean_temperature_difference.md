@@ -2,9 +2,9 @@
 
 **Path ID:** `heat_transfer.log_mean_temperature_difference`
 
-\[
+$$
 \Delta T_{lm} = \frac{\Delta T_1 - \Delta T_2}{\ln(\Delta T_1 / \Delta T_2)}
-\]
+$$
 
 - Unicode: `Δ T_{lm} = (Δ T_1 - Δ T_2) / ln(Δ T_1 / Δ T_2)`
 - ASCII: `delta_T_lm = (delta_T_1 - delta_T_2) / ln(delta_T_1 / delta_T_2)`
@@ -64,10 +64,13 @@ let value = eq.solve(equations::heat_transfer::log_mean_temperature_difference::
 
 ### Python
 ```python
-engpy.equations.heat_transfer.solve_delta_t_lm(delta_t_1="...", delta_t_2="...")
+engpy.equations.heat_transfer.log_mean_temperature_difference.solve_delta_t_lm(delta_t_1="...", delta_t_2="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.heat_transfer.solve_delta_t_lm(delta_t_1="...", delta_t_2="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.heat_transfer.log_mean_temperature_difference.solve_delta_t_lm(delta_t_1="...", delta_t_2="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("heat_transfer.log_mean_temperature_difference")
+engpy.helpers.equation_targets_text("heat_transfer.log_mean_temperature_difference")
+engpy.helpers.equation_variables_table("heat_transfer.log_mean_temperature_difference")
+engpy.helpers.equation_target_count("heat_transfer.log_mean_temperature_difference")
 ```
 
 ### Excel
@@ -75,6 +78,9 @@ engpy.equations.meta.equation_ascii("heat_transfer.log_mean_temperature_differen
 =ENG_HEAT_TRANSFER_LOG_MEAN_TEMPERATURE_DIFFERENCE_DELTA_T_LM("...","...")
 =ENG_FORMAT(ENG_HEAT_TRANSFER_LOG_MEAN_TEMPERATURE_DIFFERENCE_DELTA_T_LM("...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("heat_transfer.log_mean_temperature_difference")
+=ENG_EQUATION_TARGETS_TEXT("heat_transfer.log_mean_temperature_difference")
+=ENG_EQUATION_VARIABLES_TABLE("heat_transfer.log_mean_temperature_difference")
+=ENG_EQUATION_TARGET_COUNT("heat_transfer.log_mean_temperature_difference")
 ```
 
 **Excel arguments**

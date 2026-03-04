@@ -2,9 +2,9 @@
 
 **Path ID:** `heat_transfer.thermal_resistance_convection`
 
-\[
+$$
 R_{th} = \frac{1}{h A}
-\]
+$$
 
 - Unicode: `R_th = 1 / (h · A)`
 - ASCII: `R_th = 1 / (h * A)`
@@ -82,10 +82,13 @@ let value = eq.solve(equations::heat_transfer::thermal_resistance_convection::eq
 
 ### Python
 ```python
-engpy.equations.heat_transfer.solve_a(r_th="...", h="...")
+engpy.equations.heat_transfer.thermal_resistance_convection.solve_a(r_th="...", h="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.heat_transfer.solve_a(r_th="...", h="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.heat_transfer.thermal_resistance_convection.solve_a(r_th="...", h="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("heat_transfer.thermal_resistance_convection")
+engpy.helpers.equation_targets_text("heat_transfer.thermal_resistance_convection")
+engpy.helpers.equation_variables_table("heat_transfer.thermal_resistance_convection")
+engpy.helpers.equation_target_count("heat_transfer.thermal_resistance_convection")
 ```
 
 ### Excel
@@ -93,6 +96,9 @@ engpy.equations.meta.equation_ascii("heat_transfer.thermal_resistance_convection
 =ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_A("...","...")
 =ENG_FORMAT(ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_A("...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("heat_transfer.thermal_resistance_convection")
+=ENG_EQUATION_TARGETS_TEXT("heat_transfer.thermal_resistance_convection")
+=ENG_EQUATION_VARIABLES_TABLE("heat_transfer.thermal_resistance_convection")
+=ENG_EQUATION_TARGET_COUNT("heat_transfer.thermal_resistance_convection")
 ```
 
 **Excel arguments**

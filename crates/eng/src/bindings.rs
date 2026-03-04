@@ -14,8 +14,28 @@ pub const INVOKE_SUPPORTED_OPS: &[&str] = &[
     "equation.name",
     "equation.description",
     "equation.family",
+    "equation.targets.text",
+    "equation.targets.table",
+    "equation.target.count",
+    "equation.branches.text",
+    "equation.branches.table",
+    "equation.variables.text",
+    "equation.variables.table",
+    "equation.variable.count",
     "format.value",
     "meta.get",
+    "fluid.properties.text",
+    "fluid.properties.table",
+    "fluid.property.count",
+    "material.properties.text",
+    "material.properties.table",
+    "material.property.count",
+    "device.modes.text",
+    "device.mode.count",
+    "device.isentropic_calc",
+    "device.isentropic_calc.value",
+    "device.isentropic_calc.pivot_mach",
+    "device.isentropic_calc.path_text",
     "device.pipe_loss.solve_delta_p",
     "fluid.prop",
     "material.prop",
@@ -183,11 +203,67 @@ pub fn invoke_protocol_spec() -> InvokeProtocolSpec {
                     "equation.family" => {
                         "Read parent equation family metadata when available".to_string()
                     }
+                    "equation.targets.text" => {
+                        "Read equation targets as one deterministic delimited string".to_string()
+                    }
+                    "equation.targets.table" => {
+                        "Read equation targets as 2-column table rows".to_string()
+                    }
+                    "equation.target.count" => "Read equation target count".to_string(),
+                    "equation.branches.text" => {
+                        "Read equation branches as one deterministic delimited string".to_string()
+                    }
+                    "equation.branches.table" => {
+                        "Read equation branches as 2-column table rows [branch, is_preferred]"
+                            .to_string()
+                    }
+                    "equation.variables.text" => {
+                        "Read equation variables as one deterministic delimited string".to_string()
+                    }
+                    "equation.variables.table" => {
+                        "Read equation variables as 2-column table rows".to_string()
+                    }
+                    "equation.variable.count" => "Read equation variable count".to_string(),
                     "format.value" => {
-                        "Convert/format SI values into requested engineering units".to_string()
+                        "Convert values between explicit input/output units".to_string()
                     }
                     "meta.get" => {
                         "Read scalar/list metadata from equation/device/fluid/material/constant"
+                            .to_string()
+                    }
+                    "fluid.properties.text" => {
+                        "Read fluid properties as one deterministic delimited string".to_string()
+                    }
+                    "fluid.properties.table" => {
+                        "Read fluid properties as 2-column table rows".to_string()
+                    }
+                    "fluid.property.count" => "Read fluid property count".to_string(),
+                    "material.properties.text" => {
+                        "Read material properties as one deterministic delimited string"
+                            .to_string()
+                    }
+                    "material.properties.table" => {
+                        "Read material properties as 2-column table rows".to_string()
+                    }
+                    "material.property.count" => "Read material property count".to_string(),
+                    "device.modes.text" => {
+                        "Read device supported modes as one deterministic delimited string"
+                            .to_string()
+                    }
+                    "device.mode.count" => "Read device supported mode count".to_string(),
+                    "device.isentropic_calc" => {
+                        "Run isentropic calculator device and return value+pivot+path diagnostics"
+                            .to_string()
+                    }
+                    "device.isentropic_calc.value" => {
+                        "Run isentropic calculator device and return scalar output value"
+                            .to_string()
+                    }
+                    "device.isentropic_calc.pivot_mach" => {
+                        "Run isentropic calculator device and return resolved pivot Mach".to_string()
+                    }
+                    "device.isentropic_calc.path_text" => {
+                        "Run isentropic calculator device and return compact path trace text"
                             .to_string()
                     }
                     "device.pipe_loss.solve_delta_p" => {

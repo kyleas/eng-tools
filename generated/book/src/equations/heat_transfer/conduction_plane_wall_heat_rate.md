@@ -2,9 +2,9 @@
 
 **Path ID:** `heat_transfer.conduction_plane_wall_heat_rate`
 
-\[
+$$
 \dot{Q} = k A \frac{T_h - T_c}{L}
-\]
+$$
 
 - Unicode: `Q_dot = k · A · (T_h - T_c) / L`
 - ASCII: `Q_dot = k * A * (T_h - T_c) / L`
@@ -143,10 +143,13 @@ let value = eq.solve(equations::heat_transfer::conduction_plane_wall_heat_rate::
 
 ### Python
 ```python
-engpy.equations.heat_transfer.solve_a(q_dot="...", k="...", t_h="...", t_c="...", l="...")
+engpy.equations.heat_transfer.conduction_plane_wall_heat_rate.solve_a(q_dot="...", k="...", t_h="...", t_c="...", l="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.heat_transfer.solve_a(q_dot="...", k="...", t_h="...", t_c="...", l="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.heat_transfer.conduction_plane_wall_heat_rate.solve_a(q_dot="...", k="...", t_h="...", t_c="...", l="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("heat_transfer.conduction_plane_wall_heat_rate")
+engpy.helpers.equation_targets_text("heat_transfer.conduction_plane_wall_heat_rate")
+engpy.helpers.equation_variables_table("heat_transfer.conduction_plane_wall_heat_rate")
+engpy.helpers.equation_target_count("heat_transfer.conduction_plane_wall_heat_rate")
 ```
 
 ### Excel
@@ -154,6 +157,9 @@ engpy.equations.meta.equation_ascii("heat_transfer.conduction_plane_wall_heat_ra
 =ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_A("...","...","...","...","...")
 =ENG_FORMAT(ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_A("...","...","...","...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("heat_transfer.conduction_plane_wall_heat_rate")
+=ENG_EQUATION_TARGETS_TEXT("heat_transfer.conduction_plane_wall_heat_rate")
+=ENG_EQUATION_VARIABLES_TABLE("heat_transfer.conduction_plane_wall_heat_rate")
+=ENG_EQUATION_TARGET_COUNT("heat_transfer.conduction_plane_wall_heat_rate")
 ```
 
 **Excel arguments**

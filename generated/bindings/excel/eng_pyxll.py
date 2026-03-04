@@ -13,10 +13,50 @@ def e_n_g_c_o_n_s_t(key):
     """Get constant value from registry | Arguments: | - key: Constant key | Returns: f64 | Example: =ENG_CONST('g0')"""
     return invoke("constant.get", {"key": key})
 
+@xl_func(name="ENG_ISENTROPIC", doc="Isentropic calculator: input kind -> target kind through Mach pivot | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: f64 | Example: =ENG_ISENTROPIC('mach',2.0,'pressure_ratio',1.4,'')")
+def e_n_g_i_s_e_n_t_r_o_p_i_c(value_kind_in, value_in, target_kind_out, gamma, branch=""):
+    """Isentropic calculator: input kind -> target kind through Mach pivot | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: f64 | Example: =ENG_ISENTROPIC('mach',2.0,'pressure_ratio',1.4,'')"""
+    return invoke("device.isentropic_calc.value", {"input_kind": value_kind_in, "input_value": value_in, "target_kind": target_kind_out, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_ISENTROPIC_FROM_A_ASTAR_TO_M", doc="Convenience isentropic path: A/A* -> Mach (branch required) | Arguments: | - value_in: Area ratio A/A* | - gamma: Specific heat ratio | - branch: Required: subsonic or supersonic | Returns: f64 | Example: =ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,'supersonic')")
+def e_n_g_i_s_e_n_t_r_o_p_i_c_f_r_o_m_a_a_s_t_a_r_t_o_m(value_in, gamma, branch=""):
+    """Convenience isentropic path: A/A* -> Mach (branch required) | Arguments: | - value_in: Area ratio A/A* | - gamma: Specific heat ratio | - branch: Required: subsonic or supersonic | Returns: f64 | Example: =ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,'supersonic')"""
+    return invoke("device.isentropic_calc.value", {"input_kind": "area_ratio", "target_kind": "mach", "input_value": value_in, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_ISENTROPIC_FROM_M_TO_P_P0", doc="Convenience isentropic path: Mach -> p/p0 | Arguments: | - value_in: Mach number | - gamma: Specific heat ratio | - branch: Optional branch (unused for this path) | Returns: f64 | Example: =ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,'')")
+def e_n_g_i_s_e_n_t_r_o_p_i_c_f_r_o_m_m_t_o_p_p0(value_in, gamma, branch=""):
+    """Convenience isentropic path: Mach -> p/p0 | Arguments: | - value_in: Mach number | - gamma: Specific heat ratio | - branch: Optional branch (unused for this path) | Returns: f64 | Example: =ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,'')"""
+    return invoke("device.isentropic_calc.value", {"input_kind": "mach", "target_kind": "pressure_ratio", "input_value": value_in, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0", doc="Convenience isentropic path: mu(deg) -> p/p0 | Arguments: | - value_in: Mach angle in degrees | - gamma: Specific heat ratio | - branch: Optional branch (unused for this path) | Returns: f64 | Example: =ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30.0,1.4,'')")
+def e_n_g_i_s_e_n_t_r_o_p_i_c_f_r_o_m_m_u_d_e_g_t_o_p_p0(value_in, gamma, branch=""):
+    """Convenience isentropic path: mu(deg) -> p/p0 | Arguments: | - value_in: Mach angle in degrees | - gamma: Specific heat ratio | - branch: Optional branch (unused for this path) | Returns: f64 | Example: =ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30.0,1.4,'')"""
+    return invoke("device.isentropic_calc.value", {"input_kind": "mach_angle_deg", "target_kind": "pressure_ratio", "input_value": value_in, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_ISENTROPIC_PATH_TEXT", doc="Isentropic calculator helper: compact step trace text | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: str | Example: =ENG_ISENTROPIC_PATH_TEXT('mach_angle_deg',30.0,'pressure_ratio',1.4,'')")
+def e_n_g_i_s_e_n_t_r_o_p_i_c_p_a_t_h_t_e_x_t(value_kind_in, value_in, target_kind_out, gamma, branch=""):
+    """Isentropic calculator helper: compact step trace text | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: str | Example: =ENG_ISENTROPIC_PATH_TEXT('mach_angle_deg',30.0,'pressure_ratio',1.4,'')"""
+    return invoke("device.isentropic_calc.path_text", {"input_kind": value_kind_in, "input_value": value_in, "target_kind": target_kind_out, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_ISENTROPIC_PIVOT_MACH", doc="Isentropic calculator helper: return resolved pivot Mach | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: f64 | Example: =ENG_ISENTROPIC_PIVOT_MACH('area_ratio',2.0,'mach',1.4,'subsonic')")
+def e_n_g_i_s_e_n_t_r_o_p_i_c_p_i_v_o_t_m_a_c_h(value_kind_in, value_in, target_kind_out, gamma, branch=""):
+    """Isentropic calculator helper: return resolved pivot Mach | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: f64 | Example: =ENG_ISENTROPIC_PIVOT_MACH('area_ratio',2.0,'mach',1.4,'subsonic')"""
+    return invoke("device.isentropic_calc.pivot_mach", {"input_kind": value_kind_in, "input_value": value_in, "target_kind": target_kind_out, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
 @xl_func(name="ENG_DEVICE_MODES", doc="Read supported modes for a device | Arguments: | - key: Device key | Returns: list | Example: =ENG_DEVICE_MODES('pipe_loss')")
 def e_n_g_d_e_v_i_c_e_m_o_d_e_s(key):
     """Read supported modes for a device | Arguments: | - key: Device key | Returns: list | Example: =ENG_DEVICE_MODES('pipe_loss')"""
     return invoke("meta.get", {"entity": "device", "field": "supported_modes", "key": key})
+
+@xl_func(name="ENG_DEVICE_MODE_COUNT", doc="Read device mode count | Arguments: | - key: Device key | Returns: u64 | Example: =ENG_DEVICE_MODE_COUNT('pipe_loss')")
+def e_n_g_d_e_v_i_c_e_m_o_d_e_c_o_u_n_t(key):
+    """Read device mode count | Arguments: | - key: Device key | Returns: u64 | Example: =ENG_DEVICE_MODE_COUNT('pipe_loss')"""
+    return invoke("device.mode.count", {"key": key})
+
+@xl_func(name="ENG_DEVICE_MODES_TEXT", doc="Read device modes as delimited text | Arguments: | - key: Device key | Returns: str | Example: =ENG_DEVICE_MODES_TEXT('pipe_loss')")
+def e_n_g_d_e_v_i_c_e_m_o_d_e_s_t_e_x_t(key):
+    """Read device modes as delimited text | Arguments: | - key: Device key | Returns: str | Example: =ENG_DEVICE_MODES_TEXT('pipe_loss')"""
+    return invoke("device.modes.text", {"key": key})
 
 @xl_func(name="ENG_PIPE_LOSS_DELTA_P", doc="Solve pipe pressure drop using Fixed/Colebrook friction model | Arguments: | - friction_model: Colebrook or Fixed | - fixed_f: Required when friction_model=Fixed | - density: Density input (optional with fluid context) | - viscosity: Viscosity input (required for Colebrook without fluid context) | - velocity: Velocity | - diameter: Diameter | - length: Length | - roughness: Roughness (Colebrook) | - fluid: Optional fluid key (e.g. H2O) | - in1_key: Fluid state input key 1 | - in1_value: Fluid state input value 1 | - in2_key: Fluid state input key 2 | - in2_value: Fluid state input value 2 | Returns: f64 | Example: =ENG_PIPE_LOSS_DELTA_P(...)")
 def e_n_g_p_i_p_e_l_o_s_s_d_e_l_t_a_p(friction_model, fixed_f, density, viscosity, velocity, diameter, length, roughness, fluid, in1_key, in1_value, in2_key, in2_value):
@@ -28,15 +68,25 @@ def e_n_g_e_q_u_a_t_i_o_n_a_s_c_i_i(path_id):
     """Read ASCII display form for an equation | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_ASCII('fluids.reynolds_number')"""
     return invoke("equation.ascii", {"path_id": path_id})
 
-@xl_func(name="ENG_COMPRESSIBLE_AREA_MACH_M", doc="Solve Isentropic Area-Mach Relation for M | Arguments: | - area_ratio: Area ratio | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_AREA_MACH_M('...','...')")
-def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_a_r_e_a_m_a_c_h_m(area_ratio, gamma):
-    """Solve Isentropic Area-Mach Relation for M | Arguments: | - area_ratio: Area ratio | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_AREA_MACH_M('...','...')"""
-    return invoke("equation.solve", {"path_id": "compressible.area_mach", "target": "M", "area_ratio": area_ratio, "gamma": gamma})
+@xl_func(name="ENG_EQUATION_BRANCHES_TABLE", doc="Read equation branch table rows [branch, is_preferred] | Arguments: | - path_id: Equation path id | Returns: list[list] | Example: =ENG_EQUATION_BRANCHES_TABLE('compressible.area_mach')")
+def e_n_g_e_q_u_a_t_i_o_n_b_r_a_n_c_h_e_s_t_a_b_l_e(path_id):
+    """Read equation branch table rows [branch, is_preferred] | Arguments: | - path_id: Equation path id | Returns: list[list] | Example: =ENG_EQUATION_BRANCHES_TABLE('compressible.area_mach')"""
+    return invoke("equation.branches.table", {"path_id": path_id})
 
-@xl_func(name="ENG_COMPRESSIBLE_AREA_MACH_AREA_RATIO", doc="Solve Isentropic Area-Mach Relation for area_ratio | Arguments: | - m: Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_AREA_MACH_AREA_RATIO('...','...')")
-def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_a_r_e_a_m_a_c_h_a_r_e_a_r_a_t_i_o(m, gamma):
-    """Solve Isentropic Area-Mach Relation for area_ratio | Arguments: | - m: Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_AREA_MACH_AREA_RATIO('...','...')"""
-    return invoke("equation.solve", {"path_id": "compressible.area_mach", "target": "area_ratio", "M": m, "gamma": gamma})
+@xl_func(name="ENG_EQUATION_BRANCHES_TEXT", doc="Read equation branch names as delimited text | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_BRANCHES_TEXT('compressible.area_mach')")
+def e_n_g_e_q_u_a_t_i_o_n_b_r_a_n_c_h_e_s_t_e_x_t(path_id):
+    """Read equation branch names as delimited text | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_BRANCHES_TEXT('compressible.area_mach')"""
+    return invoke("equation.branches.text", {"path_id": path_id})
+
+@xl_func(name="ENG_COMPRESSIBLE_AREA_MACH_M", doc="Solve Isentropic Area-Mach Relation for M | Arguments: | - area_ratio: Area ratio | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_AREA_MACH_M('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_a_r_e_a_m_a_c_h_m(area_ratio, gamma, branch=""):
+    """Solve Isentropic Area-Mach Relation for M | Arguments: | - area_ratio: Area ratio | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_AREA_MACH_M('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.area_mach", "target": "M", "area_ratio": area_ratio, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_COMPRESSIBLE_AREA_MACH_AREA_RATIO", doc="Solve Isentropic Area-Mach Relation for area_ratio | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_AREA_MACH_AREA_RATIO('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_a_r_e_a_m_a_c_h_a_r_e_a_r_a_t_i_o(m, gamma, branch=""):
+    """Solve Isentropic Area-Mach Relation for area_ratio | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_AREA_MACH_AREA_RATIO('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.area_mach", "target": "area_ratio", "M": m, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
 
 @xl_func(name="ENG_COMPRESSIBLE_CHOKED_MASS_FLUX_G_STAR", doc="Solve Choked Mass Flux for G_star | Arguments: | - p0: Stagnation pressure | - t0: Stagnation temperature | - gamma: Specific heat ratio | - r: Gas constant | Returns: f64 | Example: =ENG_COMPRESSIBLE_CHOKED_MASS_FLUX_G_STAR('...','...','...','...')")
 def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_c_h_o_k_e_d_m_a_s_s_f_l_u_x_g_s_t_a_r(p0, t0, gamma, r):
@@ -72,6 +122,16 @@ def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_i_s_e_n_t_r_o_p_i_c_t_e_m_p_e_r_a_t_u_r_e_r_a_
 def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_i_s_e_n_t_r_o_p_i_c_t_e_m_p_e_r_a_t_u_r_e_r_a_t_i_o_t_t0(m, gamma):
     """Solve Isentropic Temperature Ratio for T_T0 | Arguments: | - m: Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_T_T0('...','...')"""
     return invoke("equation.solve", {"path_id": "compressible.isentropic_temperature_ratio", "target": "T_T0", "M": m, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_MACH_ANGLE_M", doc="Solve Mach Angle for M | Arguments: | - mu: Mach angle | Returns: f64 | Example: =ENG_COMPRESSIBLE_MACH_ANGLE_M('...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_m_a_c_h_a_n_g_l_e_m(mu):
+    """Solve Mach Angle for M | Arguments: | - mu: Mach angle | Returns: f64 | Example: =ENG_COMPRESSIBLE_MACH_ANGLE_M('...')"""
+    return invoke("equation.solve", {"path_id": "compressible.mach_angle", "target": "M", "mu": mu})
+
+@xl_func(name="ENG_COMPRESSIBLE_MACH_ANGLE_MU", doc="Solve Mach Angle for mu | Arguments: | - m: Mach number | Returns: f64 | Example: =ENG_COMPRESSIBLE_MACH_ANGLE_MU('...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_m_a_c_h_a_n_g_l_e_m_u(m):
+    """Solve Mach Angle for mu | Arguments: | - m: Mach number | Returns: f64 | Example: =ENG_COMPRESSIBLE_MACH_ANGLE_MU('...')"""
+    return invoke("equation.solve", {"path_id": "compressible.mach_angle", "target": "mu", "M": m})
 
 @xl_func(name="ENG_EQUATION_DEFAULT_UNIT", doc="Read canonical default unit for one equation variable | Arguments: | - path_id: Equation path id | - variable: Variable key (case-insensitive) | Returns: str | Example: =ENG_EQUATION_DEFAULT_UNIT('fluids.reynolds_number','mu')")
 def e_n_g_e_q_u_a_t_i_o_n_d_e_f_a_u_l_t_u_n_i_t(path_id, variable):
@@ -473,10 +533,25 @@ def e_n_g_s_t_r_u_c_t_u_r_e_s_s_h_a_f_t_t_o_r_s_i_o_n_s_t_r_e_s_s_t_a_u(t, r, j)
     """Solve Circular Shaft Torsion Stress for tau | Arguments: | - t: Torque | - r: Radius | - j: Polar moment of inertia | Returns: f64 | Example: =ENG_STRUCTURES_SHAFT_TORSION_STRESS_TAU('...','...','...')"""
     return invoke("equation.solve", {"path_id": "structures.shaft_torsion_stress", "target": "tau", "T": t, "r": r, "J": j})
 
+@xl_func(name="ENG_EQUATION_TARGET_COUNT", doc="Read equation target count | Arguments: | - path_id: Equation path id | Returns: u64 | Example: =ENG_EQUATION_TARGET_COUNT('structures.hoop_stress')")
+def e_n_g_e_q_u_a_t_i_o_n_t_a_r_g_e_t_c_o_u_n_t(path_id):
+    """Read equation target count | Arguments: | - path_id: Equation path id | Returns: u64 | Example: =ENG_EQUATION_TARGET_COUNT('structures.hoop_stress')"""
+    return invoke("equation.target.count", {"path_id": path_id})
+
 @xl_func(name="ENG_EQUATION_TARGETS", doc="Read solve targets for an equation | Arguments: | - path_id: Equation path id | Returns: list | Example: =ENG_EQUATION_TARGETS('fluids.reynolds_number')")
 def e_n_g_e_q_u_a_t_i_o_n_t_a_r_g_e_t_s(path_id):
     """Read solve targets for an equation | Arguments: | - path_id: Equation path id | Returns: list | Example: =ENG_EQUATION_TARGETS('fluids.reynolds_number')"""
     return invoke("equation.targets", {"path_id": path_id})
+
+@xl_func(name="ENG_EQUATION_TARGETS_TABLE", doc="Read equation targets table rows [target, is_default] | Arguments: | - path_id: Equation path id | Returns: list[list] | Example: =ENG_EQUATION_TARGETS_TABLE('structures.hoop_stress')")
+def e_n_g_e_q_u_a_t_i_o_n_t_a_r_g_e_t_s_t_a_b_l_e(path_id):
+    """Read equation targets table rows [target, is_default] | Arguments: | - path_id: Equation path id | Returns: list[list] | Example: =ENG_EQUATION_TARGETS_TABLE('structures.hoop_stress')"""
+    return invoke("equation.targets.table", {"path_id": path_id})
+
+@xl_func(name="ENG_EQUATION_TARGETS_TEXT", doc="Read equation targets as delimited text | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_TARGETS_TEXT('structures.hoop_stress')")
+def e_n_g_e_q_u_a_t_i_o_n_t_a_r_g_e_t_s_t_e_x_t(path_id):
+    """Read equation targets as delimited text | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_TARGETS_TEXT('structures.hoop_stress')"""
+    return invoke("equation.targets.text", {"path_id": path_id})
 
 @xl_func(name="ENG_THERMO_IDEAL_GAS_DENSITY_P", doc="Solve Ideal Gas Law (Density Form) for P | Arguments: | - rho: Density | - r: Specific gas constant | - t: Absolute temperature | Returns: f64 | Example: =ENG_THERMO_IDEAL_GAS_DENSITY_P('...','...','...')")
 def e_n_g_t_h_e_r_m_o_i_d_e_a_l_g_a_s_d_e_n_s_i_t_y_p(rho, r, t):
@@ -528,10 +603,25 @@ def e_n_g_e_q_u_a_t_i_o_n_u_n_i_c_o_d_e(path_id):
     """Read Unicode display form for an equation | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_UNICODE('fluids.reynolds_number')"""
     return invoke("equation.unicode", {"path_id": path_id})
 
+@xl_func(name="ENG_EQUATION_VARIABLE_COUNT", doc="Read equation variable count | Arguments: | - path_id: Equation path id | Returns: u64 | Example: =ENG_EQUATION_VARIABLE_COUNT('structures.hoop_stress')")
+def e_n_g_e_q_u_a_t_i_o_n_v_a_r_i_a_b_l_e_c_o_u_n_t(path_id):
+    """Read equation variable count | Arguments: | - path_id: Equation path id | Returns: u64 | Example: =ENG_EQUATION_VARIABLE_COUNT('structures.hoop_stress')"""
+    return invoke("equation.variable.count", {"path_id": path_id})
+
 @xl_func(name="ENG_EQUATION_VARIABLES", doc="Read variable metadata for an equation | Arguments: | - path_id: Equation path id | Returns: list | Example: =ENG_EQUATION_VARIABLES('fluids.reynolds_number')")
 def e_n_g_e_q_u_a_t_i_o_n_v_a_r_i_a_b_l_e_s(path_id):
     """Read variable metadata for an equation | Arguments: | - path_id: Equation path id | Returns: list | Example: =ENG_EQUATION_VARIABLES('fluids.reynolds_number')"""
     return invoke("equation.variables", {"path_id": path_id})
+
+@xl_func(name="ENG_EQUATION_VARIABLES_TABLE", doc="Read equation variable table rows [variable, default_unit] | Arguments: | - path_id: Equation path id | Returns: list[list] | Example: =ENG_EQUATION_VARIABLES_TABLE('structures.hoop_stress')")
+def e_n_g_e_q_u_a_t_i_o_n_v_a_r_i_a_b_l_e_s_t_a_b_l_e(path_id):
+    """Read equation variable table rows [variable, default_unit] | Arguments: | - path_id: Equation path id | Returns: list[list] | Example: =ENG_EQUATION_VARIABLES_TABLE('structures.hoop_stress')"""
+    return invoke("equation.variables.table", {"path_id": path_id})
+
+@xl_func(name="ENG_EQUATION_VARIABLES_TEXT", doc="Read equation variables as delimited text | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_VARIABLES_TEXT('structures.hoop_stress')")
+def e_n_g_e_q_u_a_t_i_o_n_v_a_r_i_a_b_l_e_s_t_e_x_t(path_id):
+    """Read equation variables as delimited text | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_VARIABLES_TEXT('structures.hoop_stress')"""
+    return invoke("equation.variables.text", {"path_id": path_id})
 
 @xl_func(name="ENG_FAMILY_IDEAL_GAS_DENSITY_P", doc="Solve Ideal Gas Law variant Density Form for P | Arguments: | - rho: Density | - r: Specific gas constant | - t: Absolute temperature | Returns: f64 | Example: =ENG_FAMILY_IDEAL_GAS_DENSITY_P('...','...','...')")
 def e_n_g_f_a_m_i_l_y_i_d_e_a_l_g_a_s_d_e_n_s_i_t_y_p(rho, r, t):
@@ -588,6 +678,21 @@ def e_n_g_f_l_u_i_d_p_r_o_p(fluid, state_prop_1, state_value_1, state_prop_2, st
     """Binding-friendly fluid property lookup | Arguments: | - fluid: Fluid key/name | - state_prop_1: State input key 1 | - state_value_1: State input value 1 | - state_prop_2: State input key 2 | - state_value_2: State input value 2 | - out_prop: Output property key | Returns: f64 | Example: =ENG_FLUID_PROP('H2O','T','300 K','P','1 bar','rho')"""
     return invoke("fluid.prop", {"fluid": fluid, "in1_key": state_prop_1, "in1_value": state_value_1, "in2_key": state_prop_2, "in2_value": state_value_2, "out_prop": out_prop})
 
+@xl_func(name="ENG_FLUID_PROPERTIES_TABLE", doc="Read fluid property table rows [property, default_unit] | Arguments: | - key: Fluid key/alias | Returns: list[list] | Example: =ENG_FLUID_PROPERTIES_TABLE('H2O')")
+def e_n_g_f_l_u_i_d_p_r_o_p_e_r_t_i_e_s_t_a_b_l_e(key):
+    """Read fluid property table rows [property, default_unit] | Arguments: | - key: Fluid key/alias | Returns: list[list] | Example: =ENG_FLUID_PROPERTIES_TABLE('H2O')"""
+    return invoke("fluid.properties.table", {"key": key})
+
+@xl_func(name="ENG_FLUID_PROPERTIES_TEXT", doc="Read fluid properties as delimited text | Arguments: | - key: Fluid key/alias | Returns: str | Example: =ENG_FLUID_PROPERTIES_TEXT('H2O')")
+def e_n_g_f_l_u_i_d_p_r_o_p_e_r_t_i_e_s_t_e_x_t(key):
+    """Read fluid properties as delimited text | Arguments: | - key: Fluid key/alias | Returns: str | Example: =ENG_FLUID_PROPERTIES_TEXT('H2O')"""
+    return invoke("fluid.properties.text", {"key": key})
+
+@xl_func(name="ENG_FLUID_PROPERTY_COUNT", doc="Read fluid property count | Arguments: | - key: Fluid key/alias | Returns: u64 | Example: =ENG_FLUID_PROPERTY_COUNT('H2O')")
+def e_n_g_f_l_u_i_d_p_r_o_p_e_r_t_y_c_o_u_n_t(key):
+    """Read fluid property count | Arguments: | - key: Fluid key/alias | Returns: u64 | Example: =ENG_FLUID_PROPERTY_COUNT('H2O')"""
+    return invoke("fluid.property.count", {"key": key})
+
 @xl_func(name="ENG_FORMAT", doc="Convert a numeric value from input units to output units (with dimensional checks) | Arguments: | - value: Input value in `in_unit` | - in_unit: Input unit expression (for example Pa, m, psia, kg/(m*s)) | - out_unit: Requested output unit expression | Returns: f64 | Example: =ENG_FORMAT(2500000,'Pa','psia')")
 def e_n_g_f_o_r_m_a_t(value, in_unit, out_unit):
     """Convert a numeric value from input units to output units (with dimensional checks) | Arguments: | - value: Input value in `in_unit` | - in_unit: Input unit expression (for example Pa, m, psia, kg/(m*s)) | - out_unit: Requested output unit expression | Returns: f64 | Example: =ENG_FORMAT(2500000,'Pa','psia')"""
@@ -602,6 +707,21 @@ def e_n_g_m_a_t_e_r_i_a_l_p_r_o_p_e_r_t_i_e_s(key):
 def e_n_g_m_a_t_p_r_o_p(material, property_key, temperature):
     """Binding-friendly material property lookup | Arguments: | - material: Material key/name | - property_key: Property key | - temperature: Temperature input | Returns: f64 | Example: =ENG_MAT_PROP('stainless_304','elastic_modulus','350 K')"""
     return invoke("material.prop", {"material": material, "property": property_key, "temperature": temperature})
+
+@xl_func(name="ENG_MATERIAL_PROPERTIES_TABLE", doc="Read material property table rows [property, unit] | Arguments: | - key: Material key/alias | Returns: list[list] | Example: =ENG_MATERIAL_PROPERTIES_TABLE('stainless_304')")
+def e_n_g_m_a_t_e_r_i_a_l_p_r_o_p_e_r_t_i_e_s_t_a_b_l_e(key):
+    """Read material property table rows [property, unit] | Arguments: | - key: Material key/alias | Returns: list[list] | Example: =ENG_MATERIAL_PROPERTIES_TABLE('stainless_304')"""
+    return invoke("material.properties.table", {"key": key})
+
+@xl_func(name="ENG_MATERIAL_PROPERTIES_TEXT", doc="Read material properties as delimited text | Arguments: | - key: Material key/alias | Returns: str | Example: =ENG_MATERIAL_PROPERTIES_TEXT('stainless_304')")
+def e_n_g_m_a_t_e_r_i_a_l_p_r_o_p_e_r_t_i_e_s_t_e_x_t(key):
+    """Read material properties as delimited text | Arguments: | - key: Material key/alias | Returns: str | Example: =ENG_MATERIAL_PROPERTIES_TEXT('stainless_304')"""
+    return invoke("material.properties.text", {"key": key})
+
+@xl_func(name="ENG_MATERIAL_PROPERTY_COUNT", doc="Read material property count | Arguments: | - key: Material key/alias | Returns: u64 | Example: =ENG_MATERIAL_PROPERTY_COUNT('stainless_304')")
+def e_n_g_m_a_t_e_r_i_a_l_p_r_o_p_e_r_t_y_c_o_u_n_t(key):
+    """Read material property count | Arguments: | - key: Material key/alias | Returns: u64 | Example: =ENG_MATERIAL_PROPERTY_COUNT('stainless_304')"""
+    return invoke("material.property.count", {"key": key})
 
 @xl_func(name="ENG_META", doc="General metadata helper for bindings | Arguments: | - entity: equation | device | fluid | material | constant | - key: Entity id/key | - field: Metadata field to read | Returns: scalar|list|dict | Example: =ENG_META('equation','structures.hoop_stress','ascii')")
 def e_n_g_m_e_t_a(entity, key, field):

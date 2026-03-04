@@ -2,9 +2,9 @@
 
 **Path ID:** `structures.euler_buckling_load`
 
-\[
+$$
 P_{cr} = \frac{\pi^2 E I}{(K L)^2}
-\]
+$$
 
 - Unicode: `P_cr = (π² · E · I) / ((K · L)²)`
 - ASCII: `P_cr = (pi^2 * E * I) / ((K * L)^2)`
@@ -127,10 +127,13 @@ let value = eq.solve(equations::structures::euler_buckling_load::equation()).for
 
 ### Python
 ```python
-engpy.equations.structures.solve_e(p_cr="...", i="...", k="...", l="...")
+engpy.equations.structures.euler_buckling_load.solve_e(p_cr="...", i="...", k="...", l="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.structures.solve_e(p_cr="...", i="...", k="...", l="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.structures.euler_buckling_load.solve_e(p_cr="...", i="...", k="...", l="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("structures.euler_buckling_load")
+engpy.helpers.equation_targets_text("structures.euler_buckling_load")
+engpy.helpers.equation_variables_table("structures.euler_buckling_load")
+engpy.helpers.equation_target_count("structures.euler_buckling_load")
 ```
 
 ### Excel
@@ -138,6 +141,9 @@ engpy.equations.meta.equation_ascii("structures.euler_buckling_load")
 =ENG_STRUCTURES_EULER_BUCKLING_LOAD_E("...","...","...","...")
 =ENG_FORMAT(ENG_STRUCTURES_EULER_BUCKLING_LOAD_E("...","...","...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("structures.euler_buckling_load")
+=ENG_EQUATION_TARGETS_TEXT("structures.euler_buckling_load")
+=ENG_EQUATION_VARIABLES_TABLE("structures.euler_buckling_load")
+=ENG_EQUATION_TARGET_COUNT("structures.euler_buckling_load")
 ```
 
 **Excel arguments**

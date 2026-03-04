@@ -13,12 +13,18 @@ Austenitic stainless steel with temperature-dependent mechanical and thermal pro
 ```python
 engpy.materials.mat_prop("stainless_304", "elastic_modulus", "350 K")
 engpy.helpers.material_properties("stainless_304")
+engpy.helpers.material_properties_text("stainless_304")
+engpy.helpers.material_properties_table("stainless_304")
+engpy.helpers.material_property_count("stainless_304")
 ```
 
 ### Excel
 ```excel
 =ENG_MAT_PROP("stainless_304","elastic_modulus","350 K")
 =ENG_MATERIAL_PROPERTIES("stainless_304")
+=ENG_MATERIAL_PROPERTIES_TEXT("stainless_304")
+=ENG_MATERIAL_PROPERTIES_TABLE("stainless_304")
+=ENG_MATERIAL_PROPERTY_COUNT("stainless_304")
 ```
 
 **Excel arguments**

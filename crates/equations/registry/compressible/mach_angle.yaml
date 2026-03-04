@@ -1,0 +1,74 @@
+key: mach_angle
+taxonomy:
+  category: compressible
+name: Mach Angle
+source: "Anderson, Modern Compressible Flow: With Historical Perspective"
+display:
+  latex: '\mu = \arcsin\left(\frac{1}{M}\right)'
+  unicode: "mu = asin(1/M)"
+  ascii: "mu = asin(1/M)"
+  description: Mach angle as a function of Mach number for supersonic flow.
+variables:
+  mu:
+    name: Mach angle
+    symbol: '\mu'
+    dimension: angle
+    constraints:
+      positive: true
+      min: 1e-12
+      max: 1.5707963267948966
+  M:
+    name: Mach number
+    symbol: 'M'
+    dimension: mach
+    constraints:
+      min: 1.0
+relation:
+  form: residual
+  residual: mu - asin(1 / M)
+solve:
+  explicit_forms:
+    mu: asin(1 / M)
+    M: 1 / sin(mu)
+assumptions:
+  - Calorically perfect gas, isentropic context.
+  - Mach angle is defined for M >= 1.
+tests:
+  units_policy: auto_convert_to_si
+  relation_tolerance:
+    abs: 1e-12
+    rel: 1e-10
+  cases:
+    - id: mach_1_1
+      full_state:
+        M: 1.1
+        mu: 1.141096660643472
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: mu
+            methods: [explicit]
+          - target: M
+            methods: [explicit]
+    - id: mach_2_0
+      full_state:
+        M: 2.0
+        mu: 0.5235987755982989
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: mu
+            methods: [explicit]
+          - target: M
+            methods: [explicit]
+    - id: mach_5_0
+      full_state:
+        M: 5.0
+        mu: 0.2013579207903308
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: mu
+            methods: [explicit]
+          - target: M
+            methods: [explicit]

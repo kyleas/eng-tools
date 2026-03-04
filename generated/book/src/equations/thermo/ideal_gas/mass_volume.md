@@ -2,9 +2,9 @@
 
 **Path ID:** `thermo.ideal_gas.mass_volume`
 
-\[
+$$
 P V = m R T
-\]
+$$
 
 - Unicode: `P = m · R · T / V`
 - ASCII: `P = m * R * T / V`
@@ -123,10 +123,13 @@ let value = eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_
 
 ### Python
 ```python
-engpy.equations.thermo.solve_p(v="...", m="...", r="...", t="...")
+engpy.equations.thermo.mass_volume.solve_p(v="...", m="...", r="...", t="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.thermo.solve_p(v="...", m="...", r="...", t="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.thermo.mass_volume.solve_p(v="...", m="...", r="...", t="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("thermo.ideal_gas.mass_volume")
+engpy.helpers.equation_targets_text("thermo.ideal_gas.mass_volume")
+engpy.helpers.equation_variables_table("thermo.ideal_gas.mass_volume")
+engpy.helpers.equation_target_count("thermo.ideal_gas.mass_volume")
 ```
 
 ### Excel
@@ -134,6 +137,9 @@ engpy.equations.meta.equation_ascii("thermo.ideal_gas.mass_volume")
 =ENG_THERMO_IDEAL_GAS_MASS_VOLUME_P("...","...","...","...")
 =ENG_FORMAT(ENG_THERMO_IDEAL_GAS_MASS_VOLUME_P("...","...","...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("thermo.ideal_gas.mass_volume")
+=ENG_EQUATION_TARGETS_TEXT("thermo.ideal_gas.mass_volume")
+=ENG_EQUATION_VARIABLES_TABLE("thermo.ideal_gas.mass_volume")
+=ENG_EQUATION_TARGET_COUNT("thermo.ideal_gas.mass_volume")
 ```
 
 **Excel arguments**

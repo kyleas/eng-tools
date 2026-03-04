@@ -2,9 +2,9 @@
 
 **Path ID:** `rockets.thrust_from_mass_flow`
 
-\[
+$$
 F = \dot{m} c_{eff}
-\]
+$$
 
 - Unicode: `F = m_dot · c_eff`
 - ASCII: `F = m_dot * c_eff`
@@ -82,10 +82,13 @@ let value = eq.solve(equations::rockets::thrust_from_mass_flow::equation()).for_
 
 ### Python
 ```python
-engpy.equations.rockets.solve_f(m_dot="...", c_eff="...")
+engpy.equations.rockets.thrust_from_mass_flow.solve_f(m_dot="...", c_eff="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.rockets.solve_f(m_dot="...", c_eff="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.rockets.thrust_from_mass_flow.solve_f(m_dot="...", c_eff="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("rockets.thrust_from_mass_flow")
+engpy.helpers.equation_targets_text("rockets.thrust_from_mass_flow")
+engpy.helpers.equation_variables_table("rockets.thrust_from_mass_flow")
+engpy.helpers.equation_target_count("rockets.thrust_from_mass_flow")
 ```
 
 ### Excel
@@ -93,6 +96,9 @@ engpy.equations.meta.equation_ascii("rockets.thrust_from_mass_flow")
 =ENG_ROCKETS_THRUST_FROM_MASS_FLOW_F("...","...")
 =ENG_FORMAT(ENG_ROCKETS_THRUST_FROM_MASS_FLOW_F("...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("rockets.thrust_from_mass_flow")
+=ENG_EQUATION_TARGETS_TEXT("rockets.thrust_from_mass_flow")
+=ENG_EQUATION_VARIABLES_TABLE("rockets.thrust_from_mass_flow")
+=ENG_EQUATION_TARGET_COUNT("rockets.thrust_from_mass_flow")
 ```
 
 **Excel arguments**

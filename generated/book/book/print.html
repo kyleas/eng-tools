@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-b9b2989c.js";
+            window.path_to_searchindex_js = "searchindex-cb405dff.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-e22846d2.js"></script>
+        <script src="toc-3fe63638.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -235,7 +235,7 @@
 <li><a href="#fluids-1">Fluids</a></li>
 <li><a href="#materials">Materials</a></li>
 </ul>
-<p><strong>Library size:</strong> 28 equations, 5 constants, 1 devices, 31 fluids, 2 materials.</p>
+<p><strong>Library size:</strong> 29 equations, 5 constants, 2 devices, 31 fluids, 2 materials.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h1>
 <p>The top-level crate is <code>eng</code>. It re-exports equations, fluids, materials, constants, units, and docs export APIs.</p>
@@ -508,9 +508,9 @@ let sy = state.property("yield_strength")?;
 <p><code>binding_spec.json</code> is transport-agnostic (function names, args, returns, help, examples). <code>invoke_protocol.json</code> documents the current runtime transport contract.</p>
 <h2 id="naming-rules"><a class="header" href="#naming-rules">Naming Rules</a></h2>
 <ul>
-<li>Python: namespaced modules (<code>engpy.equations.&lt;category&gt;.*</code>, <code>engpy.devices.*</code>, <code>engpy.fluids.*</code>, <code>engpy.materials.*</code>, <code>engpy.constants.*</code>).</li>
+<li>Python: namespaced modules (<code>engpy.equations.&lt;category&gt;.&lt;equation_slug&gt;.*</code>, <code>engpy.devices.*</code>, <code>engpy.fluids.*</code>, <code>engpy.materials.*</code>, <code>engpy.constants.*</code>).</li>
 <li>Excel: flat worksheet-friendly functions (<code>ENG_*</code>).</li>
-<li>Families are exposed under <code>engpy.equations.families.&lt;family&gt;</code>.</li>
+<li>Families are exposed under <code>engpy.equations.families.&lt;family&gt;.&lt;variant&gt;</code>.</li>
 </ul>
 <h2 id="metadata-and-diagnostics-functions"><a class="header" href="#metadata-and-diagnostics-functions">Metadata and Diagnostics Functions</a></h2>
 <ul>
@@ -526,33 +526,113 @@ let sy = state.property("yield_strength")?;
 <li><code>engpy.equations.meta.equation_description(path_id)</code></li>
 <li><code>engpy.equations.meta.equation_family(path_id)</code></li>
 <li><code>engpy.equations.meta.equation_default_unit(path_id, variable)</code></li>
+<li><code>engpy.helpers.equation_targets_text(path_id)</code></li>
+<li><code>engpy.helpers.equation_variables_text(path_id)</code></li>
+<li><code>engpy.helpers.equation_branches_text(path_id)</code></li>
+<li><code>engpy.helpers.fluid_properties_text(key)</code></li>
+<li><code>engpy.helpers.material_properties_text(key)</code></li>
+<li><code>engpy.helpers.device_modes_text(key)</code></li>
+<li><code>engpy.helpers.equation_targets_table(path_id)</code></li>
+<li><code>engpy.helpers.equation_variables_table(path_id)</code></li>
+<li><code>engpy.helpers.equation_branches_table(path_id)</code></li>
+<li><code>engpy.helpers.fluid_properties_table(key)</code></li>
+<li><code>engpy.helpers.material_properties_table(key)</code></li>
+<li><code>engpy.helpers.equation_target_count(path_id)</code></li>
+<li><code>engpy.helpers.equation_variable_count(path_id)</code></li>
+<li><code>engpy.helpers.fluid_property_count(key)</code></li>
+<li><code>engpy.helpers.material_property_count(key)</code></li>
+<li><code>engpy.helpers.device_mode_count(key)</code></li>
 <li><code>engpy.helpers.format_value(value, in_unit, out_unit)</code></li>
 <li><code>engpy.helpers.meta_get(entity, key, field)</code></li>
 </ul>
 </li>
 <li>Excel:
 <ul>
-<li><code>ENG_FORMAT(value, in_unit, out_unit)</code></li>
-<li><code>ENG_META(entity, key, field)</code></li>
-<li><code>ENG_EQUATION_META(path_id)</code></li>
-<li><code>ENG_EQUATION_ASCII(path_id)</code></li>
-<li><code>ENG_EQUATION_UNICODE(path_id)</code></li>
-<li><code>ENG_EQUATION_LATEX(path_id)</code></li>
-<li><code>ENG_EQUATION_TARGETS(path_id)</code></li>
-<li><code>ENG_EQUATION_VARIABLES(path_id)</code></li>
-<li><code>ENG_EQUATION_NAME(path_id)</code></li>
-<li><code>ENG_EQUATION_DESCRIPTION(path_id)</code></li>
-<li><code>ENG_EQUATION_FAMILY(path_id)</code></li>
-<li><code>ENG_EQUATION_DEFAULT_UNIT(path_id, variable)</code></li>
+<li>
+<p><code>ENG_FORMAT(value, in_unit, out_unit)</code></p>
+</li>
+<li>
+<p><code>ENG_META(entity, key, field)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_META(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_ASCII(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_UNICODE(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_LATEX(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_TARGETS(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_VARIABLES(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_NAME(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_DESCRIPTION(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_FAMILY(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_DEFAULT_UNIT(path_id, variable)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_TARGETS_TEXT(path_id)</code> / <code>ENG_EQUATION_VARIABLES_TEXT(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_BRANCHES_TEXT(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_FLUID_PROPERTIES_TEXT(fluid_key)</code> / <code>ENG_MATERIAL_PROPERTIES_TEXT(material_key)</code> / <code>ENG_DEVICE_MODES_TEXT(device_key)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_TARGETS_TABLE(path_id)</code> / <code>ENG_EQUATION_VARIABLES_TABLE(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_BRANCHES_TABLE(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_FLUID_PROPERTIES_TABLE(fluid_key)</code> / <code>ENG_MATERIAL_PROPERTIES_TABLE(material_key)</code></p>
+</li>
+<li>
+<p><code>ENG_EQUATION_TARGET_COUNT(path_id)</code> / <code>ENG_EQUATION_VARIABLE_COUNT(path_id)</code></p>
+</li>
+<li>
+<p><code>ENG_FLUID_PROPERTY_COUNT(fluid_key)</code> / <code>ENG_MATERIAL_PROPERTY_COUNT(material_key)</code> / <code>ENG_DEVICE_MODE_COUNT(device_key)</code></p>
+</li>
 </ul>
 </li>
 </ul>
+<p>Delimited TEXT helpers use <code>; </code> as a deterministic separator.</p>
 <p>Use these helpers for a composable workflow: keep core engineering calls simple, then layer formatting/reference metadata as needed.</p>
 <h3 id="clean-excel-pattern"><a class="header" href="#clean-excel-pattern">Clean Excel Pattern</a></h3>
 <pre><code class="language-excel">=ENG_HOOP_STRESS_SIGMA_H(P, r, t)
 =ENG_FORMAT(ENG_HOOP_STRESS_SIGMA_H(P, r, t), "Pa", "psia")
 =ENG_EQUATION_ASCII("structures.hoop_stress")
 =ENG_META("equation", "structures.hoop_stress", "targets")
+</code></pre>
+<h3 id="excel-single-cell-text-helpers"><a class="header" href="#excel-single-cell-text-helpers">Excel single-cell text helpers</a></h3>
+<pre><code class="language-excel">=ENG_EQUATION_TARGETS_TEXT("structures.hoop_stress")
+=ENG_EQUATION_VARIABLES_TEXT("structures.hoop_stress")
+=ENG_EQUATION_BRANCHES_TEXT("compressible.area_mach")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_MATERIAL_PROPERTIES_TEXT("stainless_304")
+=ENG_DEVICE_MODES_TEXT("pipe_loss")
+</code></pre>
+<h3 id="excel-spill-range-table-helpers"><a class="header" href="#excel-spill-range-table-helpers">Excel spill-range table helpers</a></h3>
+<pre><code class="language-excel">=ENG_EQUATION_VARIABLES_TABLE("structures.hoop_stress")
+=ENG_EQUATION_TARGETS_TABLE("structures.hoop_stress")
+=ENG_EQUATION_BRANCHES_TABLE("compressible.area_mach")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_MATERIAL_PROPERTIES_TABLE("stainless_304")
 </code></pre>
 <p>Native in-process runtime supports Python usage on Linux and Windows without requiring a platform-specific executable per call.</p>
 <h2 id="build--install-native-python-runtime"><a class="header" href="#build--install-native-python-runtime">Build / Install (Native Python Runtime)</a></h2>
@@ -673,7 +753,16 @@ print(engpy_native.runtime_info())
         .solve_delta_p()?;
 }
 <span class="boring">}</span></code></pre>
-<p>See <a href="#devices">Devices Index</a> and <a href="#pipe-pressure-drop">Pipe Pressure Drop</a>.</p>
+<h2 id="calculator-device-isentropic"><a class="header" href="#calculator-device-isentropic">Calculator Device: Isentropic</a></h2>
+<ul>
+<li>API entrypoint: <code>eng::devices::isentropic_calc()</code></li>
+<li>Uses deterministic Mach-pivot orchestration (<code>input_kind -&gt; pivot Mach -&gt; target_kind</code>).</li>
+<li>All mathematical relations are resolved through registry-backed atomic equations.</li>
+<li>Branch-sensitive inverse paths (such as <code>area_ratio -&gt; mach</code>) require explicit branch selection.</li>
+<li>Outputs include scalar value, pivot Mach, and step diagnostics/path text.</li>
+</ul>
+<p>See <a href="#devices">Devices Index</a> and <a href="#pipe-pressure-drop">Pipe Pressure Drop</a>.
+See also <a href="#isentropic-calculator">Isentropic Calculator</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="yaml-authoring"><a class="header" href="#yaml-authoring">YAML Authoring</a></h1>
 <p>Equation YAML files live under <code>crates/equations/registry/&lt;category&gt;/</code>. Family YAML files live under <code>crates/equations/registry/families/</code>.</p>
@@ -896,6 +985,7 @@ variants:
 <tr><td><a href="#isentropic-density-ratio">Isentropic Density Ratio</a></td><td>Compressible</td><td>2</td><td>-</td></tr>
 <tr><td><a href="#isentropic-pressure-ratio">Isentropic Pressure Ratio</a></td><td>Compressible</td><td>2</td><td>-</td></tr>
 <tr><td><a href="#isentropic-temperature-ratio">Isentropic Temperature Ratio</a></td><td>Compressible</td><td>2</td><td>-</td></tr>
+<tr><td><a href="#mach-angle">Mach Angle</a></td><td>Compressible</td><td>2</td><td>-</td></tr>
 <tr><td><a href="#circular-pipe-flow-area">Circular Pipe Flow Area</a></td><td>Fluids</td><td>2</td><td><code>pi</code></td></tr>
 <tr><td><a href="#colebrook-white-friction-factor">Colebrook-White Friction Factor</a></td><td>Fluids</td><td>1</td><td>-</td></tr>
 <tr><td><a href="#continuity-mass-flow">Continuity Mass Flow</a></td><td>Fluids</td><td>4</td><td>-</td></tr>
@@ -939,13 +1029,14 @@ variants:
 <li><a href="#isentropic-density-ratio">Isentropic Density Ratio</a></li>
 <li><a href="#isentropic-pressure-ratio">Isentropic Pressure Ratio</a></li>
 <li><a href="#isentropic-temperature-ratio">Isentropic Temperature Ratio</a></li>
+<li><a href="#mach-angle">Mach Angle</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="isentropic-area-mach-relation"><a class="header" href="#isentropic-area-mach-relation">Isentropic Area-Mach Relation</a></h1>
 <p><strong>Path ID:</strong> <code>compressible.area_mach</code></p>
-<p>[
+<p>$$
 \frac{A}{A^*} = \frac{1}{M}\left(\frac{2}{\gamma+1}\left(1+\frac{\gamma-1}{2}M^2\right)\right)^{\frac{\gamma+1}{2(\gamma-1)}}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>A/A* = (1/M) * ((2/(gamma+1))*(1+((gamma-1)/2)M^2))^((gamma+1)/(2(gamma-1)))</code></li>
 <li>ASCII: <code>area_ratio = (1/M) * ((2/(gamma+1))*(1+((gamma-1)/2)*M^2))^((gamma+1)/(2*(gamma-1)))</code></li>
@@ -1008,27 +1099,46 @@ variants:
 </span>let value = eq.solve(equations::compressible::area_mach::equation()).for_target("M").value()?;
 <span class="boring">}</span></code></pre>
 <h3 id="python"><a class="header" href="#python">Python</a></h3>
-<pre><code class="language-python">engpy.equations.compressible.solve_m(area_ratio="...", gamma="...")
+<pre><code class="language-python">engpy.equations.compressible.area_mach.solve_m(area_ratio="...", gamma="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.compressible.solve_m(area_ratio="...", gamma="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.compressible.area_mach.solve_m(area_ratio="...", gamma="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("compressible.area_mach")
+engpy.helpers.equation_targets_text("compressible.area_mach")
+engpy.helpers.equation_variables_table("compressible.area_mach")
+engpy.helpers.equation_target_count("compressible.area_mach")
 </code></pre>
 <h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
 <pre><code class="language-excel">=ENG_COMPRESSIBLE_AREA_MACH_M("...","...")
 =ENG_FORMAT(ENG_COMPRESSIBLE_AREA_MACH_M("...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("compressible.area_mach")
+=ENG_EQUATION_TARGETS_TEXT("compressible.area_mach")
+=ENG_EQUATION_VARIABLES_TABLE("compressible.area_mach")
+=ENG_EQUATION_TARGET_COUNT("compressible.area_mach")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
 <li><code>area_ratio</code>: Area ratio</li>
 <li><code>gamma</code>: Specific heat ratio</li>
 </ul>
+<p><strong>Branch behavior</strong></p>
+<ul>
+<li>Default solver behavior uses preferred branch (<code>supersonic</code>) when one is marked.</li>
+<li>Supported branches: <code>subsonic</code>, <code>supersonic</code></li>
+</ul>
+<h3 id="python-explicit-branch"><a class="header" href="#python-explicit-branch">Python (explicit branch)</a></h3>
+<pre><code class="language-python">engpy.equations.compressible.area_mach.solve_m(area_ratio="...", gamma="...", branch="supersonic")
+</code></pre>
+<h3 id="excel-explicit-branch"><a class="header" href="#excel-explicit-branch">Excel (explicit branch)</a></h3>
+<pre><code class="language-excel">=ENG_COMPRESSIBLE_AREA_MACH_M("...","...","supersonic")
+=ENG_EQUATION_BRANCHES_TEXT("compressible.area_mach")
+=ENG_EQUATION_BRANCHES_TABLE("compressible.area_mach")
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="choked-mass-flux"><a class="header" href="#choked-mass-flux">Choked Mass Flux</a></h1>
 <p><strong>Path ID:</strong> <code>compressible.choked_mass_flux</code></p>
-<p>[
+<p>$$
 G^* = \frac{p_0}{\sqrt{T_0}} \sqrt{\frac{\gamma}{R}} \left(\frac{2}{\gamma+1}\right)^{(\gamma+1)/(2(\gamma-1))}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>G_star = (p0 / √(T0)) · √(γ / R) · pow(2 / (γ + 1), (γ + 1) / (2 · (γ - 1)))</code></li>
 <li>ASCII: <code>G_star = (p0 / sqrt(T0)) * sqrt(gamma / R) * pow(2 / (gamma + 1), (gamma + 1) / (2 * (gamma - 1)))</code></li>
@@ -1099,15 +1209,21 @@ G^* = \frac{p_0}{\sqrt{T_0}} \sqrt{\frac{\gamma}{R}} \left(\frac{2}{\gamma+1}\ri
 </span>let value = eq.solve(equations::compressible::choked_mass_flux::equation()).for_target("G_star").value()?;
 <span class="boring">}</span></code></pre>
 <h3 id="python-1"><a class="header" href="#python-1">Python</a></h3>
-<pre><code class="language-python">engpy.equations.compressible.solve_g_star(p0="...", t0="...", gamma="...", r="...")
+<pre><code class="language-python">engpy.equations.compressible.choked_mass_flux.solve_g_star(p0="...", t0="...", gamma="...", r="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.compressible.solve_g_star(p0="...", t0="...", gamma="...", r="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.compressible.choked_mass_flux.solve_g_star(p0="...", t0="...", gamma="...", r="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("compressible.choked_mass_flux")
+engpy.helpers.equation_targets_text("compressible.choked_mass_flux")
+engpy.helpers.equation_variables_table("compressible.choked_mass_flux")
+engpy.helpers.equation_target_count("compressible.choked_mass_flux")
 </code></pre>
 <h3 id="excel-1"><a class="header" href="#excel-1">Excel</a></h3>
 <pre><code class="language-excel">=ENG_COMPRESSIBLE_CHOKED_MASS_FLUX_G_STAR("...","...","...","...")
 =ENG_FORMAT(ENG_COMPRESSIBLE_CHOKED_MASS_FLUX_G_STAR("...","...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("compressible.choked_mass_flux")
+=ENG_EQUATION_TARGETS_TEXT("compressible.choked_mass_flux")
+=ENG_EQUATION_VARIABLES_TABLE("compressible.choked_mass_flux")
+=ENG_EQUATION_TARGET_COUNT("compressible.choked_mass_flux")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -1119,9 +1235,9 @@ engpy.equations.meta.equation_ascii("compressible.choked_mass_flux")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="isentropic-density-ratio"><a class="header" href="#isentropic-density-ratio">Isentropic Density Ratio</a></h1>
 <p><strong>Path ID:</strong> <code>compressible.isentropic_density_ratio</code></p>
-<p>[
+<p>$$
 \frac{\rho}{\rho_0} = \left(1+\frac{\gamma-1}{2}M^2\right)^{-1/(\gamma-1)}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>\frac{ρ}{ρ_0} = pow(1 + ((γ - 1) / 2) · M², - 1 / (γ - 1))</code></li>
 <li>ASCII: <code>rho_rho0 = pow(1 + ((gamma - 1) / 2) * M^2, - 1 / (gamma - 1))</code></li>
@@ -1171,15 +1287,21 @@ engpy.equations.meta.equation_ascii("compressible.choked_mass_flux")
 </span>let value = eq.solve(equations::compressible::isentropic_density_ratio::equation()).for_target("M").value()?;
 <span class="boring">}</span></code></pre>
 <h3 id="python-2"><a class="header" href="#python-2">Python</a></h3>
-<pre><code class="language-python">engpy.equations.compressible.solve_m(rho_rho0="...", gamma="...")
+<pre><code class="language-python">engpy.equations.compressible.isentropic_density_ratio.solve_m(rho_rho0="...", gamma="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.compressible.solve_m(rho_rho0="...", gamma="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.compressible.isentropic_density_ratio.solve_m(rho_rho0="...", gamma="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("compressible.isentropic_density_ratio")
+engpy.helpers.equation_targets_text("compressible.isentropic_density_ratio")
+engpy.helpers.equation_variables_table("compressible.isentropic_density_ratio")
+engpy.helpers.equation_target_count("compressible.isentropic_density_ratio")
 </code></pre>
 <h3 id="excel-2"><a class="header" href="#excel-2">Excel</a></h3>
 <pre><code class="language-excel">=ENG_COMPRESSIBLE_ISENTROPIC_DENSITY_RATIO_M("...","...")
 =ENG_FORMAT(ENG_COMPRESSIBLE_ISENTROPIC_DENSITY_RATIO_M("...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("compressible.isentropic_density_ratio")
+=ENG_EQUATION_TARGETS_TEXT("compressible.isentropic_density_ratio")
+=ENG_EQUATION_VARIABLES_TABLE("compressible.isentropic_density_ratio")
+=ENG_EQUATION_TARGET_COUNT("compressible.isentropic_density_ratio")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -1189,9 +1311,9 @@ engpy.equations.meta.equation_ascii("compressible.isentropic_density_ratio")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="isentropic-pressure-ratio"><a class="header" href="#isentropic-pressure-ratio">Isentropic Pressure Ratio</a></h1>
 <p><strong>Path ID:</strong> <code>compressible.isentropic_pressure_ratio</code></p>
-<p>[
+<p>$$
 \frac{p}{p_0} = \left(1+\frac{\gamma-1}{2}M^2\right)^{-\gamma/(\gamma-1)}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>p_p0 = pow(1 + ((γ - 1) / 2) · M², - γ / (γ - 1))</code></li>
 <li>ASCII: <code>p_p0 = pow(1 + ((gamma - 1) / 2) * M^2, - gamma / (gamma - 1))</code></li>
@@ -1241,15 +1363,21 @@ engpy.equations.meta.equation_ascii("compressible.isentropic_density_ratio")
 </span>let value = eq.solve(equations::compressible::isentropic_pressure_ratio::equation()).for_target("M").value()?;
 <span class="boring">}</span></code></pre>
 <h3 id="python-3"><a class="header" href="#python-3">Python</a></h3>
-<pre><code class="language-python">engpy.equations.compressible.solve_m(p_p0="...", gamma="...")
+<pre><code class="language-python">engpy.equations.compressible.isentropic_pressure_ratio.solve_m(p_p0="...", gamma="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.compressible.solve_m(p_p0="...", gamma="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.compressible.isentropic_pressure_ratio.solve_m(p_p0="...", gamma="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("compressible.isentropic_pressure_ratio")
+engpy.helpers.equation_targets_text("compressible.isentropic_pressure_ratio")
+engpy.helpers.equation_variables_table("compressible.isentropic_pressure_ratio")
+engpy.helpers.equation_target_count("compressible.isentropic_pressure_ratio")
 </code></pre>
 <h3 id="excel-3"><a class="header" href="#excel-3">Excel</a></h3>
 <pre><code class="language-excel">=ENG_COMPRESSIBLE_ISENTROPIC_PRESSURE_RATIO_M("...","...")
 =ENG_FORMAT(ENG_COMPRESSIBLE_ISENTROPIC_PRESSURE_RATIO_M("...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("compressible.isentropic_pressure_ratio")
+=ENG_EQUATION_TARGETS_TEXT("compressible.isentropic_pressure_ratio")
+=ENG_EQUATION_VARIABLES_TABLE("compressible.isentropic_pressure_ratio")
+=ENG_EQUATION_TARGET_COUNT("compressible.isentropic_pressure_ratio")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -1259,9 +1387,9 @@ engpy.equations.meta.equation_ascii("compressible.isentropic_pressure_ratio")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="isentropic-temperature-ratio"><a class="header" href="#isentropic-temperature-ratio">Isentropic Temperature Ratio</a></h1>
 <p><strong>Path ID:</strong> <code>compressible.isentropic_temperature_ratio</code></p>
-<p>[
+<p>$$
 \frac{T}{T_0} = \left(1+\frac{\gamma-1}{2}M^2\right)^{-1}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>T_T0 = 1 / (1 + ((γ - 1) / 2) · M²)</code></li>
 <li>ASCII: <code>T_T0 = 1 / (1 + ((gamma - 1) / 2) * M^2)</code></li>
@@ -1311,20 +1439,114 @@ engpy.equations.meta.equation_ascii("compressible.isentropic_pressure_ratio")
 </span>let value = eq.solve(equations::compressible::isentropic_temperature_ratio::equation()).for_target("M").value()?;
 <span class="boring">}</span></code></pre>
 <h3 id="python-4"><a class="header" href="#python-4">Python</a></h3>
-<pre><code class="language-python">engpy.equations.compressible.solve_m(t_t0="...", gamma="...")
+<pre><code class="language-python">engpy.equations.compressible.isentropic_temperature_ratio.solve_m(t_t0="...", gamma="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.compressible.solve_m(t_t0="...", gamma="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.compressible.isentropic_temperature_ratio.solve_m(t_t0="...", gamma="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("compressible.isentropic_temperature_ratio")
+engpy.helpers.equation_targets_text("compressible.isentropic_temperature_ratio")
+engpy.helpers.equation_variables_table("compressible.isentropic_temperature_ratio")
+engpy.helpers.equation_target_count("compressible.isentropic_temperature_ratio")
 </code></pre>
 <h3 id="excel-4"><a class="header" href="#excel-4">Excel</a></h3>
 <pre><code class="language-excel">=ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_M("...","...")
 =ENG_FORMAT(ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_M("...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("compressible.isentropic_temperature_ratio")
+=ENG_EQUATION_TARGETS_TEXT("compressible.isentropic_temperature_ratio")
+=ENG_EQUATION_VARIABLES_TABLE("compressible.isentropic_temperature_ratio")
+=ENG_EQUATION_TARGET_COUNT("compressible.isentropic_temperature_ratio")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
 <li><code>t_t0</code>: Static-to-stagnation temperature ratio</li>
 <li><code>gamma</code>: Specific heat ratio</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="mach-angle"><a class="header" href="#mach-angle">Mach Angle</a></h1>
+<p><strong>Path ID:</strong> <code>compressible.mach_angle</code></p>
+<p>$$
+\mu = \arcsin\left(\frac{1}{M}\right)
+$$</p>
+<ul>
+<li>Unicode: <code>mu = asin(1/M)</code></li>
+<li>ASCII: <code>mu = asin(1/M)</code></li>
+</ul>
+<h2 id="variables-5"><a class="header" href="#variables-5">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>mu</code></td><td>Mach angle</td><td>\(\mu\)</td><td><code>angle</code></td><td><code>rad</code></td></tr>
+
+<tr><td><code>M</code></td><td>Mach number</td><td>\(M\)</td><td><code>mach</code></td><td><code>1</code></td></tr>
+
+</tbody>
+</table>
+
+<h2 id="assumptions-5"><a class="header" href="#assumptions-5">Assumptions</a></h2>
+<ul>
+<li>Calorically perfect gas, isentropic context.</li>
+<li>Mach angle is defined for M &gt;= 1.</li>
+</ul>
+<h2 id="examples-5"><a class="header" href="#examples-5">Examples</a></h2>
+<h3 id="typed_builder_si-5"><a class="header" href="#typed_builder_si-5">typed_builder_si</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq
+    .solve(compressible::mach_angle::equation())
+    .target_mu()
+    .given_m(1.1)
+    .value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="typed_builder_units-1"><a class="header" href="#typed_builder_units-1">typed_builder_units</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq
+    .solve(compressible::mach_angle::equation())
+    .target_mu()
+    .given_m(1.1)
+    .value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_mu"><a class="header" href="#convenience_mu">convenience_mu</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::compressible::mach_angle::solve_mu(
+    1.1,
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_m"><a class="header" href="#convenience_m">convenience_m</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::compressible::mach_angle::solve_m(
+    1.1410966606,
+)?;
+<span class="boring">}</span></code></pre>
+<h2 id="bindings-5"><a class="header" href="#bindings-5">Bindings</a></h2>
+<h3 id="rust-5"><a class="header" href="#rust-5">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::compressible::mach_angle::equation()).for_target("M").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python-5"><a class="header" href="#python-5">Python</a></h3>
+<pre><code class="language-python">engpy.equations.compressible.mach_angle.solve_m(mu="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.compressible.mach_angle.solve_m(mu="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.equations.meta.equation_ascii("compressible.mach_angle")
+engpy.helpers.equation_targets_text("compressible.mach_angle")
+engpy.helpers.equation_variables_table("compressible.mach_angle")
+engpy.helpers.equation_target_count("compressible.mach_angle")
+</code></pre>
+<h3 id="excel-5"><a class="header" href="#excel-5">Excel</a></h3>
+<pre><code class="language-excel">=ENG_COMPRESSIBLE_MACH_ANGLE_M("...")
+=ENG_FORMAT(ENG_COMPRESSIBLE_MACH_ANGLE_M("..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
+=ENG_EQUATION_ASCII("compressible.mach_angle")
+=ENG_EQUATION_TARGETS_TEXT("compressible.mach_angle")
+=ENG_EQUATION_VARIABLES_TABLE("compressible.mach_angle")
+=ENG_EQUATION_TARGET_COUNT("compressible.mach_angle")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
+<ul>
+<li><code>mu</code>: Mach angle</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="fluids"><a class="header" href="#fluids">Fluids</a></h1>
@@ -1339,14 +1561,14 @@ engpy.equations.meta.equation_ascii("compressible.isentropic_temperature_ratio")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="circular-pipe-flow-area"><a class="header" href="#circular-pipe-flow-area">Circular Pipe Flow Area</a></h1>
 <p><strong>Path ID:</strong> <code>fluids.circular_pipe_area</code></p>
-<p>[
+<p>$$
 A = \frac{\pi D^2}{4}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>A = (π / 4) · D²</code></li>
 <li>ASCII: <code>A = (pi / 4) * D^2</code></li>
 </ul>
-<h2 id="variables-5"><a class="header" href="#variables-5">Variables</a></h2>
+<h2 id="variables-6"><a class="header" href="#variables-6">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -1359,7 +1581,7 @@ A = \frac{\pi D^2}{4}
 </tbody>
 </table>
 
-<h2 id="assumptions-5"><a class="header" href="#assumptions-5">Assumptions</a></h2>
+<h2 id="assumptions-6"><a class="header" href="#assumptions-6">Assumptions</a></h2>
 <ul>
 <li>Cross-section is circular and unobstructed.</li>
 </ul>
@@ -1367,8 +1589,8 @@ A = \frac{\pi D^2}{4}
 <ul>
 <li><a href="#archimedes-constant"><code>pi</code></a> (Archimedes Constant) (\pi)</li>
 </ul>
-<h2 id="examples-5"><a class="header" href="#examples-5">Examples</a></h2>
-<h3 id="typed_builder_si-5"><a class="header" href="#typed_builder_si-5">typed_builder_si</a></h3>
+<h2 id="examples-6"><a class="header" href="#examples-6">Examples</a></h2>
+<h3 id="typed_builder_si-6"><a class="header" href="#typed_builder_si-6">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -1377,7 +1599,7 @@ A = \frac{\pi D^2}{4}
     .given_d(0.1)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-1"><a class="header" href="#typed_builder_units-1">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-2"><a class="header" href="#typed_builder_units-2">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -1400,22 +1622,28 @@ A = \frac{\pi D^2}{4}
     "0.007853981633974483 m2",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-5"><a class="header" href="#bindings-5">Bindings</a></h2>
-<h3 id="rust-5"><a class="header" href="#rust-5">Rust</a></h3>
+<h2 id="bindings-6"><a class="header" href="#bindings-6">Bindings</a></h2>
+<h3 id="rust-6"><a class="header" href="#rust-6">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::fluids::circular_pipe_area::equation()).for_target("A").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-5"><a class="header" href="#python-5">Python</a></h3>
-<pre><code class="language-python">engpy.equations.fluids.solve_a(d="...")
+<h3 id="python-6"><a class="header" href="#python-6">Python</a></h3>
+<pre><code class="language-python">engpy.equations.fluids.circular_pipe_area.solve_a(d="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.fluids.solve_a(d="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.fluids.circular_pipe_area.solve_a(d="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("fluids.circular_pipe_area")
+engpy.helpers.equation_targets_text("fluids.circular_pipe_area")
+engpy.helpers.equation_variables_table("fluids.circular_pipe_area")
+engpy.helpers.equation_target_count("fluids.circular_pipe_area")
 </code></pre>
-<h3 id="excel-5"><a class="header" href="#excel-5">Excel</a></h3>
+<h3 id="excel-6"><a class="header" href="#excel-6">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUIDS_CIRCULAR_PIPE_AREA_A("...")
 =ENG_FORMAT(ENG_FLUIDS_CIRCULAR_PIPE_AREA_A("..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("fluids.circular_pipe_area")
+=ENG_EQUATION_TARGETS_TEXT("fluids.circular_pipe_area")
+=ENG_EQUATION_VARIABLES_TABLE("fluids.circular_pipe_area")
+=ENG_EQUATION_TARGET_COUNT("fluids.circular_pipe_area")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -1424,14 +1652,14 @@ engpy.equations.meta.equation_ascii("fluids.circular_pipe_area")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="colebrook-white-friction-factor"><a class="header" href="#colebrook-white-friction-factor">Colebrook-White Friction Factor</a></h1>
 <p><strong>Path ID:</strong> <code>fluids.colebrook</code></p>
-<p>[
+<p>$$
 \frac{1}{\sqrt{f}} + 2\log_{10}\left(\frac{\varepsilon_D}{3.7} + \frac{2.51}{Re\sqrt{f}}\right) = 0
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>1/sqrt(f) + 2 log10(eps_D/3.7 + 2.51/(Re sqrt(f))) = 0</code></li>
 <li>ASCII: <code>1/sqrt(f) + 2*log10((eps_D/3.7) + (2.51/(Re*sqrt(f)))) = 0</code></li>
 </ul>
-<h2 id="variables-6"><a class="header" href="#variables-6">Variables</a></h2>
+<h2 id="variables-7"><a class="header" href="#variables-7">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -1446,13 +1674,13 @@ engpy.equations.meta.equation_ascii("fluids.circular_pipe_area")
 </tbody>
 </table>
 
-<h2 id="assumptions-6"><a class="header" href="#assumptions-6">Assumptions</a></h2>
+<h2 id="assumptions-7"><a class="header" href="#assumptions-7">Assumptions</a></h2>
 <ul>
 <li>Fully developed turbulent internal flow.</li>
 <li>Incompressible flow behavior.</li>
 </ul>
-<h2 id="examples-6"><a class="header" href="#examples-6">Examples</a></h2>
-<h3 id="typed_builder_si-6"><a class="header" href="#typed_builder_si-6">typed_builder_si</a></h3>
+<h2 id="examples-7"><a class="header" href="#examples-7">Examples</a></h2>
+<h3 id="typed_builder_si-7"><a class="header" href="#typed_builder_si-7">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -1462,22 +1690,28 @@ engpy.equations.meta.equation_ascii("fluids.circular_pipe_area")
     .given_re(1e5)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-6"><a class="header" href="#bindings-6">Bindings</a></h2>
-<h3 id="rust-6"><a class="header" href="#rust-6">Rust</a></h3>
+<h2 id="bindings-7"><a class="header" href="#bindings-7">Bindings</a></h2>
+<h3 id="rust-7"><a class="header" href="#rust-7">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::fluids::colebrook::equation()).for_target("f").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-6"><a class="header" href="#python-6">Python</a></h3>
-<pre><code class="language-python">engpy.equations.fluids.solve_f(eps_d="...", re="...")
+<h3 id="python-7"><a class="header" href="#python-7">Python</a></h3>
+<pre><code class="language-python">engpy.equations.fluids.colebrook.solve_f(eps_d="...", re="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.fluids.solve_f(eps_d="...", re="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.fluids.colebrook.solve_f(eps_d="...", re="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("fluids.colebrook")
+engpy.helpers.equation_targets_text("fluids.colebrook")
+engpy.helpers.equation_variables_table("fluids.colebrook")
+engpy.helpers.equation_target_count("fluids.colebrook")
 </code></pre>
-<h3 id="excel-6"><a class="header" href="#excel-6">Excel</a></h3>
+<h3 id="excel-7"><a class="header" href="#excel-7">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUIDS_COLEBROOK_F("...","...")
 =ENG_FORMAT(ENG_FLUIDS_COLEBROOK_F("...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("fluids.colebrook")
+=ENG_EQUATION_TARGETS_TEXT("fluids.colebrook")
+=ENG_EQUATION_VARIABLES_TABLE("fluids.colebrook")
+=ENG_EQUATION_TARGET_COUNT("fluids.colebrook")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -1487,20 +1721,20 @@ engpy.equations.meta.equation_ascii("fluids.colebrook")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="continuity-mass-flow"><a class="header" href="#continuity-mass-flow">Continuity Mass Flow</a></h1>
 <p><strong>Path ID:</strong> <code>fluids.continuity_mass_flow</code></p>
-<p>[
+<p>$$
 \dot{m} = \rho A V
-]</p>
+$$</p>
 <ul>
-<li>Unicode: <code>m_dot = ρ · A · V</code></li>
+<li>Unicode: <code>\dot{m} = ρ · A · V</code></li>
 <li>ASCII: <code>m_dot = rho * A * V</code></li>
 </ul>
-<h2 id="variables-7"><a class="header" href="#variables-7">Variables</a></h2>
+<h2 id="variables-8"><a class="header" href="#variables-8">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
 </thead>
 <tbody>
-<tr><td><code>m_dot</code></td><td>Mass flow rate</td><td>\(m_dot\)</td><td><code>mass_flow_rate</code></td><td><code>kg/s</code></td></tr>
+<tr><td><code>m_dot</code></td><td>Mass flow rate</td><td>\(\dot{m}\)</td><td><code>mass_flow_rate</code></td><td><code>kg/s</code></td></tr>
 
 <tr><td><code>rho</code></td><td>Fluid density</td><td>\(\rho\)</td><td><code>density</code></td><td><code>kg/m3</code></td></tr>
 
@@ -1511,12 +1745,12 @@ engpy.equations.meta.equation_ascii("fluids.colebrook")
 </tbody>
 </table>
 
-<h2 id="assumptions-7"><a class="header" href="#assumptions-7">Assumptions</a></h2>
+<h2 id="assumptions-8"><a class="header" href="#assumptions-8">Assumptions</a></h2>
 <ul>
 <li>One-dimensional mean properties represent cross-section averages.</li>
 </ul>
-<h2 id="examples-7"><a class="header" href="#examples-7">Examples</a></h2>
-<h3 id="typed_builder_si-7"><a class="header" href="#typed_builder_si-7">typed_builder_si</a></h3>
+<h2 id="examples-8"><a class="header" href="#examples-8">Examples</a></h2>
+<h3 id="typed_builder_si-8"><a class="header" href="#typed_builder_si-8">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -1527,7 +1761,7 @@ engpy.equations.meta.equation_ascii("fluids.colebrook")
     .given_v(3.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-2"><a class="header" href="#typed_builder_units-2">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-3"><a class="header" href="#typed_builder_units-3">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -1574,22 +1808,28 @@ engpy.equations.meta.equation_ascii("fluids.colebrook")
     "0.1 m2",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-7"><a class="header" href="#bindings-7">Bindings</a></h2>
-<h3 id="rust-7"><a class="header" href="#rust-7">Rust</a></h3>
+<h2 id="bindings-8"><a class="header" href="#bindings-8">Bindings</a></h2>
+<h3 id="rust-8"><a class="header" href="#rust-8">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::fluids::continuity_mass_flow::equation()).for_target("A").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-7"><a class="header" href="#python-7">Python</a></h3>
-<pre><code class="language-python">engpy.equations.fluids.solve_a(m_dot="...", rho="...", v="...")
+<h3 id="python-8"><a class="header" href="#python-8">Python</a></h3>
+<pre><code class="language-python">engpy.equations.fluids.continuity_mass_flow.solve_a(m_dot="...", rho="...", v="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.fluids.solve_a(m_dot="...", rho="...", v="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.fluids.continuity_mass_flow.solve_a(m_dot="...", rho="...", v="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("fluids.continuity_mass_flow")
+engpy.helpers.equation_targets_text("fluids.continuity_mass_flow")
+engpy.helpers.equation_variables_table("fluids.continuity_mass_flow")
+engpy.helpers.equation_target_count("fluids.continuity_mass_flow")
 </code></pre>
-<h3 id="excel-7"><a class="header" href="#excel-7">Excel</a></h3>
+<h3 id="excel-8"><a class="header" href="#excel-8">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUIDS_CONTINUITY_MASS_FLOW_A("...","...","...")
 =ENG_FORMAT(ENG_FLUIDS_CONTINUITY_MASS_FLOW_A("...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("fluids.continuity_mass_flow")
+=ENG_EQUATION_TARGETS_TEXT("fluids.continuity_mass_flow")
+=ENG_EQUATION_VARIABLES_TABLE("fluids.continuity_mass_flow")
+=ENG_EQUATION_TARGET_COUNT("fluids.continuity_mass_flow")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -1600,14 +1840,14 @@ engpy.equations.meta.equation_ascii("fluids.continuity_mass_flow")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="darcy-weisbach-pressure-drop"><a class="header" href="#darcy-weisbach-pressure-drop">Darcy-Weisbach Pressure Drop</a></h1>
 <p><strong>Path ID:</strong> <code>fluids.darcy_weisbach_pressure_drop</code></p>
-<p>[
+<p>$$
 \Delta p = f \frac{L}{D} \frac{\rho V^2}{2}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>Δ p = f · (L / D) · (ρ · V² / 2)</code></li>
 <li>ASCII: <code>delta_p = f * (L / D) * (rho * V^2 / 2)</code></li>
 </ul>
-<h2 id="variables-8"><a class="header" href="#variables-8">Variables</a></h2>
+<h2 id="variables-9"><a class="header" href="#variables-9">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -1628,12 +1868,12 @@ engpy.equations.meta.equation_ascii("fluids.continuity_mass_flow")
 </tbody>
 </table>
 
-<h2 id="assumptions-8"><a class="header" href="#assumptions-8">Assumptions</a></h2>
+<h2 id="assumptions-9"><a class="header" href="#assumptions-9">Assumptions</a></h2>
 <ul>
 <li>Fully developed internal flow in a constant-diameter conduit.</li>
 </ul>
-<h2 id="examples-8"><a class="header" href="#examples-8">Examples</a></h2>
-<h3 id="typed_builder_si-8"><a class="header" href="#typed_builder_si-8">typed_builder_si</a></h3>
+<h2 id="examples-9"><a class="header" href="#examples-9">Examples</a></h2>
+<h3 id="typed_builder_si-9"><a class="header" href="#typed_builder_si-9">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -1646,7 +1886,7 @@ engpy.equations.meta.equation_ascii("fluids.continuity_mass_flow")
     .given_v(3.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-3"><a class="header" href="#typed_builder_units-3">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-4"><a class="header" href="#typed_builder_units-4">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -1725,22 +1965,28 @@ engpy.equations.meta.equation_ascii("fluids.continuity_mass_flow")
     "1000 kg/m3",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-8"><a class="header" href="#bindings-8">Bindings</a></h2>
-<h3 id="rust-8"><a class="header" href="#rust-8">Rust</a></h3>
+<h2 id="bindings-9"><a class="header" href="#bindings-9">Bindings</a></h2>
+<h3 id="rust-9"><a class="header" href="#rust-9">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::fluids::darcy_weisbach_pressure_drop::equation()).for_target("D").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-8"><a class="header" href="#python-8">Python</a></h3>
-<pre><code class="language-python">engpy.equations.fluids.solve_d(delta_p="...", f="...", l="...", rho="...", v="...")
+<h3 id="python-9"><a class="header" href="#python-9">Python</a></h3>
+<pre><code class="language-python">engpy.equations.fluids.darcy_weisbach_pressure_drop.solve_d(delta_p="...", f="...", l="...", rho="...", v="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.fluids.solve_d(delta_p="...", f="...", l="...", rho="...", v="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.fluids.darcy_weisbach_pressure_drop.solve_d(delta_p="...", f="...", l="...", rho="...", v="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("fluids.darcy_weisbach_pressure_drop")
+engpy.helpers.equation_targets_text("fluids.darcy_weisbach_pressure_drop")
+engpy.helpers.equation_variables_table("fluids.darcy_weisbach_pressure_drop")
+engpy.helpers.equation_target_count("fluids.darcy_weisbach_pressure_drop")
 </code></pre>
-<h3 id="excel-8"><a class="header" href="#excel-8">Excel</a></h3>
+<h3 id="excel-9"><a class="header" href="#excel-9">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_D("...","...","...","...","...")
 =ENG_FORMAT(ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_D("...","...","...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("fluids.darcy_weisbach_pressure_drop")
+=ENG_EQUATION_TARGETS_TEXT("fluids.darcy_weisbach_pressure_drop")
+=ENG_EQUATION_VARIABLES_TABLE("fluids.darcy_weisbach_pressure_drop")
+=ENG_EQUATION_TARGET_COUNT("fluids.darcy_weisbach_pressure_drop")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -1753,14 +1999,14 @@ engpy.equations.meta.equation_ascii("fluids.darcy_weisbach_pressure_drop")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="incompressible-orifice-mass-flow"><a class="header" href="#incompressible-orifice-mass-flow">Incompressible Orifice Mass Flow</a></h1>
 <p><strong>Path ID:</strong> <code>fluids.orifice_mass_flow_incompressible</code></p>
-<p>[
+<p>$$
 \dot{m} = C_d A \sqrt{2 \rho \Delta p}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>m_dot = C_d · A · √(2 · ρ · Δ p)</code></li>
 <li>ASCII: <code>m_dot = C_d * A * sqrt(2 * rho * delta_p)</code></li>
 </ul>
-<h2 id="variables-9"><a class="header" href="#variables-9">Variables</a></h2>
+<h2 id="variables-10"><a class="header" href="#variables-10">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -1779,12 +2025,12 @@ engpy.equations.meta.equation_ascii("fluids.darcy_weisbach_pressure_drop")
 </tbody>
 </table>
 
-<h2 id="assumptions-9"><a class="header" href="#assumptions-9">Assumptions</a></h2>
+<h2 id="assumptions-10"><a class="header" href="#assumptions-10">Assumptions</a></h2>
 <ul>
 <li>Incompressible single-phase flow through a sharp-edged restriction.</li>
 </ul>
-<h2 id="examples-9"><a class="header" href="#examples-9">Examples</a></h2>
-<h3 id="typed_builder_si-9"><a class="header" href="#typed_builder_si-9">typed_builder_si</a></h3>
+<h2 id="examples-10"><a class="header" href="#examples-10">Examples</a></h2>
+<h3 id="typed_builder_si-10"><a class="header" href="#typed_builder_si-10">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -1796,7 +2042,7 @@ engpy.equations.meta.equation_ascii("fluids.darcy_weisbach_pressure_drop")
     .given_delta_p(0.5)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-4"><a class="header" href="#typed_builder_units-4">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-5"><a class="header" href="#typed_builder_units-5">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -1858,22 +2104,28 @@ engpy.equations.meta.equation_ascii("fluids.darcy_weisbach_pressure_drop")
     "1 kg/m3",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-9"><a class="header" href="#bindings-9">Bindings</a></h2>
-<h3 id="rust-9"><a class="header" href="#rust-9">Rust</a></h3>
+<h2 id="bindings-10"><a class="header" href="#bindings-10">Bindings</a></h2>
+<h3 id="rust-10"><a class="header" href="#rust-10">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::fluids::orifice_mass_flow_incompressible::equation()).for_target("A").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-9"><a class="header" href="#python-9">Python</a></h3>
-<pre><code class="language-python">engpy.equations.fluids.solve_a(m_dot="...", c_d="...", rho="...", delta_p="...")
+<h3 id="python-10"><a class="header" href="#python-10">Python</a></h3>
+<pre><code class="language-python">engpy.equations.fluids.orifice_mass_flow_incompressible.solve_a(m_dot="...", c_d="...", rho="...", delta_p="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.fluids.solve_a(m_dot="...", c_d="...", rho="...", delta_p="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.fluids.orifice_mass_flow_incompressible.solve_a(m_dot="...", c_d="...", rho="...", delta_p="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("fluids.orifice_mass_flow_incompressible")
+engpy.helpers.equation_targets_text("fluids.orifice_mass_flow_incompressible")
+engpy.helpers.equation_variables_table("fluids.orifice_mass_flow_incompressible")
+engpy.helpers.equation_target_count("fluids.orifice_mass_flow_incompressible")
 </code></pre>
-<h3 id="excel-9"><a class="header" href="#excel-9">Excel</a></h3>
+<h3 id="excel-10"><a class="header" href="#excel-10">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_A("...","...","...","...")
 =ENG_FORMAT(ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_A("...","...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("fluids.orifice_mass_flow_incompressible")
+=ENG_EQUATION_TARGETS_TEXT("fluids.orifice_mass_flow_incompressible")
+=ENG_EQUATION_VARIABLES_TABLE("fluids.orifice_mass_flow_incompressible")
+=ENG_EQUATION_TARGET_COUNT("fluids.orifice_mass_flow_incompressible")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -1885,14 +2137,14 @@ engpy.equations.meta.equation_ascii("fluids.orifice_mass_flow_incompressible")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="reynolds-number"><a class="header" href="#reynolds-number">Reynolds Number</a></h1>
 <p><strong>Path ID:</strong> <code>fluids.reynolds_number</code></p>
-<p>[
+<p>$$
 Re = \frac{\rho V D}{\mu}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>Re = ρ · V · D / μ</code></li>
 <li>ASCII: <code>Re = rho * V * D / mu</code></li>
 </ul>
-<h2 id="variables-10"><a class="header" href="#variables-10">Variables</a></h2>
+<h2 id="variables-11"><a class="header" href="#variables-11">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -1911,12 +2163,12 @@ Re = \frac{\rho V D}{\mu}
 </tbody>
 </table>
 
-<h2 id="assumptions-10"><a class="header" href="#assumptions-10">Assumptions</a></h2>
+<h2 id="assumptions-11"><a class="header" href="#assumptions-11">Assumptions</a></h2>
 <ul>
 <li>Internal-flow characteristic length is represented by hydraulic diameter.</li>
 </ul>
-<h2 id="examples-10"><a class="header" href="#examples-10">Examples</a></h2>
-<h3 id="typed_builder_si-10"><a class="header" href="#typed_builder_si-10">typed_builder_si</a></h3>
+<h2 id="examples-11"><a class="header" href="#examples-11">Examples</a></h2>
+<h3 id="typed_builder_si-11"><a class="header" href="#typed_builder_si-11">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -1926,7 +2178,7 @@ Re = \frac{\rho V D}{\mu}
     .given_d(0.1)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-5"><a class="header" href="#typed_builder_units-5">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-6"><a class="header" href="#typed_builder_units-6">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -1980,7 +2232,7 @@ Re = \frac{\rho V D}{\mu}
     "2.5 m/s",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="convenience_mu"><a class="header" href="#convenience_mu">convenience_mu</a></h3>
+<h3 id="convenience_mu-1"><a class="header" href="#convenience_mu-1">convenience_mu</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::fluids::reynolds_number::solve_mu(
@@ -1989,22 +2241,28 @@ Re = \frac{\rho V D}{\mu}
     "0.1 m",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-10"><a class="header" href="#bindings-10">Bindings</a></h2>
-<h3 id="rust-10"><a class="header" href="#rust-10">Rust</a></h3>
+<h2 id="bindings-11"><a class="header" href="#bindings-11">Bindings</a></h2>
+<h3 id="rust-11"><a class="header" href="#rust-11">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::fluids::reynolds_number::equation()).for_target("D").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-10"><a class="header" href="#python-10">Python</a></h3>
-<pre><code class="language-python">engpy.equations.fluids.solve_d(re="...", rho="...", v="...", mu="...")
+<h3 id="python-11"><a class="header" href="#python-11">Python</a></h3>
+<pre><code class="language-python">engpy.equations.fluids.reynolds_number.solve_d(re="...", rho="...", v="...", mu="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.fluids.solve_d(re="...", rho="...", v="...", mu="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.fluids.reynolds_number.solve_d(re="...", rho="...", v="...", mu="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("fluids.reynolds_number")
+engpy.helpers.equation_targets_text("fluids.reynolds_number")
+engpy.helpers.equation_variables_table("fluids.reynolds_number")
+engpy.helpers.equation_target_count("fluids.reynolds_number")
 </code></pre>
-<h3 id="excel-10"><a class="header" href="#excel-10">Excel</a></h3>
+<h3 id="excel-11"><a class="header" href="#excel-11">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUIDS_REYNOLDS_NUMBER_D("...","...","...","...")
 =ENG_FORMAT(ENG_FLUIDS_REYNOLDS_NUMBER_D("...","...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("fluids.reynolds_number")
+=ENG_EQUATION_TARGETS_TEXT("fluids.reynolds_number")
+=ENG_EQUATION_VARIABLES_TABLE("fluids.reynolds_number")
+=ENG_EQUATION_TARGET_COUNT("fluids.reynolds_number")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -2025,14 +2283,14 @@ engpy.equations.meta.equation_ascii("fluids.reynolds_number")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="plane-wall-conduction-heat-rate"><a class="header" href="#plane-wall-conduction-heat-rate">Plane-Wall Conduction Heat Rate</a></h1>
 <p><strong>Path ID:</strong> <code>heat_transfer.conduction_plane_wall_heat_rate</code></p>
-<p>[
+<p>$$
 \dot{Q} = k A \frac{T_h - T_c}{L}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>Q_dot = k · A · (T_h - T_c) / L</code></li>
 <li>ASCII: <code>Q_dot = k * A * (T_h - T_c) / L</code></li>
 </ul>
-<h2 id="variables-11"><a class="header" href="#variables-11">Variables</a></h2>
+<h2 id="variables-12"><a class="header" href="#variables-12">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -2053,12 +2311,12 @@ engpy.equations.meta.equation_ascii("fluids.reynolds_number")
 </tbody>
 </table>
 
-<h2 id="assumptions-11"><a class="header" href="#assumptions-11">Assumptions</a></h2>
+<h2 id="assumptions-12"><a class="header" href="#assumptions-12">Assumptions</a></h2>
 <ul>
 <li>One-dimensional steady conduction through a homogeneous plane wall.</li>
 </ul>
-<h2 id="examples-11"><a class="header" href="#examples-11">Examples</a></h2>
-<h3 id="typed_builder_si-11"><a class="header" href="#typed_builder_si-11">typed_builder_si</a></h3>
+<h2 id="examples-12"><a class="header" href="#examples-12">Examples</a></h2>
+<h3 id="typed_builder_si-12"><a class="header" href="#typed_builder_si-12">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -2070,7 +2328,7 @@ engpy.equations.meta.equation_ascii("fluids.reynolds_number")
     .given_l(1.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-6"><a class="header" href="#typed_builder_units-6">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-7"><a class="header" href="#typed_builder_units-7">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -2156,22 +2414,28 @@ engpy.equations.meta.equation_ascii("fluids.reynolds_number")
     "280 K",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-11"><a class="header" href="#bindings-11">Bindings</a></h2>
-<h3 id="rust-11"><a class="header" href="#rust-11">Rust</a></h3>
+<h2 id="bindings-12"><a class="header" href="#bindings-12">Bindings</a></h2>
+<h3 id="rust-12"><a class="header" href="#rust-12">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::heat_transfer::conduction_plane_wall_heat_rate::equation()).for_target("A").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-11"><a class="header" href="#python-11">Python</a></h3>
-<pre><code class="language-python">engpy.equations.heat_transfer.solve_a(q_dot="...", k="...", t_h="...", t_c="...", l="...")
+<h3 id="python-12"><a class="header" href="#python-12">Python</a></h3>
+<pre><code class="language-python">engpy.equations.heat_transfer.conduction_plane_wall_heat_rate.solve_a(q_dot="...", k="...", t_h="...", t_c="...", l="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.heat_transfer.solve_a(q_dot="...", k="...", t_h="...", t_c="...", l="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.heat_transfer.conduction_plane_wall_heat_rate.solve_a(q_dot="...", k="...", t_h="...", t_c="...", l="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("heat_transfer.conduction_plane_wall_heat_rate")
+engpy.helpers.equation_targets_text("heat_transfer.conduction_plane_wall_heat_rate")
+engpy.helpers.equation_variables_table("heat_transfer.conduction_plane_wall_heat_rate")
+engpy.helpers.equation_target_count("heat_transfer.conduction_plane_wall_heat_rate")
 </code></pre>
-<h3 id="excel-11"><a class="header" href="#excel-11">Excel</a></h3>
+<h3 id="excel-12"><a class="header" href="#excel-12">Excel</a></h3>
 <pre><code class="language-excel">=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_A("...","...","...","...","...")
 =ENG_FORMAT(ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_A("...","...","...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("heat_transfer.conduction_plane_wall_heat_rate")
+=ENG_EQUATION_TARGETS_TEXT("heat_transfer.conduction_plane_wall_heat_rate")
+=ENG_EQUATION_VARIABLES_TABLE("heat_transfer.conduction_plane_wall_heat_rate")
+=ENG_EQUATION_TARGET_COUNT("heat_transfer.conduction_plane_wall_heat_rate")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -2184,14 +2448,14 @@ engpy.equations.meta.equation_ascii("heat_transfer.conduction_plane_wall_heat_ra
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="convection-heat-transfer-rate"><a class="header" href="#convection-heat-transfer-rate">Convection Heat Transfer Rate</a></h1>
 <p><strong>Path ID:</strong> <code>heat_transfer.convection_heat_rate</code></p>
-<p>[
+<p>$$
 \dot{Q} = h A (T_s - T_\infty)
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>Q_dot = h · A · (T_s - T_\infty)</code></li>
 <li>ASCII: <code>Q_dot = h * A * (T_s - T_inf)</code></li>
 </ul>
-<h2 id="variables-12"><a class="header" href="#variables-12">Variables</a></h2>
+<h2 id="variables-13"><a class="header" href="#variables-13">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -2210,12 +2474,12 @@ engpy.equations.meta.equation_ascii("heat_transfer.conduction_plane_wall_heat_ra
 </tbody>
 </table>
 
-<h2 id="assumptions-12"><a class="header" href="#assumptions-12">Assumptions</a></h2>
+<h2 id="assumptions-13"><a class="header" href="#assumptions-13">Assumptions</a></h2>
 <ul>
 <li>Newton’s law of cooling with uniform h and area.</li>
 </ul>
-<h2 id="examples-12"><a class="header" href="#examples-12">Examples</a></h2>
-<h3 id="typed_builder_si-12"><a class="header" href="#typed_builder_si-12">typed_builder_si</a></h3>
+<h2 id="examples-13"><a class="header" href="#examples-13">Examples</a></h2>
+<h3 id="typed_builder_si-13"><a class="header" href="#typed_builder_si-13">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -2227,7 +2491,7 @@ engpy.equations.meta.equation_ascii("heat_transfer.conduction_plane_wall_heat_ra
     .given_t_inf(300.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-7"><a class="header" href="#typed_builder_units-7">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-8"><a class="header" href="#typed_builder_units-8">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -2289,22 +2553,28 @@ engpy.equations.meta.equation_ascii("heat_transfer.conduction_plane_wall_heat_ra
     "400 K",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-12"><a class="header" href="#bindings-12">Bindings</a></h2>
-<h3 id="rust-12"><a class="header" href="#rust-12">Rust</a></h3>
+<h2 id="bindings-13"><a class="header" href="#bindings-13">Bindings</a></h2>
+<h3 id="rust-13"><a class="header" href="#rust-13">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::heat_transfer::convection_heat_rate::equation()).for_target("A").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-12"><a class="header" href="#python-12">Python</a></h3>
-<pre><code class="language-python">engpy.equations.heat_transfer.solve_a(q_dot="...", h="...", t_s="...", t_inf="...")
+<h3 id="python-13"><a class="header" href="#python-13">Python</a></h3>
+<pre><code class="language-python">engpy.equations.heat_transfer.convection_heat_rate.solve_a(q_dot="...", h="...", t_s="...", t_inf="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.heat_transfer.solve_a(q_dot="...", h="...", t_s="...", t_inf="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.heat_transfer.convection_heat_rate.solve_a(q_dot="...", h="...", t_s="...", t_inf="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("heat_transfer.convection_heat_rate")
+engpy.helpers.equation_targets_text("heat_transfer.convection_heat_rate")
+engpy.helpers.equation_variables_table("heat_transfer.convection_heat_rate")
+engpy.helpers.equation_target_count("heat_transfer.convection_heat_rate")
 </code></pre>
-<h3 id="excel-12"><a class="header" href="#excel-12">Excel</a></h3>
+<h3 id="excel-13"><a class="header" href="#excel-13">Excel</a></h3>
 <pre><code class="language-excel">=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_A("...","...","...","...")
 =ENG_FORMAT(ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_A("...","...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("heat_transfer.convection_heat_rate")
+=ENG_EQUATION_TARGETS_TEXT("heat_transfer.convection_heat_rate")
+=ENG_EQUATION_VARIABLES_TABLE("heat_transfer.convection_heat_rate")
+=ENG_EQUATION_TARGET_COUNT("heat_transfer.convection_heat_rate")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -2316,14 +2586,14 @@ engpy.equations.meta.equation_ascii("heat_transfer.convection_heat_rate")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="log-mean-temperature-difference"><a class="header" href="#log-mean-temperature-difference">Log-Mean Temperature Difference</a></h1>
 <p><strong>Path ID:</strong> <code>heat_transfer.log_mean_temperature_difference</code></p>
-<p>[
+<p>$$
 \Delta T_{lm} = \frac{\Delta T_1 - \Delta T_2}{\ln(\Delta T_1 / \Delta T_2)}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>Δ T_{lm} = (Δ T_1 - Δ T_2) / ln(Δ T_1 / Δ T_2)</code></li>
 <li>ASCII: <code>delta_T_lm = (delta_T_1 - delta_T_2) / ln(delta_T_1 / delta_T_2)</code></li>
 </ul>
-<h2 id="variables-13"><a class="header" href="#variables-13">Variables</a></h2>
+<h2 id="variables-14"><a class="header" href="#variables-14">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -2338,12 +2608,12 @@ engpy.equations.meta.equation_ascii("heat_transfer.convection_heat_rate")
 </tbody>
 </table>
 
-<h2 id="assumptions-13"><a class="header" href="#assumptions-13">Assumptions</a></h2>
+<h2 id="assumptions-14"><a class="header" href="#assumptions-14">Assumptions</a></h2>
 <ul>
 <li>End-point temperature differences remain positive and unequal.</li>
 </ul>
-<h2 id="examples-13"><a class="header" href="#examples-13">Examples</a></h2>
-<h3 id="typed_builder_si-13"><a class="header" href="#typed_builder_si-13">typed_builder_si</a></h3>
+<h2 id="examples-14"><a class="header" href="#examples-14">Examples</a></h2>
+<h3 id="typed_builder_si-14"><a class="header" href="#typed_builder_si-14">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -2353,7 +2623,7 @@ engpy.equations.meta.equation_ascii("heat_transfer.convection_heat_rate")
     .given_delta_t_2(20.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-8"><a class="header" href="#typed_builder_units-8">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-9"><a class="header" href="#typed_builder_units-9">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -2371,22 +2641,28 @@ engpy.equations.meta.equation_ascii("heat_transfer.convection_heat_rate")
     "20 K",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-13"><a class="header" href="#bindings-13">Bindings</a></h2>
-<h3 id="rust-13"><a class="header" href="#rust-13">Rust</a></h3>
+<h2 id="bindings-14"><a class="header" href="#bindings-14">Bindings</a></h2>
+<h3 id="rust-14"><a class="header" href="#rust-14">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::heat_transfer::log_mean_temperature_difference::equation()).for_target("delta_T_lm").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-13"><a class="header" href="#python-13">Python</a></h3>
-<pre><code class="language-python">engpy.equations.heat_transfer.solve_delta_t_lm(delta_t_1="...", delta_t_2="...")
+<h3 id="python-14"><a class="header" href="#python-14">Python</a></h3>
+<pre><code class="language-python">engpy.equations.heat_transfer.log_mean_temperature_difference.solve_delta_t_lm(delta_t_1="...", delta_t_2="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.heat_transfer.solve_delta_t_lm(delta_t_1="...", delta_t_2="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.heat_transfer.log_mean_temperature_difference.solve_delta_t_lm(delta_t_1="...", delta_t_2="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("heat_transfer.log_mean_temperature_difference")
+engpy.helpers.equation_targets_text("heat_transfer.log_mean_temperature_difference")
+engpy.helpers.equation_variables_table("heat_transfer.log_mean_temperature_difference")
+engpy.helpers.equation_target_count("heat_transfer.log_mean_temperature_difference")
 </code></pre>
-<h3 id="excel-13"><a class="header" href="#excel-13">Excel</a></h3>
+<h3 id="excel-14"><a class="header" href="#excel-14">Excel</a></h3>
 <pre><code class="language-excel">=ENG_HEAT_TRANSFER_LOG_MEAN_TEMPERATURE_DIFFERENCE_DELTA_T_LM("...","...")
 =ENG_FORMAT(ENG_HEAT_TRANSFER_LOG_MEAN_TEMPERATURE_DIFFERENCE_DELTA_T_LM("...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("heat_transfer.log_mean_temperature_difference")
+=ENG_EQUATION_TARGETS_TEXT("heat_transfer.log_mean_temperature_difference")
+=ENG_EQUATION_VARIABLES_TABLE("heat_transfer.log_mean_temperature_difference")
+=ENG_EQUATION_TARGET_COUNT("heat_transfer.log_mean_temperature_difference")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -2396,14 +2672,14 @@ engpy.equations.meta.equation_ascii("heat_transfer.log_mean_temperature_differen
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="conduction-thermal-resistance"><a class="header" href="#conduction-thermal-resistance">Conduction Thermal Resistance</a></h1>
 <p><strong>Path ID:</strong> <code>heat_transfer.thermal_resistance_conduction</code></p>
-<p>[
+<p>$$
 R_{th} = \frac{L}{k A}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>R_th = L / (k · A)</code></li>
 <li>ASCII: <code>R_th = L / (k * A)</code></li>
 </ul>
-<h2 id="variables-14"><a class="header" href="#variables-14">Variables</a></h2>
+<h2 id="variables-15"><a class="header" href="#variables-15">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -2420,12 +2696,12 @@ R_{th} = \frac{L}{k A}
 </tbody>
 </table>
 
-<h2 id="assumptions-14"><a class="header" href="#assumptions-14">Assumptions</a></h2>
+<h2 id="assumptions-15"><a class="header" href="#assumptions-15">Assumptions</a></h2>
 <ul>
 <li>One-dimensional steady conduction with constant properties.</li>
 </ul>
-<h2 id="examples-14"><a class="header" href="#examples-14">Examples</a></h2>
-<h3 id="typed_builder_si-14"><a class="header" href="#typed_builder_si-14">typed_builder_si</a></h3>
+<h2 id="examples-15"><a class="header" href="#examples-15">Examples</a></h2>
+<h3 id="typed_builder_si-15"><a class="header" href="#typed_builder_si-15">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -2436,7 +2712,7 @@ R_{th} = \frac{L}{k A}
     .given_a(0.2)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-9"><a class="header" href="#typed_builder_units-9">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-10"><a class="header" href="#typed_builder_units-10">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -2483,22 +2759,28 @@ R_{th} = \frac{L}{k A}
     "10 W/(m*K)",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-14"><a class="header" href="#bindings-14">Bindings</a></h2>
-<h3 id="rust-14"><a class="header" href="#rust-14">Rust</a></h3>
+<h2 id="bindings-15"><a class="header" href="#bindings-15">Bindings</a></h2>
+<h3 id="rust-15"><a class="header" href="#rust-15">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::heat_transfer::thermal_resistance_conduction::equation()).for_target("A").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-14"><a class="header" href="#python-14">Python</a></h3>
-<pre><code class="language-python">engpy.equations.heat_transfer.solve_a(r_th="...", l="...", k="...")
+<h3 id="python-15"><a class="header" href="#python-15">Python</a></h3>
+<pre><code class="language-python">engpy.equations.heat_transfer.thermal_resistance_conduction.solve_a(r_th="...", l="...", k="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.heat_transfer.solve_a(r_th="...", l="...", k="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.heat_transfer.thermal_resistance_conduction.solve_a(r_th="...", l="...", k="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("heat_transfer.thermal_resistance_conduction")
+engpy.helpers.equation_targets_text("heat_transfer.thermal_resistance_conduction")
+engpy.helpers.equation_variables_table("heat_transfer.thermal_resistance_conduction")
+engpy.helpers.equation_target_count("heat_transfer.thermal_resistance_conduction")
 </code></pre>
-<h3 id="excel-14"><a class="header" href="#excel-14">Excel</a></h3>
+<h3 id="excel-15"><a class="header" href="#excel-15">Excel</a></h3>
 <pre><code class="language-excel">=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_A("...","...","...")
 =ENG_FORMAT(ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_A("...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("heat_transfer.thermal_resistance_conduction")
+=ENG_EQUATION_TARGETS_TEXT("heat_transfer.thermal_resistance_conduction")
+=ENG_EQUATION_VARIABLES_TABLE("heat_transfer.thermal_resistance_conduction")
+=ENG_EQUATION_TARGET_COUNT("heat_transfer.thermal_resistance_conduction")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -2509,14 +2791,14 @@ engpy.equations.meta.equation_ascii("heat_transfer.thermal_resistance_conduction
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="convection-thermal-resistance"><a class="header" href="#convection-thermal-resistance">Convection Thermal Resistance</a></h1>
 <p><strong>Path ID:</strong> <code>heat_transfer.thermal_resistance_convection</code></p>
-<p>[
+<p>$$
 R_{th} = \frac{1}{h A}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>R_th = 1 / (h · A)</code></li>
 <li>ASCII: <code>R_th = 1 / (h * A)</code></li>
 </ul>
-<h2 id="variables-15"><a class="header" href="#variables-15">Variables</a></h2>
+<h2 id="variables-16"><a class="header" href="#variables-16">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -2531,12 +2813,12 @@ R_{th} = \frac{1}{h A}
 </tbody>
 </table>
 
-<h2 id="assumptions-15"><a class="header" href="#assumptions-15">Assumptions</a></h2>
+<h2 id="assumptions-16"><a class="header" href="#assumptions-16">Assumptions</a></h2>
 <ul>
 <li>Uniform convection coefficient over the area.</li>
 </ul>
-<h2 id="examples-15"><a class="header" href="#examples-15">Examples</a></h2>
-<h3 id="typed_builder_si-15"><a class="header" href="#typed_builder_si-15">typed_builder_si</a></h3>
+<h2 id="examples-16"><a class="header" href="#examples-16">Examples</a></h2>
+<h3 id="typed_builder_si-16"><a class="header" href="#typed_builder_si-16">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -2546,7 +2828,7 @@ R_{th} = \frac{1}{h A}
     .given_a(3.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-10"><a class="header" href="#typed_builder_units-10">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-11"><a class="header" href="#typed_builder_units-11">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -2580,22 +2862,28 @@ R_{th} = \frac{1}{h A}
     "35 W/(m2*K)",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-15"><a class="header" href="#bindings-15">Bindings</a></h2>
-<h3 id="rust-15"><a class="header" href="#rust-15">Rust</a></h3>
+<h2 id="bindings-16"><a class="header" href="#bindings-16">Bindings</a></h2>
+<h3 id="rust-16"><a class="header" href="#rust-16">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::heat_transfer::thermal_resistance_convection::equation()).for_target("A").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-15"><a class="header" href="#python-15">Python</a></h3>
-<pre><code class="language-python">engpy.equations.heat_transfer.solve_a(r_th="...", h="...")
+<h3 id="python-16"><a class="header" href="#python-16">Python</a></h3>
+<pre><code class="language-python">engpy.equations.heat_transfer.thermal_resistance_convection.solve_a(r_th="...", h="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.heat_transfer.solve_a(r_th="...", h="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.heat_transfer.thermal_resistance_convection.solve_a(r_th="...", h="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("heat_transfer.thermal_resistance_convection")
+engpy.helpers.equation_targets_text("heat_transfer.thermal_resistance_convection")
+engpy.helpers.equation_variables_table("heat_transfer.thermal_resistance_convection")
+engpy.helpers.equation_target_count("heat_transfer.thermal_resistance_convection")
 </code></pre>
-<h3 id="excel-15"><a class="header" href="#excel-15">Excel</a></h3>
+<h3 id="excel-16"><a class="header" href="#excel-16">Excel</a></h3>
 <pre><code class="language-excel">=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_A("...","...")
 =ENG_FORMAT(ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_A("...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("heat_transfer.thermal_resistance_convection")
+=ENG_EQUATION_TARGETS_TEXT("heat_transfer.thermal_resistance_convection")
+=ENG_EQUATION_VARIABLES_TABLE("heat_transfer.thermal_resistance_convection")
+=ENG_EQUATION_TARGET_COUNT("heat_transfer.thermal_resistance_convection")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -2613,14 +2901,14 @@ engpy.equations.meta.equation_ascii("heat_transfer.thermal_resistance_convection
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="ideal-characteristic-velocity"><a class="header" href="#ideal-characteristic-velocity">Ideal Characteristic Velocity</a></h1>
 <p><strong>Path ID:</strong> <code>rockets.cstar_ideal</code></p>
-<p>[
+<p>$$
 c^* = \sqrt{\frac{R T_c}{\gamma}} \left(\frac{\gamma+1}{2}\right)^{(\gamma+1)/(2(\gamma-1))}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>c_star = √(R · T_c / γ) · pow((γ + 1) / 2, (γ + 1) / (2 · (γ - 1)))</code></li>
 <li>ASCII: <code>c_star = sqrt(R * T_c / gamma) * pow((gamma + 1) / 2, (gamma + 1) / (2 * (gamma - 1)))</code></li>
 </ul>
-<h2 id="variables-16"><a class="header" href="#variables-16">Variables</a></h2>
+<h2 id="variables-17"><a class="header" href="#variables-17">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -2637,12 +2925,12 @@ c^* = \sqrt{\frac{R T_c}{\gamma}} \left(\frac{\gamma+1}{2}\right)^{(\gamma+1)/(2
 </tbody>
 </table>
 
-<h2 id="assumptions-16"><a class="header" href="#assumptions-16">Assumptions</a></h2>
+<h2 id="assumptions-17"><a class="header" href="#assumptions-17">Assumptions</a></h2>
 <ul>
 <li>Ideal nozzle flow with calorically perfect combustion products.</li>
 </ul>
-<h2 id="examples-16"><a class="header" href="#examples-16">Examples</a></h2>
-<h3 id="typed_builder_si-16"><a class="header" href="#typed_builder_si-16">typed_builder_si</a></h3>
+<h2 id="examples-17"><a class="header" href="#examples-17">Examples</a></h2>
+<h3 id="typed_builder_si-17"><a class="header" href="#typed_builder_si-17">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -2653,7 +2941,7 @@ c^* = \sqrt{\frac{R T_c}{\gamma}} \left(\frac{\gamma+1}{2}\right)^{(\gamma+1)/(2
     .given_gamma(1.22)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-11"><a class="header" href="#typed_builder_units-11">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-12"><a class="header" href="#typed_builder_units-12">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -2673,22 +2961,28 @@ c^* = \sqrt{\frac{R T_c}{\gamma}} \left(\frac{\gamma+1}{2}\right)^{(\gamma+1)/(2
     1.22,
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-16"><a class="header" href="#bindings-16">Bindings</a></h2>
-<h3 id="rust-16"><a class="header" href="#rust-16">Rust</a></h3>
+<h2 id="bindings-17"><a class="header" href="#bindings-17">Bindings</a></h2>
+<h3 id="rust-17"><a class="header" href="#rust-17">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::rockets::cstar_ideal::equation()).for_target("c_star").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-16"><a class="header" href="#python-16">Python</a></h3>
-<pre><code class="language-python">engpy.equations.rockets.solve_c_star(r="...", t_c="...", gamma="...")
+<h3 id="python-17"><a class="header" href="#python-17">Python</a></h3>
+<pre><code class="language-python">engpy.equations.rockets.cstar_ideal.solve_c_star(r="...", t_c="...", gamma="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.rockets.solve_c_star(r="...", t_c="...", gamma="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.rockets.cstar_ideal.solve_c_star(r="...", t_c="...", gamma="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("rockets.cstar_ideal")
+engpy.helpers.equation_targets_text("rockets.cstar_ideal")
+engpy.helpers.equation_variables_table("rockets.cstar_ideal")
+engpy.helpers.equation_target_count("rockets.cstar_ideal")
 </code></pre>
-<h3 id="excel-16"><a class="header" href="#excel-16">Excel</a></h3>
+<h3 id="excel-17"><a class="header" href="#excel-17">Excel</a></h3>
 <pre><code class="language-excel">=ENG_ROCKETS_CSTAR_IDEAL_C_STAR("...","...","...")
 =ENG_FORMAT(ENG_ROCKETS_CSTAR_IDEAL_C_STAR("...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("rockets.cstar_ideal")
+=ENG_EQUATION_TARGETS_TEXT("rockets.cstar_ideal")
+=ENG_EQUATION_VARIABLES_TABLE("rockets.cstar_ideal")
+=ENG_EQUATION_TARGET_COUNT("rockets.cstar_ideal")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -2699,14 +2993,14 @@ engpy.equations.meta.equation_ascii("rockets.cstar_ideal")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="ideal-specific-impulse"><a class="header" href="#ideal-specific-impulse">Ideal Specific Impulse</a></h1>
 <p><strong>Path ID:</strong> <code>rockets.specific_impulse_ideal</code></p>
-<p>[
+<p>$$
 I_{sp} = \frac{C_f c^*}{g_0}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>I_sp = C_f · c_star / g₀</code></li>
 <li>ASCII: <code>I_sp = C_f * c_star / g0</code></li>
 </ul>
-<h2 id="variables-17"><a class="header" href="#variables-17">Variables</a></h2>
+<h2 id="variables-18"><a class="header" href="#variables-18">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -2721,7 +3015,7 @@ I_{sp} = \frac{C_f c^*}{g_0}
 </tbody>
 </table>
 
-<h2 id="assumptions-17"><a class="header" href="#assumptions-17">Assumptions</a></h2>
+<h2 id="assumptions-18"><a class="header" href="#assumptions-18">Assumptions</a></h2>
 <ul>
 <li>Vacuum-equivalent ideal performance relation.</li>
 </ul>
@@ -2729,8 +3023,8 @@ I_{sp} = \frac{C_f c^*}{g_0}
 <ul>
 <li><a href="#standard-gravity"><code>g0</code></a> (Standard Gravity) (g_0)</li>
 </ul>
-<h2 id="examples-17"><a class="header" href="#examples-17">Examples</a></h2>
-<h3 id="typed_builder_si-17"><a class="header" href="#typed_builder_si-17">typed_builder_si</a></h3>
+<h2 id="examples-18"><a class="header" href="#examples-18">Examples</a></h2>
+<h3 id="typed_builder_si-18"><a class="header" href="#typed_builder_si-18">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -2740,7 +3034,7 @@ I_{sp} = \frac{C_f c^*}{g_0}
     .given_c_star(1718.7683350153)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-12"><a class="header" href="#typed_builder_units-12">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-13"><a class="header" href="#typed_builder_units-13">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -2774,22 +3068,28 @@ I_{sp} = \frac{C_f c^*}{g_0}
     1.7684408757,
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-17"><a class="header" href="#bindings-17">Bindings</a></h2>
-<h3 id="rust-17"><a class="header" href="#rust-17">Rust</a></h3>
+<h2 id="bindings-18"><a class="header" href="#bindings-18">Bindings</a></h2>
+<h3 id="rust-18"><a class="header" href="#rust-18">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::rockets::specific_impulse_ideal::equation()).for_target("C_f").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-17"><a class="header" href="#python-17">Python</a></h3>
-<pre><code class="language-python">engpy.equations.rockets.solve_c_f(i_sp="...", c_star="...")
+<h3 id="python-18"><a class="header" href="#python-18">Python</a></h3>
+<pre><code class="language-python">engpy.equations.rockets.specific_impulse_ideal.solve_c_f(i_sp="...", c_star="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.rockets.solve_c_f(i_sp="...", c_star="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.rockets.specific_impulse_ideal.solve_c_f(i_sp="...", c_star="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("rockets.specific_impulse_ideal")
+engpy.helpers.equation_targets_text("rockets.specific_impulse_ideal")
+engpy.helpers.equation_variables_table("rockets.specific_impulse_ideal")
+engpy.helpers.equation_target_count("rockets.specific_impulse_ideal")
 </code></pre>
-<h3 id="excel-17"><a class="header" href="#excel-17">Excel</a></h3>
+<h3 id="excel-18"><a class="header" href="#excel-18">Excel</a></h3>
 <pre><code class="language-excel">=ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_F("...","...")
 =ENG_FORMAT(ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_F("...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("rockets.specific_impulse_ideal")
+=ENG_EQUATION_TARGETS_TEXT("rockets.specific_impulse_ideal")
+=ENG_EQUATION_VARIABLES_TABLE("rockets.specific_impulse_ideal")
+=ENG_EQUATION_TARGET_COUNT("rockets.specific_impulse_ideal")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -2799,14 +3099,14 @@ engpy.equations.meta.equation_ascii("rockets.specific_impulse_ideal")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="ideal-thrust-coefficient"><a class="header" href="#ideal-thrust-coefficient">Ideal Thrust Coefficient</a></h1>
 <p><strong>Path ID:</strong> <code>rockets.thrust_coefficient_ideal</code></p>
-<p>[
+<p>$$
 C_f = \sqrt{\frac{2\gamma^2}{\gamma-1}\left(\frac{2}{\gamma+1}\right)^{(\gamma+1)/(\gamma-1)}\left(1-\left(\frac{p_e}{p_c}\right)^{(\gamma-1)/\gamma}\right)} + \left(\frac{p_e}{p_c}-\frac{p_a}{p_c}\right)\frac{A_e}{A_t}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>C_f = √((2 · γ² / (γ - 1)) · pow(2 / (γ + 1), (γ + 1) / (γ - 1)) · (1 - pow(p_e_p_c, (γ - 1) / γ))) + (p_e_p_c - p_a_p_c) · A_e_A_t</code></li>
 <li>ASCII: <code>C_f = sqrt((2 * gamma^2 / (gamma - 1)) * pow(2 / (gamma + 1), (gamma + 1) / (gamma - 1)) * (1 - pow(p_e_p_c, (gamma - 1) / gamma))) + (p_e_p_c - p_a_p_c) * A_e_A_t</code></li>
 </ul>
-<h2 id="variables-18"><a class="header" href="#variables-18">Variables</a></h2>
+<h2 id="variables-19"><a class="header" href="#variables-19">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -2825,12 +3125,12 @@ C_f = \sqrt{\frac{2\gamma^2}{\gamma-1}\left(\frac{2}{\gamma+1}\right)^{(\gamma+1
 </tbody>
 </table>
 
-<h2 id="assumptions-18"><a class="header" href="#assumptions-18">Assumptions</a></h2>
+<h2 id="assumptions-19"><a class="header" href="#assumptions-19">Assumptions</a></h2>
 <ul>
 <li>Ideal isentropic nozzle expansion.</li>
 </ul>
-<h2 id="examples-18"><a class="header" href="#examples-18">Examples</a></h2>
-<h3 id="typed_builder_si-18"><a class="header" href="#typed_builder_si-18">typed_builder_si</a></h3>
+<h2 id="examples-19"><a class="header" href="#examples-19">Examples</a></h2>
+<h3 id="typed_builder_si-19"><a class="header" href="#typed_builder_si-19">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -2852,22 +3152,28 @@ C_f = \sqrt{\frac{2\gamma^2}{\gamma-1}\left(\frac{2}{\gamma+1}\right)^{(\gamma+1
     8.0,
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-18"><a class="header" href="#bindings-18">Bindings</a></h2>
-<h3 id="rust-18"><a class="header" href="#rust-18">Rust</a></h3>
+<h2 id="bindings-19"><a class="header" href="#bindings-19">Bindings</a></h2>
+<h3 id="rust-19"><a class="header" href="#rust-19">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::rockets::thrust_coefficient_ideal::equation()).for_target("C_f").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-18"><a class="header" href="#python-18">Python</a></h3>
-<pre><code class="language-python">engpy.equations.rockets.solve_c_f(gamma="...", p_e_p_c="...", p_a_p_c="...", a_e_a_t="...")
+<h3 id="python-19"><a class="header" href="#python-19">Python</a></h3>
+<pre><code class="language-python">engpy.equations.rockets.thrust_coefficient_ideal.solve_c_f(gamma="...", p_e_p_c="...", p_a_p_c="...", a_e_a_t="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.rockets.solve_c_f(gamma="...", p_e_p_c="...", p_a_p_c="...", a_e_a_t="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.rockets.thrust_coefficient_ideal.solve_c_f(gamma="...", p_e_p_c="...", p_a_p_c="...", a_e_a_t="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("rockets.thrust_coefficient_ideal")
+engpy.helpers.equation_targets_text("rockets.thrust_coefficient_ideal")
+engpy.helpers.equation_variables_table("rockets.thrust_coefficient_ideal")
+engpy.helpers.equation_target_count("rockets.thrust_coefficient_ideal")
 </code></pre>
-<h3 id="excel-18"><a class="header" href="#excel-18">Excel</a></h3>
+<h3 id="excel-19"><a class="header" href="#excel-19">Excel</a></h3>
 <pre><code class="language-excel">=ENG_ROCKETS_THRUST_COEFFICIENT_IDEAL_C_F("...","...","...","...")
 =ENG_FORMAT(ENG_ROCKETS_THRUST_COEFFICIENT_IDEAL_C_F("...","...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("rockets.thrust_coefficient_ideal")
+=ENG_EQUATION_TARGETS_TEXT("rockets.thrust_coefficient_ideal")
+=ENG_EQUATION_VARIABLES_TABLE("rockets.thrust_coefficient_ideal")
+=ENG_EQUATION_TARGET_COUNT("rockets.thrust_coefficient_ideal")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -2879,14 +3185,14 @@ engpy.equations.meta.equation_ascii("rockets.thrust_coefficient_ideal")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="thrust-from-mass-flow-and-effective-exhaust-velocity"><a class="header" href="#thrust-from-mass-flow-and-effective-exhaust-velocity">Thrust From Mass Flow and Effective Exhaust Velocity</a></h1>
 <p><strong>Path ID:</strong> <code>rockets.thrust_from_mass_flow</code></p>
-<p>[
+<p>$$
 F = \dot{m} c_{eff}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>F = m_dot · c_eff</code></li>
 <li>ASCII: <code>F = m_dot * c_eff</code></li>
 </ul>
-<h2 id="variables-19"><a class="header" href="#variables-19">Variables</a></h2>
+<h2 id="variables-20"><a class="header" href="#variables-20">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -2901,12 +3207,12 @@ F = \dot{m} c_{eff}
 </tbody>
 </table>
 
-<h2 id="assumptions-19"><a class="header" href="#assumptions-19">Assumptions</a></h2>
+<h2 id="assumptions-20"><a class="header" href="#assumptions-20">Assumptions</a></h2>
 <ul>
 <li>Pressure-thrust contribution is embedded in effective exhaust velocity.</li>
 </ul>
-<h2 id="examples-19"><a class="header" href="#examples-19">Examples</a></h2>
-<h3 id="typed_builder_si-19"><a class="header" href="#typed_builder_si-19">typed_builder_si</a></h3>
+<h2 id="examples-20"><a class="header" href="#examples-20">Examples</a></h2>
+<h3 id="typed_builder_si-20"><a class="header" href="#typed_builder_si-20">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -2916,7 +3222,7 @@ F = \dot{m} c_{eff}
     .given_c_eff(2000.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-13"><a class="header" href="#typed_builder_units-13">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-14"><a class="header" href="#typed_builder_units-14">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -2950,22 +3256,28 @@ F = \dot{m} c_{eff}
     "250 kg/s",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-19"><a class="header" href="#bindings-19">Bindings</a></h2>
-<h3 id="rust-19"><a class="header" href="#rust-19">Rust</a></h3>
+<h2 id="bindings-20"><a class="header" href="#bindings-20">Bindings</a></h2>
+<h3 id="rust-20"><a class="header" href="#rust-20">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::rockets::thrust_from_mass_flow::equation()).for_target("F").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-19"><a class="header" href="#python-19">Python</a></h3>
-<pre><code class="language-python">engpy.equations.rockets.solve_f(m_dot="...", c_eff="...")
+<h3 id="python-20"><a class="header" href="#python-20">Python</a></h3>
+<pre><code class="language-python">engpy.equations.rockets.thrust_from_mass_flow.solve_f(m_dot="...", c_eff="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.rockets.solve_f(m_dot="...", c_eff="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.rockets.thrust_from_mass_flow.solve_f(m_dot="...", c_eff="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("rockets.thrust_from_mass_flow")
+engpy.helpers.equation_targets_text("rockets.thrust_from_mass_flow")
+engpy.helpers.equation_variables_table("rockets.thrust_from_mass_flow")
+engpy.helpers.equation_target_count("rockets.thrust_from_mass_flow")
 </code></pre>
-<h3 id="excel-19"><a class="header" href="#excel-19">Excel</a></h3>
+<h3 id="excel-20"><a class="header" href="#excel-20">Excel</a></h3>
 <pre><code class="language-excel">=ENG_ROCKETS_THRUST_FROM_MASS_FLOW_F("...","...")
 =ENG_FORMAT(ENG_ROCKETS_THRUST_FROM_MASS_FLOW_F("...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("rockets.thrust_from_mass_flow")
+=ENG_EQUATION_TARGETS_TEXT("rockets.thrust_from_mass_flow")
+=ENG_EQUATION_VARIABLES_TABLE("rockets.thrust_from_mass_flow")
+=ENG_EQUATION_TARGET_COUNT("rockets.thrust_from_mass_flow")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -2985,14 +3297,14 @@ engpy.equations.meta.equation_ascii("rockets.thrust_from_mass_flow")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="axial-normal-stress"><a class="header" href="#axial-normal-stress">Axial Normal Stress</a></h1>
 <p><strong>Path ID:</strong> <code>structures.axial_stress</code></p>
-<p>[
+<p>$$
 \sigma = \frac{F}{A}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>σ = F / A</code></li>
 <li>ASCII: <code>sigma = F / A</code></li>
 </ul>
-<h2 id="variables-20"><a class="header" href="#variables-20">Variables</a></h2>
+<h2 id="variables-21"><a class="header" href="#variables-21">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -3007,12 +3319,12 @@ engpy.equations.meta.equation_ascii("rockets.thrust_from_mass_flow")
 </tbody>
 </table>
 
-<h2 id="assumptions-20"><a class="header" href="#assumptions-20">Assumptions</a></h2>
+<h2 id="assumptions-21"><a class="header" href="#assumptions-21">Assumptions</a></h2>
 <ul>
 <li>Uniform axial loading and stress distribution.</li>
 </ul>
-<h2 id="examples-20"><a class="header" href="#examples-20">Examples</a></h2>
-<h3 id="typed_builder_si-20"><a class="header" href="#typed_builder_si-20">typed_builder_si</a></h3>
+<h2 id="examples-21"><a class="header" href="#examples-21">Examples</a></h2>
+<h3 id="typed_builder_si-21"><a class="header" href="#typed_builder_si-21">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -3022,7 +3334,7 @@ engpy.equations.meta.equation_ascii("rockets.thrust_from_mass_flow")
     .given_a(1.9999999999999998e-4)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-14"><a class="header" href="#typed_builder_units-14">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-15"><a class="header" href="#typed_builder_units-15">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -3056,22 +3368,28 @@ engpy.equations.meta.equation_ascii("rockets.thrust_from_mass_flow")
     "10000 N",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-20"><a class="header" href="#bindings-20">Bindings</a></h2>
-<h3 id="rust-20"><a class="header" href="#rust-20">Rust</a></h3>
+<h2 id="bindings-21"><a class="header" href="#bindings-21">Bindings</a></h2>
+<h3 id="rust-21"><a class="header" href="#rust-21">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::structures::axial_stress::equation()).for_target("A").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-20"><a class="header" href="#python-20">Python</a></h3>
-<pre><code class="language-python">engpy.equations.structures.solve_a(sigma="...", f="...")
+<h3 id="python-21"><a class="header" href="#python-21">Python</a></h3>
+<pre><code class="language-python">engpy.equations.structures.axial_stress.solve_a(sigma="...", f="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.structures.solve_a(sigma="...", f="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.structures.axial_stress.solve_a(sigma="...", f="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("structures.axial_stress")
+engpy.helpers.equation_targets_text("structures.axial_stress")
+engpy.helpers.equation_variables_table("structures.axial_stress")
+engpy.helpers.equation_target_count("structures.axial_stress")
 </code></pre>
-<h3 id="excel-20"><a class="header" href="#excel-20">Excel</a></h3>
+<h3 id="excel-21"><a class="header" href="#excel-21">Excel</a></h3>
 <pre><code class="language-excel">=ENG_STRUCTURES_AXIAL_STRESS_A("...","...")
 =ENG_FORMAT(ENG_STRUCTURES_AXIAL_STRESS_A("...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("structures.axial_stress")
+=ENG_EQUATION_TARGETS_TEXT("structures.axial_stress")
+=ENG_EQUATION_VARIABLES_TABLE("structures.axial_stress")
+=ENG_EQUATION_TARGET_COUNT("structures.axial_stress")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -3081,14 +3399,14 @@ engpy.equations.meta.equation_ascii("structures.axial_stress")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="beam-bending-stress"><a class="header" href="#beam-bending-stress">Beam Bending Stress</a></h1>
 <p><strong>Path ID:</strong> <code>structures.beam_bending_stress</code></p>
-<p>[
+<p>$$
 \sigma_b = \frac{M c}{I}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>σ_b = M · c / I</code></li>
 <li>ASCII: <code>sigma_b = M * c / I</code></li>
 </ul>
-<h2 id="variables-21"><a class="header" href="#variables-21">Variables</a></h2>
+<h2 id="variables-22"><a class="header" href="#variables-22">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -3105,12 +3423,12 @@ engpy.equations.meta.equation_ascii("structures.axial_stress")
 </tbody>
 </table>
 
-<h2 id="assumptions-21"><a class="header" href="#assumptions-21">Assumptions</a></h2>
+<h2 id="assumptions-22"><a class="header" href="#assumptions-22">Assumptions</a></h2>
 <ul>
 <li>Linear elastic beam bending with small strains.</li>
 </ul>
-<h2 id="examples-21"><a class="header" href="#examples-21">Examples</a></h2>
-<h3 id="typed_builder_si-21"><a class="header" href="#typed_builder_si-21">typed_builder_si</a></h3>
+<h2 id="examples-22"><a class="header" href="#examples-22">Examples</a></h2>
+<h3 id="typed_builder_si-22"><a class="header" href="#typed_builder_si-22">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -3121,7 +3439,7 @@ engpy.equations.meta.equation_ascii("structures.axial_stress")
     .given_i(5e-6)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-15"><a class="header" href="#typed_builder_units-15">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-16"><a class="header" href="#typed_builder_units-16">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -3141,7 +3459,7 @@ engpy.equations.meta.equation_ascii("structures.axial_stress")
     "5e-6 m4",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="convenience_m"><a class="header" href="#convenience_m">convenience_m</a></h3>
+<h3 id="convenience_m-1"><a class="header" href="#convenience_m-1">convenience_m</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::structures::beam_bending_stress::solve_m(
@@ -3168,22 +3486,28 @@ engpy.equations.meta.equation_ascii("structures.axial_stress")
     "0.05 m",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-21"><a class="header" href="#bindings-21">Bindings</a></h2>
-<h3 id="rust-21"><a class="header" href="#rust-21">Rust</a></h3>
+<h2 id="bindings-22"><a class="header" href="#bindings-22">Bindings</a></h2>
+<h3 id="rust-22"><a class="header" href="#rust-22">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::structures::beam_bending_stress::equation()).for_target("I").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-21"><a class="header" href="#python-21">Python</a></h3>
-<pre><code class="language-python">engpy.equations.structures.solve_i(sigma_b="...", m="...", c="...")
+<h3 id="python-22"><a class="header" href="#python-22">Python</a></h3>
+<pre><code class="language-python">engpy.equations.structures.beam_bending_stress.solve_i(sigma_b="...", m="...", c="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.structures.solve_i(sigma_b="...", m="...", c="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.structures.beam_bending_stress.solve_i(sigma_b="...", m="...", c="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("structures.beam_bending_stress")
+engpy.helpers.equation_targets_text("structures.beam_bending_stress")
+engpy.helpers.equation_variables_table("structures.beam_bending_stress")
+engpy.helpers.equation_target_count("structures.beam_bending_stress")
 </code></pre>
-<h3 id="excel-21"><a class="header" href="#excel-21">Excel</a></h3>
+<h3 id="excel-22"><a class="header" href="#excel-22">Excel</a></h3>
 <pre><code class="language-excel">=ENG_STRUCTURES_BEAM_BENDING_STRESS_I("...","...","...")
 =ENG_FORMAT(ENG_STRUCTURES_BEAM_BENDING_STRESS_I("...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("structures.beam_bending_stress")
+=ENG_EQUATION_TARGETS_TEXT("structures.beam_bending_stress")
+=ENG_EQUATION_VARIABLES_TABLE("structures.beam_bending_stress")
+=ENG_EQUATION_TARGET_COUNT("structures.beam_bending_stress")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -3194,14 +3518,14 @@ engpy.equations.meta.equation_ascii("structures.beam_bending_stress")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="euler-buckling-critical-load"><a class="header" href="#euler-buckling-critical-load">Euler Buckling Critical Load</a></h1>
 <p><strong>Path ID:</strong> <code>structures.euler_buckling_load</code></p>
-<p>[
+<p>$$
 P_{cr} = \frac{\pi^2 E I}{(K L)^2}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>P_cr = (π² · E · I) / ((K · L)²)</code></li>
 <li>ASCII: <code>P_cr = (pi^2 * E * I) / ((K * L)^2)</code></li>
 </ul>
-<h2 id="variables-22"><a class="header" href="#variables-22">Variables</a></h2>
+<h2 id="variables-23"><a class="header" href="#variables-23">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -3220,7 +3544,7 @@ P_{cr} = \frac{\pi^2 E I}{(K L)^2}
 </tbody>
 </table>
 
-<h2 id="assumptions-22"><a class="header" href="#assumptions-22">Assumptions</a></h2>
+<h2 id="assumptions-23"><a class="header" href="#assumptions-23">Assumptions</a></h2>
 <ul>
 <li>Ideal slender column with elastic buckling.</li>
 </ul>
@@ -3228,8 +3552,8 @@ P_{cr} = \frac{\pi^2 E I}{(K L)^2}
 <ul>
 <li><a href="#archimedes-constant"><code>pi</code></a> (Archimedes Constant) (\pi)</li>
 </ul>
-<h2 id="examples-22"><a class="header" href="#examples-22">Examples</a></h2>
-<h3 id="typed_builder_si-22"><a class="header" href="#typed_builder_si-22">typed_builder_si</a></h3>
+<h2 id="examples-23"><a class="header" href="#examples-23">Examples</a></h2>
+<h3 id="typed_builder_si-23"><a class="header" href="#typed_builder_si-23">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -3240,7 +3564,7 @@ P_{cr} = \frac{\pi^2 E I}{(K L)^2}
     .given_l(2.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-16"><a class="header" href="#typed_builder_units-16">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-17"><a class="header" href="#typed_builder_units-17">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -3309,22 +3633,28 @@ P_{cr} = \frac{\pi^2 E I}{(K L)^2}
     1.0,
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-22"><a class="header" href="#bindings-22">Bindings</a></h2>
-<h3 id="rust-22"><a class="header" href="#rust-22">Rust</a></h3>
+<h2 id="bindings-23"><a class="header" href="#bindings-23">Bindings</a></h2>
+<h3 id="rust-23"><a class="header" href="#rust-23">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::structures::euler_buckling_load::equation()).for_target("E").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-22"><a class="header" href="#python-22">Python</a></h3>
-<pre><code class="language-python">engpy.equations.structures.solve_e(p_cr="...", i="...", k="...", l="...")
+<h3 id="python-23"><a class="header" href="#python-23">Python</a></h3>
+<pre><code class="language-python">engpy.equations.structures.euler_buckling_load.solve_e(p_cr="...", i="...", k="...", l="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.structures.solve_e(p_cr="...", i="...", k="...", l="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.structures.euler_buckling_load.solve_e(p_cr="...", i="...", k="...", l="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("structures.euler_buckling_load")
+engpy.helpers.equation_targets_text("structures.euler_buckling_load")
+engpy.helpers.equation_variables_table("structures.euler_buckling_load")
+engpy.helpers.equation_target_count("structures.euler_buckling_load")
 </code></pre>
-<h3 id="excel-22"><a class="header" href="#excel-22">Excel</a></h3>
+<h3 id="excel-23"><a class="header" href="#excel-23">Excel</a></h3>
 <pre><code class="language-excel">=ENG_STRUCTURES_EULER_BUCKLING_LOAD_E("...","...","...","...")
 =ENG_FORMAT(ENG_STRUCTURES_EULER_BUCKLING_LOAD_E("...","...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("structures.euler_buckling_load")
+=ENG_EQUATION_TARGETS_TEXT("structures.euler_buckling_load")
+=ENG_EQUATION_VARIABLES_TABLE("structures.euler_buckling_load")
+=ENG_EQUATION_TARGET_COUNT("structures.euler_buckling_load")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -3336,14 +3666,14 @@ engpy.equations.meta.equation_ascii("structures.euler_buckling_load")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="thin-wall-hoop-stress"><a class="header" href="#thin-wall-hoop-stress">Thin-Wall Hoop Stress</a></h1>
 <p><strong>Path ID:</strong> <code>structures.hoop_stress</code></p>
-<p>[
+<p>$$
 \sigma_h = \frac{P r}{t}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>σ_h = P · r / t</code></li>
 <li>ASCII: <code>sigma_h = P * r / t</code></li>
 </ul>
-<h2 id="variables-23"><a class="header" href="#variables-23">Variables</a></h2>
+<h2 id="variables-24"><a class="header" href="#variables-24">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -3360,13 +3690,13 @@ engpy.equations.meta.equation_ascii("structures.euler_buckling_load")
 </tbody>
 </table>
 
-<h2 id="assumptions-23"><a class="header" href="#assumptions-23">Assumptions</a></h2>
+<h2 id="assumptions-24"><a class="header" href="#assumptions-24">Assumptions</a></h2>
 <ul>
 <li>Thin-wall approximation is valid (t &lt;&lt; r).</li>
 <li>Material behavior remains in the elastic membrane-stress regime.</li>
 </ul>
-<h2 id="examples-23"><a class="header" href="#examples-23">Examples</a></h2>
-<h3 id="typed_builder_si-23"><a class="header" href="#typed_builder_si-23">typed_builder_si</a></h3>
+<h2 id="examples-24"><a class="header" href="#examples-24">Examples</a></h2>
+<h3 id="typed_builder_si-24"><a class="header" href="#typed_builder_si-24">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -3377,7 +3707,7 @@ engpy.equations.meta.equation_ascii("structures.euler_buckling_load")
     .given_t(0.008)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-17"><a class="header" href="#typed_builder_units-17">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-18"><a class="header" href="#typed_builder_units-18">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -3424,22 +3754,28 @@ engpy.equations.meta.equation_ascii("structures.euler_buckling_load")
     "0.2 m",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-23"><a class="header" href="#bindings-23">Bindings</a></h2>
-<h3 id="rust-23"><a class="header" href="#rust-23">Rust</a></h3>
+<h2 id="bindings-24"><a class="header" href="#bindings-24">Bindings</a></h2>
+<h3 id="rust-24"><a class="header" href="#rust-24">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::structures::hoop_stress::equation()).for_target("P").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-23"><a class="header" href="#python-23">Python</a></h3>
-<pre><code class="language-python">engpy.equations.structures.solve_p(sigma_h="...", r="...", t="...")
+<h3 id="python-24"><a class="header" href="#python-24">Python</a></h3>
+<pre><code class="language-python">engpy.equations.structures.hoop_stress.solve_p(sigma_h="...", r="...", t="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.structures.solve_p(sigma_h="...", r="...", t="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.structures.hoop_stress.solve_p(sigma_h="...", r="...", t="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("structures.hoop_stress")
+engpy.helpers.equation_targets_text("structures.hoop_stress")
+engpy.helpers.equation_variables_table("structures.hoop_stress")
+engpy.helpers.equation_target_count("structures.hoop_stress")
 </code></pre>
-<h3 id="excel-23"><a class="header" href="#excel-23">Excel</a></h3>
+<h3 id="excel-24"><a class="header" href="#excel-24">Excel</a></h3>
 <pre><code class="language-excel">=ENG_STRUCTURES_HOOP_STRESS_P("...","...","...")
 =ENG_FORMAT(ENG_STRUCTURES_HOOP_STRESS_P("...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("structures.hoop_stress")
+=ENG_EQUATION_TARGETS_TEXT("structures.hoop_stress")
+=ENG_EQUATION_VARIABLES_TABLE("structures.hoop_stress")
+=ENG_EQUATION_TARGET_COUNT("structures.hoop_stress")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -3450,14 +3786,14 @@ engpy.equations.meta.equation_ascii("structures.hoop_stress")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="thin-wall-longitudinal-stress"><a class="header" href="#thin-wall-longitudinal-stress">Thin-Wall Longitudinal Stress</a></h1>
 <p><strong>Path ID:</strong> <code>structures.longitudinal_stress_thin_wall</code></p>
-<p>[
+<p>$$
 \sigma_l = \frac{P r}{2 t}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>σ_l = P · r / (2 · t)</code></li>
 <li>ASCII: <code>sigma_l = P * r / (2 * t)</code></li>
 </ul>
-<h2 id="variables-24"><a class="header" href="#variables-24">Variables</a></h2>
+<h2 id="variables-25"><a class="header" href="#variables-25">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -3474,12 +3810,12 @@ engpy.equations.meta.equation_ascii("structures.hoop_stress")
 </tbody>
 </table>
 
-<h2 id="assumptions-24"><a class="header" href="#assumptions-24">Assumptions</a></h2>
+<h2 id="assumptions-25"><a class="header" href="#assumptions-25">Assumptions</a></h2>
 <ul>
 <li>Thin-wall cylindrical vessel behavior.</li>
 </ul>
-<h2 id="examples-24"><a class="header" href="#examples-24">Examples</a></h2>
-<h3 id="typed_builder_si-24"><a class="header" href="#typed_builder_si-24">typed_builder_si</a></h3>
+<h2 id="examples-25"><a class="header" href="#examples-25">Examples</a></h2>
+<h3 id="typed_builder_si-25"><a class="header" href="#typed_builder_si-25">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -3490,7 +3826,7 @@ engpy.equations.meta.equation_ascii("structures.hoop_stress")
     .given_t(0.008)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-18"><a class="header" href="#typed_builder_units-18">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-19"><a class="header" href="#typed_builder_units-19">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -3537,22 +3873,28 @@ engpy.equations.meta.equation_ascii("structures.hoop_stress")
     "0.2 m",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-24"><a class="header" href="#bindings-24">Bindings</a></h2>
-<h3 id="rust-24"><a class="header" href="#rust-24">Rust</a></h3>
+<h2 id="bindings-25"><a class="header" href="#bindings-25">Bindings</a></h2>
+<h3 id="rust-25"><a class="header" href="#rust-25">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::structures::longitudinal_stress_thin_wall::equation()).for_target("P").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-24"><a class="header" href="#python-24">Python</a></h3>
-<pre><code class="language-python">engpy.equations.structures.solve_p(sigma_l="...", r="...", t="...")
+<h3 id="python-25"><a class="header" href="#python-25">Python</a></h3>
+<pre><code class="language-python">engpy.equations.structures.longitudinal_stress_thin_wall.solve_p(sigma_l="...", r="...", t="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.structures.solve_p(sigma_l="...", r="...", t="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.structures.longitudinal_stress_thin_wall.solve_p(sigma_l="...", r="...", t="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("structures.longitudinal_stress_thin_wall")
+engpy.helpers.equation_targets_text("structures.longitudinal_stress_thin_wall")
+engpy.helpers.equation_variables_table("structures.longitudinal_stress_thin_wall")
+engpy.helpers.equation_target_count("structures.longitudinal_stress_thin_wall")
 </code></pre>
-<h3 id="excel-24"><a class="header" href="#excel-24">Excel</a></h3>
+<h3 id="excel-25"><a class="header" href="#excel-25">Excel</a></h3>
 <pre><code class="language-excel">=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_P("...","...","...")
 =ENG_FORMAT(ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_P("...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("structures.longitudinal_stress_thin_wall")
+=ENG_EQUATION_TARGETS_TEXT("structures.longitudinal_stress_thin_wall")
+=ENG_EQUATION_VARIABLES_TABLE("structures.longitudinal_stress_thin_wall")
+=ENG_EQUATION_TARGET_COUNT("structures.longitudinal_stress_thin_wall")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -3563,14 +3905,14 @@ engpy.equations.meta.equation_ascii("structures.longitudinal_stress_thin_wall")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="circular-shaft-torsion-stress"><a class="header" href="#circular-shaft-torsion-stress">Circular Shaft Torsion Stress</a></h1>
 <p><strong>Path ID:</strong> <code>structures.shaft_torsion_stress</code></p>
-<p>[
+<p>$$
 \tau = \frac{T r}{J}
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>\tau = T · r / J</code></li>
 <li>ASCII: <code>tau = T * r / J</code></li>
 </ul>
-<h2 id="variables-25"><a class="header" href="#variables-25">Variables</a></h2>
+<h2 id="variables-26"><a class="header" href="#variables-26">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -3587,12 +3929,12 @@ engpy.equations.meta.equation_ascii("structures.longitudinal_stress_thin_wall")
 </tbody>
 </table>
 
-<h2 id="assumptions-25"><a class="header" href="#assumptions-25">Assumptions</a></h2>
+<h2 id="assumptions-26"><a class="header" href="#assumptions-26">Assumptions</a></h2>
 <ul>
 <li>Circular shaft in Saint-Venant torsion.</li>
 </ul>
-<h2 id="examples-25"><a class="header" href="#examples-25">Examples</a></h2>
-<h3 id="typed_builder_si-25"><a class="header" href="#typed_builder_si-25">typed_builder_si</a></h3>
+<h2 id="examples-26"><a class="header" href="#examples-26">Examples</a></h2>
+<h3 id="typed_builder_si-26"><a class="header" href="#typed_builder_si-26">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -3603,7 +3945,7 @@ engpy.equations.meta.equation_ascii("structures.longitudinal_stress_thin_wall")
     .given_j(1.6e-5)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-19"><a class="header" href="#typed_builder_units-19">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-20"><a class="header" href="#typed_builder_units-20">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -3650,22 +3992,28 @@ engpy.equations.meta.equation_ascii("structures.longitudinal_stress_thin_wall")
     "0.04 m",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-25"><a class="header" href="#bindings-25">Bindings</a></h2>
-<h3 id="rust-25"><a class="header" href="#rust-25">Rust</a></h3>
+<h2 id="bindings-26"><a class="header" href="#bindings-26">Bindings</a></h2>
+<h3 id="rust-26"><a class="header" href="#rust-26">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::structures::shaft_torsion_stress::equation()).for_target("J").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-25"><a class="header" href="#python-25">Python</a></h3>
-<pre><code class="language-python">engpy.equations.structures.solve_j(tau="...", t="...", r="...")
+<h3 id="python-26"><a class="header" href="#python-26">Python</a></h3>
+<pre><code class="language-python">engpy.equations.structures.shaft_torsion_stress.solve_j(tau="...", t="...", r="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.structures.solve_j(tau="...", t="...", r="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.structures.shaft_torsion_stress.solve_j(tau="...", t="...", r="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("structures.shaft_torsion_stress")
+engpy.helpers.equation_targets_text("structures.shaft_torsion_stress")
+engpy.helpers.equation_variables_table("structures.shaft_torsion_stress")
+engpy.helpers.equation_target_count("structures.shaft_torsion_stress")
 </code></pre>
-<h3 id="excel-25"><a class="header" href="#excel-25">Excel</a></h3>
+<h3 id="excel-26"><a class="header" href="#excel-26">Excel</a></h3>
 <pre><code class="language-excel">=ENG_STRUCTURES_SHAFT_TORSION_STRESS_J("...","...","...")
 =ENG_FORMAT(ENG_STRUCTURES_SHAFT_TORSION_STRESS_J("...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("structures.shaft_torsion_stress")
+=ENG_EQUATION_TARGETS_TEXT("structures.shaft_torsion_stress")
+=ENG_EQUATION_VARIABLES_TABLE("structures.shaft_torsion_stress")
+=ENG_EQUATION_TARGET_COUNT("structures.shaft_torsion_stress")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -3687,14 +4035,14 @@ engpy.equations.meta.equation_ascii("structures.shaft_torsion_stress")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="ideal-gas-law-density-form"><a class="header" href="#ideal-gas-law-density-form">Ideal Gas Law (Density Form)</a></h1>
 <p><strong>Path ID:</strong> <code>thermo.ideal_gas.density</code></p>
-<p>[
+<p>$$
 P = \rho R T
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>P = ρ · R · T</code></li>
 <li>ASCII: <code>P = rho * R * T</code></li>
 </ul>
-<h2 id="variables-26"><a class="header" href="#variables-26">Variables</a></h2>
+<h2 id="variables-27"><a class="header" href="#variables-27">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -3711,7 +4059,7 @@ P = \rho R T
 </tbody>
 </table>
 
-<h2 id="assumptions-26"><a class="header" href="#assumptions-26">Assumptions</a></h2>
+<h2 id="assumptions-27"><a class="header" href="#assumptions-27">Assumptions</a></h2>
 <ul>
 <li>Thermally and calorically ideal gas behavior.</li>
 <li>Single-phase gas state.</li>
@@ -3722,8 +4070,8 @@ P = \rho R T
 <li>Variant: <code>Density Form</code> (<code>density</code>)</li>
 <li>Use when: Use when density-based flow/property calculations are primary.</li>
 </ul>
-<h2 id="examples-26"><a class="header" href="#examples-26">Examples</a></h2>
-<h3 id="typed_builder_si-26"><a class="header" href="#typed_builder_si-26">typed_builder_si</a></h3>
+<h2 id="examples-27"><a class="header" href="#examples-27">Examples</a></h2>
+<h3 id="typed_builder_si-27"><a class="header" href="#typed_builder_si-27">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -3734,7 +4082,7 @@ P = \rho R T
     .given_t(300.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-20"><a class="header" href="#typed_builder_units-20">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-21"><a class="header" href="#typed_builder_units-21">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -3781,22 +4129,28 @@ P = \rho R T
     "287 J/(kg*K)",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-26"><a class="header" href="#bindings-26">Bindings</a></h2>
-<h3 id="rust-26"><a class="header" href="#rust-26">Rust</a></h3>
+<h2 id="bindings-27"><a class="header" href="#bindings-27">Bindings</a></h2>
+<h3 id="rust-27"><a class="header" href="#rust-27">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::thermo::ideal_gas::density::equation()).for_target("P").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-26"><a class="header" href="#python-26">Python</a></h3>
-<pre><code class="language-python">engpy.equations.thermo.solve_p(rho="...", r="...", t="...")
+<h3 id="python-27"><a class="header" href="#python-27">Python</a></h3>
+<pre><code class="language-python">engpy.equations.thermo.density.solve_p(rho="...", r="...", t="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.thermo.solve_p(rho="...", r="...", t="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.thermo.density.solve_p(rho="...", r="...", t="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("thermo.ideal_gas.density")
+engpy.helpers.equation_targets_text("thermo.ideal_gas.density")
+engpy.helpers.equation_variables_table("thermo.ideal_gas.density")
+engpy.helpers.equation_target_count("thermo.ideal_gas.density")
 </code></pre>
-<h3 id="excel-26"><a class="header" href="#excel-26">Excel</a></h3>
+<h3 id="excel-27"><a class="header" href="#excel-27">Excel</a></h3>
 <pre><code class="language-excel">=ENG_THERMO_IDEAL_GAS_DENSITY_P("...","...","...")
 =ENG_FORMAT(ENG_THERMO_IDEAL_GAS_DENSITY_P("...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("thermo.ideal_gas.density")
+=ENG_EQUATION_TARGETS_TEXT("thermo.ideal_gas.density")
+=ENG_EQUATION_VARIABLES_TABLE("thermo.ideal_gas.density")
+=ENG_EQUATION_TARGET_COUNT("thermo.ideal_gas.density")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -3807,14 +4161,14 @@ engpy.equations.meta.equation_ascii("thermo.ideal_gas.density")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="ideal-gas-law-mass-volume-form"><a class="header" href="#ideal-gas-law-mass-volume-form">Ideal Gas Law (Mass-Volume Form)</a></h1>
 <p><strong>Path ID:</strong> <code>thermo.ideal_gas.mass_volume</code></p>
-<p>[
+<p>$$
 P V = m R T
-]</p>
+$$</p>
 <ul>
 <li>Unicode: <code>P = m · R · T / V</code></li>
 <li>ASCII: <code>P = m * R * T / V</code></li>
 </ul>
-<h2 id="variables-27"><a class="header" href="#variables-27">Variables</a></h2>
+<h2 id="variables-28"><a class="header" href="#variables-28">Variables</a></h2>
 <table>
 <thead>
 <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
@@ -3833,7 +4187,7 @@ P V = m R T
 </tbody>
 </table>
 
-<h2 id="assumptions-27"><a class="header" href="#assumptions-27">Assumptions</a></h2>
+<h2 id="assumptions-28"><a class="header" href="#assumptions-28">Assumptions</a></h2>
 <ul>
 <li>Thermally and calorically ideal gas behavior.</li>
 <li>Gas is in equilibrium at a single representative state.</li>
@@ -3844,8 +4198,8 @@ P V = m R T
 <li>Variant: <code>Mass-Volume Form</code> (<code>mass_volume</code>)</li>
 <li>Use when: Use when total mass and control-volume size are primary knowns.</li>
 </ul>
-<h2 id="examples-27"><a class="header" href="#examples-27">Examples</a></h2>
-<h3 id="typed_builder_si-27"><a class="header" href="#typed_builder_si-27">typed_builder_si</a></h3>
+<h2 id="examples-28"><a class="header" href="#examples-28">Examples</a></h2>
+<h3 id="typed_builder_si-28"><a class="header" href="#typed_builder_si-28">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -3857,7 +4211,7 @@ P V = m R T
     .given_t(300.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed_builder_units-21"><a class="header" href="#typed_builder_units-21">typed_builder_units</a></h3>
+<h3 id="typed_builder_units-22"><a class="header" href="#typed_builder_units-22">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -3889,7 +4243,7 @@ P V = m R T
     "300 K",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="convenience_m-1"><a class="header" href="#convenience_m-1">convenience_m</a></h3>
+<h3 id="convenience_m-2"><a class="header" href="#convenience_m-2">convenience_m</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::thermo::mass_volume::solve_m(
@@ -3919,22 +4273,28 @@ P V = m R T
     "287 J/(kg*K)",
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="bindings-27"><a class="header" href="#bindings-27">Bindings</a></h2>
-<h3 id="rust-27"><a class="header" href="#rust-27">Rust</a></h3>
+<h2 id="bindings-28"><a class="header" href="#bindings-28">Bindings</a></h2>
+<h3 id="rust-28"><a class="header" href="#rust-28">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target("P").value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="python-27"><a class="header" href="#python-27">Python</a></h3>
-<pre><code class="language-python">engpy.equations.thermo.solve_p(v="...", m="...", r="...", t="...")
+<h3 id="python-28"><a class="header" href="#python-28">Python</a></h3>
+<pre><code class="language-python">engpy.equations.thermo.mass_volume.solve_p(v="...", m="...", r="...", t="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.thermo.solve_p(v="...", m="...", r="...", t="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.helpers.format_value(engpy.equations.thermo.mass_volume.solve_p(v="...", m="...", r="...", t="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
 engpy.equations.meta.equation_ascii("thermo.ideal_gas.mass_volume")
+engpy.helpers.equation_targets_text("thermo.ideal_gas.mass_volume")
+engpy.helpers.equation_variables_table("thermo.ideal_gas.mass_volume")
+engpy.helpers.equation_target_count("thermo.ideal_gas.mass_volume")
 </code></pre>
-<h3 id="excel-27"><a class="header" href="#excel-27">Excel</a></h3>
+<h3 id="excel-28"><a class="header" href="#excel-28">Excel</a></h3>
 <pre><code class="language-excel">=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_P("...","...","...","...")
 =ENG_FORMAT(ENG_THERMO_IDEAL_GAS_MASS_VOLUME_P("...","...","...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
 =ENG_EQUATION_ASCII("thermo.ideal_gas.mass_volume")
+=ENG_EQUATION_TARGETS_TEXT("thermo.ideal_gas.mass_volume")
+=ENG_EQUATION_VARIABLES_TABLE("thermo.ideal_gas.mass_volume")
+=ENG_EQUATION_TARGET_COUNT("thermo.ideal_gas.mass_volume")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -3976,12 +4336,12 @@ engpy.equations.meta.equation_ascii("thermo.ideal_gas.mass_volume")
 </tbody>
 </table>
 </div>
-<h2 id="bindings-28"><a class="header" href="#bindings-28">Bindings</a></h2>
-<h3 id="python-28"><a class="header" href="#python-28">Python</a></h3>
-<pre><code class="language-python">import engpy.equations.families.ideal_gas as family
-family.mass_volume_solve_...(...)
+<h2 id="bindings-29"><a class="header" href="#bindings-29">Bindings</a></h2>
+<h3 id="python-29"><a class="header" href="#python-29">Python</a></h3>
+<pre><code class="language-python">from engpy.equations.families import ideal_gas
+ideal_gas.mass_volume.solve_&lt;target&gt;(...)
 </code></pre>
-<h3 id="excel-28"><a class="header" href="#excel-28">Excel</a></h3>
+<h3 id="excel-29"><a class="header" href="#excel-29">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FAMILY_&lt;FAMILY&gt;_&lt;VARIANT&gt;_&lt;TARGET&gt;(...)
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -3996,6 +4356,7 @@ family.mass_volume_solve_...(...)
 </thead>
 <tbody>
 <tr><td><a href="#pipe-pressure-drop">Pipe Pressure Drop</a></td><td><code>pipe_loss</code></td><td>Composes Reynolds + friction model + Darcy-Weisbach for pipe pressure loss.</td><td>Fixed friction factor, Colebrook</td></tr>
+<tr><td><a href="#isentropic-calculator">Isentropic Calculator</a></td><td><code>isentropic_calc</code></td><td>Calculator-style compressible device: solve any supported isentropic input to any supported output through Mach pivot orchestration.</td><td>Input kinds: Mach, MachAngle, p/p0, T/T0, rho/rho0, A/A*, Branch-aware inversion for A/A*</td></tr>
 </tbody>
 </table>
 </div>
@@ -4066,12 +4427,12 @@ family.mass_volume_solve_...(...)
 <li>Pressure drop: <a href="#darcy-weisbach-pressure-drop">Darcy-Weisbach Pressure Drop</a></li>
 <li>Fluid state/context: <a href="#fluids-guide">Fluids Guide</a></li>
 </ul>
-<h2 id="bindings-29"><a class="header" href="#bindings-29">Bindings</a></h2>
-<h3 id="python-29"><a class="header" href="#python-29">Python</a></h3>
+<h2 id="bindings-30"><a class="header" href="#bindings-30">Bindings</a></h2>
+<h3 id="python-30"><a class="header" href="#python-30">Python</a></h3>
 <pre><code class="language-python">dp = engpy.devices.pipe_loss_solve_delta_p(friction_model="Colebrook", v="3 m/s", d="0.1 m", l="10 m", eps="0.00015 in", fluid="H2O", in1_key="T", in1_value="300 K", in2_key="P", in2_value="1 atm")
 engpy.helpers.format_value(dp, "Pa", "psia")
 </code></pre>
-<h3 id="excel-29"><a class="header" href="#excel-29">Excel</a></h3>
+<h3 id="excel-30"><a class="header" href="#excel-30">Excel</a></h3>
 <pre><code class="language-excel">=ENG_PIPE_LOSS_DELTA_P("Colebrook",,"",,"3 m/s","0.1 m","10 m","0.00015 in","H2O","T","300 K","P","1 atm")
 =ENG_FORMAT(ENG_PIPE_LOSS_DELTA_P("Colebrook",,"",,"3 m/s","0.1 m","10 m","0.00015 in","H2O","T","300 K","P","1 atm"),"Pa","psia")
 =ENG_META("device","pipe_loss","supported_modes")
@@ -4082,6 +4443,87 @@ engpy.helpers.format_value(dp, "Pa", "psia")
 <li><code>fixed_f</code>: fixed Darcy friction factor when model is <code>Fixed</code></li>
 <li><code>density</code> / <code>viscosity</code> / <code>velocity</code> / <code>diameter</code> / <code>length</code> / <code>roughness</code>: direct engineering inputs</li>
 <li><code>fluid</code>, <code>in1_key</code>, <code>in1_value</code>, <code>in2_key</code>, <code>in2_value</code>: optional fluid-state context pair</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="isentropic-calculator"><a class="header" href="#isentropic-calculator">Isentropic Calculator</a></h1>
+<p>Calculator-style compressible-flow device that accepts one isentropic input kind and one target kind, resolves a pivot Mach number, then computes the requested output.</p>
+<p>All relation math is delegated to equation-registry atomic equations (no device-local formula authority).</p>
+<h2 id="supported-inputs-v1"><a class="header" href="#supported-inputs-v1">Supported Inputs (v1)</a></h2>
+<ul>
+<li><code>mach</code></li>
+<li><code>mach_angle_deg</code> (Excel/Python convenience; internally converted to radians)</li>
+<li><code>pressure_ratio</code> (<code>p/p0</code>)</li>
+<li><code>temperature_ratio</code> (<code>T/T0</code>)</li>
+<li><code>density_ratio</code> (<code>rho/rho0</code>)</li>
+<li><code>area_ratio</code> (<code>A/A*</code>, branch-sensitive)</li>
+</ul>
+<h2 id="supported-targets-v1"><a class="header" href="#supported-targets-v1">Supported Targets (v1)</a></h2>
+<ul>
+<li><code>mach</code></li>
+<li><code>mach_angle_deg</code></li>
+<li><code>pressure_ratio</code></li>
+<li><code>temperature_ratio</code></li>
+<li><code>density_ratio</code></li>
+<li><code>area_ratio</code></li>
+</ul>
+<h2 id="branch-behavior"><a class="header" href="#branch-behavior">Branch Behavior</a></h2>
+<ul>
+<li><code>area_ratio -&gt; mach</code> is double-valued and requires explicit branch (<code>subsonic</code> or <code>supersonic</code>).</li>
+<li>If branch-sensitive inversion is requested without branch, the device returns a structured error.</li>
+</ul>
+<h2 id="examples-29"><a class="header" href="#examples-29">Examples</a></h2>
+<h3 id="rust-29"><a class="header" href="#rust-29">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use eng::devices::{isentropic_calc, IsentropicInputKind, IsentropicOutputKind, IsentropicBranch};
+let out = isentropic_calc()
+    .gamma(1.4)
+    .input(IsentropicInputKind::AreaRatio, 2.0)
+    .target(IsentropicOutputKind::Mach)
+    .branch(IsentropicBranch::Supersonic)
+    .solve()?;
+println!("M={}, p/p0={}", out.pivot_mach, out.value_si);
+<span class="boring">}</span></code></pre>
+<h3 id="python-31"><a class="header" href="#python-31">Python</a></h3>
+<pre><code class="language-python">engpy.devices.isentropic_calc("mach_angle_deg", 30.0, "pressure_ratio", 1.4)
+engpy.devices.isentropic_pivot_mach("area_ratio", 2.0, "mach", 1.4, "subsonic")
+engpy.devices.isentropic_path_text("area_ratio", 2.0, "mach", 1.4, "supersonic")
+</code></pre>
+<h3 id="excel-31"><a class="header" href="#excel-31">Excel</a></h3>
+<pre><code class="language-excel">=ENG_ISENTROPIC("mach_angle_deg",30,"pressure_ratio",1.4,"")
+=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,"supersonic")
+=ENG_ISENTROPIC_PIVOT_MACH("area_ratio",2.0,"mach",1.4,"subsonic")
+=ENG_ISENTROPIC_PATH_TEXT("mach",2.0,"pressure_ratio",1.4,"")
+</code></pre>
+<h2 id="internal-composition-1"><a class="header" href="#internal-composition-1">Internal Composition</a></h2>
+<ul>
+<li><a href="#mach-angle">Mach Angle</a></li>
+<li><a href="#isentropic-pressure-ratio">Isentropic Pressure Ratio</a></li>
+<li><a href="#isentropic-temperature-ratio">Isentropic Temperature Ratio</a></li>
+<li><a href="#isentropic-density-ratio">Isentropic Density Ratio</a></li>
+<li><a href="#isentropic-area-mach-relation">Isentropic Area-Mach Relation</a></li>
+</ul>
+<h2 id="bindings-31"><a class="header" href="#bindings-31">Bindings</a></h2>
+<h3 id="python-1-1"><a class="header" href="#python-1-1">Python</a></h3>
+<pre><code class="language-python">engpy.devices.isentropic_calc("mach_angle_deg", 30.0, "pressure_ratio", 1.4)
+engpy.devices.isentropic_pivot_mach("area_ratio", 2.0, "mach", 1.4, "supersonic")
+engpy.devices.isentropic_path_text("area_ratio", 2.0, "mach", 1.4, "subsonic")
+</code></pre>
+<h3 id="excel-1-1"><a class="header" href="#excel-1-1">Excel</a></h3>
+<pre><code class="language-excel">=ENG_ISENTROPIC("mach_angle_deg",30,"pressure_ratio",1.4,"")
+=ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,"")
+=ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30,1.4,"")
+=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,"supersonic")
+=ENG_ISENTROPIC_PIVOT_MACH("area_ratio",2.0,"mach",1.4,"subsonic")
+=ENG_ISENTROPIC_PATH_TEXT("mach",2.0,"pressure_ratio",1.4,"")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
+<ul>
+<li><code>value_kind_in</code>: <code>mach</code>, <code>mach_angle_deg</code>, <code>pressure_ratio</code>, <code>temperature_ratio</code>, <code>density_ratio</code>, <code>area_ratio</code></li>
+<li><code>value_in</code>: input value</li>
+<li><code>target_kind_out</code>: same enum family as input kind</li>
+<li><code>gamma</code>: specific heat ratio</li>
+<li><code>branch</code>: optional, required for double-valued inverse paths like <code>area_ratio -&gt; mach</code></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="constants"><a class="header" href="#constants">Constants</a></h1>
@@ -4478,14 +4920,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-30"><a class="header" href="#bindings-30">Bindings</a></h2>
-<h3 id="python-30"><a class="header" href="#python-30">Python</a></h3>
+<h2 id="bindings-32"><a class="header" href="#bindings-32">Bindings</a></h2>
+<h3 id="python-32"><a class="header" href="#python-32">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-30"><a class="header" href="#excel-30">Excel</a></h3>
+<h3 id="excel-32"><a class="header" href="#excel-32">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -4635,14 +5083,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-31"><a class="header" href="#bindings-31">Bindings</a></h2>
-<h3 id="python-31"><a class="header" href="#python-31">Python</a></h3>
+<h2 id="bindings-33"><a class="header" href="#bindings-33">Bindings</a></h2>
+<h3 id="python-33"><a class="header" href="#python-33">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-31"><a class="header" href="#excel-31">Excel</a></h3>
+<h3 id="excel-33"><a class="header" href="#excel-33">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -4792,14 +5246,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-32"><a class="header" href="#bindings-32">Bindings</a></h2>
-<h3 id="python-32"><a class="header" href="#python-32">Python</a></h3>
+<h2 id="bindings-34"><a class="header" href="#bindings-34">Bindings</a></h2>
+<h3 id="python-34"><a class="header" href="#python-34">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-32"><a class="header" href="#excel-32">Excel</a></h3>
+<h3 id="excel-34"><a class="header" href="#excel-34">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -4949,14 +5409,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-33"><a class="header" href="#bindings-33">Bindings</a></h2>
-<h3 id="python-33"><a class="header" href="#python-33">Python</a></h3>
+<h2 id="bindings-35"><a class="header" href="#bindings-35">Bindings</a></h2>
+<h3 id="python-35"><a class="header" href="#python-35">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-33"><a class="header" href="#excel-33">Excel</a></h3>
+<h3 id="excel-35"><a class="header" href="#excel-35">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -5106,14 +5572,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-34"><a class="header" href="#bindings-34">Bindings</a></h2>
-<h3 id="python-34"><a class="header" href="#python-34">Python</a></h3>
+<h2 id="bindings-36"><a class="header" href="#bindings-36">Bindings</a></h2>
+<h3 id="python-36"><a class="header" href="#python-36">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-34"><a class="header" href="#excel-34">Excel</a></h3>
+<h3 id="excel-36"><a class="header" href="#excel-36">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -5263,14 +5735,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-35"><a class="header" href="#bindings-35">Bindings</a></h2>
-<h3 id="python-35"><a class="header" href="#python-35">Python</a></h3>
+<h2 id="bindings-37"><a class="header" href="#bindings-37">Bindings</a></h2>
+<h3 id="python-37"><a class="header" href="#python-37">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-35"><a class="header" href="#excel-35">Excel</a></h3>
+<h3 id="excel-37"><a class="header" href="#excel-37">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -5420,14 +5898,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-36"><a class="header" href="#bindings-36">Bindings</a></h2>
-<h3 id="python-36"><a class="header" href="#python-36">Python</a></h3>
+<h2 id="bindings-38"><a class="header" href="#bindings-38">Bindings</a></h2>
+<h3 id="python-38"><a class="header" href="#python-38">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-36"><a class="header" href="#excel-36">Excel</a></h3>
+<h3 id="excel-38"><a class="header" href="#excel-38">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -5577,14 +6061,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-37"><a class="header" href="#bindings-37">Bindings</a></h2>
-<h3 id="python-37"><a class="header" href="#python-37">Python</a></h3>
+<h2 id="bindings-39"><a class="header" href="#bindings-39">Bindings</a></h2>
+<h3 id="python-39"><a class="header" href="#python-39">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-37"><a class="header" href="#excel-37">Excel</a></h3>
+<h3 id="excel-39"><a class="header" href="#excel-39">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -5734,14 +6224,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-38"><a class="header" href="#bindings-38">Bindings</a></h2>
-<h3 id="python-38"><a class="header" href="#python-38">Python</a></h3>
+<h2 id="bindings-40"><a class="header" href="#bindings-40">Bindings</a></h2>
+<h3 id="python-40"><a class="header" href="#python-40">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-38"><a class="header" href="#excel-38">Excel</a></h3>
+<h3 id="excel-40"><a class="header" href="#excel-40">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -5891,14 +6387,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-39"><a class="header" href="#bindings-39">Bindings</a></h2>
-<h3 id="python-39"><a class="header" href="#python-39">Python</a></h3>
+<h2 id="bindings-41"><a class="header" href="#bindings-41">Bindings</a></h2>
+<h3 id="python-41"><a class="header" href="#python-41">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-39"><a class="header" href="#excel-39">Excel</a></h3>
+<h3 id="excel-41"><a class="header" href="#excel-41">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -6048,14 +6550,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-40"><a class="header" href="#bindings-40">Bindings</a></h2>
-<h3 id="python-40"><a class="header" href="#python-40">Python</a></h3>
+<h2 id="bindings-42"><a class="header" href="#bindings-42">Bindings</a></h2>
+<h3 id="python-42"><a class="header" href="#python-42">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-40"><a class="header" href="#excel-40">Excel</a></h3>
+<h3 id="excel-42"><a class="header" href="#excel-42">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -6205,14 +6713,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-41"><a class="header" href="#bindings-41">Bindings</a></h2>
-<h3 id="python-41"><a class="header" href="#python-41">Python</a></h3>
+<h2 id="bindings-43"><a class="header" href="#bindings-43">Bindings</a></h2>
+<h3 id="python-43"><a class="header" href="#python-43">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-41"><a class="header" href="#excel-41">Excel</a></h3>
+<h3 id="excel-43"><a class="header" href="#excel-43">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -6362,14 +6876,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-42"><a class="header" href="#bindings-42">Bindings</a></h2>
-<h3 id="python-42"><a class="header" href="#python-42">Python</a></h3>
+<h2 id="bindings-44"><a class="header" href="#bindings-44">Bindings</a></h2>
+<h3 id="python-44"><a class="header" href="#python-44">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-42"><a class="header" href="#excel-42">Excel</a></h3>
+<h3 id="excel-44"><a class="header" href="#excel-44">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -6519,14 +7039,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-43"><a class="header" href="#bindings-43">Bindings</a></h2>
-<h3 id="python-43"><a class="header" href="#python-43">Python</a></h3>
+<h2 id="bindings-45"><a class="header" href="#bindings-45">Bindings</a></h2>
+<h3 id="python-45"><a class="header" href="#python-45">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-43"><a class="header" href="#excel-43">Excel</a></h3>
+<h3 id="excel-45"><a class="header" href="#excel-45">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -6676,14 +7202,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-44"><a class="header" href="#bindings-44">Bindings</a></h2>
-<h3 id="python-44"><a class="header" href="#python-44">Python</a></h3>
+<h2 id="bindings-46"><a class="header" href="#bindings-46">Bindings</a></h2>
+<h3 id="python-46"><a class="header" href="#python-46">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-44"><a class="header" href="#excel-44">Excel</a></h3>
+<h3 id="excel-46"><a class="header" href="#excel-46">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -6833,14 +7365,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-45"><a class="header" href="#bindings-45">Bindings</a></h2>
-<h3 id="python-45"><a class="header" href="#python-45">Python</a></h3>
+<h2 id="bindings-47"><a class="header" href="#bindings-47">Bindings</a></h2>
+<h3 id="python-47"><a class="header" href="#python-47">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-45"><a class="header" href="#excel-45">Excel</a></h3>
+<h3 id="excel-47"><a class="header" href="#excel-47">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -6990,14 +7528,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-46"><a class="header" href="#bindings-46">Bindings</a></h2>
-<h3 id="python-46"><a class="header" href="#python-46">Python</a></h3>
+<h2 id="bindings-48"><a class="header" href="#bindings-48">Bindings</a></h2>
+<h3 id="python-48"><a class="header" href="#python-48">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-46"><a class="header" href="#excel-46">Excel</a></h3>
+<h3 id="excel-48"><a class="header" href="#excel-48">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -7147,14 +7691,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-47"><a class="header" href="#bindings-47">Bindings</a></h2>
-<h3 id="python-47"><a class="header" href="#python-47">Python</a></h3>
+<h2 id="bindings-49"><a class="header" href="#bindings-49">Bindings</a></h2>
+<h3 id="python-49"><a class="header" href="#python-49">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-47"><a class="header" href="#excel-47">Excel</a></h3>
+<h3 id="excel-49"><a class="header" href="#excel-49">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -7304,14 +7854,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-48"><a class="header" href="#bindings-48">Bindings</a></h2>
-<h3 id="python-48"><a class="header" href="#python-48">Python</a></h3>
+<h2 id="bindings-50"><a class="header" href="#bindings-50">Bindings</a></h2>
+<h3 id="python-50"><a class="header" href="#python-50">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-48"><a class="header" href="#excel-48">Excel</a></h3>
+<h3 id="excel-50"><a class="header" href="#excel-50">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -7461,14 +8017,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-49"><a class="header" href="#bindings-49">Bindings</a></h2>
-<h3 id="python-49"><a class="header" href="#python-49">Python</a></h3>
+<h2 id="bindings-51"><a class="header" href="#bindings-51">Bindings</a></h2>
+<h3 id="python-51"><a class="header" href="#python-51">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-49"><a class="header" href="#excel-49">Excel</a></h3>
+<h3 id="excel-51"><a class="header" href="#excel-51">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -7618,14 +8180,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-50"><a class="header" href="#bindings-50">Bindings</a></h2>
-<h3 id="python-50"><a class="header" href="#python-50">Python</a></h3>
+<h2 id="bindings-52"><a class="header" href="#bindings-52">Bindings</a></h2>
+<h3 id="python-52"><a class="header" href="#python-52">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-50"><a class="header" href="#excel-50">Excel</a></h3>
+<h3 id="excel-52"><a class="header" href="#excel-52">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -7775,14 +8343,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-51"><a class="header" href="#bindings-51">Bindings</a></h2>
-<h3 id="python-51"><a class="header" href="#python-51">Python</a></h3>
+<h2 id="bindings-53"><a class="header" href="#bindings-53">Bindings</a></h2>
+<h3 id="python-53"><a class="header" href="#python-53">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-51"><a class="header" href="#excel-51">Excel</a></h3>
+<h3 id="excel-53"><a class="header" href="#excel-53">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -7932,14 +8506,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-52"><a class="header" href="#bindings-52">Bindings</a></h2>
-<h3 id="python-52"><a class="header" href="#python-52">Python</a></h3>
+<h2 id="bindings-54"><a class="header" href="#bindings-54">Bindings</a></h2>
+<h3 id="python-54"><a class="header" href="#python-54">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-52"><a class="header" href="#excel-52">Excel</a></h3>
+<h3 id="excel-54"><a class="header" href="#excel-54">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -8089,14 +8669,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-53"><a class="header" href="#bindings-53">Bindings</a></h2>
-<h3 id="python-53"><a class="header" href="#python-53">Python</a></h3>
+<h2 id="bindings-55"><a class="header" href="#bindings-55">Bindings</a></h2>
+<h3 id="python-55"><a class="header" href="#python-55">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-53"><a class="header" href="#excel-53">Excel</a></h3>
+<h3 id="excel-55"><a class="header" href="#excel-55">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -8246,14 +8832,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-54"><a class="header" href="#bindings-54">Bindings</a></h2>
-<h3 id="python-54"><a class="header" href="#python-54">Python</a></h3>
+<h2 id="bindings-56"><a class="header" href="#bindings-56">Bindings</a></h2>
+<h3 id="python-56"><a class="header" href="#python-56">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-54"><a class="header" href="#excel-54">Excel</a></h3>
+<h3 id="excel-56"><a class="header" href="#excel-56">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -8403,14 +8995,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-55"><a class="header" href="#bindings-55">Bindings</a></h2>
-<h3 id="python-55"><a class="header" href="#python-55">Python</a></h3>
+<h2 id="bindings-57"><a class="header" href="#bindings-57">Bindings</a></h2>
+<h3 id="python-57"><a class="header" href="#python-57">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-55"><a class="header" href="#excel-55">Excel</a></h3>
+<h3 id="excel-57"><a class="header" href="#excel-57">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -8560,14 +9158,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-56"><a class="header" href="#bindings-56">Bindings</a></h2>
-<h3 id="python-56"><a class="header" href="#python-56">Python</a></h3>
+<h2 id="bindings-58"><a class="header" href="#bindings-58">Bindings</a></h2>
+<h3 id="python-58"><a class="header" href="#python-58">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-56"><a class="header" href="#excel-56">Excel</a></h3>
+<h3 id="excel-58"><a class="header" href="#excel-58">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -8717,14 +9321,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-57"><a class="header" href="#bindings-57">Bindings</a></h2>
-<h3 id="python-57"><a class="header" href="#python-57">Python</a></h3>
+<h2 id="bindings-59"><a class="header" href="#bindings-59">Bindings</a></h2>
+<h3 id="python-59"><a class="header" href="#python-59">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-57"><a class="header" href="#excel-57">Excel</a></h3>
+<h3 id="excel-59"><a class="header" href="#excel-59">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -8874,14 +9484,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-58"><a class="header" href="#bindings-58">Bindings</a></h2>
-<h3 id="python-58"><a class="header" href="#python-58">Python</a></h3>
+<h2 id="bindings-60"><a class="header" href="#bindings-60">Bindings</a></h2>
+<h3 id="python-60"><a class="header" href="#python-60">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-58"><a class="header" href="#excel-58">Excel</a></h3>
+<h3 id="excel-60"><a class="header" href="#excel-60">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -9031,14 +9647,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-59"><a class="header" href="#bindings-59">Bindings</a></h2>
-<h3 id="python-59"><a class="header" href="#python-59">Python</a></h3>
+<h2 id="bindings-61"><a class="header" href="#bindings-61">Bindings</a></h2>
+<h3 id="python-61"><a class="header" href="#python-61">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-59"><a class="header" href="#excel-59">Excel</a></h3>
+<h3 id="excel-61"><a class="header" href="#excel-61">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -9188,14 +9810,20 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-60"><a class="header" href="#bindings-60">Bindings</a></h2>
-<h3 id="python-60"><a class="header" href="#python-60">Python</a></h3>
+<h2 id="bindings-62"><a class="header" href="#bindings-62">Bindings</a></h2>
+<h3 id="python-62"><a class="header" href="#python-62">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-60"><a class="header" href="#excel-60">Excel</a></h3>
+<h3 id="excel-62"><a class="header" href="#excel-62">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -9231,14 +9859,20 @@ let sy = state.property("yield_strength")?;
 <li>Properties: elastic_modulus, thermal_conductivity, yield_strength</li>
 </ul>
 <p>Heat-treated aluminum alloy with dense temperature-property series.</p>
-<h2 id="bindings-61"><a class="header" href="#bindings-61">Bindings</a></h2>
-<h3 id="python-61"><a class="header" href="#python-61">Python</a></h3>
+<h2 id="bindings-63"><a class="header" href="#bindings-63">Bindings</a></h2>
+<h3 id="python-63"><a class="header" href="#python-63">Python</a></h3>
 <pre><code class="language-python">engpy.materials.mat_prop("stainless_304", "elastic_modulus", "350 K")
 engpy.helpers.material_properties("stainless_304")
+engpy.helpers.material_properties_text("stainless_304")
+engpy.helpers.material_properties_table("stainless_304")
+engpy.helpers.material_property_count("stainless_304")
 </code></pre>
-<h3 id="excel-61"><a class="header" href="#excel-61">Excel</a></h3>
+<h3 id="excel-63"><a class="header" href="#excel-63">Excel</a></h3>
 <pre><code class="language-excel">=ENG_MAT_PROP("stainless_304","elastic_modulus","350 K")
 =ENG_MATERIAL_PROPERTIES("stainless_304")
+=ENG_MATERIAL_PROPERTIES_TEXT("stainless_304")
+=ENG_MATERIAL_PROPERTIES_TABLE("stainless_304")
+=ENG_MATERIAL_PROPERTY_COUNT("stainless_304")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
@@ -9255,14 +9889,20 @@ engpy.helpers.material_properties("stainless_304")
 <li>Properties: elastic_modulus, thermal_conductivity, yield_strength</li>
 </ul>
 <p>Austenitic stainless steel with temperature-dependent mechanical and thermal properties.</p>
-<h2 id="bindings-62"><a class="header" href="#bindings-62">Bindings</a></h2>
-<h3 id="python-62"><a class="header" href="#python-62">Python</a></h3>
+<h2 id="bindings-64"><a class="header" href="#bindings-64">Bindings</a></h2>
+<h3 id="python-64"><a class="header" href="#python-64">Python</a></h3>
 <pre><code class="language-python">engpy.materials.mat_prop("stainless_304", "elastic_modulus", "350 K")
 engpy.helpers.material_properties("stainless_304")
+engpy.helpers.material_properties_text("stainless_304")
+engpy.helpers.material_properties_table("stainless_304")
+engpy.helpers.material_property_count("stainless_304")
 </code></pre>
-<h3 id="excel-62"><a class="header" href="#excel-62">Excel</a></h3>
+<h3 id="excel-64"><a class="header" href="#excel-64">Excel</a></h3>
 <pre><code class="language-excel">=ENG_MAT_PROP("stainless_304","elastic_modulus","350 K")
 =ENG_MATERIAL_PROPERTIES("stainless_304")
+=ENG_MATERIAL_PROPERTIES_TEXT("stainless_304")
+=ENG_MATERIAL_PROPERTIES_TABLE("stainless_304")
+=ENG_MATERIAL_PROPERTY_COUNT("stainless_304")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>

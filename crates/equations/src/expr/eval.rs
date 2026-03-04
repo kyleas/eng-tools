@@ -75,8 +75,11 @@ fn eval_call(
         "ln" => vals.first().copied().ok_or_else(bad_arity).map(f64::ln),
         "exp" => vals.first().copied().ok_or_else(bad_arity).map(f64::exp),
         "sin" => vals.first().copied().ok_or_else(bad_arity).map(f64::sin),
+        "asin" => vals.first().copied().ok_or_else(bad_arity).map(f64::asin),
         "cos" => vals.first().copied().ok_or_else(bad_arity).map(f64::cos),
+        "acos" => vals.first().copied().ok_or_else(bad_arity).map(f64::acos),
         "tan" => vals.first().copied().ok_or_else(bad_arity).map(f64::tan),
+        "atan" => vals.first().copied().ok_or_else(bad_arity).map(f64::atan),
         "abs" => vals.first().copied().ok_or_else(bad_arity).map(f64::abs),
         "pow" => {
             if vals.len() != 2 {

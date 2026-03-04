@@ -2,9 +2,9 @@
 
 **Path ID:** `compressible.choked_mass_flux`
 
-\[
+$$
 G^* = \frac{p_0}{\sqrt{T_0}} \sqrt{\frac{\gamma}{R}} \left(\frac{2}{\gamma+1}\right)^{(\gamma+1)/(2(\gamma-1))}
-\]
+$$
 
 - Unicode: `G_star = (p0 / √(T0)) · √(γ / R) · pow(2 / (γ + 1), (γ + 1) / (2 · (γ - 1)))`
 - ASCII: `G_star = (p0 / sqrt(T0)) * sqrt(gamma / R) * pow(2 / (gamma + 1), (gamma + 1) / (2 * (gamma - 1)))`
@@ -73,10 +73,13 @@ let value = eq.solve(equations::compressible::choked_mass_flux::equation()).for_
 
 ### Python
 ```python
-engpy.equations.compressible.solve_g_star(p0="...", t0="...", gamma="...", r="...")
+engpy.equations.compressible.choked_mass_flux.solve_g_star(p0="...", t0="...", gamma="...", r="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.compressible.solve_g_star(p0="...", t0="...", gamma="...", r="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.compressible.choked_mass_flux.solve_g_star(p0="...", t0="...", gamma="...", r="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("compressible.choked_mass_flux")
+engpy.helpers.equation_targets_text("compressible.choked_mass_flux")
+engpy.helpers.equation_variables_table("compressible.choked_mass_flux")
+engpy.helpers.equation_target_count("compressible.choked_mass_flux")
 ```
 
 ### Excel
@@ -84,6 +87,9 @@ engpy.equations.meta.equation_ascii("compressible.choked_mass_flux")
 =ENG_COMPRESSIBLE_CHOKED_MASS_FLUX_G_STAR("...","...","...","...")
 =ENG_FORMAT(ENG_COMPRESSIBLE_CHOKED_MASS_FLUX_G_STAR("...","...","...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("compressible.choked_mass_flux")
+=ENG_EQUATION_TARGETS_TEXT("compressible.choked_mass_flux")
+=ENG_EQUATION_VARIABLES_TABLE("compressible.choked_mass_flux")
+=ENG_EQUATION_TARGET_COUNT("compressible.choked_mass_flux")
 ```
 
 **Excel arguments**

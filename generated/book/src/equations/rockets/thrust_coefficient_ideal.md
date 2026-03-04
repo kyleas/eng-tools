@@ -2,9 +2,9 @@
 
 **Path ID:** `rockets.thrust_coefficient_ideal`
 
-\[
+$$
 C_f = \sqrt{\frac{2\gamma^2}{\gamma-1}\left(\frac{2}{\gamma+1}\right)^{(\gamma+1)/(\gamma-1)}\left(1-\left(\frac{p_e}{p_c}\right)^{(\gamma-1)/\gamma}\right)} + \left(\frac{p_e}{p_c}-\frac{p_a}{p_c}\right)\frac{A_e}{A_t}
-\]
+$$
 
 - Unicode: `C_f = √((2 · γ² / (γ - 1)) · pow(2 / (γ + 1), (γ + 1) / (γ - 1)) · (1 - pow(p_e_p_c, (γ - 1) / γ))) + (p_e_p_c - p_a_p_c) · A_e_A_t`
 - ASCII: `C_f = sqrt((2 * gamma^2 / (gamma - 1)) * pow(2 / (gamma + 1), (gamma + 1) / (gamma - 1)) * (1 - pow(p_e_p_c, (gamma - 1) / gamma))) + (p_e_p_c - p_a_p_c) * A_e_A_t`
@@ -59,10 +59,13 @@ let value = eq.solve(equations::rockets::thrust_coefficient_ideal::equation()).f
 
 ### Python
 ```python
-engpy.equations.rockets.solve_c_f(gamma="...", p_e_p_c="...", p_a_p_c="...", a_e_a_t="...")
+engpy.equations.rockets.thrust_coefficient_ideal.solve_c_f(gamma="...", p_e_p_c="...", p_a_p_c="...", a_e_a_t="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.rockets.solve_c_f(gamma="...", p_e_p_c="...", p_a_p_c="...", a_e_a_t="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.rockets.thrust_coefficient_ideal.solve_c_f(gamma="...", p_e_p_c="...", p_a_p_c="...", a_e_a_t="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("rockets.thrust_coefficient_ideal")
+engpy.helpers.equation_targets_text("rockets.thrust_coefficient_ideal")
+engpy.helpers.equation_variables_table("rockets.thrust_coefficient_ideal")
+engpy.helpers.equation_target_count("rockets.thrust_coefficient_ideal")
 ```
 
 ### Excel
@@ -70,6 +73,9 @@ engpy.equations.meta.equation_ascii("rockets.thrust_coefficient_ideal")
 =ENG_ROCKETS_THRUST_COEFFICIENT_IDEAL_C_F("...","...","...","...")
 =ENG_FORMAT(ENG_ROCKETS_THRUST_COEFFICIENT_IDEAL_C_F("...","...","...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("rockets.thrust_coefficient_ideal")
+=ENG_EQUATION_TARGETS_TEXT("rockets.thrust_coefficient_ideal")
+=ENG_EQUATION_VARIABLES_TABLE("rockets.thrust_coefficient_ideal")
+=ENG_EQUATION_TARGET_COUNT("rockets.thrust_coefficient_ideal")
 ```
 
 **Excel arguments**

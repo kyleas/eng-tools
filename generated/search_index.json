@@ -70,6 +70,19 @@
       ]
     },
     {
+      "key": "mach_angle",
+      "path_id": "compressible.mach_angle",
+      "name": "Mach Angle",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Mach angle as a function of Mach number for supersonic flow.",
+      "aliases": [],
+      "solve_targets": [
+        "mu",
+        "M"
+      ]
+    },
+    {
       "key": "circular_pipe_area",
       "path_id": "fluids.circular_pipe_area",
       "name": "Circular Pipe Flow Area",

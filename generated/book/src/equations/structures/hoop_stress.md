@@ -2,9 +2,9 @@
 
 **Path ID:** `structures.hoop_stress`
 
-\[
+$$
 \sigma_h = \frac{P r}{t}
-\]
+$$
 
 - Unicode: `σ_h = P · r / t`
 - ASCII: `sigma_h = P * r / t`
@@ -99,10 +99,13 @@ let value = eq.solve(equations::structures::hoop_stress::equation()).for_target(
 
 ### Python
 ```python
-engpy.equations.structures.solve_p(sigma_h="...", r="...", t="...")
+engpy.equations.structures.hoop_stress.solve_p(sigma_h="...", r="...", t="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.structures.solve_p(sigma_h="...", r="...", t="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.structures.hoop_stress.solve_p(sigma_h="...", r="...", t="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("structures.hoop_stress")
+engpy.helpers.equation_targets_text("structures.hoop_stress")
+engpy.helpers.equation_variables_table("structures.hoop_stress")
+engpy.helpers.equation_target_count("structures.hoop_stress")
 ```
 
 ### Excel
@@ -110,6 +113,9 @@ engpy.equations.meta.equation_ascii("structures.hoop_stress")
 =ENG_STRUCTURES_HOOP_STRESS_P("...","...","...")
 =ENG_FORMAT(ENG_STRUCTURES_HOOP_STRESS_P("...","...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("structures.hoop_stress")
+=ENG_EQUATION_TARGETS_TEXT("structures.hoop_stress")
+=ENG_EQUATION_VARIABLES_TABLE("structures.hoop_stress")
+=ENG_EQUATION_TARGET_COUNT("structures.hoop_stress")
 ```
 
 **Excel arguments**

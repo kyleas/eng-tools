@@ -7,7 +7,7 @@ source: "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics"
 display:
   latex: '\dot{m} = \rho A V'
 variables:
-  m_dot: { name: Mass flow rate, dimension: mass_flow_rate }
+  m_dot: { name: Mass flow rate, symbol: '\dot{m}', dimension: mass_flow_rate }
   rho: { name: Fluid density, symbol: '\rho', dimension: density }
   A: { name: Flow area, dimension: area }
   V: { name: Mean velocity, dimension: velocity }

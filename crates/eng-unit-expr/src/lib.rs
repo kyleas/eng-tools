@@ -400,6 +400,8 @@ fn resolve_atom(raw: &str) -> Result<(f64, Signature), ExprError> {
         "min" => (60.0, Signature::new(0, 0, 1, 0, 0)),
         "hr" | "h" => (3600.0, Signature::new(0, 0, 1, 0, 0)),
         "k" | "kelvin" => (1.0, Signature::new(0, 0, 0, 1, 0)),
+        "rad" | "radian" | "radians" => (1.0, Signature::dimless()),
+        "deg" | "degree" | "degrees" => (std::f64::consts::PI / 180.0, Signature::dimless()),
         "mol" => (1.0, Signature::new(0, 0, 0, 0, 1)),
         "n" => (1.0, Signature::new(1, 1, -2, 0, 0)),
         "j" => (1.0, Signature::new(1, 2, -2, 0, 0)),
@@ -482,5 +484,13 @@ mod tests {
     fn rejects_ambiguous_psi() {
         let err = evaluate("12 psi").unwrap_err();
         assert!(err.to_string().contains("ambiguous pressure unit"));
+    }
+
+    #[test]
+    fn evaluates_angle_units() {
+        let q = evaluate("180 deg").unwrap();
+        assert!((q.value_si - std::f64::consts::PI).abs() < 1e-12);
+        let r = evaluate("1 rad").unwrap();
+        assert!((r.value_si - 1.0).abs() < 1e-12);
     }
 }

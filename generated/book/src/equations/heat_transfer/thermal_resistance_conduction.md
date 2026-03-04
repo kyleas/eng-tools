@@ -2,9 +2,9 @@
 
 **Path ID:** `heat_transfer.thermal_resistance_conduction`
 
-\[
+$$
 R_{th} = \frac{L}{k A}
-\]
+$$
 
 - Unicode: `R_th = L / (k · A)`
 - ASCII: `R_th = L / (k * A)`
@@ -98,10 +98,13 @@ let value = eq.solve(equations::heat_transfer::thermal_resistance_conduction::eq
 
 ### Python
 ```python
-engpy.equations.heat_transfer.solve_a(r_th="...", l="...", k="...")
+engpy.equations.heat_transfer.thermal_resistance_conduction.solve_a(r_th="...", l="...", k="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.heat_transfer.solve_a(r_th="...", l="...", k="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.heat_transfer.thermal_resistance_conduction.solve_a(r_th="...", l="...", k="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("heat_transfer.thermal_resistance_conduction")
+engpy.helpers.equation_targets_text("heat_transfer.thermal_resistance_conduction")
+engpy.helpers.equation_variables_table("heat_transfer.thermal_resistance_conduction")
+engpy.helpers.equation_target_count("heat_transfer.thermal_resistance_conduction")
 ```
 
 ### Excel
@@ -109,6 +112,9 @@ engpy.equations.meta.equation_ascii("heat_transfer.thermal_resistance_conduction
 =ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_A("...","...","...")
 =ENG_FORMAT(ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_A("...","...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("heat_transfer.thermal_resistance_conduction")
+=ENG_EQUATION_TARGETS_TEXT("heat_transfer.thermal_resistance_conduction")
+=ENG_EQUATION_VARIABLES_TABLE("heat_transfer.thermal_resistance_conduction")
+=ENG_EQUATION_TARGET_COUNT("heat_transfer.thermal_resistance_conduction")
 ```
 
 **Excel arguments**

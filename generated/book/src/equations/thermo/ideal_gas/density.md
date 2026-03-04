@@ -2,9 +2,9 @@
 
 **Path ID:** `thermo.ideal_gas.density`
 
-\[
+$$
 P = \rho R T
-\]
+$$
 
 - Unicode: `P = ρ · R · T`
 - ASCII: `P = rho * R * T`
@@ -105,10 +105,13 @@ let value = eq.solve(equations::thermo::ideal_gas::density::equation()).for_targ
 
 ### Python
 ```python
-engpy.equations.thermo.solve_p(rho="...", r="...", t="...")
+engpy.equations.thermo.density.solve_p(rho="...", r="...", t="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.thermo.solve_p(rho="...", r="...", t="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.thermo.density.solve_p(rho="...", r="...", t="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("thermo.ideal_gas.density")
+engpy.helpers.equation_targets_text("thermo.ideal_gas.density")
+engpy.helpers.equation_variables_table("thermo.ideal_gas.density")
+engpy.helpers.equation_target_count("thermo.ideal_gas.density")
 ```
 
 ### Excel
@@ -116,6 +119,9 @@ engpy.equations.meta.equation_ascii("thermo.ideal_gas.density")
 =ENG_THERMO_IDEAL_GAS_DENSITY_P("...","...","...")
 =ENG_FORMAT(ENG_THERMO_IDEAL_GAS_DENSITY_P("...","...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("thermo.ideal_gas.density")
+=ENG_EQUATION_TARGETS_TEXT("thermo.ideal_gas.density")
+=ENG_EQUATION_VARIABLES_TABLE("thermo.ideal_gas.density")
+=ENG_EQUATION_TARGET_COUNT("thermo.ideal_gas.density")
 ```
 
 **Excel arguments**

@@ -76,6 +76,30 @@
       "style": "convenience"
     },
     {
+      "code": "let value = eq\n    .solve(compressible::mach_angle::equation())\n    .target_mu()\n    .given_m(1.1)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.mach_angle",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::mach_angle::equation())\n    .target_mu()\n    .given_m(1.1)\n    .value()?;",
+      "label": "typed_builder_units",
+      "path_id": "compressible.mach_angle",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::mach_angle::solve_mu(\n    1.1,\n)?;",
+      "label": "convenience_mu",
+      "path_id": "compressible.mach_angle",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = equations::compressible::mach_angle::solve_m(\n    1.1410966606,\n)?;",
+      "label": "convenience_m",
+      "path_id": "compressible.mach_angle",
+      "style": "convenience"
+    },
+    {
       "code": "let value = eq\n    .solve(fluids::circular_pipe_area::equation())\n    .target_a()\n    .given_d(0.1)\n    .value()?;",
       "label": "typed_builder_si",
       "path_id": "fluids.circular_pipe_area",

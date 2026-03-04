@@ -2,9 +2,9 @@
 
 **Path ID:** `structures.shaft_torsion_stress`
 
-\[
+$$
 \tau = \frac{T r}{J}
-\]
+$$
 
 - Unicode: `\tau = T · r / J`
 - ASCII: `tau = T * r / J`
@@ -98,10 +98,13 @@ let value = eq.solve(equations::structures::shaft_torsion_stress::equation()).fo
 
 ### Python
 ```python
-engpy.equations.structures.solve_j(tau="...", t="...", r="...")
+engpy.equations.structures.shaft_torsion_stress.solve_j(tau="...", t="...", r="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.structures.solve_j(tau="...", t="...", r="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.structures.shaft_torsion_stress.solve_j(tau="...", t="...", r="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("structures.shaft_torsion_stress")
+engpy.helpers.equation_targets_text("structures.shaft_torsion_stress")
+engpy.helpers.equation_variables_table("structures.shaft_torsion_stress")
+engpy.helpers.equation_target_count("structures.shaft_torsion_stress")
 ```
 
 ### Excel
@@ -109,6 +112,9 @@ engpy.equations.meta.equation_ascii("structures.shaft_torsion_stress")
 =ENG_STRUCTURES_SHAFT_TORSION_STRESS_J("...","...","...")
 =ENG_FORMAT(ENG_STRUCTURES_SHAFT_TORSION_STRESS_J("...","...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("structures.shaft_torsion_stress")
+=ENG_EQUATION_TARGETS_TEXT("structures.shaft_torsion_stress")
+=ENG_EQUATION_VARIABLES_TABLE("structures.shaft_torsion_stress")
+=ENG_EQUATION_TARGET_COUNT("structures.shaft_torsion_stress")
 ```
 
 **Excel arguments**

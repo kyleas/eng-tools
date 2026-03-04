@@ -83,12 +83,92 @@
       "description": "Read parent equation family metadata when available"
     },
     {
+      "op": "equation.targets.text",
+      "description": "Read equation targets as one deterministic delimited string"
+    },
+    {
+      "op": "equation.targets.table",
+      "description": "Read equation targets as 2-column table rows"
+    },
+    {
+      "op": "equation.target.count",
+      "description": "Read equation target count"
+    },
+    {
+      "op": "equation.branches.text",
+      "description": "Read equation branches as one deterministic delimited string"
+    },
+    {
+      "op": "equation.branches.table",
+      "description": "Read equation branches as 2-column table rows [branch, is_preferred]"
+    },
+    {
+      "op": "equation.variables.text",
+      "description": "Read equation variables as one deterministic delimited string"
+    },
+    {
+      "op": "equation.variables.table",
+      "description": "Read equation variables as 2-column table rows"
+    },
+    {
+      "op": "equation.variable.count",
+      "description": "Read equation variable count"
+    },
+    {
       "op": "format.value",
-      "description": "Convert/format SI values into requested engineering units"
+      "description": "Convert values between explicit input/output units"
     },
     {
       "op": "meta.get",
       "description": "Read scalar/list metadata from equation/device/fluid/material/constant"
+    },
+    {
+      "op": "fluid.properties.text",
+      "description": "Read fluid properties as one deterministic delimited string"
+    },
+    {
+      "op": "fluid.properties.table",
+      "description": "Read fluid properties as 2-column table rows"
+    },
+    {
+      "op": "fluid.property.count",
+      "description": "Read fluid property count"
+    },
+    {
+      "op": "material.properties.text",
+      "description": "Read material properties as one deterministic delimited string"
+    },
+    {
+      "op": "material.properties.table",
+      "description": "Read material properties as 2-column table rows"
+    },
+    {
+      "op": "material.property.count",
+      "description": "Read material property count"
+    },
+    {
+      "op": "device.modes.text",
+      "description": "Read device supported modes as one deterministic delimited string"
+    },
+    {
+      "op": "device.mode.count",
+      "description": "Read device supported mode count"
+    },
+    {
+      "op": "device.isentropic_calc",
+      "description": "Run isentropic calculator device and return value+pivot+path diagnostics"
+    },
+    {
+      "op": "device.isentropic_calc.value",
+      "description": "Run isentropic calculator device and return scalar output value"
+    },
+    {
+      "op": "device.isentropic_calc.pivot_mach",
+      "description": "Run isentropic calculator device and return resolved pivot Mach"
+    },
+    {
+      "op": "device.isentropic_calc.path_text",
+      "description": "Run isentropic calculator device and return compact path trace text"
     },
     {
       "op": "device.pipe_loss.solve_delta_p",

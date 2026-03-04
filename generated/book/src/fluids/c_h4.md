@@ -137,12 +137,18 @@ let re = eq
 ```python
 engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 ```
 
 ### Excel
 ```excel
 =ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 ```
 
 **Excel arguments**

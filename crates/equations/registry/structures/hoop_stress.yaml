@@ -56,10 +56,10 @@ tests:
     - id: baseline_imperial
       description: Imperial pressure/length inputs converted to SI.
       full_state:
-        P: "725 psi"
+        P: "725 psia"
         r: "24 in"
         t: "0.5 in"
-        sigma_h: "34800 psi"
+        sigma_h: "34800 psia"
       verify:
         residual_zero: true
         solve_targets:

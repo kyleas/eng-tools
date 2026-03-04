@@ -2,9 +2,9 @@
 
 **Path ID:** `structures.longitudinal_stress_thin_wall`
 
-\[
+$$
 \sigma_l = \frac{P r}{2 t}
-\]
+$$
 
 - Unicode: `σ_l = P · r / (2 · t)`
 - ASCII: `sigma_l = P * r / (2 * t)`
@@ -98,10 +98,13 @@ let value = eq.solve(equations::structures::longitudinal_stress_thin_wall::equat
 
 ### Python
 ```python
-engpy.equations.structures.solve_p(sigma_l="...", r="...", t="...")
+engpy.equations.structures.longitudinal_stress_thin_wall.solve_p(sigma_l="...", r="...", t="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.structures.solve_p(sigma_l="...", r="...", t="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.structures.longitudinal_stress_thin_wall.solve_p(sigma_l="...", r="...", t="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("structures.longitudinal_stress_thin_wall")
+engpy.helpers.equation_targets_text("structures.longitudinal_stress_thin_wall")
+engpy.helpers.equation_variables_table("structures.longitudinal_stress_thin_wall")
+engpy.helpers.equation_target_count("structures.longitudinal_stress_thin_wall")
 ```
 
 ### Excel
@@ -109,6 +112,9 @@ engpy.equations.meta.equation_ascii("structures.longitudinal_stress_thin_wall")
 =ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_P("...","...","...")
 =ENG_FORMAT(ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_P("...","...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("structures.longitudinal_stress_thin_wall")
+=ENG_EQUATION_TARGETS_TEXT("structures.longitudinal_stress_thin_wall")
+=ENG_EQUATION_VARIABLES_TABLE("structures.longitudinal_stress_thin_wall")
+=ENG_EQUATION_TARGET_COUNT("structures.longitudinal_stress_thin_wall")
 ```
 
 **Excel arguments**

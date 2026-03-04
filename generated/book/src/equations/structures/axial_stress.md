@@ -2,9 +2,9 @@
 
 **Path ID:** `structures.axial_stress`
 
-\[
+$$
 \sigma = \frac{F}{A}
-\]
+$$
 
 - Unicode: `σ = F / A`
 - ASCII: `sigma = F / A`
@@ -82,10 +82,13 @@ let value = eq.solve(equations::structures::axial_stress::equation()).for_target
 
 ### Python
 ```python
-engpy.equations.structures.solve_a(sigma="...", f="...")
+engpy.equations.structures.axial_stress.solve_a(sigma="...", f="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.structures.solve_a(sigma="...", f="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.structures.axial_stress.solve_a(sigma="...", f="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("structures.axial_stress")
+engpy.helpers.equation_targets_text("structures.axial_stress")
+engpy.helpers.equation_variables_table("structures.axial_stress")
+engpy.helpers.equation_target_count("structures.axial_stress")
 ```
 
 ### Excel
@@ -93,6 +96,9 @@ engpy.equations.meta.equation_ascii("structures.axial_stress")
 =ENG_STRUCTURES_AXIAL_STRESS_A("...","...")
 =ENG_FORMAT(ENG_STRUCTURES_AXIAL_STRESS_A("...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("structures.axial_stress")
+=ENG_EQUATION_TARGETS_TEXT("structures.axial_stress")
+=ENG_EQUATION_VARIABLES_TABLE("structures.axial_stress")
+=ENG_EQUATION_TARGET_COUNT("structures.axial_stress")
 ```
 
 **Excel arguments**

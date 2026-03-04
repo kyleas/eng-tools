@@ -3,6 +3,7 @@ use std::{fs, process::Command};
 use eng::docs::export_unified_docs_to;
 use regex::Regex;
 use tempfile::tempdir;
+use walkdir::WalkDir;
 
 #[test]
 fn generated_binding_artifacts_exist_and_are_populated() {
@@ -61,6 +62,25 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(xloil_text.contains("ENG_EQUATION_DEFAULT_UNIT"));
     assert!(xloil_text.contains("ENG_FORMAT"));
     assert!(xloil_text.contains("ENG_META"));
+    assert!(xloil_text.contains("ENG_EQUATION_TARGETS_TEXT"));
+    assert!(xloil_text.contains("ENG_EQUATION_VARIABLES_TABLE"));
+    assert!(xloil_text.contains("ENG_EQUATION_BRANCHES_TEXT"));
+    assert!(xloil_text.contains("ENG_EQUATION_BRANCHES_TABLE"));
+    assert!(xloil_text.contains("ENG_EQUATION_TARGET_COUNT"));
+    assert!(xloil_text.contains("ENG_FLUID_PROPERTIES_TEXT"));
+    assert!(xloil_text.contains("ENG_FLUID_PROPERTIES_TABLE"));
+    assert!(xloil_text.contains("ENG_FLUID_PROPERTY_COUNT"));
+    assert!(xloil_text.contains("ENG_MATERIAL_PROPERTIES_TEXT"));
+    assert!(xloil_text.contains("ENG_MATERIAL_PROPERTIES_TABLE"));
+    assert!(xloil_text.contains("ENG_MATERIAL_PROPERTY_COUNT"));
+    assert!(xloil_text.contains("ENG_DEVICE_MODES_TEXT"));
+    assert!(xloil_text.contains("ENG_DEVICE_MODE_COUNT"));
+    assert!(xloil_text.contains("ENG_ISENTROPIC("));
+    assert!(xloil_text.contains("ENG_ISENTROPIC_PIVOT_MACH"));
+    assert!(xloil_text.contains("ENG_ISENTROPIC_PATH_TEXT"));
+    assert!(xloil_text.contains("ENG_ISENTROPIC_FROM_M_TO_P_P0"));
+    assert!(xloil_text.contains("ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0"));
+    assert!(xloil_text.contains("ENG_ISENTROPIC_FROM_A_ASTAR_TO_M"));
     assert!(xloil_text.contains("ENG_EQUATION_TARGETS"));
     assert!(xloil_text.contains("Arguments:"));
     assert!(xloil_text.contains("density"));
@@ -74,6 +94,25 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(pyxll_text.contains("ENG_EQUATION_LATEX"));
     assert!(pyxll_text.contains("ENG_FORMAT"));
     assert!(pyxll_text.contains("ENG_META"));
+    assert!(pyxll_text.contains("ENG_EQUATION_TARGETS_TEXT"));
+    assert!(pyxll_text.contains("ENG_EQUATION_VARIABLES_TABLE"));
+    assert!(pyxll_text.contains("ENG_EQUATION_BRANCHES_TEXT"));
+    assert!(pyxll_text.contains("ENG_EQUATION_BRANCHES_TABLE"));
+    assert!(pyxll_text.contains("ENG_EQUATION_TARGET_COUNT"));
+    assert!(pyxll_text.contains("ENG_FLUID_PROPERTIES_TEXT"));
+    assert!(pyxll_text.contains("ENG_FLUID_PROPERTIES_TABLE"));
+    assert!(pyxll_text.contains("ENG_FLUID_PROPERTY_COUNT"));
+    assert!(pyxll_text.contains("ENG_MATERIAL_PROPERTIES_TEXT"));
+    assert!(pyxll_text.contains("ENG_MATERIAL_PROPERTIES_TABLE"));
+    assert!(pyxll_text.contains("ENG_MATERIAL_PROPERTY_COUNT"));
+    assert!(pyxll_text.contains("ENG_DEVICE_MODES_TEXT"));
+    assert!(pyxll_text.contains("ENG_DEVICE_MODE_COUNT"));
+    assert!(pyxll_text.contains("ENG_ISENTROPIC("));
+    assert!(pyxll_text.contains("ENG_ISENTROPIC_PIVOT_MACH"));
+    assert!(pyxll_text.contains("ENG_ISENTROPIC_PATH_TEXT"));
+    assert!(pyxll_text.contains("ENG_ISENTROPIC_FROM_M_TO_P_P0"));
+    assert!(pyxll_text.contains("ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0"));
+    assert!(pyxll_text.contains("ENG_ISENTROPIC_FROM_A_ASTAR_TO_M"));
     assert!(pyxll_text.contains("Arguments:"));
     assert!(pyxll_text.contains("state_prop_1"));
 
@@ -87,6 +126,16 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(runtime_text.contains("\"encoding\": \"utf-8\""));
     assert!(runtime_text.contains("native_incompatible_no_worker"));
     assert!(runtime_text.contains("_switch_to_worker_fallback"));
+
+    assert!(xloil_text.contains("(area_ratio, gamma, branch=\"\")"));
+    assert!(pyxll_text.contains("(area_ratio, gamma, branch=\"\")"));
+    assert!(xloil_text.contains("(rho, v, d, mu):"));
+
+    let py_devices = fs::read_to_string(tmp.path().join("bindings/python/engpy/devices.py"))
+        .expect("read generated python devices module");
+    assert!(py_devices.contains("def isentropic_calc("));
+    assert!(py_devices.contains("def isentropic_pivot_mach("));
+    assert!(py_devices.contains("def isentropic_path_text("));
 
     let pyproject_text = fs::read_to_string(pyproject).expect("read generated pyproject");
     assert!(pyproject_text.contains("maturin"));
@@ -158,4 +207,92 @@ assert (mode == 'native') or (s1.get('worker_pid') is not None and s1.get('worke
         status.success(),
         "python import smoke failed for generated package"
     );
+}
+
+#[test]
+fn generated_python_equation_modules_are_collision_free() {
+    let tmp = tempdir().expect("tempdir");
+    export_unified_docs_to(tmp.path()).expect("export unified docs");
+
+    let eq_root = tmp.path().join("bindings/python/engpy/equations");
+    let def_re = Regex::new(r"(?m)^def\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(").expect("regex");
+    for entry in WalkDir::new(&eq_root)
+        .into_iter()
+        .filter_map(|e| e.ok())
+        .filter(|e| e.file_type().is_file())
+    {
+        let path = entry.path();
+        if path
+            .file_name()
+            .and_then(|n| n.to_str())
+            .is_some_and(|n| n == "__init__.py")
+        {
+            continue;
+        }
+        if path.extension().and_then(|e| e.to_str()) != Some("py") {
+            continue;
+        }
+        let text = fs::read_to_string(path).expect("read generated python equation module");
+        let mut counts = std::collections::BTreeMap::<String, usize>::new();
+        for cap in def_re.captures_iter(&text) {
+            let name = cap.get(1).expect("def capture").as_str().to_string();
+            *counts.entry(name).or_insert(0) += 1;
+        }
+        let dups: Vec<String> = counts
+            .into_iter()
+            .filter_map(|(k, v)| if v > 1 { Some(k) } else { None })
+            .collect();
+        assert!(
+            dups.is_empty(),
+            "duplicate function definitions in {}: {:?}",
+            path.display(),
+            dups
+        );
+    }
+}
+
+#[test]
+fn binding_spec_python_names_are_unique_per_module_for_equations() {
+    let tmp = tempdir().expect("tempdir");
+    export_unified_docs_to(tmp.path()).expect("export unified docs");
+    let spec_path = tmp.path().join("bindings").join("binding_spec.json");
+    let spec_text = fs::read_to_string(spec_path).expect("read binding spec");
+    let spec: serde_json::Value = serde_json::from_str(&spec_text).expect("parse binding spec");
+    let mut seen = std::collections::BTreeMap::<(String, String), String>::new();
+    for f in spec["functions"].as_array().expect("functions array") {
+        let module = f["python_module"].as_str().unwrap_or("").to_string();
+        let name = f["python_name"].as_str().unwrap_or("").to_string();
+        let id = f["id"].as_str().unwrap_or("").to_string();
+        if !module.starts_with("equations.") {
+            continue;
+        }
+        if let Some(prev) = seen.insert((module.clone(), name.clone()), id.clone()) {
+            panic!(
+                "duplicate python symbol {}.{} mapped to ids '{}' and '{}'",
+                module, name, prev, id
+            );
+        }
+    }
+}
+
+#[test]
+fn generated_python_nested_equation_module_spotcheck_executes() {
+    let python = Command::new("python").arg("--version").output();
+    if python.is_err() {
+        return;
+    }
+    let tmp = tempdir().expect("tempdir");
+    export_unified_docs_to(tmp.path()).expect("export unified docs");
+    let python_root = tmp.path().join("bindings").join("python");
+    let script = format!(
+        "import sys; sys.path.insert(0, r'{}'); import engpy.equations.compressible.area_mach as area_mach; v = area_mach.solve_m(2.0, 1.4); assert v > 1.0",
+        python_root.display()
+    );
+    let status = Command::new("python")
+        .arg("-c")
+        .arg(script)
+        .env("ENG_WORKER_BIN", env!("CARGO_BIN_EXE_eng"))
+        .status()
+        .expect("run python nested module spotcheck");
+    assert!(status.success(), "python nested module spotcheck failed");
 }

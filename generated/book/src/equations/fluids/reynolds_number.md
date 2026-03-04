@@ -2,9 +2,9 @@
 
 **Path ID:** `fluids.reynolds_number`
 
-\[
+$$
 Re = \frac{\rho V D}{\mu}
-\]
+$$
 
 - Unicode: `Re = ρ · V · D / μ`
 - ASCII: `Re = rho * V * D / mu`
@@ -116,10 +116,13 @@ let value = eq.solve(equations::fluids::reynolds_number::equation()).for_target(
 
 ### Python
 ```python
-engpy.equations.fluids.solve_d(re="...", rho="...", v="...", mu="...")
+engpy.equations.fluids.reynolds_number.solve_d(re="...", rho="...", v="...", mu="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.fluids.solve_d(re="...", rho="...", v="...", mu="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.fluids.reynolds_number.solve_d(re="...", rho="...", v="...", mu="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("fluids.reynolds_number")
+engpy.helpers.equation_targets_text("fluids.reynolds_number")
+engpy.helpers.equation_variables_table("fluids.reynolds_number")
+engpy.helpers.equation_target_count("fluids.reynolds_number")
 ```
 
 ### Excel
@@ -127,6 +130,9 @@ engpy.equations.meta.equation_ascii("fluids.reynolds_number")
 =ENG_FLUIDS_REYNOLDS_NUMBER_D("...","...","...","...")
 =ENG_FORMAT(ENG_FLUIDS_REYNOLDS_NUMBER_D("...","...","...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("fluids.reynolds_number")
+=ENG_EQUATION_TARGETS_TEXT("fluids.reynolds_number")
+=ENG_EQUATION_VARIABLES_TABLE("fluids.reynolds_number")
+=ENG_EQUATION_TARGET_COUNT("fluids.reynolds_number")
 ```
 
 **Excel arguments**

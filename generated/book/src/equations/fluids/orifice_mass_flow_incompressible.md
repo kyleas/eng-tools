@@ -2,9 +2,9 @@
 
 **Path ID:** `fluids.orifice_mass_flow_incompressible`
 
-\[
+$$
 \dot{m} = C_d A \sqrt{2 \rho \Delta p}
-\]
+$$
 
 - Unicode: `m_dot = C_d · A · √(2 · ρ · Δ p)`
 - ASCII: `m_dot = C_d * A * sqrt(2 * rho * delta_p)`
@@ -116,10 +116,13 @@ let value = eq.solve(equations::fluids::orifice_mass_flow_incompressible::equati
 
 ### Python
 ```python
-engpy.equations.fluids.solve_a(m_dot="...", c_d="...", rho="...", delta_p="...")
+engpy.equations.fluids.orifice_mass_flow_incompressible.solve_a(m_dot="...", c_d="...", rho="...", delta_p="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.fluids.solve_a(m_dot="...", c_d="...", rho="...", delta_p="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.fluids.orifice_mass_flow_incompressible.solve_a(m_dot="...", c_d="...", rho="...", delta_p="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("fluids.orifice_mass_flow_incompressible")
+engpy.helpers.equation_targets_text("fluids.orifice_mass_flow_incompressible")
+engpy.helpers.equation_variables_table("fluids.orifice_mass_flow_incompressible")
+engpy.helpers.equation_target_count("fluids.orifice_mass_flow_incompressible")
 ```
 
 ### Excel
@@ -127,6 +130,9 @@ engpy.equations.meta.equation_ascii("fluids.orifice_mass_flow_incompressible")
 =ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_A("...","...","...","...")
 =ENG_FORMAT(ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_A("...","...","...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("fluids.orifice_mass_flow_incompressible")
+=ENG_EQUATION_TARGETS_TEXT("fluids.orifice_mass_flow_incompressible")
+=ENG_EQUATION_VARIABLES_TABLE("fluids.orifice_mass_flow_incompressible")
+=ENG_EQUATION_TARGET_COUNT("fluids.orifice_mass_flow_incompressible")
 ```
 
 **Excel arguments**

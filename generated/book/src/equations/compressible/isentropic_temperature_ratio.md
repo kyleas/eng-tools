@@ -2,9 +2,9 @@
 
 **Path ID:** `compressible.isentropic_temperature_ratio`
 
-\[
+$$
 \frac{T}{T_0} = \left(1+\frac{\gamma-1}{2}M^2\right)^{-1}
-\]
+$$
 
 - Unicode: `T_T0 = 1 / (1 + ((γ - 1) / 2) · M²)`
 - ASCII: `T_T0 = 1 / (1 + ((gamma - 1) / 2) * M^2)`
@@ -53,10 +53,13 @@ let value = eq.solve(equations::compressible::isentropic_temperature_ratio::equa
 
 ### Python
 ```python
-engpy.equations.compressible.solve_m(t_t0="...", gamma="...")
+engpy.equations.compressible.isentropic_temperature_ratio.solve_m(t_t0="...", gamma="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.compressible.solve_m(t_t0="...", gamma="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.compressible.isentropic_temperature_ratio.solve_m(t_t0="...", gamma="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("compressible.isentropic_temperature_ratio")
+engpy.helpers.equation_targets_text("compressible.isentropic_temperature_ratio")
+engpy.helpers.equation_variables_table("compressible.isentropic_temperature_ratio")
+engpy.helpers.equation_target_count("compressible.isentropic_temperature_ratio")
 ```
 
 ### Excel
@@ -64,6 +67,9 @@ engpy.equations.meta.equation_ascii("compressible.isentropic_temperature_ratio")
 =ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_M("...","...")
 =ENG_FORMAT(ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_M("...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("compressible.isentropic_temperature_ratio")
+=ENG_EQUATION_TARGETS_TEXT("compressible.isentropic_temperature_ratio")
+=ENG_EQUATION_VARIABLES_TABLE("compressible.isentropic_temperature_ratio")
+=ENG_EQUATION_TARGET_COUNT("compressible.isentropic_temperature_ratio")
 ```
 
 **Excel arguments**

@@ -2,9 +2,9 @@
 
 **Path ID:** `compressible.area_mach`
 
-\[
+$$
 \frac{A}{A^*} = \frac{1}{M}\left(\frac{2}{\gamma+1}\left(1+\frac{\gamma-1}{2}M^2\right)\right)^{\frac{\gamma+1}{2(\gamma-1)}}
-\]
+$$
 
 - Unicode: `A/A* = (1/M) * ((2/(gamma+1))*(1+((gamma-1)/2)M^2))^((gamma+1)/(2(gamma-1)))`
 - ASCII: `area_ratio = (1/M) * ((2/(gamma+1))*(1+((gamma-1)/2)*M^2))^((gamma+1)/(2*(gamma-1)))`
@@ -67,10 +67,13 @@ let value = eq.solve(equations::compressible::area_mach::equation()).for_target(
 
 ### Python
 ```python
-engpy.equations.compressible.solve_m(area_ratio="...", gamma="...")
+engpy.equations.compressible.area_mach.solve_m(area_ratio="...", gamma="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.compressible.solve_m(area_ratio="...", gamma="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.compressible.area_mach.solve_m(area_ratio="...", gamma="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("compressible.area_mach")
+engpy.helpers.equation_targets_text("compressible.area_mach")
+engpy.helpers.equation_variables_table("compressible.area_mach")
+engpy.helpers.equation_target_count("compressible.area_mach")
 ```
 
 ### Excel
@@ -78,9 +81,28 @@ engpy.equations.meta.equation_ascii("compressible.area_mach")
 =ENG_COMPRESSIBLE_AREA_MACH_M("...","...")
 =ENG_FORMAT(ENG_COMPRESSIBLE_AREA_MACH_M("...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("compressible.area_mach")
+=ENG_EQUATION_TARGETS_TEXT("compressible.area_mach")
+=ENG_EQUATION_VARIABLES_TABLE("compressible.area_mach")
+=ENG_EQUATION_TARGET_COUNT("compressible.area_mach")
 ```
 
 **Excel arguments**
 - `area_ratio`: Area ratio
 - `gamma`: Specific heat ratio
 
+
+**Branch behavior**
+- Default solver behavior uses preferred branch (`supersonic`) when one is marked.
+- Supported branches: `subsonic`, `supersonic`
+
+### Python (explicit branch)
+```python
+engpy.equations.compressible.area_mach.solve_m(area_ratio="...", gamma="...", branch="supersonic")
+```
+
+### Excel (explicit branch)
+```excel
+=ENG_COMPRESSIBLE_AREA_MACH_M("...","...","supersonic")
+=ENG_EQUATION_BRANCHES_TEXT("compressible.area_mach")
+=ENG_EQUATION_BRANCHES_TABLE("compressible.area_mach")
+```

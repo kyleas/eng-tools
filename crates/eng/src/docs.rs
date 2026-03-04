@@ -615,6 +615,12 @@ fn write_generated_bindings(c: &UnifiedDocsContribution, out_dir: &Path) -> Resu
     let excel_root = bindings_root.join("excel");
     let xloil_path = excel_root.join("eng_xloil.py");
     let pyxll_path = excel_root.join("eng_pyxll.py");
+    if bindings_root.exists() {
+        fs::remove_dir_all(&bindings_root).map_err(|source| EquationError::Io {
+            path: bindings_root.clone(),
+            source,
+        })?;
+    }
 
     let manifest = build_binding_manifest(c);
     write_json(bindings_root.join("binding_spec.json"), &manifest)?;
@@ -730,8 +736,29 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
         for target in &page.solve_targets {
             let target_snake = snake_case(&target.target);
             let fn_name = format!("solve_{}", target_snake);
-            let args = equation_args_for_target(page, &target.target);
-            let module = format!("equations.{}", snake_case(&page.category));
+            let mut args = equation_args_for_target(page, &target.target);
+            if !page.branches.is_empty() {
+                let options = page
+                    .branches
+                    .iter()
+                    .map(|b| b.name.as_str())
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                args.push(BindingArg {
+                    name: "branch".to_string(),
+                    description: format!(
+                        "Optional branch selection. Supported: {}",
+                        options
+                    ),
+                });
+            }
+            let eq_slug = page
+                .path_id
+                .rsplit('.')
+                .next()
+                .map(snake_case)
+                .unwrap_or_else(|| snake_case(&page.path_id));
+            let module = format!("equations.{}.{}", snake_case(&page.category), eq_slug);
             let excel_name = format!(
                 "ENG_{}_{}",
                 page.path_id
@@ -777,12 +804,31 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
             if let Some(page) = page_by_path.get(variant.equation_id.as_str()) {
                 for target in &page.solve_targets {
                     let target_snake = snake_case(&target.target);
-                    let args = equation_args_for_target(page, &target.target);
+                    let mut args = equation_args_for_target(page, &target.target);
+                    if !page.branches.is_empty() {
+                        let options = page
+                            .branches
+                            .iter()
+                            .map(|b| b.name.as_str())
+                            .collect::<Vec<_>>()
+                            .join(", ");
+                        args.push(BindingArg {
+                            name: "branch".to_string(),
+                            description: format!(
+                                "Optional branch selection. Supported: {}",
+                                options
+                            ),
+                        });
+                    }
                     let mut fixed_args = BTreeMap::new();
                     fixed_args.insert("path_id".to_string(), page.path_id.clone());
                     fixed_args.insert("target".to_string(), target.target.clone());
-                    let py_mod = format!("equations.families.{}", snake_case(&family.key));
-                    let py_name = format!("{}_solve_{}", snake_case(&variant.key), target_snake);
+                    let py_mod = format!(
+                        "equations.families.{}.{}",
+                        snake_case(&family.key),
+                        snake_case(&variant.key)
+                    );
+                    let py_name = format!("solve_{}", target_snake);
                     let excel_name = format!(
                         "ENG_FAMILY_{}_{}_{}",
                         snake_case(&family.key).to_ascii_uppercase(),
@@ -1182,6 +1228,334 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
         xloil_example: "=ENG_DEVICE_MODES(\"pipe_loss\")".to_string(),
         pyxll_example: "=ENG_DEVICE_MODES(\"pipe_loss\")".to_string(),
     });
+    functions.push(BindingFunction {
+        id: "equation.targets.text".to_string(),
+        entity: "helper".to_string(),
+        source: "equations".to_string(),
+        python_module: "helpers".to_string(),
+        python_name: "equation_targets_text".to_string(),
+        excel_name: "ENG_EQUATION_TARGETS_TEXT".to_string(),
+        op: "equation.targets.text".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "path_id".to_string(),
+            description: "Equation path id".to_string(),
+        }],
+        returns: "str".to_string(),
+        help: "Read equation targets as delimited text".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example:
+            "engpy.helpers.equation_targets_text(\"structures.hoop_stress\")".to_string(),
+        xloil_example: "=ENG_EQUATION_TARGETS_TEXT(\"structures.hoop_stress\")".to_string(),
+        pyxll_example: "=ENG_EQUATION_TARGETS_TEXT(\"structures.hoop_stress\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "equation.variables.text".to_string(),
+        entity: "helper".to_string(),
+        source: "equations".to_string(),
+        python_module: "helpers".to_string(),
+        python_name: "equation_variables_text".to_string(),
+        excel_name: "ENG_EQUATION_VARIABLES_TEXT".to_string(),
+        op: "equation.variables.text".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "path_id".to_string(),
+            description: "Equation path id".to_string(),
+        }],
+        returns: "str".to_string(),
+        help: "Read equation variables as delimited text".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example:
+            "engpy.helpers.equation_variables_text(\"structures.hoop_stress\")".to_string(),
+        xloil_example: "=ENG_EQUATION_VARIABLES_TEXT(\"structures.hoop_stress\")".to_string(),
+        pyxll_example: "=ENG_EQUATION_VARIABLES_TEXT(\"structures.hoop_stress\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "equation.branches.text".to_string(),
+        entity: "helper".to_string(),
+        source: "equations".to_string(),
+        python_module: "helpers".to_string(),
+        python_name: "equation_branches_text".to_string(),
+        excel_name: "ENG_EQUATION_BRANCHES_TEXT".to_string(),
+        op: "equation.branches.text".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "path_id".to_string(),
+            description: "Equation path id".to_string(),
+        }],
+        returns: "str".to_string(),
+        help: "Read equation branch names as delimited text".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example:
+            "engpy.helpers.equation_branches_text(\"compressible.area_mach\")".to_string(),
+        xloil_example: "=ENG_EQUATION_BRANCHES_TEXT(\"compressible.area_mach\")".to_string(),
+        pyxll_example: "=ENG_EQUATION_BRANCHES_TEXT(\"compressible.area_mach\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "equation.targets.table".to_string(),
+        entity: "helper".to_string(),
+        source: "equations".to_string(),
+        python_module: "helpers".to_string(),
+        python_name: "equation_targets_table".to_string(),
+        excel_name: "ENG_EQUATION_TARGETS_TABLE".to_string(),
+        op: "equation.targets.table".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "path_id".to_string(),
+            description: "Equation path id".to_string(),
+        }],
+        returns: "list[list]".to_string(),
+        help: "Read equation targets table rows [target, is_default]".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example:
+            "engpy.helpers.equation_targets_table(\"structures.hoop_stress\")".to_string(),
+        xloil_example: "=ENG_EQUATION_TARGETS_TABLE(\"structures.hoop_stress\")".to_string(),
+        pyxll_example: "=ENG_EQUATION_TARGETS_TABLE(\"structures.hoop_stress\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "equation.variables.table".to_string(),
+        entity: "helper".to_string(),
+        source: "equations".to_string(),
+        python_module: "helpers".to_string(),
+        python_name: "equation_variables_table".to_string(),
+        excel_name: "ENG_EQUATION_VARIABLES_TABLE".to_string(),
+        op: "equation.variables.table".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "path_id".to_string(),
+            description: "Equation path id".to_string(),
+        }],
+        returns: "list[list]".to_string(),
+        help: "Read equation variable table rows [variable, default_unit]".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example:
+            "engpy.helpers.equation_variables_table(\"structures.hoop_stress\")".to_string(),
+        xloil_example: "=ENG_EQUATION_VARIABLES_TABLE(\"structures.hoop_stress\")".to_string(),
+        pyxll_example: "=ENG_EQUATION_VARIABLES_TABLE(\"structures.hoop_stress\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "equation.branches.table".to_string(),
+        entity: "helper".to_string(),
+        source: "equations".to_string(),
+        python_module: "helpers".to_string(),
+        python_name: "equation_branches_table".to_string(),
+        excel_name: "ENG_EQUATION_BRANCHES_TABLE".to_string(),
+        op: "equation.branches.table".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "path_id".to_string(),
+            description: "Equation path id".to_string(),
+        }],
+        returns: "list[list]".to_string(),
+        help: "Read equation branch table rows [branch, is_preferred]".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example:
+            "engpy.helpers.equation_branches_table(\"compressible.area_mach\")".to_string(),
+        xloil_example: "=ENG_EQUATION_BRANCHES_TABLE(\"compressible.area_mach\")".to_string(),
+        pyxll_example: "=ENG_EQUATION_BRANCHES_TABLE(\"compressible.area_mach\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "equation.target.count".to_string(),
+        entity: "helper".to_string(),
+        source: "equations".to_string(),
+        python_module: "helpers".to_string(),
+        python_name: "equation_target_count".to_string(),
+        excel_name: "ENG_EQUATION_TARGET_COUNT".to_string(),
+        op: "equation.target.count".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "path_id".to_string(),
+            description: "Equation path id".to_string(),
+        }],
+        returns: "u64".to_string(),
+        help: "Read equation target count".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example:
+            "engpy.helpers.equation_target_count(\"structures.hoop_stress\")".to_string(),
+        xloil_example: "=ENG_EQUATION_TARGET_COUNT(\"structures.hoop_stress\")".to_string(),
+        pyxll_example: "=ENG_EQUATION_TARGET_COUNT(\"structures.hoop_stress\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "equation.variable.count".to_string(),
+        entity: "helper".to_string(),
+        source: "equations".to_string(),
+        python_module: "helpers".to_string(),
+        python_name: "equation_variable_count".to_string(),
+        excel_name: "ENG_EQUATION_VARIABLE_COUNT".to_string(),
+        op: "equation.variable.count".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "path_id".to_string(),
+            description: "Equation path id".to_string(),
+        }],
+        returns: "u64".to_string(),
+        help: "Read equation variable count".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example:
+            "engpy.helpers.equation_variable_count(\"structures.hoop_stress\")".to_string(),
+        xloil_example: "=ENG_EQUATION_VARIABLE_COUNT(\"structures.hoop_stress\")".to_string(),
+        pyxll_example: "=ENG_EQUATION_VARIABLE_COUNT(\"structures.hoop_stress\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "fluid.properties.text".to_string(),
+        entity: "helper".to_string(),
+        source: "fluids".to_string(),
+        python_module: "helpers".to_string(),
+        python_name: "fluid_properties_text".to_string(),
+        excel_name: "ENG_FLUID_PROPERTIES_TEXT".to_string(),
+        op: "fluid.properties.text".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "key".to_string(),
+            description: "Fluid key/alias".to_string(),
+        }],
+        returns: "str".to_string(),
+        help: "Read fluid properties as delimited text".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example: "engpy.helpers.fluid_properties_text(\"H2O\")".to_string(),
+        xloil_example: "=ENG_FLUID_PROPERTIES_TEXT(\"H2O\")".to_string(),
+        pyxll_example: "=ENG_FLUID_PROPERTIES_TEXT(\"H2O\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "fluid.properties.table".to_string(),
+        entity: "helper".to_string(),
+        source: "fluids".to_string(),
+        python_module: "helpers".to_string(),
+        python_name: "fluid_properties_table".to_string(),
+        excel_name: "ENG_FLUID_PROPERTIES_TABLE".to_string(),
+        op: "fluid.properties.table".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "key".to_string(),
+            description: "Fluid key/alias".to_string(),
+        }],
+        returns: "list[list]".to_string(),
+        help: "Read fluid property table rows [property, default_unit]".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example: "engpy.helpers.fluid_properties_table(\"H2O\")".to_string(),
+        xloil_example: "=ENG_FLUID_PROPERTIES_TABLE(\"H2O\")".to_string(),
+        pyxll_example: "=ENG_FLUID_PROPERTIES_TABLE(\"H2O\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "fluid.property.count".to_string(),
+        entity: "helper".to_string(),
+        source: "fluids".to_string(),
+        python_module: "helpers".to_string(),
+        python_name: "fluid_property_count".to_string(),
+        excel_name: "ENG_FLUID_PROPERTY_COUNT".to_string(),
+        op: "fluid.property.count".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "key".to_string(),
+            description: "Fluid key/alias".to_string(),
+        }],
+        returns: "u64".to_string(),
+        help: "Read fluid property count".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example: "engpy.helpers.fluid_property_count(\"H2O\")".to_string(),
+        xloil_example: "=ENG_FLUID_PROPERTY_COUNT(\"H2O\")".to_string(),
+        pyxll_example: "=ENG_FLUID_PROPERTY_COUNT(\"H2O\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "material.properties.text".to_string(),
+        entity: "helper".to_string(),
+        source: "materials".to_string(),
+        python_module: "helpers".to_string(),
+        python_name: "material_properties_text".to_string(),
+        excel_name: "ENG_MATERIAL_PROPERTIES_TEXT".to_string(),
+        op: "material.properties.text".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "key".to_string(),
+            description: "Material key/alias".to_string(),
+        }],
+        returns: "str".to_string(),
+        help: "Read material properties as delimited text".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example: "engpy.helpers.material_properties_text(\"stainless_304\")".to_string(),
+        xloil_example: "=ENG_MATERIAL_PROPERTIES_TEXT(\"stainless_304\")".to_string(),
+        pyxll_example: "=ENG_MATERIAL_PROPERTIES_TEXT(\"stainless_304\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "material.properties.table".to_string(),
+        entity: "helper".to_string(),
+        source: "materials".to_string(),
+        python_module: "helpers".to_string(),
+        python_name: "material_properties_table".to_string(),
+        excel_name: "ENG_MATERIAL_PROPERTIES_TABLE".to_string(),
+        op: "material.properties.table".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "key".to_string(),
+            description: "Material key/alias".to_string(),
+        }],
+        returns: "list[list]".to_string(),
+        help: "Read material property table rows [property, unit]".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example: "engpy.helpers.material_properties_table(\"stainless_304\")".to_string(),
+        xloil_example: "=ENG_MATERIAL_PROPERTIES_TABLE(\"stainless_304\")".to_string(),
+        pyxll_example: "=ENG_MATERIAL_PROPERTIES_TABLE(\"stainless_304\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "material.property.count".to_string(),
+        entity: "helper".to_string(),
+        source: "materials".to_string(),
+        python_module: "helpers".to_string(),
+        python_name: "material_property_count".to_string(),
+        excel_name: "ENG_MATERIAL_PROPERTY_COUNT".to_string(),
+        op: "material.property.count".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "key".to_string(),
+            description: "Material key/alias".to_string(),
+        }],
+        returns: "u64".to_string(),
+        help: "Read material property count".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example: "engpy.helpers.material_property_count(\"stainless_304\")".to_string(),
+        xloil_example: "=ENG_MATERIAL_PROPERTY_COUNT(\"stainless_304\")".to_string(),
+        pyxll_example: "=ENG_MATERIAL_PROPERTY_COUNT(\"stainless_304\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "device.modes.text".to_string(),
+        entity: "helper".to_string(),
+        source: "devices".to_string(),
+        python_module: "helpers".to_string(),
+        python_name: "device_modes_text".to_string(),
+        excel_name: "ENG_DEVICE_MODES_TEXT".to_string(),
+        op: "device.modes.text".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "key".to_string(),
+            description: "Device key".to_string(),
+        }],
+        returns: "str".to_string(),
+        help: "Read device modes as delimited text".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example: "engpy.helpers.device_modes_text(\"pipe_loss\")".to_string(),
+        xloil_example: "=ENG_DEVICE_MODES_TEXT(\"pipe_loss\")".to_string(),
+        pyxll_example: "=ENG_DEVICE_MODES_TEXT(\"pipe_loss\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "device.mode.count".to_string(),
+        entity: "helper".to_string(),
+        source: "devices".to_string(),
+        python_module: "helpers".to_string(),
+        python_name: "device_mode_count".to_string(),
+        excel_name: "ENG_DEVICE_MODE_COUNT".to_string(),
+        op: "device.mode.count".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "key".to_string(),
+            description: "Device key".to_string(),
+        }],
+        returns: "u64".to_string(),
+        help: "Read device mode count".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example: "engpy.helpers.device_mode_count(\"pipe_loss\")".to_string(),
+        xloil_example: "=ENG_DEVICE_MODE_COUNT(\"pipe_loss\")".to_string(),
+        pyxll_example: "=ENG_DEVICE_MODE_COUNT(\"pipe_loss\")".to_string(),
+    });
 
     for device in &c.devices {
         if device.key == "pipe_loss" {
@@ -1256,6 +1630,170 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
                 python_example: "engpy.devices.pipe_loss_solve_delta_p(...)".to_string(),
                 xloil_example: "=ENG_PIPE_LOSS_DELTA_P(...)".to_string(),
                 pyxll_example: "=ENG_PIPE_LOSS_DELTA_P(...)".to_string(),
+            });
+        }
+        if device.key == "isentropic_calc" {
+            let args = vec![
+                BindingArg {
+                    name: "input_kind".to_string(),
+                    description: "Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)".to_string(),
+                },
+                BindingArg {
+                    name: "input_value".to_string(),
+                    description: "Input value".to_string(),
+                },
+                BindingArg {
+                    name: "target_kind".to_string(),
+                    description: "Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)".to_string(),
+                },
+                BindingArg {
+                    name: "gamma".to_string(),
+                    description: "Specific heat ratio".to_string(),
+                },
+                BindingArg {
+                    name: "branch".to_string(),
+                    description: "Optional branch for double-valued inversions (subsonic/supersonic)".to_string(),
+                },
+            ];
+            functions.push(BindingFunction {
+                id: "device.isentropic_calc".to_string(),
+                entity: "device".to_string(),
+                source: "isentropic_calc".to_string(),
+                python_module: "devices".to_string(),
+                python_name: "isentropic_calc".to_string(),
+                excel_name: "ENG_ISENTROPIC".to_string(),
+                op: "device.isentropic_calc.value".to_string(),
+                fixed_args: BTreeMap::new(),
+                args: args.clone(),
+                returns: "f64".to_string(),
+                help: "Isentropic calculator: input kind -> target kind through Mach pivot"
+                    .to_string(),
+                rust_example: "eng::devices::isentropic_calc().solve()?".to_string(),
+                python_example:
+                    "engpy.devices.isentropic_calc(\"mach\", 2.0, \"pressure_ratio\", 1.4)"
+                        .to_string(),
+                xloil_example: "=ENG_ISENTROPIC(\"mach\",2.0,\"pressure_ratio\",1.4,\"\")"
+                    .to_string(),
+                pyxll_example: "=ENG_ISENTROPIC(\"mach\",2.0,\"pressure_ratio\",1.4,\"\")"
+                    .to_string(),
+            });
+            functions.push(BindingFunction {
+                id: "device.isentropic_calc.pivot".to_string(),
+                entity: "device".to_string(),
+                source: "isentropic_calc".to_string(),
+                python_module: "devices".to_string(),
+                python_name: "isentropic_pivot_mach".to_string(),
+                excel_name: "ENG_ISENTROPIC_PIVOT_MACH".to_string(),
+                op: "device.isentropic_calc.pivot_mach".to_string(),
+                fixed_args: BTreeMap::new(),
+                args: args.clone(),
+                returns: "f64".to_string(),
+                help: "Isentropic calculator helper: return resolved pivot Mach".to_string(),
+                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+                python_example:
+                    "engpy.devices.isentropic_pivot_mach(\"area_ratio\", 2.0, \"mach\", 1.4, \"subsonic\")"
+                        .to_string(),
+                xloil_example:
+                    "=ENG_ISENTROPIC_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,\"subsonic\")"
+                        .to_string(),
+                pyxll_example:
+                    "=ENG_ISENTROPIC_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,\"subsonic\")"
+                        .to_string(),
+            });
+            functions.push(BindingFunction {
+                id: "device.isentropic_calc.path_text".to_string(),
+                entity: "device".to_string(),
+                source: "isentropic_calc".to_string(),
+                python_module: "devices".to_string(),
+                python_name: "isentropic_path_text".to_string(),
+                excel_name: "ENG_ISENTROPIC_PATH_TEXT".to_string(),
+                op: "device.isentropic_calc.path_text".to_string(),
+                fixed_args: BTreeMap::new(),
+                args: args.clone(),
+                returns: "str".to_string(),
+                help: "Isentropic calculator helper: compact step trace text".to_string(),
+                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+                python_example:
+                    "engpy.devices.isentropic_path_text(\"mach_angle_deg\", 30.0, \"pressure_ratio\", 1.4)"
+                        .to_string(),
+                xloil_example:
+                    "=ENG_ISENTROPIC_PATH_TEXT(\"mach_angle_deg\",30.0,\"pressure_ratio\",1.4,\"\")"
+                        .to_string(),
+                pyxll_example:
+                    "=ENG_ISENTROPIC_PATH_TEXT(\"mach_angle_deg\",30.0,\"pressure_ratio\",1.4,\"\")"
+                        .to_string(),
+            });
+            functions.push(BindingFunction {
+                id: "device.isentropic_calc.from_m.to_p_p0".to_string(),
+                entity: "device".to_string(),
+                source: "isentropic_calc".to_string(),
+                python_module: "devices".to_string(),
+                python_name: "isentropic_from_m_to_p_p0".to_string(),
+                excel_name: "ENG_ISENTROPIC_FROM_M_TO_P_P0".to_string(),
+                op: "device.isentropic_calc.value".to_string(),
+                fixed_args: BTreeMap::from([
+                    ("input_kind".to_string(), "mach".to_string()),
+                    ("target_kind".to_string(), "pressure_ratio".to_string()),
+                ]),
+                args: vec![
+                    BindingArg { name: "input_value".to_string(), description: "Mach number".to_string() },
+                    BindingArg { name: "gamma".to_string(), description: "Specific heat ratio".to_string() },
+                    BindingArg { name: "branch".to_string(), description: "Optional branch (unused for this path)".to_string() },
+                ],
+                returns: "f64".to_string(),
+                help: "Convenience isentropic path: Mach -> p/p0".to_string(),
+                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+                python_example: "engpy.devices.isentropic_from_m_to_p_p0(2.0, 1.4)".to_string(),
+                xloil_example: "=ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,\"\")".to_string(),
+                pyxll_example: "=ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,\"\")".to_string(),
+            });
+            functions.push(BindingFunction {
+                id: "device.isentropic_calc.from_mu_deg.to_p_p0".to_string(),
+                entity: "device".to_string(),
+                source: "isentropic_calc".to_string(),
+                python_module: "devices".to_string(),
+                python_name: "isentropic_from_mu_deg_to_p_p0".to_string(),
+                excel_name: "ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0".to_string(),
+                op: "device.isentropic_calc.value".to_string(),
+                fixed_args: BTreeMap::from([
+                    ("input_kind".to_string(), "mach_angle_deg".to_string()),
+                    ("target_kind".to_string(), "pressure_ratio".to_string()),
+                ]),
+                args: vec![
+                    BindingArg { name: "input_value".to_string(), description: "Mach angle in degrees".to_string() },
+                    BindingArg { name: "gamma".to_string(), description: "Specific heat ratio".to_string() },
+                    BindingArg { name: "branch".to_string(), description: "Optional branch (unused for this path)".to_string() },
+                ],
+                returns: "f64".to_string(),
+                help: "Convenience isentropic path: mu(deg) -> p/p0".to_string(),
+                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+                python_example: "engpy.devices.isentropic_from_mu_deg_to_p_p0(30.0, 1.4)".to_string(),
+                xloil_example: "=ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30.0,1.4,\"\")".to_string(),
+                pyxll_example: "=ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30.0,1.4,\"\")".to_string(),
+            });
+            functions.push(BindingFunction {
+                id: "device.isentropic_calc.from_area_ratio.to_m".to_string(),
+                entity: "device".to_string(),
+                source: "isentropic_calc".to_string(),
+                python_module: "devices".to_string(),
+                python_name: "isentropic_from_area_ratio_to_m".to_string(),
+                excel_name: "ENG_ISENTROPIC_FROM_A_ASTAR_TO_M".to_string(),
+                op: "device.isentropic_calc.value".to_string(),
+                fixed_args: BTreeMap::from([
+                    ("input_kind".to_string(), "area_ratio".to_string()),
+                    ("target_kind".to_string(), "mach".to_string()),
+                ]),
+                args: vec![
+                    BindingArg { name: "input_value".to_string(), description: "Area ratio A/A*".to_string() },
+                    BindingArg { name: "gamma".to_string(), description: "Specific heat ratio".to_string() },
+                    BindingArg { name: "branch".to_string(), description: "Required: subsonic or supersonic".to_string() },
+                ],
+                returns: "f64".to_string(),
+                help: "Convenience isentropic path: A/A* -> Mach (branch required)".to_string(),
+                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+                python_example: "engpy.devices.isentropic_from_area_ratio_to_m(2.0, 1.4, \"supersonic\")".to_string(),
+                xloil_example: "=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")".to_string(),
+                pyxll_example: "=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")".to_string(),
             });
         }
     }
@@ -1783,6 +2321,18 @@ fn excel_param_name_for_op(op: &str, arg_name: &str) -> String {
         ("device.pipe_loss.solve_delta_p", "d") => "diameter".to_string(),
         ("device.pipe_loss.solve_delta_p", "l") => "length".to_string(),
         ("device.pipe_loss.solve_delta_p", "eps") => "roughness".to_string(),
+        ("device.isentropic_calc", "input_kind")
+        | ("device.isentropic_calc.value", "input_kind")
+        | ("device.isentropic_calc.pivot_mach", "input_kind")
+        | ("device.isentropic_calc.path_text", "input_kind") => "value_kind_in".to_string(),
+        ("device.isentropic_calc", "input_value")
+        | ("device.isentropic_calc.value", "input_value")
+        | ("device.isentropic_calc.pivot_mach", "input_value")
+        | ("device.isentropic_calc.path_text", "input_value") => "value_in".to_string(),
+        ("device.isentropic_calc", "target_kind")
+        | ("device.isentropic_calc.value", "target_kind")
+        | ("device.isentropic_calc.pivot_mach", "target_kind")
+        | ("device.isentropic_calc.path_text", "target_kind") => "target_kind_out".to_string(),
         ("fluid.prop", "in1_key") => "state_prop_1".to_string(),
         ("fluid.prop", "in1_value") => "state_value_1".to_string(),
         ("fluid.prop", "in2_key") => "state_prop_2".to_string(),
@@ -1818,17 +2368,48 @@ fn render_python_devices_module(manifest: &BindingManifest) -> String {
         .iter()
         .filter(|f| f.python_module == "devices")
     {
-        out.push_str(
-            "def pipe_loss_solve_delta_p(friction_model=\"Colebrook\", fixed_f=None, rho=None, mu=None, v=None, d=None, l=None, eps=None, fluid=None, in1_key=None, in1_value=None, in2_key=None, in2_value=None):\n",
-        );
-        out.push_str(
-            "    \"\"\"Solve pipe pressure drop using composed Reynolds/Colebrook/Darcy behavior.\n\nArgs:\n  friction_model: 'Colebrook' or 'Fixed'\n  fixed_f: fixed Darcy friction factor (required when friction_model='Fixed')\n  rho, mu, v, d, l, eps: direct inputs\n  fluid, in1_key, in1_value, in2_key, in2_value: optional fluid-state context inputs\nReturns:\n  dict with delta_p, friction_factor, reynolds_number\n\"\"\"\n",
-        );
-        out.push_str("    args = {\n");
-        out.push_str("        \"friction_model\": friction_model,\n        \"fixed_f\": fixed_f,\n        \"rho\": rho,\n        \"mu\": mu,\n        \"v\": v,\n        \"d\": d,\n        \"l\": l,\n        \"eps\": eps,\n        \"fluid\": fluid,\n        \"in1_key\": in1_key,\n        \"in1_value\": in1_value,\n        \"in2_key\": in2_key,\n        \"in2_value\": in2_value,\n    }\n");
-        out.push_str("    return invoke(\"");
-        out.push_str(&f.op);
-        out.push_str("\", {k: v for k, v in args.items() if v is not None})\n\n");
+        if f.python_name == "pipe_loss_solve_delta_p" {
+            out.push_str(
+                "def pipe_loss_solve_delta_p(friction_model=\"Colebrook\", fixed_f=None, rho=None, mu=None, v=None, d=None, l=None, eps=None, fluid=None, in1_key=None, in1_value=None, in2_key=None, in2_value=None):\n",
+            );
+            out.push_str(
+                "    \"\"\"Solve pipe pressure drop using composed Reynolds/Colebrook/Darcy behavior.\n\nArgs:\n  friction_model: 'Colebrook' or 'Fixed'\n  fixed_f: fixed Darcy friction factor (required when friction_model='Fixed')\n  rho, mu, v, d, l, eps: direct inputs\n  fluid, in1_key, in1_value, in2_key, in2_value: optional fluid-state context inputs\nReturns:\n  dict with delta_p, friction_factor, reynolds_number\n\"\"\"\n",
+            );
+            out.push_str("    args = {\n");
+            out.push_str("        \"friction_model\": friction_model,\n        \"fixed_f\": fixed_f,\n        \"rho\": rho,\n        \"mu\": mu,\n        \"v\": v,\n        \"d\": d,\n        \"l\": l,\n        \"eps\": eps,\n        \"fluid\": fluid,\n        \"in1_key\": in1_key,\n        \"in1_value\": in1_value,\n        \"in2_key\": in2_key,\n        \"in2_value\": in2_value,\n    }\n");
+            out.push_str("    return invoke(\"");
+            out.push_str(&f.op);
+            out.push_str("\", {k: v for k, v in args.items() if v is not None})\n\n");
+            continue;
+        }
+
+        let mut params = Vec::new();
+        let mut payload_parts = f
+            .fixed_args
+            .iter()
+            .map(|(k, v)| format!("\"{}\": \"{}\"", k, v))
+            .collect::<Vec<_>>();
+        for a in &f.args {
+            let p = snake_case(&a.name);
+            if a.name == "branch" {
+                params.push(format!("{p}=None"));
+                payload_parts.push(format!(
+                    "**({{\"{}\": {}}} if {} not in (None, \"\") else {{}})",
+                    a.name, p, p
+                ));
+            } else {
+                params.push(p.clone());
+                payload_parts.push(format!("\"{}\": {}", a.name, p));
+            }
+        }
+        out.push_str(&format!(
+            "def {}({}):\n    \"\"\"{}\"\"\"\n    return invoke(\"{}\", {{{}}})\n\n",
+            f.python_name,
+            params.join(", "),
+            render_python_docstring(f),
+            f.op,
+            payload_parts.join(", ")
+        ));
     }
     out
 }
@@ -1905,66 +2486,99 @@ fn render_python_helpers_module(manifest: &BindingManifest) -> String {
 }
 
 fn render_python_equations_init(manifest: &BindingManifest) -> String {
-    let mut categories = BTreeSet::new();
-    let mut families = BTreeSet::new();
+    let mut top_level = BTreeSet::new();
     for f in &manifest.functions {
         if let Some(rest) = f.python_module.strip_prefix("equations.") {
-            if let Some(fam) = rest.strip_prefix("families.") {
-                families.insert(snake_case(fam));
+            if let Some((head, _)) = rest.split_once('.') {
+                top_level.insert(snake_case(head));
             } else {
-                categories.insert(snake_case(rest));
+                top_level.insert(snake_case(rest));
             }
         }
     }
     let mut out = String::new();
-    for cat in categories {
-        out.push_str(&format!("from . import {}\n", cat));
+    out.push_str("from engpy._runtime import invoke\n\n");
+    for mod_name in &top_level {
+        out.push_str(&format!("from . import {}\n", mod_name));
     }
-    out.push_str("from . import families\n");
-    for fam in families {
-        out.push_str(&format!("from .families import {}\n", fam));
+    out.push_str("\n");
+    out.push_str(
+        "def solve(path_id, target, **inputs):\n    \"\"\"Generic equation solve fallback.\n\nArgs:\n  path_id: equation id (for example 'fluids.reynolds_number')\n  target: solve target variable key\n  **inputs: named solve inputs\nReturns:\n  f64\n\"\"\"\n    args = {\"path_id\": path_id, \"target\": target}\n    args.update(inputs)\n    return invoke(\"equation.solve\", args)\n\n",
+    );
+    out.push_str("__all__ = [\n");
+    for mod_name in &top_level {
+        out.push_str(&format!("    \"{}\",\n", mod_name));
     }
+    out.push_str("    \"solve\",\n");
+    out.push_str("]\n");
     out
 }
 
 fn write_python_equation_modules(manifest: &BindingManifest, equations_root: &Path) -> Result<()> {
-    let families_root = equations_root.join("families");
-    write_text(families_root.join("__init__.py"), "")?;
-
     let mut by_module: BTreeMap<String, Vec<&BindingFunction>> = BTreeMap::new();
     for f in &manifest.functions {
         if f.python_module.starts_with("equations.") {
-            by_module
-                .entry(f.python_module.clone())
-                .or_default()
-                .push(f);
+            by_module.entry(f.python_module.clone()).or_default().push(f);
         }
     }
-    for (module, funcs) in by_module {
+
+    let mut package_children_pkgs: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    let mut package_children_mods: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    let mut module_functions: BTreeMap<String, Vec<&BindingFunction>> = BTreeMap::new();
+
+    for (module, funcs) in &by_module {
         let rel = module.trim_start_matches("equations.");
-        let parts: Vec<&str> = rel.split('.').collect();
+        let parts: Vec<String> = rel.split('.').map(snake_case).collect();
+        if parts.is_empty() {
+            continue;
+        }
+        let module_name = parts.last().cloned().unwrap_or_default();
+        let pkg = if parts.len() > 1 {
+            parts[..parts.len() - 1].join(".")
+        } else {
+            String::new()
+        };
+        package_children_mods
+            .entry(pkg.clone())
+            .or_default()
+            .insert(module_name.clone());
+        for i in 1..parts.len() {
+            let parent = parts[..i - 1].join(".");
+            package_children_pkgs
+                .entry(parent)
+                .or_default()
+                .insert(parts[i - 1].clone());
+        }
+        module_functions.insert(rel.to_string(), funcs.clone());
+    }
+
+    for (module_rel, funcs) in &module_functions {
+        let parts: Vec<String> = module_rel.split('.').map(snake_case).collect();
         let mut path = equations_root.to_path_buf();
         for p in &parts[..parts.len() - 1] {
-            path = path.join(snake_case(p));
+            path = path.join(p);
         }
-        let file = path.join(format!("{}.py", snake_case(parts[parts.len() - 1])));
+        let file = path.join(format!("{}.py", parts[parts.len() - 1]));
         let mut out = String::new();
         out.push_str("from engpy._runtime import invoke\n\n");
         for f in funcs {
             let mut params = Vec::new();
-            let mut args_map = Vec::new();
+            let mut payload_parts = Vec::new();
             for a in &f.args {
                 let p = snake_case(&a.name);
-                params.push(p.clone());
-                args_map.push(format!("\"{}\": {}", a.name, p));
+                if a.name == "branch" {
+                    params.push(format!("{p}=None"));
+                    payload_parts.push(format!("**({{\"{}\": {}}} if {} is not None else {{}})", a.name, p, p));
+                } else {
+                    params.push(p.clone());
+                    payload_parts.push(format!("\"{}\": {}", a.name, p));
+                }
             }
-            let mut payload_parts = Vec::new();
             payload_parts.extend(
                 f.fixed_args
                     .iter()
                     .map(|(k, v)| format!("\"{}\": \"{}\"", k, v)),
             );
-            payload_parts.extend(args_map);
             out.push_str(&format!(
                 "def {}({}):\n    \"\"\"{}\"\"\"\n    return invoke(\"{}\", {{{}}})\n\n",
                 f.python_name,
@@ -1974,8 +2588,102 @@ fn write_python_equation_modules(manifest: &BindingManifest, equations_root: &Pa
                 payload_parts.join(", ")
             ));
         }
+        out.push_str("__all__ = [\n");
+        for f in funcs {
+            out.push_str(&format!("    \"{}\",\n", f.python_name));
+        }
+        out.push_str("]\n");
         write_text(file, &out)?;
     }
+
+    let mut packages: BTreeSet<String> = BTreeSet::new();
+    for k in package_children_pkgs.keys() {
+        packages.insert(k.clone());
+    }
+    for k in package_children_mods.keys() {
+        packages.insert(k.clone());
+    }
+
+    for pkg in packages {
+        if pkg.is_empty() {
+            continue;
+        }
+        let mut out = String::new();
+        let child_pkgs = package_children_pkgs.get(&pkg).cloned().unwrap_or_default();
+        let child_mods = package_children_mods.get(&pkg).cloned().unwrap_or_default();
+        for child in &child_pkgs {
+            out.push_str(&format!("from . import {}\n", child));
+        }
+        for m in &child_mods {
+            out.push_str(&format!("from . import {}\n", m));
+        }
+
+        // Migration-safe aliases: only for category packages (depth=1, non-family/meta),
+        // and only when alias names are unique.
+        let depth = if pkg.is_empty() {
+            0
+        } else {
+            pkg.split('.').count()
+        };
+        if depth == 1 && pkg != "families" && pkg != "meta" {
+            let mut alias_counts: BTreeMap<String, usize> = BTreeMap::new();
+            let mut alias_src: BTreeMap<String, (String, String)> = BTreeMap::new();
+            for m in &child_mods {
+                let module_rel = format!("{}.{}", pkg, m);
+                if let Some(funcs) = module_functions.get(&module_rel) {
+                    for f in funcs {
+                        *alias_counts.entry(f.python_name.clone()).or_insert(0) += 1;
+                        alias_src.insert(
+                            f.python_name.clone(),
+                            (m.clone(), f.python_name.clone()),
+                        );
+                    }
+                }
+            }
+            let mut omitted = Vec::new();
+            for (name, count) in alias_counts {
+                if count == 1 {
+                    if let Some((m, src_name)) = alias_src.get(&name) {
+                        out.push_str(&format!(
+                            "from .{} import {} as {}\n",
+                            m, src_name, name
+                        ));
+                    }
+                } else {
+                    omitted.push(name);
+                }
+            }
+            if !omitted.is_empty() {
+                out.push_str("\n# Omitted legacy aliases due to collisions:\n");
+                for name in omitted {
+                    out.push_str(&format!("# - {}\n", name));
+                }
+            }
+        }
+
+        let mut all_entries = Vec::new();
+        for child in child_pkgs {
+            all_entries.push(child);
+        }
+        for m in child_mods {
+            all_entries.push(m);
+        }
+        if !all_entries.is_empty() {
+            out.push_str("\n__all__ = [\n");
+            for name in all_entries {
+                out.push_str(&format!("    \"{}\",\n", name));
+            }
+            out.push_str("]\n");
+        }
+
+        let mut p = equations_root.to_path_buf();
+        for seg in pkg.split('.') {
+            p = p.join(seg);
+        }
+        let file = p.join("__init__.py");
+        write_text(file, &out)?;
+    }
+
     Ok(())
 }
 
@@ -1986,20 +2694,25 @@ fn render_xloil_module(manifest: &BindingManifest) -> String {
     );
     out.push_str("from engpy._runtime import invoke\n\n");
     for f in &manifest.functions {
-        let params: Vec<String> = f.args.iter().map(|a| excel_param_name(f, a)).collect();
-        let kwargs = params
-            .iter()
-            .zip(f.args.iter())
-            .map(|(p, a)| format!("\"{}\": {}", a.name, p))
-            .collect::<Vec<_>>()
-            .join(", ");
+        let mut params: Vec<String> = Vec::new();
+        let mut kwargs = Vec::new();
+        for a in &f.args {
+            let p = excel_param_name(f, a);
+            if a.name == "branch" {
+                params.push(format!("{p}=\"\""));
+                kwargs.push(format!("**({{\"{}\": {}}} if {} not in (None, \"\") else {{}})", a.name, p, p));
+            } else {
+                params.push(p.clone());
+                kwargs.push(format!("\"{}\": {}", a.name, p));
+            }
+        }
         let mut payload_parts = f
             .fixed_args
             .iter()
             .map(|(k, v)| format!("\"{}\": \"{}\"", k, v))
             .collect::<Vec<_>>();
         if !kwargs.is_empty() {
-            payload_parts.push(kwargs.clone());
+            payload_parts.extend(kwargs);
         }
         out.push_str(&format!(
             "@xloil.func(name=\"{}\", help=\"{}\")\ndef {}({}):\n    \"\"\"{}\"\"\"\n    return invoke(\"{}\", {{{}}})\n\n",
@@ -2022,20 +2735,25 @@ fn render_pyxll_module(manifest: &BindingManifest) -> String {
     );
     out.push_str("from engpy._runtime import invoke\n\n");
     for f in &manifest.functions {
-        let params: Vec<String> = f.args.iter().map(|a| excel_param_name(f, a)).collect();
-        let kwargs = params
-            .iter()
-            .zip(f.args.iter())
-            .map(|(p, a)| format!("\"{}\": {}", a.name, p))
-            .collect::<Vec<_>>()
-            .join(", ");
+        let mut params: Vec<String> = Vec::new();
+        let mut kwargs = Vec::new();
+        for a in &f.args {
+            let p = excel_param_name(f, a);
+            if a.name == "branch" {
+                params.push(format!("{p}=\"\""));
+                kwargs.push(format!("**({{\"{}\": {}}} if {} not in (None, \"\") else {{}})", a.name, p, p));
+            } else {
+                params.push(p.clone());
+                kwargs.push(format!("\"{}\": {}", a.name, p));
+            }
+        }
         let mut payload_parts = f
             .fixed_args
             .iter()
             .map(|(k, v)| format!("\"{}\": \"{}\"", k, v))
             .collect::<Vec<_>>();
         if !kwargs.is_empty() {
-            payload_parts.push(kwargs.clone());
+            payload_parts.extend(kwargs);
         }
         out.push_str(&format!(
             "@xl_func(name=\"{}\", doc=\"{}\")\ndef {}({}):\n    \"\"\"{}\"\"\"\n    return invoke(\"{}\", {{{}}})\n\n",
@@ -2066,6 +2784,8 @@ fn generate_mdbook_source(c: &UnifiedDocsContribution, book_root: &Path) -> Resu
 
     write_text(
         book_root.join("book.toml"),
+        // Invariant: MathJax must remain enabled. The handbook equation pages emit LaTeX
+        // (`$$...$$` and `\(...\)`), and disabling this breaks core docs rendering.
         r#"[book]
 title = "Engineering Handbook"
 authors = ["eng-tools"]
@@ -2646,9 +3366,9 @@ fn render_bindings_guide() -> String {
     md.push_str("- `generated/bindings/excel/eng_pyxll.py`\n\n");
     md.push_str("`binding_spec.json` is transport-agnostic (function names, args, returns, help, examples). `invoke_protocol.json` documents the current runtime transport contract.\n\n");
     md.push_str("## Naming Rules\n\n");
-    md.push_str("- Python: namespaced modules (`engpy.equations.<category>.*`, `engpy.devices.*`, `engpy.fluids.*`, `engpy.materials.*`, `engpy.constants.*`).\n");
+    md.push_str("- Python: namespaced modules (`engpy.equations.<category>.<equation_slug>.*`, `engpy.devices.*`, `engpy.fluids.*`, `engpy.materials.*`, `engpy.constants.*`).\n");
     md.push_str("- Excel: flat worksheet-friendly functions (`ENG_*`).\n");
-    md.push_str("- Families are exposed under `engpy.equations.families.<family>`.\n\n");
+    md.push_str("- Families are exposed under `engpy.equations.families.<family>.<variant>`.\n\n");
     md.push_str("## Metadata and Diagnostics Functions\n\n");
     md.push_str("- Python:\n");
     md.push_str("  - `engpy.equations.meta.equation_meta(path_id)`\n");
@@ -2661,6 +3381,22 @@ fn render_bindings_guide() -> String {
     md.push_str("  - `engpy.equations.meta.equation_description(path_id)`\n");
     md.push_str("  - `engpy.equations.meta.equation_family(path_id)`\n");
     md.push_str("  - `engpy.equations.meta.equation_default_unit(path_id, variable)`\n");
+    md.push_str("  - `engpy.helpers.equation_targets_text(path_id)`\n");
+    md.push_str("  - `engpy.helpers.equation_variables_text(path_id)`\n");
+    md.push_str("  - `engpy.helpers.equation_branches_text(path_id)`\n");
+    md.push_str("  - `engpy.helpers.fluid_properties_text(key)`\n");
+    md.push_str("  - `engpy.helpers.material_properties_text(key)`\n");
+    md.push_str("  - `engpy.helpers.device_modes_text(key)`\n");
+    md.push_str("  - `engpy.helpers.equation_targets_table(path_id)`\n");
+    md.push_str("  - `engpy.helpers.equation_variables_table(path_id)`\n");
+    md.push_str("  - `engpy.helpers.equation_branches_table(path_id)`\n");
+    md.push_str("  - `engpy.helpers.fluid_properties_table(key)`\n");
+    md.push_str("  - `engpy.helpers.material_properties_table(key)`\n");
+    md.push_str("  - `engpy.helpers.equation_target_count(path_id)`\n");
+    md.push_str("  - `engpy.helpers.equation_variable_count(path_id)`\n");
+    md.push_str("  - `engpy.helpers.fluid_property_count(key)`\n");
+    md.push_str("  - `engpy.helpers.material_property_count(key)`\n");
+    md.push_str("  - `engpy.helpers.device_mode_count(key)`\n");
     md.push_str("  - `engpy.helpers.format_value(value, in_unit, out_unit)`\n");
     md.push_str("  - `engpy.helpers.meta_get(entity, key, field)`\n");
     md.push_str("- Excel:\n");
@@ -2676,9 +3412,22 @@ fn render_bindings_guide() -> String {
     md.push_str("  - `ENG_EQUATION_DESCRIPTION(path_id)`\n");
     md.push_str("  - `ENG_EQUATION_FAMILY(path_id)`\n");
     md.push_str("  - `ENG_EQUATION_DEFAULT_UNIT(path_id, variable)`\n\n");
+    md.push_str("  - `ENG_EQUATION_TARGETS_TEXT(path_id)` / `ENG_EQUATION_VARIABLES_TEXT(path_id)`\n");
+    md.push_str("  - `ENG_EQUATION_BRANCHES_TEXT(path_id)`\n");
+    md.push_str("  - `ENG_FLUID_PROPERTIES_TEXT(fluid_key)` / `ENG_MATERIAL_PROPERTIES_TEXT(material_key)` / `ENG_DEVICE_MODES_TEXT(device_key)`\n");
+    md.push_str("  - `ENG_EQUATION_TARGETS_TABLE(path_id)` / `ENG_EQUATION_VARIABLES_TABLE(path_id)`\n");
+    md.push_str("  - `ENG_EQUATION_BRANCHES_TABLE(path_id)`\n");
+    md.push_str("  - `ENG_FLUID_PROPERTIES_TABLE(fluid_key)` / `ENG_MATERIAL_PROPERTIES_TABLE(material_key)`\n");
+    md.push_str("  - `ENG_EQUATION_TARGET_COUNT(path_id)` / `ENG_EQUATION_VARIABLE_COUNT(path_id)`\n");
+    md.push_str("  - `ENG_FLUID_PROPERTY_COUNT(fluid_key)` / `ENG_MATERIAL_PROPERTY_COUNT(material_key)` / `ENG_DEVICE_MODE_COUNT(device_key)`\n\n");
+    md.push_str("Delimited TEXT helpers use `; ` as a deterministic separator.\n\n");
     md.push_str("Use these helpers for a composable workflow: keep core engineering calls simple, then layer formatting/reference metadata as needed.\n\n");
     md.push_str("### Clean Excel Pattern\n\n");
     md.push_str("```excel\n=ENG_HOOP_STRESS_SIGMA_H(P, r, t)\n=ENG_FORMAT(ENG_HOOP_STRESS_SIGMA_H(P, r, t), \"Pa\", \"psia\")\n=ENG_EQUATION_ASCII(\"structures.hoop_stress\")\n=ENG_META(\"equation\", \"structures.hoop_stress\", \"targets\")\n```\n\n");
+    md.push_str("### Excel single-cell text helpers\n\n");
+    md.push_str("```excel\n=ENG_EQUATION_TARGETS_TEXT(\"structures.hoop_stress\")\n=ENG_EQUATION_VARIABLES_TEXT(\"structures.hoop_stress\")\n=ENG_EQUATION_BRANCHES_TEXT(\"compressible.area_mach\")\n=ENG_FLUID_PROPERTIES_TEXT(\"H2O\")\n=ENG_MATERIAL_PROPERTIES_TEXT(\"stainless_304\")\n=ENG_DEVICE_MODES_TEXT(\"pipe_loss\")\n```\n\n");
+    md.push_str("### Excel spill-range table helpers\n\n");
+    md.push_str("```excel\n=ENG_EQUATION_VARIABLES_TABLE(\"structures.hoop_stress\")\n=ENG_EQUATION_TARGETS_TABLE(\"structures.hoop_stress\")\n=ENG_EQUATION_BRANCHES_TABLE(\"compressible.area_mach\")\n=ENG_FLUID_PROPERTIES_TABLE(\"H2O\")\n=ENG_MATERIAL_PROPERTIES_TABLE(\"stainless_304\")\n```\n\n");
     md.push_str("Native in-process runtime supports Python usage on Linux and Windows without requiring a platform-specific executable per call.\n\n");
     md.push_str("## Build / Install (Native Python Runtime)\n\n");
     md.push_str("- From `generated/bindings/python`, build/install the extension with maturin (for example `maturin develop` in an active Python environment).\n");
@@ -2748,9 +3497,16 @@ fn render_binding_examples_for_equation(p: &EquationPageModel) -> String {
         .or_else(|| p.solve_targets.first().map(|t| t.target.clone()))
         .unwrap_or_else(|| "value".to_string());
     let args = equation_args_for_target(p, &target);
+    let eq_slug = p
+        .path_id
+        .rsplit('.')
+        .next()
+        .map(snake_case)
+        .unwrap_or_else(|| snake_case(&p.path_id));
     let python_module = format!(
-        "engpy.equations.{}",
-        snake_case(&p.category).replace('-', "_")
+        "engpy.equations.{}.{}",
+        snake_case(&p.category).replace('-', "_"),
+        eq_slug
     );
     let python_fn = format!("solve_{}", snake_case(&target));
     let excel_fn = format!(
@@ -2758,8 +3514,29 @@ fn render_binding_examples_for_equation(p: &EquationPageModel) -> String {
         p.path_id.replace('.', "_").to_ascii_uppercase(),
         target.to_ascii_uppercase()
     );
+    let mut branch_block = String::new();
+    if !p.branches.is_empty() {
+        let preferred = p
+            .branches
+            .iter()
+            .find(|b| b.preferred)
+            .map(|b| b.name.clone())
+            .unwrap_or_else(|| p.branches[0].name.clone());
+        let branch_list = p
+            .branches
+            .iter()
+            .map(|b| format!("`{}`", b.name))
+            .collect::<Vec<_>>()
+            .join(", ");
+        branch_block.push_str(&format!(
+            "\n**Branch behavior**\n- Default solver behavior uses preferred branch (`{preferred}`) when one is marked.\n- Supported branches: {branch_list}\n\n### Python (explicit branch)\n```python\n{python_module}.{python_fn}({py_args}, branch=\"{preferred}\")\n```\n\n### Excel (explicit branch)\n```excel\n={excel_fn}({xl_args},\"{preferred}\")\n=ENG_EQUATION_BRANCHES_TEXT(\"{path}\")\n=ENG_EQUATION_BRANCHES_TABLE(\"{path}\")\n```\n",
+            py_args = render_python_example_args(&args),
+            xl_args = render_excel_example_args(&args),
+            path = p.path_id
+        ));
+    }
     format!(
-        "## Bindings\n\n### Rust\n```rust\nlet value = eq.solve(equations::{}::equation()).for_target(\"{}\").value()?;\n```\n\n### Python\n```python\n{}.{}({})\n# helper layer\nengpy.helpers.format_value({}.{}({}), \"<in_unit>\", \"<out_unit>\")\nengpy.equations.meta.equation_ascii(\"{}\")\n```\n\n### Excel\n```excel\n={}({})\n=ENG_FORMAT({}({}),\"<in_unit>\",\"<out_unit>\")\n=ENG_EQUATION_ASCII(\"{}\")\n```\n\n**Excel arguments**\n{}\n",
+        "## Bindings\n\n### Rust\n```rust\nlet value = eq.solve(equations::{}::equation()).for_target(\"{}\").value()?;\n```\n\n### Python\n```python\n{}.{}({})\n# helper layer\nengpy.helpers.format_value({}.{}({}), \"<in_unit>\", \"<out_unit>\")\nengpy.equations.meta.equation_ascii(\"{}\")\nengpy.helpers.equation_targets_text(\"{}\")\nengpy.helpers.equation_variables_table(\"{}\")\nengpy.helpers.equation_target_count(\"{}\")\n```\n\n### Excel\n```excel\n={}({})\n=ENG_FORMAT({}({}),\"<in_unit>\",\"<out_unit>\")\n=ENG_EQUATION_ASCII(\"{}\")\n=ENG_EQUATION_TARGETS_TEXT(\"{}\")\n=ENG_EQUATION_VARIABLES_TABLE(\"{}\")\n=ENG_EQUATION_TARGET_COUNT(\"{}\")\n```\n\n**Excel arguments**\n{}\n",
         p.path_id.replace('.', "::"),
         target,
         python_module,
@@ -2769,13 +3546,19 @@ fn render_binding_examples_for_equation(p: &EquationPageModel) -> String {
         python_fn,
         render_python_example_args(&args),
         p.path_id,
+        p.path_id,
+        p.path_id,
+        p.path_id,
         excel_fn,
         render_excel_example_args(&args),
         excel_fn,
         render_excel_example_args(&args),
         p.path_id,
+        p.path_id,
+        p.path_id,
+        p.path_id,
         render_binding_arg_bullets_for_excel_signature(&args, "equation.solve")
-    )
+    ) + &branch_block
 }
 
 fn render_binding_examples_for_family(
@@ -2785,15 +3568,12 @@ fn render_binding_examples_for_family(
     md.push_str("## Bindings\n\n");
     md.push_str("### Python\n\n");
     md.push_str("```python\n");
-    md.push_str(&format!(
-        "import engpy.equations.families.{} as family\n",
-        snake_case(&family.key)
-    ));
+    md.push_str(&format!("from engpy.equations.families import {}\n", snake_case(&family.key)));
     if let Some(v) = family.variants.first() {
         md.push_str(&format!(
-            "family.{}_solve_{}(...)\n",
+            "{}.{}.solve_<target>(...)\n",
+            snake_case(&family.key),
             snake_case(&v.key),
-            "..."
         ));
     }
     md.push_str("```\n\n");
@@ -2805,16 +3585,17 @@ fn render_binding_examples_for_family(
 fn render_binding_examples_for_device(device_key: &str) -> String {
     match device_key {
         "pipe_loss" => "## Bindings\n\n### Python\n```python\ndp = engpy.devices.pipe_loss_solve_delta_p(friction_model=\"Colebrook\", v=\"3 m/s\", d=\"0.1 m\", l=\"10 m\", eps=\"0.00015 in\", fluid=\"H2O\", in1_key=\"T\", in1_value=\"300 K\", in2_key=\"P\", in2_value=\"1 atm\")\nengpy.helpers.format_value(dp, \"Pa\", \"psia\")\n```\n\n### Excel\n```excel\n=ENG_PIPE_LOSS_DELTA_P(\"Colebrook\",,\"\",,\"3 m/s\",\"0.1 m\",\"10 m\",\"0.00015 in\",\"H2O\",\"T\",\"300 K\",\"P\",\"1 atm\")\n=ENG_FORMAT(ENG_PIPE_LOSS_DELTA_P(\"Colebrook\",,\"\",,\"3 m/s\",\"0.1 m\",\"10 m\",\"0.00015 in\",\"H2O\",\"T\",\"300 K\",\"P\",\"1 atm\"),\"Pa\",\"psia\")\n=ENG_META(\"device\",\"pipe_loss\",\"supported_modes\")\n```\n\n**Excel arguments**\n- `friction_model`: `Colebrook` or `Fixed`\n- `fixed_f`: fixed Darcy friction factor when model is `Fixed`\n- `density` / `viscosity` / `velocity` / `diameter` / `length` / `roughness`: direct engineering inputs\n- `fluid`, `in1_key`, `in1_value`, `in2_key`, `in2_value`: optional fluid-state context pair\n".to_string(),
+        "isentropic_calc" => "## Bindings\n\n### Python\n```python\nengpy.devices.isentropic_calc(\"mach_angle_deg\", 30.0, \"pressure_ratio\", 1.4)\nengpy.devices.isentropic_pivot_mach(\"area_ratio\", 2.0, \"mach\", 1.4, \"supersonic\")\nengpy.devices.isentropic_path_text(\"area_ratio\", 2.0, \"mach\", 1.4, \"subsonic\")\n```\n\n### Excel\n```excel\n=ENG_ISENTROPIC(\"mach_angle_deg\",30,\"pressure_ratio\",1.4,\"\")\n=ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,\"\")\n=ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30,1.4,\"\")\n=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")\n=ENG_ISENTROPIC_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,\"subsonic\")\n=ENG_ISENTROPIC_PATH_TEXT(\"mach\",2.0,\"pressure_ratio\",1.4,\"\")\n```\n\n**Excel arguments**\n- `value_kind_in`: `mach`, `mach_angle_deg`, `pressure_ratio`, `temperature_ratio`, `density_ratio`, `area_ratio`\n- `value_in`: input value\n- `target_kind_out`: same enum family as input kind\n- `gamma`: specific heat ratio\n- `branch`: optional, required for double-valued inverse paths like `area_ratio -> mach`\n".to_string(),
         _ => String::new(),
     }
 }
 
 fn render_binding_examples_for_fluid() -> String {
-    "## Bindings\n\n### Python\n```python\nengpy.fluids.fluid_prop(\"H2O\", \"T\", \"300 K\", \"P\", \"1 bar\", \"rho\")\nengpy.helpers.fluid_properties(\"H2O\")\n```\n\n### Excel\n```excel\n=ENG_FLUID_PROP(\"H2O\",\"T\",\"300 K\",\"P\",\"1 bar\",\"rho\")\n=ENG_FLUID_PROPERTIES(\"H2O\")\n```\n\n**Excel arguments**\n- `fluid`: fluid key or alias\n- `state_prop_1`, `state_value_1`: first state-defining property and value\n- `state_prop_2`, `state_value_2`: second state-defining property and value\n- `out_prop`: property to return (for example `rho`, `mu`, `cp`)\n".to_string()
+    "## Bindings\n\n### Python\n```python\nengpy.fluids.fluid_prop(\"H2O\", \"T\", \"300 K\", \"P\", \"1 bar\", \"rho\")\nengpy.helpers.fluid_properties(\"H2O\")\nengpy.helpers.fluid_properties_text(\"H2O\")\nengpy.helpers.fluid_properties_table(\"H2O\")\nengpy.helpers.fluid_property_count(\"H2O\")\n```\n\n### Excel\n```excel\n=ENG_FLUID_PROP(\"H2O\",\"T\",\"300 K\",\"P\",\"1 bar\",\"rho\")\n=ENG_FLUID_PROPERTIES(\"H2O\")\n=ENG_FLUID_PROPERTIES_TEXT(\"H2O\")\n=ENG_FLUID_PROPERTIES_TABLE(\"H2O\")\n=ENG_FLUID_PROPERTY_COUNT(\"H2O\")\n```\n\n**Excel arguments**\n- `fluid`: fluid key or alias\n- `state_prop_1`, `state_value_1`: first state-defining property and value\n- `state_prop_2`, `state_value_2`: second state-defining property and value\n- `out_prop`: property to return (for example `rho`, `mu`, `cp`)\n".to_string()
 }
 
 fn render_binding_examples_for_material() -> String {
-    "## Bindings\n\n### Python\n```python\nengpy.materials.mat_prop(\"stainless_304\", \"elastic_modulus\", \"350 K\")\nengpy.helpers.material_properties(\"stainless_304\")\n```\n\n### Excel\n```excel\n=ENG_MAT_PROP(\"stainless_304\",\"elastic_modulus\",\"350 K\")\n=ENG_MATERIAL_PROPERTIES(\"stainless_304\")\n```\n\n**Excel arguments**\n- `material`: material key or alias\n- `property_key`: material property key (for example `elastic_modulus`)\n- `temperature`: evaluation temperature (recommended with explicit units)\n".to_string()
+    "## Bindings\n\n### Python\n```python\nengpy.materials.mat_prop(\"stainless_304\", \"elastic_modulus\", \"350 K\")\nengpy.helpers.material_properties(\"stainless_304\")\nengpy.helpers.material_properties_text(\"stainless_304\")\nengpy.helpers.material_properties_table(\"stainless_304\")\nengpy.helpers.material_property_count(\"stainless_304\")\n```\n\n### Excel\n```excel\n=ENG_MAT_PROP(\"stainless_304\",\"elastic_modulus\",\"350 K\")\n=ENG_MATERIAL_PROPERTIES(\"stainless_304\")\n=ENG_MATERIAL_PROPERTIES_TEXT(\"stainless_304\")\n=ENG_MATERIAL_PROPERTIES_TABLE(\"stainless_304\")\n=ENG_MATERIAL_PROPERTY_COUNT(\"stainless_304\")\n```\n\n**Excel arguments**\n- `material`: material key or alias\n- `property_key`: material property key (for example `elastic_modulus`)\n- `temperature`: evaluation temperature (recommended with explicit units)\n".to_string()
 }
 
 fn render_binding_arg_bullets_for_excel_signature(args: &[BindingArg], op: &str) -> String {
@@ -3172,7 +3953,9 @@ fn render_equation_page(
     let mut md = String::new();
     md.push_str(&format!("# {}\n\n", p.name));
     md.push_str(&format!("**Path ID:** `{}`\n\n", p.path_id));
-    md.push_str(&format!("\\[\n{}\n\\]\n\n", p.latex));
+    // Invariant: emit display math with `$$...$$` so mdBook/MathJax consistently renders it.
+    // Do not wrap LaTeX in literal brackets like `[ ... ]` and do not escape backslashes here.
+    md.push_str(&format!("$$\n{}\n$$\n\n", p.latex));
     md.push_str(&format!("- Unicode: `{}`\n", p.unicode));
     md.push_str(&format!("- ASCII: `{}`\n\n", p.ascii));
 
@@ -3181,6 +3964,9 @@ fn render_equation_page(
         "<table><thead><tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr></thead><tbody>\n",
     );
     for v in &p.variables {
+        // Invariant: symbols must stay inline-math wrapped in table cells.
+        // This preserves LaTeX macros like `\dot{m}` and prevents markdown from treating
+        // underscores/braces as plain text.
         md.push_str(&format!(
             "<tr><td><code>{}</code></td><td>{}</td><td>\\({}\\)</td><td><code>{}</code></td><td><code>{}</code></td></tr>\n",
             v.key, v.name, v.symbol, v.dimension, v.default_unit
@@ -3346,7 +4132,15 @@ fn render_devices_guide() -> String {
     md.push_str(SNIPPET_DEVICE_PIPE_LOSS_COLEBROOK_FLUID.trim());
     md.push_str("\n```\n\n");
 
+    md.push_str("## Calculator Device: Isentropic\n\n");
+    md.push_str("- API entrypoint: `eng::devices::isentropic_calc()`\n");
+    md.push_str("- Uses deterministic Mach-pivot orchestration (`input_kind -> pivot Mach -> target_kind`).\n");
+    md.push_str("- All mathematical relations are resolved through registry-backed atomic equations.\n");
+    md.push_str("- Branch-sensitive inverse paths (such as `area_ratio -> mach`) require explicit branch selection.\n");
+    md.push_str("- Outputs include scalar value, pivot Mach, and step diagnostics/path text.\n\n");
+
     md.push_str("See [Devices Index](./index.md) and [Pipe Pressure Drop](./pipe_loss.md).\n");
+    md.push_str("See also [Isentropic Calculator](./isentropic_calc.md).\n");
     md
 }
 
@@ -3370,6 +4164,32 @@ fn render_devices_index(c: &UnifiedDocsContribution) -> String {
 }
 
 fn render_device_page(d: &crate::devices::DeviceDocsEntry) -> String {
+    if d.key == "isentropic_calc" {
+        let mut md = String::new();
+        md.push_str("# Isentropic Calculator\n\n");
+        md.push_str("Calculator-style compressible-flow device that accepts one isentropic input kind and one target kind, resolves a pivot Mach number, then computes the requested output.\n\n");
+        md.push_str("All relation math is delegated to equation-registry atomic equations (no device-local formula authority).\n\n");
+        md.push_str("## Supported Inputs (v1)\n\n");
+        md.push_str("- `mach`\n- `mach_angle_deg` (Excel/Python convenience; internally converted to radians)\n- `pressure_ratio` (`p/p0`)\n- `temperature_ratio` (`T/T0`)\n- `density_ratio` (`rho/rho0`)\n- `area_ratio` (`A/A*`, branch-sensitive)\n\n");
+        md.push_str("## Supported Targets (v1)\n\n");
+        md.push_str("- `mach`\n- `mach_angle_deg`\n- `pressure_ratio`\n- `temperature_ratio`\n- `density_ratio`\n- `area_ratio`\n\n");
+        md.push_str("## Branch Behavior\n\n");
+        md.push_str("- `area_ratio -> mach` is double-valued and requires explicit branch (`subsonic` or `supersonic`).\n");
+        md.push_str("- If branch-sensitive inversion is requested without branch, the device returns a structured error.\n\n");
+        md.push_str("## Examples\n\n");
+        md.push_str("### Rust\n```rust\nuse eng::devices::{isentropic_calc, IsentropicInputKind, IsentropicOutputKind, IsentropicBranch};\nlet out = isentropic_calc()\n    .gamma(1.4)\n    .input(IsentropicInputKind::AreaRatio, 2.0)\n    .target(IsentropicOutputKind::Mach)\n    .branch(IsentropicBranch::Supersonic)\n    .solve()?;\nprintln!(\"M={}, p/p0={}\", out.pivot_mach, out.value_si);\n```\n\n");
+        md.push_str("### Python\n```python\nengpy.devices.isentropic_calc(\"mach_angle_deg\", 30.0, \"pressure_ratio\", 1.4)\nengpy.devices.isentropic_pivot_mach(\"area_ratio\", 2.0, \"mach\", 1.4, \"subsonic\")\nengpy.devices.isentropic_path_text(\"area_ratio\", 2.0, \"mach\", 1.4, \"supersonic\")\n```\n\n");
+        md.push_str("### Excel\n```excel\n=ENG_ISENTROPIC(\"mach_angle_deg\",30,\"pressure_ratio\",1.4,\"\")\n=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")\n=ENG_ISENTROPIC_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,\"subsonic\")\n=ENG_ISENTROPIC_PATH_TEXT(\"mach\",2.0,\"pressure_ratio\",1.4,\"\")\n```\n\n");
+        md.push_str("## Internal Composition\n\n");
+        md.push_str("- [Mach Angle](../equations/compressible/mach_angle.md)\n");
+        md.push_str("- [Isentropic Pressure Ratio](../equations/compressible/isentropic_pressure_ratio.md)\n");
+        md.push_str("- [Isentropic Temperature Ratio](../equations/compressible/isentropic_temperature_ratio.md)\n");
+        md.push_str("- [Isentropic Density Ratio](../equations/compressible/isentropic_density_ratio.md)\n");
+        md.push_str("- [Isentropic Area-Mach Relation](../equations/compressible/area_mach.md)\n\n");
+        md.push_str(&render_binding_examples_for_device(&d.key));
+        return md;
+    }
+
     let mut md = String::new();
     md.push_str(&format!("# {}\n\n", d.name));
     md.push_str(&format!("**Key:** `{}`\n\n", d.key));
@@ -3413,6 +4233,13 @@ fn device_equation_dependencies(device_key: &str) -> &'static [&'static str] {
             "fluids.reynolds_number",
             "fluids.colebrook",
             "fluids.darcy_weisbach_pressure_drop",
+        ],
+        "isentropic_calc" => &[
+            "compressible.mach_angle",
+            "compressible.area_mach",
+            "compressible.isentropic_pressure_ratio",
+            "compressible.isentropic_temperature_ratio",
+            "compressible.isentropic_density_ratio",
         ],
         _ => &[],
     }

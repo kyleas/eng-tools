@@ -29,8 +29,8 @@ Common engineering forms of the ideal-gas law under one canonical family.
 ### Python
 
 ```python
-import engpy.equations.families.ideal_gas as family
-family.mass_volume_solve_...(...)
+from engpy.equations.families import ideal_gas
+ideal_gas.mass_volume.solve_<target>(...)
 ```
 
 ### Excel

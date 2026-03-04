@@ -101,6 +101,64 @@ fn invoke_equation_solve_area_mach_target_m_without_explicit_branch_succeeds() {
 }
 
 #[test]
+fn invoke_equation_solve_area_mach_honors_explicit_branch() {
+    let sub_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "equation.solve",
+        "args": {
+            "path_id": "compressible.area_mach",
+            "target": "M",
+            "area_ratio": 2.0,
+            "gamma": 1.4,
+            "branch": "subsonic"
+        }
+    });
+    let sub_resp = run_invoke(sub_req);
+    assert_eq!(sub_resp["ok"], true, "response: {sub_resp}");
+    let m_sub = sub_resp["value"].as_f64().unwrap_or(0.0);
+    assert!(m_sub > 0.0 && m_sub < 1.0, "expected subsonic branch, got {m_sub}");
+
+    let sup_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "equation.solve",
+        "args": {
+            "path_id": "compressible.area_mach",
+            "target": "M",
+            "area_ratio": 2.0,
+            "gamma": 1.4,
+            "branch": "supersonic"
+        }
+    });
+    let sup_resp = run_invoke(sup_req);
+    assert_eq!(sup_resp["ok"], true, "response: {sup_resp}");
+    let m_sup = sup_resp["value"].as_f64().unwrap_or(0.0);
+    assert!(m_sup > 1.0, "expected supersonic branch, got {m_sup}");
+}
+
+#[test]
+fn invoke_equation_solve_invalid_branch_is_clear_error() {
+    let req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "equation.solve",
+        "args": {
+            "path_id": "compressible.area_mach",
+            "target": "M",
+            "area_ratio": 2.0,
+            "gamma": 1.4,
+            "branch": "not_a_branch"
+        }
+    });
+    let resp = run_invoke(req);
+    assert_eq!(resp["ok"], false, "response: {resp}");
+    assert_eq!(resp["error"]["code"], "equation_solve_failed");
+    let msg = resp["error"]["message"].as_str().unwrap_or("");
+    assert!(
+        msg.contains("branch") && msg.contains("valid"),
+        "expected clear invalid branch message, got: {msg}"
+    );
+}
+
+#[test]
 fn invoke_equation_meta_includes_display_and_units() {
     let req = json!({
         "protocol_version": "eng-invoke.v1",
@@ -153,6 +211,49 @@ fn invoke_equation_ascii_and_default_unit_return_scalars() {
 }
 
 #[test]
+fn invoke_isentropic_calc_supports_deg_input_and_output() {
+    let req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "device.isentropic_calc.value",
+        "args": {
+            "input_kind": "mach",
+            "input_value": 2.0,
+            "target_kind": "mach_angle_deg",
+            "gamma": 1.4
+        }
+    });
+    let resp = run_invoke(req);
+    assert_eq!(resp["ok"], true, "response: {resp}");
+    let mu_deg = resp["value"].as_f64().unwrap_or(0.0);
+    assert!((mu_deg - 30.0).abs() < 1e-8, "expected 30 deg, got {mu_deg}");
+}
+
+#[test]
+fn invoke_isentropic_calc_requires_branch_for_area_ratio_inversion() {
+    let req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "device.isentropic_calc.value",
+        "args": {
+            "input_kind": "area_ratio",
+            "input_value": 2.0,
+            "target_kind": "mach",
+            "gamma": 1.4
+        }
+    });
+    let resp = run_invoke(req);
+    assert_eq!(resp["ok"], false, "response: {resp}");
+    assert_eq!(resp["error"]["code"], "device_isentropic_calc_failed");
+    assert!(
+        resp["error"]["message"]
+            .as_str()
+            .unwrap_or("")
+            .contains("branch is required"),
+        "expected missing-branch guidance, got: {}",
+        resp["error"]["message"].as_str().unwrap_or("")
+    );
+}
+
+#[test]
 fn invoke_format_and_meta_helpers_work() {
     let fmt_req = json!({
         "protocol_version": "eng-invoke.v1",
@@ -194,6 +295,19 @@ fn invoke_format_and_meta_helpers_work() {
     assert_eq!(mismatch_resp["ok"], false, "response: {mismatch_resp}");
     assert_eq!(mismatch_resp["error"]["code"], "format_dimension_mismatch");
 
+    let missing_in_unit_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "format.value",
+        "args": {
+            "value": 1.0,
+            "out_unit": "Pa"
+        }
+    });
+    let missing_in_unit_resp = run_invoke(missing_in_unit_req);
+    assert_eq!(missing_in_unit_resp["ok"], false, "response: {missing_in_unit_resp}");
+    assert_eq!(missing_in_unit_resp["error"]["code"], "missing_arg");
+    assert_eq!(missing_in_unit_resp["error"]["field"], "in_unit");
+
     let meta_req = json!({
         "protocol_version": "eng-invoke.v1",
         "op": "meta.get",
@@ -206,4 +320,56 @@ fn invoke_format_and_meta_helpers_work() {
     let meta_resp = run_invoke(meta_req);
     assert_eq!(meta_resp["ok"], true, "response: {meta_resp}");
     assert!(meta_resp["value"].as_str().unwrap_or("").contains("sigma"));
+
+    let targets_text_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "equation.targets.text",
+        "args": { "path_id": "structures.hoop_stress" }
+    });
+    let targets_text_resp = run_invoke(targets_text_req);
+    assert_eq!(targets_text_resp["ok"], true, "response: {targets_text_resp}");
+    let targets_text = targets_text_resp["value"].as_str().unwrap_or("");
+    assert_eq!(targets_text, "P; r; sigma_h; t");
+
+    let vars_table_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "equation.variables.table",
+        "args": { "path_id": "structures.hoop_stress" }
+    });
+    let vars_table_resp = run_invoke(vars_table_req);
+    assert_eq!(vars_table_resp["ok"], true, "response: {vars_table_resp}");
+    let rows = vars_table_resp["value"].as_array().expect("table rows");
+    assert!(!rows.is_empty());
+    assert!(rows.iter().all(|r| r.as_array().is_some_and(|a| a.len() == 2)));
+
+    let branches_text_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "equation.branches.text",
+        "args": { "path_id": "compressible.area_mach" }
+    });
+    let branches_text_resp = run_invoke(branches_text_req);
+    assert_eq!(branches_text_resp["ok"], true, "response: {branches_text_resp}");
+    let branches_text = branches_text_resp["value"].as_str().unwrap_or("");
+    assert!(branches_text.contains("subsonic"));
+    assert!(branches_text.contains("supersonic"));
+
+    let branches_table_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "equation.branches.table",
+        "args": { "path_id": "compressible.area_mach" }
+    });
+    let branches_table_resp = run_invoke(branches_table_req);
+    assert_eq!(branches_table_resp["ok"], true, "response: {branches_table_resp}");
+    let branch_rows = branches_table_resp["value"].as_array().expect("branch rows");
+    assert!(!branch_rows.is_empty());
+    assert!(branch_rows.iter().all(|r| r.as_array().is_some_and(|a| a.len() == 2)));
+
+    let fluid_count_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "fluid.property.count",
+        "args": { "key": "H2O" }
+    });
+    let fluid_count_resp = run_invoke(fluid_count_req);
+    assert_eq!(fluid_count_resp["ok"], true, "response: {fluid_count_resp}");
+    assert!(fluid_count_resp["value"].as_u64().unwrap_or(0) > 0);
 }

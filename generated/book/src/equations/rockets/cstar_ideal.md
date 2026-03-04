@@ -2,9 +2,9 @@
 
 **Path ID:** `rockets.cstar_ideal`
 
-\[
+$$
 c^* = \sqrt{\frac{R T_c}{\gamma}} \left(\frac{\gamma+1}{2}\right)^{(\gamma+1)/(2(\gamma-1))}
-\]
+$$
 
 - Unicode: `c_star = √(R · T_c / γ) · pow((γ + 1) / 2, (γ + 1) / (2 · (γ - 1)))`
 - ASCII: `c_star = sqrt(R * T_c / gamma) * pow((gamma + 1) / 2, (gamma + 1) / (2 * (gamma - 1)))`
@@ -68,10 +68,13 @@ let value = eq.solve(equations::rockets::cstar_ideal::equation()).for_target("c_
 
 ### Python
 ```python
-engpy.equations.rockets.solve_c_star(r="...", t_c="...", gamma="...")
+engpy.equations.rockets.cstar_ideal.solve_c_star(r="...", t_c="...", gamma="...")
 # helper layer
-engpy.helpers.format_value(engpy.equations.rockets.solve_c_star(r="...", t_c="...", gamma="..."), "<in_unit>", "<out_unit>")
+engpy.helpers.format_value(engpy.equations.rockets.cstar_ideal.solve_c_star(r="...", t_c="...", gamma="..."), "<in_unit>", "<out_unit>")
 engpy.equations.meta.equation_ascii("rockets.cstar_ideal")
+engpy.helpers.equation_targets_text("rockets.cstar_ideal")
+engpy.helpers.equation_variables_table("rockets.cstar_ideal")
+engpy.helpers.equation_target_count("rockets.cstar_ideal")
 ```
 
 ### Excel
@@ -79,6 +82,9 @@ engpy.equations.meta.equation_ascii("rockets.cstar_ideal")
 =ENG_ROCKETS_CSTAR_IDEAL_C_STAR("...","...","...")
 =ENG_FORMAT(ENG_ROCKETS_CSTAR_IDEAL_C_STAR("...","...","..."),"<in_unit>","<out_unit>")
 =ENG_EQUATION_ASCII("rockets.cstar_ideal")
+=ENG_EQUATION_TARGETS_TEXT("rockets.cstar_ideal")
+=ENG_EQUATION_VARIABLES_TABLE("rockets.cstar_ideal")
+=ENG_EQUATION_TARGET_COUNT("rockets.cstar_ideal")
 ```
 
 **Excel arguments**

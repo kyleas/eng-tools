@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b9b2989c.js";
+            window.path_to_searchindex_js = "../searchindex-cb405dff.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-e22846d2.js"></script>
+        <script src="../toc-3fe63638.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -320,10 +320,16 @@ let re = eq
 <h3 id="python"><a class="header" href="#python">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
+engpy.helpers.fluid_properties_text("H2O")
+engpy.helpers.fluid_properties_table("H2O")
+engpy.helpers.fluid_property_count("H2O")
 </code></pre>
 <h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
+=ENG_FLUID_PROPERTIES_TEXT("H2O")
+=ENG_FLUID_PROPERTIES_TABLE("H2O")
+=ENG_FLUID_PROPERTY_COUNT("H2O")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>

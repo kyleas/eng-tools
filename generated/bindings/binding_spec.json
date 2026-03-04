@@ -26,6 +26,219 @@
       "pyxll_example": "=ENG_CONST(\"g0\")"
     },
     {
+      "id": "device.isentropic_calc",
+      "entity": "device",
+      "source": "isentropic_calc",
+      "python_module": "devices",
+      "python_name": "isentropic_calc",
+      "excel_name": "ENG_ISENTROPIC",
+      "op": "device.isentropic_calc.value",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "input_kind",
+          "description": "Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input value"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch for double-valued inversions (subsonic/supersonic)"
+        }
+      ],
+      "returns": "f64",
+      "help": "Isentropic calculator: input kind -> target kind through Mach pivot",
+      "rust_example": "eng::devices::isentropic_calc().solve()?",
+      "python_example": "engpy.devices.isentropic_calc(\"mach\", 2.0, \"pressure_ratio\", 1.4)",
+      "xloil_example": "=ENG_ISENTROPIC(\"mach\",2.0,\"pressure_ratio\",1.4,\"\")",
+      "pyxll_example": "=ENG_ISENTROPIC(\"mach\",2.0,\"pressure_ratio\",1.4,\"\")"
+    },
+    {
+      "id": "device.isentropic_calc.from_area_ratio.to_m",
+      "entity": "device",
+      "source": "isentropic_calc",
+      "python_module": "devices",
+      "python_name": "isentropic_from_area_ratio_to_m",
+      "excel_name": "ENG_ISENTROPIC_FROM_A_ASTAR_TO_M",
+      "op": "device.isentropic_calc.value",
+      "fixed_args": {
+        "input_kind": "area_ratio",
+        "target_kind": "mach"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Area ratio A/A*"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Required: subsonic or supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience isentropic path: A/A* -> Mach (branch required)",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.isentropic_from_area_ratio_to_m(2.0, 1.4, \"supersonic\")",
+      "xloil_example": "=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")",
+      "pyxll_example": "=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")"
+    },
+    {
+      "id": "device.isentropic_calc.from_m.to_p_p0",
+      "entity": "device",
+      "source": "isentropic_calc",
+      "python_module": "devices",
+      "python_name": "isentropic_from_m_to_p_p0",
+      "excel_name": "ENG_ISENTROPIC_FROM_M_TO_P_P0",
+      "op": "device.isentropic_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "pressure_ratio"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch (unused for this path)"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience isentropic path: Mach -> p/p0",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.isentropic_from_m_to_p_p0(2.0, 1.4)",
+      "xloil_example": "=ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,\"\")",
+      "pyxll_example": "=ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,\"\")"
+    },
+    {
+      "id": "device.isentropic_calc.from_mu_deg.to_p_p0",
+      "entity": "device",
+      "source": "isentropic_calc",
+      "python_module": "devices",
+      "python_name": "isentropic_from_mu_deg_to_p_p0",
+      "excel_name": "ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0",
+      "op": "device.isentropic_calc.value",
+      "fixed_args": {
+        "input_kind": "mach_angle_deg",
+        "target_kind": "pressure_ratio"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach angle in degrees"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch (unused for this path)"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience isentropic path: mu(deg) -> p/p0",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.isentropic_from_mu_deg_to_p_p0(30.0, 1.4)",
+      "xloil_example": "=ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30.0,1.4,\"\")",
+      "pyxll_example": "=ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30.0,1.4,\"\")"
+    },
+    {
+      "id": "device.isentropic_calc.path_text",
+      "entity": "device",
+      "source": "isentropic_calc",
+      "python_module": "devices",
+      "python_name": "isentropic_path_text",
+      "excel_name": "ENG_ISENTROPIC_PATH_TEXT",
+      "op": "device.isentropic_calc.path_text",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "input_kind",
+          "description": "Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input value"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch for double-valued inversions (subsonic/supersonic)"
+        }
+      ],
+      "returns": "str",
+      "help": "Isentropic calculator helper: compact step trace text",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.isentropic_path_text(\"mach_angle_deg\", 30.0, \"pressure_ratio\", 1.4)",
+      "xloil_example": "=ENG_ISENTROPIC_PATH_TEXT(\"mach_angle_deg\",30.0,\"pressure_ratio\",1.4,\"\")",
+      "pyxll_example": "=ENG_ISENTROPIC_PATH_TEXT(\"mach_angle_deg\",30.0,\"pressure_ratio\",1.4,\"\")"
+    },
+    {
+      "id": "device.isentropic_calc.pivot",
+      "entity": "device",
+      "source": "isentropic_calc",
+      "python_module": "devices",
+      "python_name": "isentropic_pivot_mach",
+      "excel_name": "ENG_ISENTROPIC_PIVOT_MACH",
+      "op": "device.isentropic_calc.pivot_mach",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "input_kind",
+          "description": "Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input value"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch for double-valued inversions (subsonic/supersonic)"
+        }
+      ],
+      "returns": "f64",
+      "help": "Isentropic calculator helper: return resolved pivot Mach",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.isentropic_pivot_mach(\"area_ratio\", 2.0, \"mach\", 1.4, \"subsonic\")",
+      "xloil_example": "=ENG_ISENTROPIC_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,\"subsonic\")",
+      "pyxll_example": "=ENG_ISENTROPIC_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,\"subsonic\")"
+    },
+    {
       "id": "device.meta.modes",
       "entity": "helper",
       "source": "devices",
@@ -49,6 +262,50 @@
       "python_example": "engpy.helpers.device_modes(\"pipe_loss\")",
       "xloil_example": "=ENG_DEVICE_MODES(\"pipe_loss\")",
       "pyxll_example": "=ENG_DEVICE_MODES(\"pipe_loss\")"
+    },
+    {
+      "id": "device.mode.count",
+      "entity": "helper",
+      "source": "devices",
+      "python_module": "helpers",
+      "python_name": "device_mode_count",
+      "excel_name": "ENG_DEVICE_MODE_COUNT",
+      "op": "device.mode.count",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "key",
+          "description": "Device key"
+        }
+      ],
+      "returns": "u64",
+      "help": "Read device mode count",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.device_mode_count(\"pipe_loss\")",
+      "xloil_example": "=ENG_DEVICE_MODE_COUNT(\"pipe_loss\")",
+      "pyxll_example": "=ENG_DEVICE_MODE_COUNT(\"pipe_loss\")"
+    },
+    {
+      "id": "device.modes.text",
+      "entity": "helper",
+      "source": "devices",
+      "python_module": "helpers",
+      "python_name": "device_modes_text",
+      "excel_name": "ENG_DEVICE_MODES_TEXT",
+      "op": "device.modes.text",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "key",
+          "description": "Device key"
+        }
+      ],
+      "returns": "str",
+      "help": "Read device modes as delimited text",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.device_modes_text(\"pipe_loss\")",
+      "xloil_example": "=ENG_DEVICE_MODES_TEXT(\"pipe_loss\")",
+      "pyxll_example": "=ENG_DEVICE_MODES_TEXT(\"pipe_loss\")"
     },
     {
       "id": "device.pipe_loss.solve_delta_p",
@@ -143,10 +400,54 @@
       "pyxll_example": "=ENG_EQUATION_ASCII(\"fluids.reynolds_number\")"
     },
     {
+      "id": "equation.branches.table",
+      "entity": "helper",
+      "source": "equations",
+      "python_module": "helpers",
+      "python_name": "equation_branches_table",
+      "excel_name": "ENG_EQUATION_BRANCHES_TABLE",
+      "op": "equation.branches.table",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        }
+      ],
+      "returns": "list[list]",
+      "help": "Read equation branch table rows [branch, is_preferred]",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.equation_branches_table(\"compressible.area_mach\")",
+      "xloil_example": "=ENG_EQUATION_BRANCHES_TABLE(\"compressible.area_mach\")",
+      "pyxll_example": "=ENG_EQUATION_BRANCHES_TABLE(\"compressible.area_mach\")"
+    },
+    {
+      "id": "equation.branches.text",
+      "entity": "helper",
+      "source": "equations",
+      "python_module": "helpers",
+      "python_name": "equation_branches_text",
+      "excel_name": "ENG_EQUATION_BRANCHES_TEXT",
+      "op": "equation.branches.text",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        }
+      ],
+      "returns": "str",
+      "help": "Read equation branch names as delimited text",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.equation_branches_text(\"compressible.area_mach\")",
+      "xloil_example": "=ENG_EQUATION_BRANCHES_TEXT(\"compressible.area_mach\")",
+      "pyxll_example": "=ENG_EQUATION_BRANCHES_TEXT(\"compressible.area_mach\")"
+    },
+    {
       "id": "equation.compressible.area_mach.M",
       "entity": "equation",
       "source": "compressible.area_mach",
-      "python_module": "equations.compressible",
+      "python_module": "equations.compressible.area_mach",
       "python_name": "solve_m",
       "excel_name": "ENG_COMPRESSIBLE_AREA_MACH_M",
       "op": "equation.solve",
@@ -162,20 +463,24 @@
         {
           "name": "gamma",
           "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
         }
       ],
       "returns": "f64",
       "help": "Solve Isentropic Area-Mach Relation for M",
       "rust_example": "eq.solve(equations::compressible::area_mach::equation()).for_target(\"M\").value()?",
-      "python_example": "engpy.equations.compressible.solve_m(area_ratio=\"...\", gamma=\"...\")",
-      "xloil_example": "=ENG_COMPRESSIBLE_AREA_MACH_M(\"...\",\"...\")",
-      "pyxll_example": "=ENG_COMPRESSIBLE_AREA_MACH_M(\"...\",\"...\")"
+      "python_example": "engpy.equations.compressible.area_mach.solve_m(area_ratio=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_AREA_MACH_M(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_AREA_MACH_M(\"...\",\"...\",\"...\")"
     },
     {
       "id": "equation.compressible.area_mach.area_ratio",
       "entity": "equation",
       "source": "compressible.area_mach",
-      "python_module": "equations.compressible",
+      "python_module": "equations.compressible.area_mach",
       "python_name": "solve_area_ratio",
       "excel_name": "ENG_COMPRESSIBLE_AREA_MACH_AREA_RATIO",
       "op": "equation.solve",
@@ -191,20 +496,24 @@
         {
           "name": "gamma",
           "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
         }
       ],
       "returns": "f64",
       "help": "Solve Isentropic Area-Mach Relation for area_ratio",
       "rust_example": "eq.solve(equations::compressible::area_mach::equation()).for_target(\"area_ratio\").value()?",
-      "python_example": "engpy.equations.compressible.solve_area_ratio(m=\"...\", gamma=\"...\")",
-      "xloil_example": "=ENG_COMPRESSIBLE_AREA_MACH_AREA_RATIO(\"...\",\"...\")",
-      "pyxll_example": "=ENG_COMPRESSIBLE_AREA_MACH_AREA_RATIO(\"...\",\"...\")"
+      "python_example": "engpy.equations.compressible.area_mach.solve_area_ratio(m=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_AREA_MACH_AREA_RATIO(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_AREA_MACH_AREA_RATIO(\"...\",\"...\",\"...\")"
     },
     {
       "id": "equation.compressible.choked_mass_flux.G_star",
       "entity": "equation",
       "source": "compressible.choked_mass_flux",
-      "python_module": "equations.compressible",
+      "python_module": "equations.compressible.choked_mass_flux",
       "python_name": "solve_g_star",
       "excel_name": "ENG_COMPRESSIBLE_CHOKED_MASS_FLUX_G_STAR",
       "op": "equation.solve",
@@ -233,7 +542,7 @@
       "returns": "f64",
       "help": "Solve Choked Mass Flux for G_star",
       "rust_example": "eq.solve(equations::compressible::choked_mass_flux::equation()).for_target(\"G_star\").value()?",
-      "python_example": "engpy.equations.compressible.solve_g_star(p0=\"...\", t0=\"...\", gamma=\"...\", r=\"...\")",
+      "python_example": "engpy.equations.compressible.choked_mass_flux.solve_g_star(p0=\"...\", t0=\"...\", gamma=\"...\", r=\"...\")",
       "xloil_example": "=ENG_COMPRESSIBLE_CHOKED_MASS_FLUX_G_STAR(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_COMPRESSIBLE_CHOKED_MASS_FLUX_G_STAR(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -241,7 +550,7 @@
       "id": "equation.compressible.isentropic_density_ratio.M",
       "entity": "equation",
       "source": "compressible.isentropic_density_ratio",
-      "python_module": "equations.compressible",
+      "python_module": "equations.compressible.isentropic_density_ratio",
       "python_name": "solve_m",
       "excel_name": "ENG_COMPRESSIBLE_ISENTROPIC_DENSITY_RATIO_M",
       "op": "equation.solve",
@@ -262,7 +571,7 @@
       "returns": "f64",
       "help": "Solve Isentropic Density Ratio for M",
       "rust_example": "eq.solve(equations::compressible::isentropic_density_ratio::equation()).for_target(\"M\").value()?",
-      "python_example": "engpy.equations.compressible.solve_m(rho_rho0=\"...\", gamma=\"...\")",
+      "python_example": "engpy.equations.compressible.isentropic_density_ratio.solve_m(rho_rho0=\"...\", gamma=\"...\")",
       "xloil_example": "=ENG_COMPRESSIBLE_ISENTROPIC_DENSITY_RATIO_M(\"...\",\"...\")",
       "pyxll_example": "=ENG_COMPRESSIBLE_ISENTROPIC_DENSITY_RATIO_M(\"...\",\"...\")"
     },
@@ -270,7 +579,7 @@
       "id": "equation.compressible.isentropic_density_ratio.rho_rho0",
       "entity": "equation",
       "source": "compressible.isentropic_density_ratio",
-      "python_module": "equations.compressible",
+      "python_module": "equations.compressible.isentropic_density_ratio",
       "python_name": "solve_rho_rho0",
       "excel_name": "ENG_COMPRESSIBLE_ISENTROPIC_DENSITY_RATIO_RHO_RHO0",
       "op": "equation.solve",
@@ -291,7 +600,7 @@
       "returns": "f64",
       "help": "Solve Isentropic Density Ratio for rho_rho0",
       "rust_example": "eq.solve(equations::compressible::isentropic_density_ratio::equation()).for_target(\"rho_rho0\").value()?",
-      "python_example": "engpy.equations.compressible.solve_rho_rho0(m=\"...\", gamma=\"...\")",
+      "python_example": "engpy.equations.compressible.isentropic_density_ratio.solve_rho_rho0(m=\"...\", gamma=\"...\")",
       "xloil_example": "=ENG_COMPRESSIBLE_ISENTROPIC_DENSITY_RATIO_RHO_RHO0(\"...\",\"...\")",
       "pyxll_example": "=ENG_COMPRESSIBLE_ISENTROPIC_DENSITY_RATIO_RHO_RHO0(\"...\",\"...\")"
     },
@@ -299,7 +608,7 @@
       "id": "equation.compressible.isentropic_pressure_ratio.M",
       "entity": "equation",
       "source": "compressible.isentropic_pressure_ratio",
-      "python_module": "equations.compressible",
+      "python_module": "equations.compressible.isentropic_pressure_ratio",
       "python_name": "solve_m",
       "excel_name": "ENG_COMPRESSIBLE_ISENTROPIC_PRESSURE_RATIO_M",
       "op": "equation.solve",
@@ -320,7 +629,7 @@
       "returns": "f64",
       "help": "Solve Isentropic Pressure Ratio for M",
       "rust_example": "eq.solve(equations::compressible::isentropic_pressure_ratio::equation()).for_target(\"M\").value()?",
-      "python_example": "engpy.equations.compressible.solve_m(p_p0=\"...\", gamma=\"...\")",
+      "python_example": "engpy.equations.compressible.isentropic_pressure_ratio.solve_m(p_p0=\"...\", gamma=\"...\")",
       "xloil_example": "=ENG_COMPRESSIBLE_ISENTROPIC_PRESSURE_RATIO_M(\"...\",\"...\")",
       "pyxll_example": "=ENG_COMPRESSIBLE_ISENTROPIC_PRESSURE_RATIO_M(\"...\",\"...\")"
     },
@@ -328,7 +637,7 @@
       "id": "equation.compressible.isentropic_pressure_ratio.p_p0",
       "entity": "equation",
       "source": "compressible.isentropic_pressure_ratio",
-      "python_module": "equations.compressible",
+      "python_module": "equations.compressible.isentropic_pressure_ratio",
       "python_name": "solve_p_p0",
       "excel_name": "ENG_COMPRESSIBLE_ISENTROPIC_PRESSURE_RATIO_P_P0",
       "op": "equation.solve",
@@ -349,7 +658,7 @@
       "returns": "f64",
       "help": "Solve Isentropic Pressure Ratio for p_p0",
       "rust_example": "eq.solve(equations::compressible::isentropic_pressure_ratio::equation()).for_target(\"p_p0\").value()?",
-      "python_example": "engpy.equations.compressible.solve_p_p0(m=\"...\", gamma=\"...\")",
+      "python_example": "engpy.equations.compressible.isentropic_pressure_ratio.solve_p_p0(m=\"...\", gamma=\"...\")",
       "xloil_example": "=ENG_COMPRESSIBLE_ISENTROPIC_PRESSURE_RATIO_P_P0(\"...\",\"...\")",
       "pyxll_example": "=ENG_COMPRESSIBLE_ISENTROPIC_PRESSURE_RATIO_P_P0(\"...\",\"...\")"
     },
@@ -357,7 +666,7 @@
       "id": "equation.compressible.isentropic_temperature_ratio.M",
       "entity": "equation",
       "source": "compressible.isentropic_temperature_ratio",
-      "python_module": "equations.compressible",
+      "python_module": "equations.compressible.isentropic_temperature_ratio",
       "python_name": "solve_m",
       "excel_name": "ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_M",
       "op": "equation.solve",
@@ -378,7 +687,7 @@
       "returns": "f64",
       "help": "Solve Isentropic Temperature Ratio for M",
       "rust_example": "eq.solve(equations::compressible::isentropic_temperature_ratio::equation()).for_target(\"M\").value()?",
-      "python_example": "engpy.equations.compressible.solve_m(t_t0=\"...\", gamma=\"...\")",
+      "python_example": "engpy.equations.compressible.isentropic_temperature_ratio.solve_m(t_t0=\"...\", gamma=\"...\")",
       "xloil_example": "=ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_M(\"...\",\"...\")",
       "pyxll_example": "=ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_M(\"...\",\"...\")"
     },
@@ -386,7 +695,7 @@
       "id": "equation.compressible.isentropic_temperature_ratio.T_T0",
       "entity": "equation",
       "source": "compressible.isentropic_temperature_ratio",
-      "python_module": "equations.compressible",
+      "python_module": "equations.compressible.isentropic_temperature_ratio",
       "python_name": "solve_t_t0",
       "excel_name": "ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_T_T0",
       "op": "equation.solve",
@@ -407,9 +716,59 @@
       "returns": "f64",
       "help": "Solve Isentropic Temperature Ratio for T_T0",
       "rust_example": "eq.solve(equations::compressible::isentropic_temperature_ratio::equation()).for_target(\"T_T0\").value()?",
-      "python_example": "engpy.equations.compressible.solve_t_t0(m=\"...\", gamma=\"...\")",
+      "python_example": "engpy.equations.compressible.isentropic_temperature_ratio.solve_t_t0(m=\"...\", gamma=\"...\")",
       "xloil_example": "=ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_T_T0(\"...\",\"...\")",
       "pyxll_example": "=ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_T_T0(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.mach_angle.M",
+      "entity": "equation",
+      "source": "compressible.mach_angle",
+      "python_module": "equations.compressible.mach_angle",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_MACH_ANGLE_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.mach_angle",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "mu",
+          "description": "Mach angle"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Mach Angle for M",
+      "rust_example": "eq.solve(equations::compressible::mach_angle::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.mach_angle.solve_m(mu=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_MACH_ANGLE_M(\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_MACH_ANGLE_M(\"...\")"
+    },
+    {
+      "id": "equation.compressible.mach_angle.mu",
+      "entity": "equation",
+      "source": "compressible.mach_angle",
+      "python_module": "equations.compressible.mach_angle",
+      "python_name": "solve_mu",
+      "excel_name": "ENG_COMPRESSIBLE_MACH_ANGLE_MU",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.mach_angle",
+        "target": "mu"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Mach Angle for mu",
+      "rust_example": "eq.solve(equations::compressible::mach_angle::equation()).for_target(\"mu\").value()?",
+      "python_example": "engpy.equations.compressible.mach_angle.solve_mu(m=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_MACH_ANGLE_MU(\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_MACH_ANGLE_MU(\"...\")"
     },
     {
       "id": "equation.default_unit",
@@ -485,7 +844,7 @@
       "id": "equation.fluids.circular_pipe_area.A",
       "entity": "equation",
       "source": "fluids.circular_pipe_area",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.circular_pipe_area",
       "python_name": "solve_a",
       "excel_name": "ENG_FLUIDS_CIRCULAR_PIPE_AREA_A",
       "op": "equation.solve",
@@ -502,7 +861,7 @@
       "returns": "f64",
       "help": "Solve Circular Pipe Flow Area for A",
       "rust_example": "eq.solve(equations::fluids::circular_pipe_area::equation()).for_target(\"A\").value()?",
-      "python_example": "engpy.equations.fluids.solve_a(d=\"...\")",
+      "python_example": "engpy.equations.fluids.circular_pipe_area.solve_a(d=\"...\")",
       "xloil_example": "=ENG_FLUIDS_CIRCULAR_PIPE_AREA_A(\"...\")",
       "pyxll_example": "=ENG_FLUIDS_CIRCULAR_PIPE_AREA_A(\"...\")"
     },
@@ -510,7 +869,7 @@
       "id": "equation.fluids.circular_pipe_area.D",
       "entity": "equation",
       "source": "fluids.circular_pipe_area",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.circular_pipe_area",
       "python_name": "solve_d",
       "excel_name": "ENG_FLUIDS_CIRCULAR_PIPE_AREA_D",
       "op": "equation.solve",
@@ -527,7 +886,7 @@
       "returns": "f64",
       "help": "Solve Circular Pipe Flow Area for D",
       "rust_example": "eq.solve(equations::fluids::circular_pipe_area::equation()).for_target(\"D\").value()?",
-      "python_example": "engpy.equations.fluids.solve_d(a=\"...\")",
+      "python_example": "engpy.equations.fluids.circular_pipe_area.solve_d(a=\"...\")",
       "xloil_example": "=ENG_FLUIDS_CIRCULAR_PIPE_AREA_D(\"...\")",
       "pyxll_example": "=ENG_FLUIDS_CIRCULAR_PIPE_AREA_D(\"...\")"
     },
@@ -535,7 +894,7 @@
       "id": "equation.fluids.colebrook.f",
       "entity": "equation",
       "source": "fluids.colebrook",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.colebrook",
       "python_name": "solve_f",
       "excel_name": "ENG_FLUIDS_COLEBROOK_F",
       "op": "equation.solve",
@@ -556,7 +915,7 @@
       "returns": "f64",
       "help": "Solve Colebrook-White Friction Factor for f",
       "rust_example": "eq.solve(equations::fluids::colebrook::equation()).for_target(\"f\").value()?",
-      "python_example": "engpy.equations.fluids.solve_f(eps_d=\"...\", re=\"...\")",
+      "python_example": "engpy.equations.fluids.colebrook.solve_f(eps_d=\"...\", re=\"...\")",
       "xloil_example": "=ENG_FLUIDS_COLEBROOK_F(\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_COLEBROOK_F(\"...\",\"...\")"
     },
@@ -564,7 +923,7 @@
       "id": "equation.fluids.continuity_mass_flow.A",
       "entity": "equation",
       "source": "fluids.continuity_mass_flow",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.continuity_mass_flow",
       "python_name": "solve_a",
       "excel_name": "ENG_FLUIDS_CONTINUITY_MASS_FLOW_A",
       "op": "equation.solve",
@@ -589,7 +948,7 @@
       "returns": "f64",
       "help": "Solve Continuity Mass Flow for A",
       "rust_example": "eq.solve(equations::fluids::continuity_mass_flow::equation()).for_target(\"A\").value()?",
-      "python_example": "engpy.equations.fluids.solve_a(m_dot=\"...\", rho=\"...\", v=\"...\")",
+      "python_example": "engpy.equations.fluids.continuity_mass_flow.solve_a(m_dot=\"...\", rho=\"...\", v=\"...\")",
       "xloil_example": "=ENG_FLUIDS_CONTINUITY_MASS_FLOW_A(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_CONTINUITY_MASS_FLOW_A(\"...\",\"...\",\"...\")"
     },
@@ -597,7 +956,7 @@
       "id": "equation.fluids.continuity_mass_flow.V",
       "entity": "equation",
       "source": "fluids.continuity_mass_flow",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.continuity_mass_flow",
       "python_name": "solve_v",
       "excel_name": "ENG_FLUIDS_CONTINUITY_MASS_FLOW_V",
       "op": "equation.solve",
@@ -622,7 +981,7 @@
       "returns": "f64",
       "help": "Solve Continuity Mass Flow for V",
       "rust_example": "eq.solve(equations::fluids::continuity_mass_flow::equation()).for_target(\"V\").value()?",
-      "python_example": "engpy.equations.fluids.solve_v(m_dot=\"...\", rho=\"...\", a=\"...\")",
+      "python_example": "engpy.equations.fluids.continuity_mass_flow.solve_v(m_dot=\"...\", rho=\"...\", a=\"...\")",
       "xloil_example": "=ENG_FLUIDS_CONTINUITY_MASS_FLOW_V(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_CONTINUITY_MASS_FLOW_V(\"...\",\"...\",\"...\")"
     },
@@ -630,7 +989,7 @@
       "id": "equation.fluids.continuity_mass_flow.m_dot",
       "entity": "equation",
       "source": "fluids.continuity_mass_flow",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.continuity_mass_flow",
       "python_name": "solve_m_dot",
       "excel_name": "ENG_FLUIDS_CONTINUITY_MASS_FLOW_M_DOT",
       "op": "equation.solve",
@@ -655,7 +1014,7 @@
       "returns": "f64",
       "help": "Solve Continuity Mass Flow for m_dot",
       "rust_example": "eq.solve(equations::fluids::continuity_mass_flow::equation()).for_target(\"m_dot\").value()?",
-      "python_example": "engpy.equations.fluids.solve_m_dot(rho=\"...\", a=\"...\", v=\"...\")",
+      "python_example": "engpy.equations.fluids.continuity_mass_flow.solve_m_dot(rho=\"...\", a=\"...\", v=\"...\")",
       "xloil_example": "=ENG_FLUIDS_CONTINUITY_MASS_FLOW_M_DOT(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_CONTINUITY_MASS_FLOW_M_DOT(\"...\",\"...\",\"...\")"
     },
@@ -663,7 +1022,7 @@
       "id": "equation.fluids.continuity_mass_flow.rho",
       "entity": "equation",
       "source": "fluids.continuity_mass_flow",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.continuity_mass_flow",
       "python_name": "solve_rho",
       "excel_name": "ENG_FLUIDS_CONTINUITY_MASS_FLOW_RHO",
       "op": "equation.solve",
@@ -688,7 +1047,7 @@
       "returns": "f64",
       "help": "Solve Continuity Mass Flow for rho",
       "rust_example": "eq.solve(equations::fluids::continuity_mass_flow::equation()).for_target(\"rho\").value()?",
-      "python_example": "engpy.equations.fluids.solve_rho(m_dot=\"...\", a=\"...\", v=\"...\")",
+      "python_example": "engpy.equations.fluids.continuity_mass_flow.solve_rho(m_dot=\"...\", a=\"...\", v=\"...\")",
       "xloil_example": "=ENG_FLUIDS_CONTINUITY_MASS_FLOW_RHO(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_CONTINUITY_MASS_FLOW_RHO(\"...\",\"...\",\"...\")"
     },
@@ -696,7 +1055,7 @@
       "id": "equation.fluids.darcy_weisbach_pressure_drop.D",
       "entity": "equation",
       "source": "fluids.darcy_weisbach_pressure_drop",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.darcy_weisbach_pressure_drop",
       "python_name": "solve_d",
       "excel_name": "ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_D",
       "op": "equation.solve",
@@ -729,7 +1088,7 @@
       "returns": "f64",
       "help": "Solve Darcy-Weisbach Pressure Drop for D",
       "rust_example": "eq.solve(equations::fluids::darcy_weisbach_pressure_drop::equation()).for_target(\"D\").value()?",
-      "python_example": "engpy.equations.fluids.solve_d(delta_p=\"...\", f=\"...\", l=\"...\", rho=\"...\", v=\"...\")",
+      "python_example": "engpy.equations.fluids.darcy_weisbach_pressure_drop.solve_d(delta_p=\"...\", f=\"...\", l=\"...\", rho=\"...\", v=\"...\")",
       "xloil_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_D(\"...\",\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_D(\"...\",\"...\",\"...\",\"...\",\"...\")"
     },
@@ -737,7 +1096,7 @@
       "id": "equation.fluids.darcy_weisbach_pressure_drop.L",
       "entity": "equation",
       "source": "fluids.darcy_weisbach_pressure_drop",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.darcy_weisbach_pressure_drop",
       "python_name": "solve_l",
       "excel_name": "ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_L",
       "op": "equation.solve",
@@ -770,7 +1129,7 @@
       "returns": "f64",
       "help": "Solve Darcy-Weisbach Pressure Drop for L",
       "rust_example": "eq.solve(equations::fluids::darcy_weisbach_pressure_drop::equation()).for_target(\"L\").value()?",
-      "python_example": "engpy.equations.fluids.solve_l(delta_p=\"...\", f=\"...\", d=\"...\", rho=\"...\", v=\"...\")",
+      "python_example": "engpy.equations.fluids.darcy_weisbach_pressure_drop.solve_l(delta_p=\"...\", f=\"...\", d=\"...\", rho=\"...\", v=\"...\")",
       "xloil_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_L(\"...\",\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_L(\"...\",\"...\",\"...\",\"...\",\"...\")"
     },
@@ -778,7 +1137,7 @@
       "id": "equation.fluids.darcy_weisbach_pressure_drop.V",
       "entity": "equation",
       "source": "fluids.darcy_weisbach_pressure_drop",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.darcy_weisbach_pressure_drop",
       "python_name": "solve_v",
       "excel_name": "ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_V",
       "op": "equation.solve",
@@ -811,7 +1170,7 @@
       "returns": "f64",
       "help": "Solve Darcy-Weisbach Pressure Drop for V",
       "rust_example": "eq.solve(equations::fluids::darcy_weisbach_pressure_drop::equation()).for_target(\"V\").value()?",
-      "python_example": "engpy.equations.fluids.solve_v(delta_p=\"...\", f=\"...\", l=\"...\", d=\"...\", rho=\"...\")",
+      "python_example": "engpy.equations.fluids.darcy_weisbach_pressure_drop.solve_v(delta_p=\"...\", f=\"...\", l=\"...\", d=\"...\", rho=\"...\")",
       "xloil_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_V(\"...\",\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_V(\"...\",\"...\",\"...\",\"...\",\"...\")"
     },
@@ -819,7 +1178,7 @@
       "id": "equation.fluids.darcy_weisbach_pressure_drop.delta_p",
       "entity": "equation",
       "source": "fluids.darcy_weisbach_pressure_drop",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.darcy_weisbach_pressure_drop",
       "python_name": "solve_delta_p",
       "excel_name": "ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_DELTA_P",
       "op": "equation.solve",
@@ -852,7 +1211,7 @@
       "returns": "f64",
       "help": "Solve Darcy-Weisbach Pressure Drop for delta_p",
       "rust_example": "eq.solve(equations::fluids::darcy_weisbach_pressure_drop::equation()).for_target(\"delta_p\").value()?",
-      "python_example": "engpy.equations.fluids.solve_delta_p(f=\"...\", l=\"...\", d=\"...\", rho=\"...\", v=\"...\")",
+      "python_example": "engpy.equations.fluids.darcy_weisbach_pressure_drop.solve_delta_p(f=\"...\", l=\"...\", d=\"...\", rho=\"...\", v=\"...\")",
       "xloil_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_DELTA_P(\"...\",\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_DELTA_P(\"...\",\"...\",\"...\",\"...\",\"...\")"
     },
@@ -860,7 +1219,7 @@
       "id": "equation.fluids.darcy_weisbach_pressure_drop.f",
       "entity": "equation",
       "source": "fluids.darcy_weisbach_pressure_drop",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.darcy_weisbach_pressure_drop",
       "python_name": "solve_f",
       "excel_name": "ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_F",
       "op": "equation.solve",
@@ -893,7 +1252,7 @@
       "returns": "f64",
       "help": "Solve Darcy-Weisbach Pressure Drop for f",
       "rust_example": "eq.solve(equations::fluids::darcy_weisbach_pressure_drop::equation()).for_target(\"f\").value()?",
-      "python_example": "engpy.equations.fluids.solve_f(delta_p=\"...\", l=\"...\", d=\"...\", rho=\"...\", v=\"...\")",
+      "python_example": "engpy.equations.fluids.darcy_weisbach_pressure_drop.solve_f(delta_p=\"...\", l=\"...\", d=\"...\", rho=\"...\", v=\"...\")",
       "xloil_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_F(\"...\",\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_F(\"...\",\"...\",\"...\",\"...\",\"...\")"
     },
@@ -901,7 +1260,7 @@
       "id": "equation.fluids.darcy_weisbach_pressure_drop.rho",
       "entity": "equation",
       "source": "fluids.darcy_weisbach_pressure_drop",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.darcy_weisbach_pressure_drop",
       "python_name": "solve_rho",
       "excel_name": "ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_RHO",
       "op": "equation.solve",
@@ -934,7 +1293,7 @@
       "returns": "f64",
       "help": "Solve Darcy-Weisbach Pressure Drop for rho",
       "rust_example": "eq.solve(equations::fluids::darcy_weisbach_pressure_drop::equation()).for_target(\"rho\").value()?",
-      "python_example": "engpy.equations.fluids.solve_rho(delta_p=\"...\", f=\"...\", l=\"...\", d=\"...\", v=\"...\")",
+      "python_example": "engpy.equations.fluids.darcy_weisbach_pressure_drop.solve_rho(delta_p=\"...\", f=\"...\", l=\"...\", d=\"...\", v=\"...\")",
       "xloil_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_RHO(\"...\",\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_RHO(\"...\",\"...\",\"...\",\"...\",\"...\")"
     },
@@ -942,7 +1301,7 @@
       "id": "equation.fluids.orifice_mass_flow_incompressible.A",
       "entity": "equation",
       "source": "fluids.orifice_mass_flow_incompressible",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.orifice_mass_flow_incompressible",
       "python_name": "solve_a",
       "excel_name": "ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_A",
       "op": "equation.solve",
@@ -971,7 +1330,7 @@
       "returns": "f64",
       "help": "Solve Incompressible Orifice Mass Flow for A",
       "rust_example": "eq.solve(equations::fluids::orifice_mass_flow_incompressible::equation()).for_target(\"A\").value()?",
-      "python_example": "engpy.equations.fluids.solve_a(m_dot=\"...\", c_d=\"...\", rho=\"...\", delta_p=\"...\")",
+      "python_example": "engpy.equations.fluids.orifice_mass_flow_incompressible.solve_a(m_dot=\"...\", c_d=\"...\", rho=\"...\", delta_p=\"...\")",
       "xloil_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_A(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_A(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -979,7 +1338,7 @@
       "id": "equation.fluids.orifice_mass_flow_incompressible.C_d",
       "entity": "equation",
       "source": "fluids.orifice_mass_flow_incompressible",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.orifice_mass_flow_incompressible",
       "python_name": "solve_c_d",
       "excel_name": "ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_C_D",
       "op": "equation.solve",
@@ -1008,7 +1367,7 @@
       "returns": "f64",
       "help": "Solve Incompressible Orifice Mass Flow for C_d",
       "rust_example": "eq.solve(equations::fluids::orifice_mass_flow_incompressible::equation()).for_target(\"C_d\").value()?",
-      "python_example": "engpy.equations.fluids.solve_c_d(m_dot=\"...\", a=\"...\", rho=\"...\", delta_p=\"...\")",
+      "python_example": "engpy.equations.fluids.orifice_mass_flow_incompressible.solve_c_d(m_dot=\"...\", a=\"...\", rho=\"...\", delta_p=\"...\")",
       "xloil_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_C_D(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_C_D(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1016,7 +1375,7 @@
       "id": "equation.fluids.orifice_mass_flow_incompressible.delta_p",
       "entity": "equation",
       "source": "fluids.orifice_mass_flow_incompressible",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.orifice_mass_flow_incompressible",
       "python_name": "solve_delta_p",
       "excel_name": "ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_DELTA_P",
       "op": "equation.solve",
@@ -1045,7 +1404,7 @@
       "returns": "f64",
       "help": "Solve Incompressible Orifice Mass Flow for delta_p",
       "rust_example": "eq.solve(equations::fluids::orifice_mass_flow_incompressible::equation()).for_target(\"delta_p\").value()?",
-      "python_example": "engpy.equations.fluids.solve_delta_p(m_dot=\"...\", c_d=\"...\", a=\"...\", rho=\"...\")",
+      "python_example": "engpy.equations.fluids.orifice_mass_flow_incompressible.solve_delta_p(m_dot=\"...\", c_d=\"...\", a=\"...\", rho=\"...\")",
       "xloil_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_DELTA_P(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_DELTA_P(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1053,7 +1412,7 @@
       "id": "equation.fluids.orifice_mass_flow_incompressible.m_dot",
       "entity": "equation",
       "source": "fluids.orifice_mass_flow_incompressible",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.orifice_mass_flow_incompressible",
       "python_name": "solve_m_dot",
       "excel_name": "ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_M_DOT",
       "op": "equation.solve",
@@ -1082,7 +1441,7 @@
       "returns": "f64",
       "help": "Solve Incompressible Orifice Mass Flow for m_dot",
       "rust_example": "eq.solve(equations::fluids::orifice_mass_flow_incompressible::equation()).for_target(\"m_dot\").value()?",
-      "python_example": "engpy.equations.fluids.solve_m_dot(c_d=\"...\", a=\"...\", rho=\"...\", delta_p=\"...\")",
+      "python_example": "engpy.equations.fluids.orifice_mass_flow_incompressible.solve_m_dot(c_d=\"...\", a=\"...\", rho=\"...\", delta_p=\"...\")",
       "xloil_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_M_DOT(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_M_DOT(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1090,7 +1449,7 @@
       "id": "equation.fluids.orifice_mass_flow_incompressible.rho",
       "entity": "equation",
       "source": "fluids.orifice_mass_flow_incompressible",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.orifice_mass_flow_incompressible",
       "python_name": "solve_rho",
       "excel_name": "ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_RHO",
       "op": "equation.solve",
@@ -1119,7 +1478,7 @@
       "returns": "f64",
       "help": "Solve Incompressible Orifice Mass Flow for rho",
       "rust_example": "eq.solve(equations::fluids::orifice_mass_flow_incompressible::equation()).for_target(\"rho\").value()?",
-      "python_example": "engpy.equations.fluids.solve_rho(m_dot=\"...\", c_d=\"...\", a=\"...\", delta_p=\"...\")",
+      "python_example": "engpy.equations.fluids.orifice_mass_flow_incompressible.solve_rho(m_dot=\"...\", c_d=\"...\", a=\"...\", delta_p=\"...\")",
       "xloil_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_RHO(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_RHO(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1127,7 +1486,7 @@
       "id": "equation.fluids.reynolds_number.D",
       "entity": "equation",
       "source": "fluids.reynolds_number",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.reynolds_number",
       "python_name": "solve_d",
       "excel_name": "ENG_FLUIDS_REYNOLDS_NUMBER_D",
       "op": "equation.solve",
@@ -1156,7 +1515,7 @@
       "returns": "f64",
       "help": "Solve Reynolds Number for D",
       "rust_example": "eq.solve(equations::fluids::reynolds_number::equation()).for_target(\"D\").value()?",
-      "python_example": "engpy.equations.fluids.solve_d(re=\"...\", rho=\"...\", v=\"...\", mu=\"...\")",
+      "python_example": "engpy.equations.fluids.reynolds_number.solve_d(re=\"...\", rho=\"...\", v=\"...\", mu=\"...\")",
       "xloil_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_D(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_D(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1164,7 +1523,7 @@
       "id": "equation.fluids.reynolds_number.Re",
       "entity": "equation",
       "source": "fluids.reynolds_number",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.reynolds_number",
       "python_name": "solve_re",
       "excel_name": "ENG_FLUIDS_REYNOLDS_NUMBER_RE",
       "op": "equation.solve",
@@ -1193,7 +1552,7 @@
       "returns": "f64",
       "help": "Solve Reynolds Number for Re",
       "rust_example": "eq.solve(equations::fluids::reynolds_number::equation()).for_target(\"Re\").value()?",
-      "python_example": "engpy.equations.fluids.solve_re(rho=\"...\", v=\"...\", d=\"...\", mu=\"...\")",
+      "python_example": "engpy.equations.fluids.reynolds_number.solve_re(rho=\"...\", v=\"...\", d=\"...\", mu=\"...\")",
       "xloil_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_RE(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_RE(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1201,7 +1560,7 @@
       "id": "equation.fluids.reynolds_number.V",
       "entity": "equation",
       "source": "fluids.reynolds_number",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.reynolds_number",
       "python_name": "solve_v",
       "excel_name": "ENG_FLUIDS_REYNOLDS_NUMBER_V",
       "op": "equation.solve",
@@ -1230,7 +1589,7 @@
       "returns": "f64",
       "help": "Solve Reynolds Number for V",
       "rust_example": "eq.solve(equations::fluids::reynolds_number::equation()).for_target(\"V\").value()?",
-      "python_example": "engpy.equations.fluids.solve_v(re=\"...\", rho=\"...\", d=\"...\", mu=\"...\")",
+      "python_example": "engpy.equations.fluids.reynolds_number.solve_v(re=\"...\", rho=\"...\", d=\"...\", mu=\"...\")",
       "xloil_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_V(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_V(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1238,7 +1597,7 @@
       "id": "equation.fluids.reynolds_number.mu",
       "entity": "equation",
       "source": "fluids.reynolds_number",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.reynolds_number",
       "python_name": "solve_mu",
       "excel_name": "ENG_FLUIDS_REYNOLDS_NUMBER_MU",
       "op": "equation.solve",
@@ -1267,7 +1626,7 @@
       "returns": "f64",
       "help": "Solve Reynolds Number for mu",
       "rust_example": "eq.solve(equations::fluids::reynolds_number::equation()).for_target(\"mu\").value()?",
-      "python_example": "engpy.equations.fluids.solve_mu(re=\"...\", rho=\"...\", v=\"...\", d=\"...\")",
+      "python_example": "engpy.equations.fluids.reynolds_number.solve_mu(re=\"...\", rho=\"...\", v=\"...\", d=\"...\")",
       "xloil_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_MU(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_MU(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1275,7 +1634,7 @@
       "id": "equation.fluids.reynolds_number.rho",
       "entity": "equation",
       "source": "fluids.reynolds_number",
-      "python_module": "equations.fluids",
+      "python_module": "equations.fluids.reynolds_number",
       "python_name": "solve_rho",
       "excel_name": "ENG_FLUIDS_REYNOLDS_NUMBER_RHO",
       "op": "equation.solve",
@@ -1304,7 +1663,7 @@
       "returns": "f64",
       "help": "Solve Reynolds Number for rho",
       "rust_example": "eq.solve(equations::fluids::reynolds_number::equation()).for_target(\"rho\").value()?",
-      "python_example": "engpy.equations.fluids.solve_rho(re=\"...\", v=\"...\", d=\"...\", mu=\"...\")",
+      "python_example": "engpy.equations.fluids.reynolds_number.solve_rho(re=\"...\", v=\"...\", d=\"...\", mu=\"...\")",
       "xloil_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_RHO(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_RHO(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1312,7 +1671,7 @@
       "id": "equation.heat_transfer.conduction_plane_wall_heat_rate.A",
       "entity": "equation",
       "source": "heat_transfer.conduction_plane_wall_heat_rate",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.conduction_plane_wall_heat_rate",
       "python_name": "solve_a",
       "excel_name": "ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_A",
       "op": "equation.solve",
@@ -1345,7 +1704,7 @@
       "returns": "f64",
       "help": "Solve Plane-Wall Conduction Heat Rate for A",
       "rust_example": "eq.solve(equations::heat_transfer::conduction_plane_wall_heat_rate::equation()).for_target(\"A\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_a(q_dot=\"...\", k=\"...\", t_h=\"...\", t_c=\"...\", l=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.conduction_plane_wall_heat_rate.solve_a(q_dot=\"...\", k=\"...\", t_h=\"...\", t_c=\"...\", l=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_A(\"...\",\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_A(\"...\",\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1353,7 +1712,7 @@
       "id": "equation.heat_transfer.conduction_plane_wall_heat_rate.L",
       "entity": "equation",
       "source": "heat_transfer.conduction_plane_wall_heat_rate",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.conduction_plane_wall_heat_rate",
       "python_name": "solve_l",
       "excel_name": "ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_L",
       "op": "equation.solve",
@@ -1386,7 +1745,7 @@
       "returns": "f64",
       "help": "Solve Plane-Wall Conduction Heat Rate for L",
       "rust_example": "eq.solve(equations::heat_transfer::conduction_plane_wall_heat_rate::equation()).for_target(\"L\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_l(q_dot=\"...\", k=\"...\", a=\"...\", t_h=\"...\", t_c=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.conduction_plane_wall_heat_rate.solve_l(q_dot=\"...\", k=\"...\", a=\"...\", t_h=\"...\", t_c=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_L(\"...\",\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_L(\"...\",\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1394,7 +1753,7 @@
       "id": "equation.heat_transfer.conduction_plane_wall_heat_rate.Q_dot",
       "entity": "equation",
       "source": "heat_transfer.conduction_plane_wall_heat_rate",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.conduction_plane_wall_heat_rate",
       "python_name": "solve_q_dot",
       "excel_name": "ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_Q_DOT",
       "op": "equation.solve",
@@ -1427,7 +1786,7 @@
       "returns": "f64",
       "help": "Solve Plane-Wall Conduction Heat Rate for Q_dot",
       "rust_example": "eq.solve(equations::heat_transfer::conduction_plane_wall_heat_rate::equation()).for_target(\"Q_dot\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_q_dot(k=\"...\", a=\"...\", t_h=\"...\", t_c=\"...\", l=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.conduction_plane_wall_heat_rate.solve_q_dot(k=\"...\", a=\"...\", t_h=\"...\", t_c=\"...\", l=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_Q_DOT(\"...\",\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_Q_DOT(\"...\",\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1435,7 +1794,7 @@
       "id": "equation.heat_transfer.conduction_plane_wall_heat_rate.T_c",
       "entity": "equation",
       "source": "heat_transfer.conduction_plane_wall_heat_rate",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.conduction_plane_wall_heat_rate",
       "python_name": "solve_t_c",
       "excel_name": "ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_T_C",
       "op": "equation.solve",
@@ -1468,7 +1827,7 @@
       "returns": "f64",
       "help": "Solve Plane-Wall Conduction Heat Rate for T_c",
       "rust_example": "eq.solve(equations::heat_transfer::conduction_plane_wall_heat_rate::equation()).for_target(\"T_c\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_t_c(q_dot=\"...\", k=\"...\", a=\"...\", t_h=\"...\", l=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.conduction_plane_wall_heat_rate.solve_t_c(q_dot=\"...\", k=\"...\", a=\"...\", t_h=\"...\", l=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_T_C(\"...\",\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_T_C(\"...\",\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1476,7 +1835,7 @@
       "id": "equation.heat_transfer.conduction_plane_wall_heat_rate.T_h",
       "entity": "equation",
       "source": "heat_transfer.conduction_plane_wall_heat_rate",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.conduction_plane_wall_heat_rate",
       "python_name": "solve_t_h",
       "excel_name": "ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_T_H",
       "op": "equation.solve",
@@ -1509,7 +1868,7 @@
       "returns": "f64",
       "help": "Solve Plane-Wall Conduction Heat Rate for T_h",
       "rust_example": "eq.solve(equations::heat_transfer::conduction_plane_wall_heat_rate::equation()).for_target(\"T_h\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_t_h(q_dot=\"...\", k=\"...\", a=\"...\", t_c=\"...\", l=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.conduction_plane_wall_heat_rate.solve_t_h(q_dot=\"...\", k=\"...\", a=\"...\", t_c=\"...\", l=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_T_H(\"...\",\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_T_H(\"...\",\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1517,7 +1876,7 @@
       "id": "equation.heat_transfer.conduction_plane_wall_heat_rate.k",
       "entity": "equation",
       "source": "heat_transfer.conduction_plane_wall_heat_rate",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.conduction_plane_wall_heat_rate",
       "python_name": "solve_k",
       "excel_name": "ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_K",
       "op": "equation.solve",
@@ -1550,7 +1909,7 @@
       "returns": "f64",
       "help": "Solve Plane-Wall Conduction Heat Rate for k",
       "rust_example": "eq.solve(equations::heat_transfer::conduction_plane_wall_heat_rate::equation()).for_target(\"k\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_k(q_dot=\"...\", a=\"...\", t_h=\"...\", t_c=\"...\", l=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.conduction_plane_wall_heat_rate.solve_k(q_dot=\"...\", a=\"...\", t_h=\"...\", t_c=\"...\", l=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_K(\"...\",\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_K(\"...\",\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1558,7 +1917,7 @@
       "id": "equation.heat_transfer.convection_heat_rate.A",
       "entity": "equation",
       "source": "heat_transfer.convection_heat_rate",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.convection_heat_rate",
       "python_name": "solve_a",
       "excel_name": "ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_A",
       "op": "equation.solve",
@@ -1587,7 +1946,7 @@
       "returns": "f64",
       "help": "Solve Convection Heat Transfer Rate for A",
       "rust_example": "eq.solve(equations::heat_transfer::convection_heat_rate::equation()).for_target(\"A\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_a(q_dot=\"...\", h=\"...\", t_s=\"...\", t_inf=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.convection_heat_rate.solve_a(q_dot=\"...\", h=\"...\", t_s=\"...\", t_inf=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_A(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_A(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1595,7 +1954,7 @@
       "id": "equation.heat_transfer.convection_heat_rate.Q_dot",
       "entity": "equation",
       "source": "heat_transfer.convection_heat_rate",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.convection_heat_rate",
       "python_name": "solve_q_dot",
       "excel_name": "ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_Q_DOT",
       "op": "equation.solve",
@@ -1624,7 +1983,7 @@
       "returns": "f64",
       "help": "Solve Convection Heat Transfer Rate for Q_dot",
       "rust_example": "eq.solve(equations::heat_transfer::convection_heat_rate::equation()).for_target(\"Q_dot\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_q_dot(h=\"...\", a=\"...\", t_s=\"...\", t_inf=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.convection_heat_rate.solve_q_dot(h=\"...\", a=\"...\", t_s=\"...\", t_inf=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_Q_DOT(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_Q_DOT(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1632,7 +1991,7 @@
       "id": "equation.heat_transfer.convection_heat_rate.T_inf",
       "entity": "equation",
       "source": "heat_transfer.convection_heat_rate",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.convection_heat_rate",
       "python_name": "solve_t_inf",
       "excel_name": "ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_T_INF",
       "op": "equation.solve",
@@ -1661,7 +2020,7 @@
       "returns": "f64",
       "help": "Solve Convection Heat Transfer Rate for T_inf",
       "rust_example": "eq.solve(equations::heat_transfer::convection_heat_rate::equation()).for_target(\"T_inf\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_t_inf(q_dot=\"...\", h=\"...\", a=\"...\", t_s=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.convection_heat_rate.solve_t_inf(q_dot=\"...\", h=\"...\", a=\"...\", t_s=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_T_INF(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_T_INF(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1669,7 +2028,7 @@
       "id": "equation.heat_transfer.convection_heat_rate.T_s",
       "entity": "equation",
       "source": "heat_transfer.convection_heat_rate",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.convection_heat_rate",
       "python_name": "solve_t_s",
       "excel_name": "ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_T_S",
       "op": "equation.solve",
@@ -1698,7 +2057,7 @@
       "returns": "f64",
       "help": "Solve Convection Heat Transfer Rate for T_s",
       "rust_example": "eq.solve(equations::heat_transfer::convection_heat_rate::equation()).for_target(\"T_s\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_t_s(q_dot=\"...\", h=\"...\", a=\"...\", t_inf=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.convection_heat_rate.solve_t_s(q_dot=\"...\", h=\"...\", a=\"...\", t_inf=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_T_S(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_T_S(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1706,7 +2065,7 @@
       "id": "equation.heat_transfer.convection_heat_rate.h",
       "entity": "equation",
       "source": "heat_transfer.convection_heat_rate",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.convection_heat_rate",
       "python_name": "solve_h",
       "excel_name": "ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_H",
       "op": "equation.solve",
@@ -1735,7 +2094,7 @@
       "returns": "f64",
       "help": "Solve Convection Heat Transfer Rate for h",
       "rust_example": "eq.solve(equations::heat_transfer::convection_heat_rate::equation()).for_target(\"h\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_h(q_dot=\"...\", a=\"...\", t_s=\"...\", t_inf=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.convection_heat_rate.solve_h(q_dot=\"...\", a=\"...\", t_s=\"...\", t_inf=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_H(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_H(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -1743,7 +2102,7 @@
       "id": "equation.heat_transfer.log_mean_temperature_difference.delta_T_lm",
       "entity": "equation",
       "source": "heat_transfer.log_mean_temperature_difference",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.log_mean_temperature_difference",
       "python_name": "solve_delta_t_lm",
       "excel_name": "ENG_HEAT_TRANSFER_LOG_MEAN_TEMPERATURE_DIFFERENCE_DELTA_T_LM",
       "op": "equation.solve",
@@ -1764,7 +2123,7 @@
       "returns": "f64",
       "help": "Solve Log-Mean Temperature Difference for delta_T_lm",
       "rust_example": "eq.solve(equations::heat_transfer::log_mean_temperature_difference::equation()).for_target(\"delta_T_lm\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_delta_t_lm(delta_t_1=\"...\", delta_t_2=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.log_mean_temperature_difference.solve_delta_t_lm(delta_t_1=\"...\", delta_t_2=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_LOG_MEAN_TEMPERATURE_DIFFERENCE_DELTA_T_LM(\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_LOG_MEAN_TEMPERATURE_DIFFERENCE_DELTA_T_LM(\"...\",\"...\")"
     },
@@ -1772,7 +2131,7 @@
       "id": "equation.heat_transfer.thermal_resistance_conduction.A",
       "entity": "equation",
       "source": "heat_transfer.thermal_resistance_conduction",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.thermal_resistance_conduction",
       "python_name": "solve_a",
       "excel_name": "ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_A",
       "op": "equation.solve",
@@ -1797,7 +2156,7 @@
       "returns": "f64",
       "help": "Solve Conduction Thermal Resistance for A",
       "rust_example": "eq.solve(equations::heat_transfer::thermal_resistance_conduction::equation()).for_target(\"A\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_a(r_th=\"...\", l=\"...\", k=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.thermal_resistance_conduction.solve_a(r_th=\"...\", l=\"...\", k=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_A(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_A(\"...\",\"...\",\"...\")"
     },
@@ -1805,7 +2164,7 @@
       "id": "equation.heat_transfer.thermal_resistance_conduction.L",
       "entity": "equation",
       "source": "heat_transfer.thermal_resistance_conduction",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.thermal_resistance_conduction",
       "python_name": "solve_l",
       "excel_name": "ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_L",
       "op": "equation.solve",
@@ -1830,7 +2189,7 @@
       "returns": "f64",
       "help": "Solve Conduction Thermal Resistance for L",
       "rust_example": "eq.solve(equations::heat_transfer::thermal_resistance_conduction::equation()).for_target(\"L\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_l(r_th=\"...\", k=\"...\", a=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.thermal_resistance_conduction.solve_l(r_th=\"...\", k=\"...\", a=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_L(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_L(\"...\",\"...\",\"...\")"
     },
@@ -1838,7 +2197,7 @@
       "id": "equation.heat_transfer.thermal_resistance_conduction.R_th",
       "entity": "equation",
       "source": "heat_transfer.thermal_resistance_conduction",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.thermal_resistance_conduction",
       "python_name": "solve_r_th",
       "excel_name": "ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_R_TH",
       "op": "equation.solve",
@@ -1863,7 +2222,7 @@
       "returns": "f64",
       "help": "Solve Conduction Thermal Resistance for R_th",
       "rust_example": "eq.solve(equations::heat_transfer::thermal_resistance_conduction::equation()).for_target(\"R_th\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_r_th(l=\"...\", k=\"...\", a=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.thermal_resistance_conduction.solve_r_th(l=\"...\", k=\"...\", a=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_R_TH(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_R_TH(\"...\",\"...\",\"...\")"
     },
@@ -1871,7 +2230,7 @@
       "id": "equation.heat_transfer.thermal_resistance_conduction.k",
       "entity": "equation",
       "source": "heat_transfer.thermal_resistance_conduction",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.thermal_resistance_conduction",
       "python_name": "solve_k",
       "excel_name": "ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_K",
       "op": "equation.solve",
@@ -1896,7 +2255,7 @@
       "returns": "f64",
       "help": "Solve Conduction Thermal Resistance for k",
       "rust_example": "eq.solve(equations::heat_transfer::thermal_resistance_conduction::equation()).for_target(\"k\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_k(r_th=\"...\", l=\"...\", a=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.thermal_resistance_conduction.solve_k(r_th=\"...\", l=\"...\", a=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_K(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_K(\"...\",\"...\",\"...\")"
     },
@@ -1904,7 +2263,7 @@
       "id": "equation.heat_transfer.thermal_resistance_convection.A",
       "entity": "equation",
       "source": "heat_transfer.thermal_resistance_convection",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.thermal_resistance_convection",
       "python_name": "solve_a",
       "excel_name": "ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_A",
       "op": "equation.solve",
@@ -1925,7 +2284,7 @@
       "returns": "f64",
       "help": "Solve Convection Thermal Resistance for A",
       "rust_example": "eq.solve(equations::heat_transfer::thermal_resistance_convection::equation()).for_target(\"A\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_a(r_th=\"...\", h=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.thermal_resistance_convection.solve_a(r_th=\"...\", h=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_A(\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_A(\"...\",\"...\")"
     },
@@ -1933,7 +2292,7 @@
       "id": "equation.heat_transfer.thermal_resistance_convection.R_th",
       "entity": "equation",
       "source": "heat_transfer.thermal_resistance_convection",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.thermal_resistance_convection",
       "python_name": "solve_r_th",
       "excel_name": "ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_R_TH",
       "op": "equation.solve",
@@ -1954,7 +2313,7 @@
       "returns": "f64",
       "help": "Solve Convection Thermal Resistance for R_th",
       "rust_example": "eq.solve(equations::heat_transfer::thermal_resistance_convection::equation()).for_target(\"R_th\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_r_th(h=\"...\", a=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.thermal_resistance_convection.solve_r_th(h=\"...\", a=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_R_TH(\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_R_TH(\"...\",\"...\")"
     },
@@ -1962,7 +2321,7 @@
       "id": "equation.heat_transfer.thermal_resistance_convection.h",
       "entity": "equation",
       "source": "heat_transfer.thermal_resistance_convection",
-      "python_module": "equations.heat_transfer",
+      "python_module": "equations.heat_transfer.thermal_resistance_convection",
       "python_name": "solve_h",
       "excel_name": "ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_H",
       "op": "equation.solve",
@@ -1983,7 +2342,7 @@
       "returns": "f64",
       "help": "Solve Convection Thermal Resistance for h",
       "rust_example": "eq.solve(equations::heat_transfer::thermal_resistance_convection::equation()).for_target(\"h\").value()?",
-      "python_example": "engpy.equations.heat_transfer.solve_h(r_th=\"...\", a=\"...\")",
+      "python_example": "engpy.equations.heat_transfer.thermal_resistance_convection.solve_h(r_th=\"...\", a=\"...\")",
       "xloil_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_H(\"...\",\"...\")",
       "pyxll_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_H(\"...\",\"...\")"
     },
@@ -2057,7 +2416,7 @@
       "id": "equation.rockets.cstar_ideal.c_star",
       "entity": "equation",
       "source": "rockets.cstar_ideal",
-      "python_module": "equations.rockets",
+      "python_module": "equations.rockets.cstar_ideal",
       "python_name": "solve_c_star",
       "excel_name": "ENG_ROCKETS_CSTAR_IDEAL_C_STAR",
       "op": "equation.solve",
@@ -2082,7 +2441,7 @@
       "returns": "f64",
       "help": "Solve Ideal Characteristic Velocity for c_star",
       "rust_example": "eq.solve(equations::rockets::cstar_ideal::equation()).for_target(\"c_star\").value()?",
-      "python_example": "engpy.equations.rockets.solve_c_star(r=\"...\", t_c=\"...\", gamma=\"...\")",
+      "python_example": "engpy.equations.rockets.cstar_ideal.solve_c_star(r=\"...\", t_c=\"...\", gamma=\"...\")",
       "xloil_example": "=ENG_ROCKETS_CSTAR_IDEAL_C_STAR(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_ROCKETS_CSTAR_IDEAL_C_STAR(\"...\",\"...\",\"...\")"
     },
@@ -2090,7 +2449,7 @@
       "id": "equation.rockets.specific_impulse_ideal.C_f",
       "entity": "equation",
       "source": "rockets.specific_impulse_ideal",
-      "python_module": "equations.rockets",
+      "python_module": "equations.rockets.specific_impulse_ideal",
       "python_name": "solve_c_f",
       "excel_name": "ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_F",
       "op": "equation.solve",
@@ -2111,7 +2470,7 @@
       "returns": "f64",
       "help": "Solve Ideal Specific Impulse for C_f",
       "rust_example": "eq.solve(equations::rockets::specific_impulse_ideal::equation()).for_target(\"C_f\").value()?",
-      "python_example": "engpy.equations.rockets.solve_c_f(i_sp=\"...\", c_star=\"...\")",
+      "python_example": "engpy.equations.rockets.specific_impulse_ideal.solve_c_f(i_sp=\"...\", c_star=\"...\")",
       "xloil_example": "=ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_F(\"...\",\"...\")",
       "pyxll_example": "=ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_F(\"...\",\"...\")"
     },
@@ -2119,7 +2478,7 @@
       "id": "equation.rockets.specific_impulse_ideal.I_sp",
       "entity": "equation",
       "source": "rockets.specific_impulse_ideal",
-      "python_module": "equations.rockets",
+      "python_module": "equations.rockets.specific_impulse_ideal",
       "python_name": "solve_i_sp",
       "excel_name": "ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_I_SP",
       "op": "equation.solve",
@@ -2140,7 +2499,7 @@
       "returns": "f64",
       "help": "Solve Ideal Specific Impulse for I_sp",
       "rust_example": "eq.solve(equations::rockets::specific_impulse_ideal::equation()).for_target(\"I_sp\").value()?",
-      "python_example": "engpy.equations.rockets.solve_i_sp(c_f=\"...\", c_star=\"...\")",
+      "python_example": "engpy.equations.rockets.specific_impulse_ideal.solve_i_sp(c_f=\"...\", c_star=\"...\")",
       "xloil_example": "=ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_I_SP(\"...\",\"...\")",
       "pyxll_example": "=ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_I_SP(\"...\",\"...\")"
     },
@@ -2148,7 +2507,7 @@
       "id": "equation.rockets.specific_impulse_ideal.c_star",
       "entity": "equation",
       "source": "rockets.specific_impulse_ideal",
-      "python_module": "equations.rockets",
+      "python_module": "equations.rockets.specific_impulse_ideal",
       "python_name": "solve_c_star",
       "excel_name": "ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_STAR",
       "op": "equation.solve",
@@ -2169,7 +2528,7 @@
       "returns": "f64",
       "help": "Solve Ideal Specific Impulse for c_star",
       "rust_example": "eq.solve(equations::rockets::specific_impulse_ideal::equation()).for_target(\"c_star\").value()?",
-      "python_example": "engpy.equations.rockets.solve_c_star(i_sp=\"...\", c_f=\"...\")",
+      "python_example": "engpy.equations.rockets.specific_impulse_ideal.solve_c_star(i_sp=\"...\", c_f=\"...\")",
       "xloil_example": "=ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_STAR(\"...\",\"...\")",
       "pyxll_example": "=ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_STAR(\"...\",\"...\")"
     },
@@ -2177,7 +2536,7 @@
       "id": "equation.rockets.thrust_coefficient_ideal.C_f",
       "entity": "equation",
       "source": "rockets.thrust_coefficient_ideal",
-      "python_module": "equations.rockets",
+      "python_module": "equations.rockets.thrust_coefficient_ideal",
       "python_name": "solve_c_f",
       "excel_name": "ENG_ROCKETS_THRUST_COEFFICIENT_IDEAL_C_F",
       "op": "equation.solve",
@@ -2206,7 +2565,7 @@
       "returns": "f64",
       "help": "Solve Ideal Thrust Coefficient for C_f",
       "rust_example": "eq.solve(equations::rockets::thrust_coefficient_ideal::equation()).for_target(\"C_f\").value()?",
-      "python_example": "engpy.equations.rockets.solve_c_f(gamma=\"...\", p_e_p_c=\"...\", p_a_p_c=\"...\", a_e_a_t=\"...\")",
+      "python_example": "engpy.equations.rockets.thrust_coefficient_ideal.solve_c_f(gamma=\"...\", p_e_p_c=\"...\", p_a_p_c=\"...\", a_e_a_t=\"...\")",
       "xloil_example": "=ENG_ROCKETS_THRUST_COEFFICIENT_IDEAL_C_F(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_ROCKETS_THRUST_COEFFICIENT_IDEAL_C_F(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -2214,7 +2573,7 @@
       "id": "equation.rockets.thrust_from_mass_flow.F",
       "entity": "equation",
       "source": "rockets.thrust_from_mass_flow",
-      "python_module": "equations.rockets",
+      "python_module": "equations.rockets.thrust_from_mass_flow",
       "python_name": "solve_f",
       "excel_name": "ENG_ROCKETS_THRUST_FROM_MASS_FLOW_F",
       "op": "equation.solve",
@@ -2235,7 +2594,7 @@
       "returns": "f64",
       "help": "Solve Thrust From Mass Flow and Effective Exhaust Velocity for F",
       "rust_example": "eq.solve(equations::rockets::thrust_from_mass_flow::equation()).for_target(\"F\").value()?",
-      "python_example": "engpy.equations.rockets.solve_f(m_dot=\"...\", c_eff=\"...\")",
+      "python_example": "engpy.equations.rockets.thrust_from_mass_flow.solve_f(m_dot=\"...\", c_eff=\"...\")",
       "xloil_example": "=ENG_ROCKETS_THRUST_FROM_MASS_FLOW_F(\"...\",\"...\")",
       "pyxll_example": "=ENG_ROCKETS_THRUST_FROM_MASS_FLOW_F(\"...\",\"...\")"
     },
@@ -2243,7 +2602,7 @@
       "id": "equation.rockets.thrust_from_mass_flow.c_eff",
       "entity": "equation",
       "source": "rockets.thrust_from_mass_flow",
-      "python_module": "equations.rockets",
+      "python_module": "equations.rockets.thrust_from_mass_flow",
       "python_name": "solve_c_eff",
       "excel_name": "ENG_ROCKETS_THRUST_FROM_MASS_FLOW_C_EFF",
       "op": "equation.solve",
@@ -2264,7 +2623,7 @@
       "returns": "f64",
       "help": "Solve Thrust From Mass Flow and Effective Exhaust Velocity for c_eff",
       "rust_example": "eq.solve(equations::rockets::thrust_from_mass_flow::equation()).for_target(\"c_eff\").value()?",
-      "python_example": "engpy.equations.rockets.solve_c_eff(f=\"...\", m_dot=\"...\")",
+      "python_example": "engpy.equations.rockets.thrust_from_mass_flow.solve_c_eff(f=\"...\", m_dot=\"...\")",
       "xloil_example": "=ENG_ROCKETS_THRUST_FROM_MASS_FLOW_C_EFF(\"...\",\"...\")",
       "pyxll_example": "=ENG_ROCKETS_THRUST_FROM_MASS_FLOW_C_EFF(\"...\",\"...\")"
     },
@@ -2272,7 +2631,7 @@
       "id": "equation.rockets.thrust_from_mass_flow.m_dot",
       "entity": "equation",
       "source": "rockets.thrust_from_mass_flow",
-      "python_module": "equations.rockets",
+      "python_module": "equations.rockets.thrust_from_mass_flow",
       "python_name": "solve_m_dot",
       "excel_name": "ENG_ROCKETS_THRUST_FROM_MASS_FLOW_M_DOT",
       "op": "equation.solve",
@@ -2293,7 +2652,7 @@
       "returns": "f64",
       "help": "Solve Thrust From Mass Flow and Effective Exhaust Velocity for m_dot",
       "rust_example": "eq.solve(equations::rockets::thrust_from_mass_flow::equation()).for_target(\"m_dot\").value()?",
-      "python_example": "engpy.equations.rockets.solve_m_dot(f=\"...\", c_eff=\"...\")",
+      "python_example": "engpy.equations.rockets.thrust_from_mass_flow.solve_m_dot(f=\"...\", c_eff=\"...\")",
       "xloil_example": "=ENG_ROCKETS_THRUST_FROM_MASS_FLOW_M_DOT(\"...\",\"...\")",
       "pyxll_example": "=ENG_ROCKETS_THRUST_FROM_MASS_FLOW_M_DOT(\"...\",\"...\")"
     },
@@ -2301,7 +2660,7 @@
       "id": "equation.structures.axial_stress.A",
       "entity": "equation",
       "source": "structures.axial_stress",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.axial_stress",
       "python_name": "solve_a",
       "excel_name": "ENG_STRUCTURES_AXIAL_STRESS_A",
       "op": "equation.solve",
@@ -2322,7 +2681,7 @@
       "returns": "f64",
       "help": "Solve Axial Normal Stress for A",
       "rust_example": "eq.solve(equations::structures::axial_stress::equation()).for_target(\"A\").value()?",
-      "python_example": "engpy.equations.structures.solve_a(sigma=\"...\", f=\"...\")",
+      "python_example": "engpy.equations.structures.axial_stress.solve_a(sigma=\"...\", f=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_AXIAL_STRESS_A(\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_AXIAL_STRESS_A(\"...\",\"...\")"
     },
@@ -2330,7 +2689,7 @@
       "id": "equation.structures.axial_stress.F",
       "entity": "equation",
       "source": "structures.axial_stress",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.axial_stress",
       "python_name": "solve_f",
       "excel_name": "ENG_STRUCTURES_AXIAL_STRESS_F",
       "op": "equation.solve",
@@ -2351,7 +2710,7 @@
       "returns": "f64",
       "help": "Solve Axial Normal Stress for F",
       "rust_example": "eq.solve(equations::structures::axial_stress::equation()).for_target(\"F\").value()?",
-      "python_example": "engpy.equations.structures.solve_f(sigma=\"...\", a=\"...\")",
+      "python_example": "engpy.equations.structures.axial_stress.solve_f(sigma=\"...\", a=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_AXIAL_STRESS_F(\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_AXIAL_STRESS_F(\"...\",\"...\")"
     },
@@ -2359,7 +2718,7 @@
       "id": "equation.structures.axial_stress.sigma",
       "entity": "equation",
       "source": "structures.axial_stress",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.axial_stress",
       "python_name": "solve_sigma",
       "excel_name": "ENG_STRUCTURES_AXIAL_STRESS_SIGMA",
       "op": "equation.solve",
@@ -2380,7 +2739,7 @@
       "returns": "f64",
       "help": "Solve Axial Normal Stress for sigma",
       "rust_example": "eq.solve(equations::structures::axial_stress::equation()).for_target(\"sigma\").value()?",
-      "python_example": "engpy.equations.structures.solve_sigma(f=\"...\", a=\"...\")",
+      "python_example": "engpy.equations.structures.axial_stress.solve_sigma(f=\"...\", a=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_AXIAL_STRESS_SIGMA(\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_AXIAL_STRESS_SIGMA(\"...\",\"...\")"
     },
@@ -2388,7 +2747,7 @@
       "id": "equation.structures.beam_bending_stress.I",
       "entity": "equation",
       "source": "structures.beam_bending_stress",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.beam_bending_stress",
       "python_name": "solve_i",
       "excel_name": "ENG_STRUCTURES_BEAM_BENDING_STRESS_I",
       "op": "equation.solve",
@@ -2413,7 +2772,7 @@
       "returns": "f64",
       "help": "Solve Beam Bending Stress for I",
       "rust_example": "eq.solve(equations::structures::beam_bending_stress::equation()).for_target(\"I\").value()?",
-      "python_example": "engpy.equations.structures.solve_i(sigma_b=\"...\", m=\"...\", c=\"...\")",
+      "python_example": "engpy.equations.structures.beam_bending_stress.solve_i(sigma_b=\"...\", m=\"...\", c=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_BEAM_BENDING_STRESS_I(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_BEAM_BENDING_STRESS_I(\"...\",\"...\",\"...\")"
     },
@@ -2421,7 +2780,7 @@
       "id": "equation.structures.beam_bending_stress.M",
       "entity": "equation",
       "source": "structures.beam_bending_stress",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.beam_bending_stress",
       "python_name": "solve_m",
       "excel_name": "ENG_STRUCTURES_BEAM_BENDING_STRESS_M",
       "op": "equation.solve",
@@ -2446,7 +2805,7 @@
       "returns": "f64",
       "help": "Solve Beam Bending Stress for M",
       "rust_example": "eq.solve(equations::structures::beam_bending_stress::equation()).for_target(\"M\").value()?",
-      "python_example": "engpy.equations.structures.solve_m(sigma_b=\"...\", c=\"...\", i=\"...\")",
+      "python_example": "engpy.equations.structures.beam_bending_stress.solve_m(sigma_b=\"...\", c=\"...\", i=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_BEAM_BENDING_STRESS_M(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_BEAM_BENDING_STRESS_M(\"...\",\"...\",\"...\")"
     },
@@ -2454,7 +2813,7 @@
       "id": "equation.structures.beam_bending_stress.c",
       "entity": "equation",
       "source": "structures.beam_bending_stress",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.beam_bending_stress",
       "python_name": "solve_c",
       "excel_name": "ENG_STRUCTURES_BEAM_BENDING_STRESS_C",
       "op": "equation.solve",
@@ -2479,7 +2838,7 @@
       "returns": "f64",
       "help": "Solve Beam Bending Stress for c",
       "rust_example": "eq.solve(equations::structures::beam_bending_stress::equation()).for_target(\"c\").value()?",
-      "python_example": "engpy.equations.structures.solve_c(sigma_b=\"...\", m=\"...\", i=\"...\")",
+      "python_example": "engpy.equations.structures.beam_bending_stress.solve_c(sigma_b=\"...\", m=\"...\", i=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_BEAM_BENDING_STRESS_C(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_BEAM_BENDING_STRESS_C(\"...\",\"...\",\"...\")"
     },
@@ -2487,7 +2846,7 @@
       "id": "equation.structures.beam_bending_stress.sigma_b",
       "entity": "equation",
       "source": "structures.beam_bending_stress",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.beam_bending_stress",
       "python_name": "solve_sigma_b",
       "excel_name": "ENG_STRUCTURES_BEAM_BENDING_STRESS_SIGMA_B",
       "op": "equation.solve",
@@ -2512,7 +2871,7 @@
       "returns": "f64",
       "help": "Solve Beam Bending Stress for sigma_b",
       "rust_example": "eq.solve(equations::structures::beam_bending_stress::equation()).for_target(\"sigma_b\").value()?",
-      "python_example": "engpy.equations.structures.solve_sigma_b(m=\"...\", c=\"...\", i=\"...\")",
+      "python_example": "engpy.equations.structures.beam_bending_stress.solve_sigma_b(m=\"...\", c=\"...\", i=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_BEAM_BENDING_STRESS_SIGMA_B(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_BEAM_BENDING_STRESS_SIGMA_B(\"...\",\"...\",\"...\")"
     },
@@ -2520,7 +2879,7 @@
       "id": "equation.structures.euler_buckling_load.E",
       "entity": "equation",
       "source": "structures.euler_buckling_load",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.euler_buckling_load",
       "python_name": "solve_e",
       "excel_name": "ENG_STRUCTURES_EULER_BUCKLING_LOAD_E",
       "op": "equation.solve",
@@ -2549,7 +2908,7 @@
       "returns": "f64",
       "help": "Solve Euler Buckling Critical Load for E",
       "rust_example": "eq.solve(equations::structures::euler_buckling_load::equation()).for_target(\"E\").value()?",
-      "python_example": "engpy.equations.structures.solve_e(p_cr=\"...\", i=\"...\", k=\"...\", l=\"...\")",
+      "python_example": "engpy.equations.structures.euler_buckling_load.solve_e(p_cr=\"...\", i=\"...\", k=\"...\", l=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_E(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_E(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -2557,7 +2916,7 @@
       "id": "equation.structures.euler_buckling_load.I",
       "entity": "equation",
       "source": "structures.euler_buckling_load",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.euler_buckling_load",
       "python_name": "solve_i",
       "excel_name": "ENG_STRUCTURES_EULER_BUCKLING_LOAD_I",
       "op": "equation.solve",
@@ -2586,7 +2945,7 @@
       "returns": "f64",
       "help": "Solve Euler Buckling Critical Load for I",
       "rust_example": "eq.solve(equations::structures::euler_buckling_load::equation()).for_target(\"I\").value()?",
-      "python_example": "engpy.equations.structures.solve_i(p_cr=\"...\", e=\"...\", k=\"...\", l=\"...\")",
+      "python_example": "engpy.equations.structures.euler_buckling_load.solve_i(p_cr=\"...\", e=\"...\", k=\"...\", l=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_I(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_I(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -2594,7 +2953,7 @@
       "id": "equation.structures.euler_buckling_load.K",
       "entity": "equation",
       "source": "structures.euler_buckling_load",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.euler_buckling_load",
       "python_name": "solve_k",
       "excel_name": "ENG_STRUCTURES_EULER_BUCKLING_LOAD_K",
       "op": "equation.solve",
@@ -2623,7 +2982,7 @@
       "returns": "f64",
       "help": "Solve Euler Buckling Critical Load for K",
       "rust_example": "eq.solve(equations::structures::euler_buckling_load::equation()).for_target(\"K\").value()?",
-      "python_example": "engpy.equations.structures.solve_k(p_cr=\"...\", e=\"...\", i=\"...\", l=\"...\")",
+      "python_example": "engpy.equations.structures.euler_buckling_load.solve_k(p_cr=\"...\", e=\"...\", i=\"...\", l=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_K(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_K(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -2631,7 +2990,7 @@
       "id": "equation.structures.euler_buckling_load.L",
       "entity": "equation",
       "source": "structures.euler_buckling_load",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.euler_buckling_load",
       "python_name": "solve_l",
       "excel_name": "ENG_STRUCTURES_EULER_BUCKLING_LOAD_L",
       "op": "equation.solve",
@@ -2660,7 +3019,7 @@
       "returns": "f64",
       "help": "Solve Euler Buckling Critical Load for L",
       "rust_example": "eq.solve(equations::structures::euler_buckling_load::equation()).for_target(\"L\").value()?",
-      "python_example": "engpy.equations.structures.solve_l(p_cr=\"...\", e=\"...\", i=\"...\", k=\"...\")",
+      "python_example": "engpy.equations.structures.euler_buckling_load.solve_l(p_cr=\"...\", e=\"...\", i=\"...\", k=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_L(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_L(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -2668,7 +3027,7 @@
       "id": "equation.structures.euler_buckling_load.P_cr",
       "entity": "equation",
       "source": "structures.euler_buckling_load",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.euler_buckling_load",
       "python_name": "solve_p_cr",
       "excel_name": "ENG_STRUCTURES_EULER_BUCKLING_LOAD_P_CR",
       "op": "equation.solve",
@@ -2697,7 +3056,7 @@
       "returns": "f64",
       "help": "Solve Euler Buckling Critical Load for P_cr",
       "rust_example": "eq.solve(equations::structures::euler_buckling_load::equation()).for_target(\"P_cr\").value()?",
-      "python_example": "engpy.equations.structures.solve_p_cr(e=\"...\", i=\"...\", k=\"...\", l=\"...\")",
+      "python_example": "engpy.equations.structures.euler_buckling_load.solve_p_cr(e=\"...\", i=\"...\", k=\"...\", l=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_P_CR(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_P_CR(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -2705,7 +3064,7 @@
       "id": "equation.structures.hoop_stress.P",
       "entity": "equation",
       "source": "structures.hoop_stress",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.hoop_stress",
       "python_name": "solve_p",
       "excel_name": "ENG_STRUCTURES_HOOP_STRESS_P",
       "op": "equation.solve",
@@ -2730,7 +3089,7 @@
       "returns": "f64",
       "help": "Solve Thin-Wall Hoop Stress for P",
       "rust_example": "eq.solve(equations::structures::hoop_stress::equation()).for_target(\"P\").value()?",
-      "python_example": "engpy.equations.structures.solve_p(sigma_h=\"...\", r=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.structures.hoop_stress.solve_p(sigma_h=\"...\", r=\"...\", t=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_HOOP_STRESS_P(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_HOOP_STRESS_P(\"...\",\"...\",\"...\")"
     },
@@ -2738,7 +3097,7 @@
       "id": "equation.structures.hoop_stress.r",
       "entity": "equation",
       "source": "structures.hoop_stress",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.hoop_stress",
       "python_name": "solve_r",
       "excel_name": "ENG_STRUCTURES_HOOP_STRESS_R",
       "op": "equation.solve",
@@ -2763,7 +3122,7 @@
       "returns": "f64",
       "help": "Solve Thin-Wall Hoop Stress for r",
       "rust_example": "eq.solve(equations::structures::hoop_stress::equation()).for_target(\"r\").value()?",
-      "python_example": "engpy.equations.structures.solve_r(sigma_h=\"...\", p=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.structures.hoop_stress.solve_r(sigma_h=\"...\", p=\"...\", t=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_HOOP_STRESS_R(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_HOOP_STRESS_R(\"...\",\"...\",\"...\")"
     },
@@ -2771,7 +3130,7 @@
       "id": "equation.structures.hoop_stress.sigma_h",
       "entity": "equation",
       "source": "structures.hoop_stress",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.hoop_stress",
       "python_name": "solve_sigma_h",
       "excel_name": "ENG_STRUCTURES_HOOP_STRESS_SIGMA_H",
       "op": "equation.solve",
@@ -2796,7 +3155,7 @@
       "returns": "f64",
       "help": "Solve Thin-Wall Hoop Stress for sigma_h",
       "rust_example": "eq.solve(equations::structures::hoop_stress::equation()).for_target(\"sigma_h\").value()?",
-      "python_example": "engpy.equations.structures.solve_sigma_h(p=\"...\", r=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.structures.hoop_stress.solve_sigma_h(p=\"...\", r=\"...\", t=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_HOOP_STRESS_SIGMA_H(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_HOOP_STRESS_SIGMA_H(\"...\",\"...\",\"...\")"
     },
@@ -2804,7 +3163,7 @@
       "id": "equation.structures.hoop_stress.t",
       "entity": "equation",
       "source": "structures.hoop_stress",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.hoop_stress",
       "python_name": "solve_t",
       "excel_name": "ENG_STRUCTURES_HOOP_STRESS_T",
       "op": "equation.solve",
@@ -2829,7 +3188,7 @@
       "returns": "f64",
       "help": "Solve Thin-Wall Hoop Stress for t",
       "rust_example": "eq.solve(equations::structures::hoop_stress::equation()).for_target(\"t\").value()?",
-      "python_example": "engpy.equations.structures.solve_t(sigma_h=\"...\", p=\"...\", r=\"...\")",
+      "python_example": "engpy.equations.structures.hoop_stress.solve_t(sigma_h=\"...\", p=\"...\", r=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_HOOP_STRESS_T(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_HOOP_STRESS_T(\"...\",\"...\",\"...\")"
     },
@@ -2837,7 +3196,7 @@
       "id": "equation.structures.longitudinal_stress_thin_wall.P",
       "entity": "equation",
       "source": "structures.longitudinal_stress_thin_wall",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.longitudinal_stress_thin_wall",
       "python_name": "solve_p",
       "excel_name": "ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_P",
       "op": "equation.solve",
@@ -2862,7 +3221,7 @@
       "returns": "f64",
       "help": "Solve Thin-Wall Longitudinal Stress for P",
       "rust_example": "eq.solve(equations::structures::longitudinal_stress_thin_wall::equation()).for_target(\"P\").value()?",
-      "python_example": "engpy.equations.structures.solve_p(sigma_l=\"...\", r=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.structures.longitudinal_stress_thin_wall.solve_p(sigma_l=\"...\", r=\"...\", t=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_P(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_P(\"...\",\"...\",\"...\")"
     },
@@ -2870,7 +3229,7 @@
       "id": "equation.structures.longitudinal_stress_thin_wall.r",
       "entity": "equation",
       "source": "structures.longitudinal_stress_thin_wall",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.longitudinal_stress_thin_wall",
       "python_name": "solve_r",
       "excel_name": "ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_R",
       "op": "equation.solve",
@@ -2895,7 +3254,7 @@
       "returns": "f64",
       "help": "Solve Thin-Wall Longitudinal Stress for r",
       "rust_example": "eq.solve(equations::structures::longitudinal_stress_thin_wall::equation()).for_target(\"r\").value()?",
-      "python_example": "engpy.equations.structures.solve_r(sigma_l=\"...\", p=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.structures.longitudinal_stress_thin_wall.solve_r(sigma_l=\"...\", p=\"...\", t=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_R(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_R(\"...\",\"...\",\"...\")"
     },
@@ -2903,7 +3262,7 @@
       "id": "equation.structures.longitudinal_stress_thin_wall.sigma_l",
       "entity": "equation",
       "source": "structures.longitudinal_stress_thin_wall",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.longitudinal_stress_thin_wall",
       "python_name": "solve_sigma_l",
       "excel_name": "ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_SIGMA_L",
       "op": "equation.solve",
@@ -2928,7 +3287,7 @@
       "returns": "f64",
       "help": "Solve Thin-Wall Longitudinal Stress for sigma_l",
       "rust_example": "eq.solve(equations::structures::longitudinal_stress_thin_wall::equation()).for_target(\"sigma_l\").value()?",
-      "python_example": "engpy.equations.structures.solve_sigma_l(p=\"...\", r=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.structures.longitudinal_stress_thin_wall.solve_sigma_l(p=\"...\", r=\"...\", t=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_SIGMA_L(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_SIGMA_L(\"...\",\"...\",\"...\")"
     },
@@ -2936,7 +3295,7 @@
       "id": "equation.structures.longitudinal_stress_thin_wall.t",
       "entity": "equation",
       "source": "structures.longitudinal_stress_thin_wall",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.longitudinal_stress_thin_wall",
       "python_name": "solve_t",
       "excel_name": "ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_T",
       "op": "equation.solve",
@@ -2961,7 +3320,7 @@
       "returns": "f64",
       "help": "Solve Thin-Wall Longitudinal Stress for t",
       "rust_example": "eq.solve(equations::structures::longitudinal_stress_thin_wall::equation()).for_target(\"t\").value()?",
-      "python_example": "engpy.equations.structures.solve_t(sigma_l=\"...\", p=\"...\", r=\"...\")",
+      "python_example": "engpy.equations.structures.longitudinal_stress_thin_wall.solve_t(sigma_l=\"...\", p=\"...\", r=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_T(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_T(\"...\",\"...\",\"...\")"
     },
@@ -2969,7 +3328,7 @@
       "id": "equation.structures.shaft_torsion_stress.J",
       "entity": "equation",
       "source": "structures.shaft_torsion_stress",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.shaft_torsion_stress",
       "python_name": "solve_j",
       "excel_name": "ENG_STRUCTURES_SHAFT_TORSION_STRESS_J",
       "op": "equation.solve",
@@ -2994,7 +3353,7 @@
       "returns": "f64",
       "help": "Solve Circular Shaft Torsion Stress for J",
       "rust_example": "eq.solve(equations::structures::shaft_torsion_stress::equation()).for_target(\"J\").value()?",
-      "python_example": "engpy.equations.structures.solve_j(tau=\"...\", t=\"...\", r=\"...\")",
+      "python_example": "engpy.equations.structures.shaft_torsion_stress.solve_j(tau=\"...\", t=\"...\", r=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_SHAFT_TORSION_STRESS_J(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_SHAFT_TORSION_STRESS_J(\"...\",\"...\",\"...\")"
     },
@@ -3002,7 +3361,7 @@
       "id": "equation.structures.shaft_torsion_stress.T",
       "entity": "equation",
       "source": "structures.shaft_torsion_stress",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.shaft_torsion_stress",
       "python_name": "solve_t",
       "excel_name": "ENG_STRUCTURES_SHAFT_TORSION_STRESS_T",
       "op": "equation.solve",
@@ -3027,7 +3386,7 @@
       "returns": "f64",
       "help": "Solve Circular Shaft Torsion Stress for T",
       "rust_example": "eq.solve(equations::structures::shaft_torsion_stress::equation()).for_target(\"T\").value()?",
-      "python_example": "engpy.equations.structures.solve_t(tau=\"...\", r=\"...\", j=\"...\")",
+      "python_example": "engpy.equations.structures.shaft_torsion_stress.solve_t(tau=\"...\", r=\"...\", j=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_SHAFT_TORSION_STRESS_T(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_SHAFT_TORSION_STRESS_T(\"...\",\"...\",\"...\")"
     },
@@ -3035,7 +3394,7 @@
       "id": "equation.structures.shaft_torsion_stress.r",
       "entity": "equation",
       "source": "structures.shaft_torsion_stress",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.shaft_torsion_stress",
       "python_name": "solve_r",
       "excel_name": "ENG_STRUCTURES_SHAFT_TORSION_STRESS_R",
       "op": "equation.solve",
@@ -3060,7 +3419,7 @@
       "returns": "f64",
       "help": "Solve Circular Shaft Torsion Stress for r",
       "rust_example": "eq.solve(equations::structures::shaft_torsion_stress::equation()).for_target(\"r\").value()?",
-      "python_example": "engpy.equations.structures.solve_r(tau=\"...\", t=\"...\", j=\"...\")",
+      "python_example": "engpy.equations.structures.shaft_torsion_stress.solve_r(tau=\"...\", t=\"...\", j=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_SHAFT_TORSION_STRESS_R(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_SHAFT_TORSION_STRESS_R(\"...\",\"...\",\"...\")"
     },
@@ -3068,7 +3427,7 @@
       "id": "equation.structures.shaft_torsion_stress.tau",
       "entity": "equation",
       "source": "structures.shaft_torsion_stress",
-      "python_module": "equations.structures",
+      "python_module": "equations.structures.shaft_torsion_stress",
       "python_name": "solve_tau",
       "excel_name": "ENG_STRUCTURES_SHAFT_TORSION_STRESS_TAU",
       "op": "equation.solve",
@@ -3093,9 +3452,31 @@
       "returns": "f64",
       "help": "Solve Circular Shaft Torsion Stress for tau",
       "rust_example": "eq.solve(equations::structures::shaft_torsion_stress::equation()).for_target(\"tau\").value()?",
-      "python_example": "engpy.equations.structures.solve_tau(t=\"...\", r=\"...\", j=\"...\")",
+      "python_example": "engpy.equations.structures.shaft_torsion_stress.solve_tau(t=\"...\", r=\"...\", j=\"...\")",
       "xloil_example": "=ENG_STRUCTURES_SHAFT_TORSION_STRESS_TAU(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_STRUCTURES_SHAFT_TORSION_STRESS_TAU(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.target.count",
+      "entity": "helper",
+      "source": "equations",
+      "python_module": "helpers",
+      "python_name": "equation_target_count",
+      "excel_name": "ENG_EQUATION_TARGET_COUNT",
+      "op": "equation.target.count",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        }
+      ],
+      "returns": "u64",
+      "help": "Read equation target count",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.equation_target_count(\"structures.hoop_stress\")",
+      "xloil_example": "=ENG_EQUATION_TARGET_COUNT(\"structures.hoop_stress\")",
+      "pyxll_example": "=ENG_EQUATION_TARGET_COUNT(\"structures.hoop_stress\")"
     },
     {
       "id": "equation.targets",
@@ -3120,10 +3501,54 @@
       "pyxll_example": "=ENG_EQUATION_TARGETS(\"fluids.reynolds_number\")"
     },
     {
+      "id": "equation.targets.table",
+      "entity": "helper",
+      "source": "equations",
+      "python_module": "helpers",
+      "python_name": "equation_targets_table",
+      "excel_name": "ENG_EQUATION_TARGETS_TABLE",
+      "op": "equation.targets.table",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        }
+      ],
+      "returns": "list[list]",
+      "help": "Read equation targets table rows [target, is_default]",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.equation_targets_table(\"structures.hoop_stress\")",
+      "xloil_example": "=ENG_EQUATION_TARGETS_TABLE(\"structures.hoop_stress\")",
+      "pyxll_example": "=ENG_EQUATION_TARGETS_TABLE(\"structures.hoop_stress\")"
+    },
+    {
+      "id": "equation.targets.text",
+      "entity": "helper",
+      "source": "equations",
+      "python_module": "helpers",
+      "python_name": "equation_targets_text",
+      "excel_name": "ENG_EQUATION_TARGETS_TEXT",
+      "op": "equation.targets.text",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        }
+      ],
+      "returns": "str",
+      "help": "Read equation targets as delimited text",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.equation_targets_text(\"structures.hoop_stress\")",
+      "xloil_example": "=ENG_EQUATION_TARGETS_TEXT(\"structures.hoop_stress\")",
+      "pyxll_example": "=ENG_EQUATION_TARGETS_TEXT(\"structures.hoop_stress\")"
+    },
+    {
       "id": "equation.thermo.ideal_gas.density.P",
       "entity": "equation",
       "source": "thermo.ideal_gas.density",
-      "python_module": "equations.thermo",
+      "python_module": "equations.thermo.density",
       "python_name": "solve_p",
       "excel_name": "ENG_THERMO_IDEAL_GAS_DENSITY_P",
       "op": "equation.solve",
@@ -3148,7 +3573,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law (Density Form) for P",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::density::equation()).for_target(\"P\").value()?",
-      "python_example": "engpy.equations.thermo.solve_p(rho=\"...\", r=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.thermo.density.solve_p(rho=\"...\", r=\"...\", t=\"...\")",
       "xloil_example": "=ENG_THERMO_IDEAL_GAS_DENSITY_P(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_THERMO_IDEAL_GAS_DENSITY_P(\"...\",\"...\",\"...\")"
     },
@@ -3156,7 +3581,7 @@
       "id": "equation.thermo.ideal_gas.density.R",
       "entity": "equation",
       "source": "thermo.ideal_gas.density",
-      "python_module": "equations.thermo",
+      "python_module": "equations.thermo.density",
       "python_name": "solve_r",
       "excel_name": "ENG_THERMO_IDEAL_GAS_DENSITY_R",
       "op": "equation.solve",
@@ -3181,7 +3606,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law (Density Form) for R",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::density::equation()).for_target(\"R\").value()?",
-      "python_example": "engpy.equations.thermo.solve_r(p=\"...\", rho=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.thermo.density.solve_r(p=\"...\", rho=\"...\", t=\"...\")",
       "xloil_example": "=ENG_THERMO_IDEAL_GAS_DENSITY_R(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_THERMO_IDEAL_GAS_DENSITY_R(\"...\",\"...\",\"...\")"
     },
@@ -3189,7 +3614,7 @@
       "id": "equation.thermo.ideal_gas.density.T",
       "entity": "equation",
       "source": "thermo.ideal_gas.density",
-      "python_module": "equations.thermo",
+      "python_module": "equations.thermo.density",
       "python_name": "solve_t",
       "excel_name": "ENG_THERMO_IDEAL_GAS_DENSITY_T",
       "op": "equation.solve",
@@ -3214,7 +3639,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law (Density Form) for T",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::density::equation()).for_target(\"T\").value()?",
-      "python_example": "engpy.equations.thermo.solve_t(p=\"...\", rho=\"...\", r=\"...\")",
+      "python_example": "engpy.equations.thermo.density.solve_t(p=\"...\", rho=\"...\", r=\"...\")",
       "xloil_example": "=ENG_THERMO_IDEAL_GAS_DENSITY_T(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_THERMO_IDEAL_GAS_DENSITY_T(\"...\",\"...\",\"...\")"
     },
@@ -3222,7 +3647,7 @@
       "id": "equation.thermo.ideal_gas.density.rho",
       "entity": "equation",
       "source": "thermo.ideal_gas.density",
-      "python_module": "equations.thermo",
+      "python_module": "equations.thermo.density",
       "python_name": "solve_rho",
       "excel_name": "ENG_THERMO_IDEAL_GAS_DENSITY_RHO",
       "op": "equation.solve",
@@ -3247,7 +3672,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law (Density Form) for rho",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::density::equation()).for_target(\"rho\").value()?",
-      "python_example": "engpy.equations.thermo.solve_rho(p=\"...\", r=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.thermo.density.solve_rho(p=\"...\", r=\"...\", t=\"...\")",
       "xloil_example": "=ENG_THERMO_IDEAL_GAS_DENSITY_RHO(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_THERMO_IDEAL_GAS_DENSITY_RHO(\"...\",\"...\",\"...\")"
     },
@@ -3255,7 +3680,7 @@
       "id": "equation.thermo.ideal_gas.mass_volume.P",
       "entity": "equation",
       "source": "thermo.ideal_gas.mass_volume",
-      "python_module": "equations.thermo",
+      "python_module": "equations.thermo.mass_volume",
       "python_name": "solve_p",
       "excel_name": "ENG_THERMO_IDEAL_GAS_MASS_VOLUME_P",
       "op": "equation.solve",
@@ -3284,7 +3709,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law (Mass-Volume Form) for P",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"P\").value()?",
-      "python_example": "engpy.equations.thermo.solve_p(v=\"...\", m=\"...\", r=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.thermo.mass_volume.solve_p(v=\"...\", m=\"...\", r=\"...\", t=\"...\")",
       "xloil_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_P(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_P(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -3292,7 +3717,7 @@
       "id": "equation.thermo.ideal_gas.mass_volume.R",
       "entity": "equation",
       "source": "thermo.ideal_gas.mass_volume",
-      "python_module": "equations.thermo",
+      "python_module": "equations.thermo.mass_volume",
       "python_name": "solve_r",
       "excel_name": "ENG_THERMO_IDEAL_GAS_MASS_VOLUME_R",
       "op": "equation.solve",
@@ -3321,7 +3746,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law (Mass-Volume Form) for R",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"R\").value()?",
-      "python_example": "engpy.equations.thermo.solve_r(p=\"...\", v=\"...\", m=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.thermo.mass_volume.solve_r(p=\"...\", v=\"...\", m=\"...\", t=\"...\")",
       "xloil_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_R(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_R(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -3329,7 +3754,7 @@
       "id": "equation.thermo.ideal_gas.mass_volume.T",
       "entity": "equation",
       "source": "thermo.ideal_gas.mass_volume",
-      "python_module": "equations.thermo",
+      "python_module": "equations.thermo.mass_volume",
       "python_name": "solve_t",
       "excel_name": "ENG_THERMO_IDEAL_GAS_MASS_VOLUME_T",
       "op": "equation.solve",
@@ -3358,7 +3783,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law (Mass-Volume Form) for T",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"T\").value()?",
-      "python_example": "engpy.equations.thermo.solve_t(p=\"...\", v=\"...\", m=\"...\", r=\"...\")",
+      "python_example": "engpy.equations.thermo.mass_volume.solve_t(p=\"...\", v=\"...\", m=\"...\", r=\"...\")",
       "xloil_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_T(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_T(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -3366,7 +3791,7 @@
       "id": "equation.thermo.ideal_gas.mass_volume.V",
       "entity": "equation",
       "source": "thermo.ideal_gas.mass_volume",
-      "python_module": "equations.thermo",
+      "python_module": "equations.thermo.mass_volume",
       "python_name": "solve_v",
       "excel_name": "ENG_THERMO_IDEAL_GAS_MASS_VOLUME_V",
       "op": "equation.solve",
@@ -3395,7 +3820,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law (Mass-Volume Form) for V",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"V\").value()?",
-      "python_example": "engpy.equations.thermo.solve_v(p=\"...\", m=\"...\", r=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.thermo.mass_volume.solve_v(p=\"...\", m=\"...\", r=\"...\", t=\"...\")",
       "xloil_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_V(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_V(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -3403,7 +3828,7 @@
       "id": "equation.thermo.ideal_gas.mass_volume.m",
       "entity": "equation",
       "source": "thermo.ideal_gas.mass_volume",
-      "python_module": "equations.thermo",
+      "python_module": "equations.thermo.mass_volume",
       "python_name": "solve_m",
       "excel_name": "ENG_THERMO_IDEAL_GAS_MASS_VOLUME_M",
       "op": "equation.solve",
@@ -3432,7 +3857,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law (Mass-Volume Form) for m",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"m\").value()?",
-      "python_example": "engpy.equations.thermo.solve_m(p=\"...\", v=\"...\", r=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.thermo.mass_volume.solve_m(p=\"...\", v=\"...\", r=\"...\", t=\"...\")",
       "xloil_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_M(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_M(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -3459,6 +3884,28 @@
       "pyxll_example": "=ENG_EQUATION_UNICODE(\"fluids.reynolds_number\")"
     },
     {
+      "id": "equation.variable.count",
+      "entity": "helper",
+      "source": "equations",
+      "python_module": "helpers",
+      "python_name": "equation_variable_count",
+      "excel_name": "ENG_EQUATION_VARIABLE_COUNT",
+      "op": "equation.variable.count",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        }
+      ],
+      "returns": "u64",
+      "help": "Read equation variable count",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.equation_variable_count(\"structures.hoop_stress\")",
+      "xloil_example": "=ENG_EQUATION_VARIABLE_COUNT(\"structures.hoop_stress\")",
+      "pyxll_example": "=ENG_EQUATION_VARIABLE_COUNT(\"structures.hoop_stress\")"
+    },
+    {
       "id": "equation.variables",
       "entity": "equation_meta",
       "source": "equations",
@@ -3481,11 +3928,55 @@
       "pyxll_example": "=ENG_EQUATION_VARIABLES(\"fluids.reynolds_number\")"
     },
     {
+      "id": "equation.variables.table",
+      "entity": "helper",
+      "source": "equations",
+      "python_module": "helpers",
+      "python_name": "equation_variables_table",
+      "excel_name": "ENG_EQUATION_VARIABLES_TABLE",
+      "op": "equation.variables.table",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        }
+      ],
+      "returns": "list[list]",
+      "help": "Read equation variable table rows [variable, default_unit]",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.equation_variables_table(\"structures.hoop_stress\")",
+      "xloil_example": "=ENG_EQUATION_VARIABLES_TABLE(\"structures.hoop_stress\")",
+      "pyxll_example": "=ENG_EQUATION_VARIABLES_TABLE(\"structures.hoop_stress\")"
+    },
+    {
+      "id": "equation.variables.text",
+      "entity": "helper",
+      "source": "equations",
+      "python_module": "helpers",
+      "python_name": "equation_variables_text",
+      "excel_name": "ENG_EQUATION_VARIABLES_TEXT",
+      "op": "equation.variables.text",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        }
+      ],
+      "returns": "str",
+      "help": "Read equation variables as delimited text",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.equation_variables_text(\"structures.hoop_stress\")",
+      "xloil_example": "=ENG_EQUATION_VARIABLES_TEXT(\"structures.hoop_stress\")",
+      "pyxll_example": "=ENG_EQUATION_VARIABLES_TEXT(\"structures.hoop_stress\")"
+    },
+    {
       "id": "family.ideal_gas.density.P",
       "entity": "family_variant",
       "source": "ideal_gas.density",
-      "python_module": "equations.families.ideal_gas",
-      "python_name": "density_solve_p",
+      "python_module": "equations.families.ideal_gas.density",
+      "python_name": "solve_p",
       "excel_name": "ENG_FAMILY_IDEAL_GAS_DENSITY_P",
       "op": "equation.solve",
       "fixed_args": {
@@ -3509,7 +4000,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law variant Density Form for P",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::density::equation()).for_target(\"P\").value()?",
-      "python_example": "engpy.equations.families.ideal_gas.density_solve_p(rho=\"...\", r=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.families.ideal_gas.density.solve_p(rho=\"...\", r=\"...\", t=\"...\")",
       "xloil_example": "=ENG_FAMILY_IDEAL_GAS_DENSITY_P(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_DENSITY_P(\"...\",\"...\",\"...\")"
     },
@@ -3517,8 +4008,8 @@
       "id": "family.ideal_gas.density.R",
       "entity": "family_variant",
       "source": "ideal_gas.density",
-      "python_module": "equations.families.ideal_gas",
-      "python_name": "density_solve_r",
+      "python_module": "equations.families.ideal_gas.density",
+      "python_name": "solve_r",
       "excel_name": "ENG_FAMILY_IDEAL_GAS_DENSITY_R",
       "op": "equation.solve",
       "fixed_args": {
@@ -3542,7 +4033,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law variant Density Form for R",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::density::equation()).for_target(\"R\").value()?",
-      "python_example": "engpy.equations.families.ideal_gas.density_solve_r(p=\"...\", rho=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.families.ideal_gas.density.solve_r(p=\"...\", rho=\"...\", t=\"...\")",
       "xloil_example": "=ENG_FAMILY_IDEAL_GAS_DENSITY_R(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_DENSITY_R(\"...\",\"...\",\"...\")"
     },
@@ -3550,8 +4041,8 @@
       "id": "family.ideal_gas.density.T",
       "entity": "family_variant",
       "source": "ideal_gas.density",
-      "python_module": "equations.families.ideal_gas",
-      "python_name": "density_solve_t",
+      "python_module": "equations.families.ideal_gas.density",
+      "python_name": "solve_t",
       "excel_name": "ENG_FAMILY_IDEAL_GAS_DENSITY_T",
       "op": "equation.solve",
       "fixed_args": {
@@ -3575,7 +4066,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law variant Density Form for T",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::density::equation()).for_target(\"T\").value()?",
-      "python_example": "engpy.equations.families.ideal_gas.density_solve_t(p=\"...\", rho=\"...\", r=\"...\")",
+      "python_example": "engpy.equations.families.ideal_gas.density.solve_t(p=\"...\", rho=\"...\", r=\"...\")",
       "xloil_example": "=ENG_FAMILY_IDEAL_GAS_DENSITY_T(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_DENSITY_T(\"...\",\"...\",\"...\")"
     },
@@ -3583,8 +4074,8 @@
       "id": "family.ideal_gas.density.rho",
       "entity": "family_variant",
       "source": "ideal_gas.density",
-      "python_module": "equations.families.ideal_gas",
-      "python_name": "density_solve_rho",
+      "python_module": "equations.families.ideal_gas.density",
+      "python_name": "solve_rho",
       "excel_name": "ENG_FAMILY_IDEAL_GAS_DENSITY_RHO",
       "op": "equation.solve",
       "fixed_args": {
@@ -3608,7 +4099,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law variant Density Form for rho",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::density::equation()).for_target(\"rho\").value()?",
-      "python_example": "engpy.equations.families.ideal_gas.density_solve_rho(p=\"...\", r=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.families.ideal_gas.density.solve_rho(p=\"...\", r=\"...\", t=\"...\")",
       "xloil_example": "=ENG_FAMILY_IDEAL_GAS_DENSITY_RHO(\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_DENSITY_RHO(\"...\",\"...\",\"...\")"
     },
@@ -3616,8 +4107,8 @@
       "id": "family.ideal_gas.mass_volume.P",
       "entity": "family_variant",
       "source": "ideal_gas.mass_volume",
-      "python_module": "equations.families.ideal_gas",
-      "python_name": "mass_volume_solve_p",
+      "python_module": "equations.families.ideal_gas.mass_volume",
+      "python_name": "solve_p",
       "excel_name": "ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_P",
       "op": "equation.solve",
       "fixed_args": {
@@ -3645,7 +4136,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law variant Mass-Volume Form for P",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"P\").value()?",
-      "python_example": "engpy.equations.families.ideal_gas.mass_volume_solve_p(v=\"...\", m=\"...\", r=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.families.ideal_gas.mass_volume.solve_p(v=\"...\", m=\"...\", r=\"...\", t=\"...\")",
       "xloil_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_P(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_P(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -3653,8 +4144,8 @@
       "id": "family.ideal_gas.mass_volume.R",
       "entity": "family_variant",
       "source": "ideal_gas.mass_volume",
-      "python_module": "equations.families.ideal_gas",
-      "python_name": "mass_volume_solve_r",
+      "python_module": "equations.families.ideal_gas.mass_volume",
+      "python_name": "solve_r",
       "excel_name": "ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_R",
       "op": "equation.solve",
       "fixed_args": {
@@ -3682,7 +4173,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law variant Mass-Volume Form for R",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"R\").value()?",
-      "python_example": "engpy.equations.families.ideal_gas.mass_volume_solve_r(p=\"...\", v=\"...\", m=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.families.ideal_gas.mass_volume.solve_r(p=\"...\", v=\"...\", m=\"...\", t=\"...\")",
       "xloil_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_R(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_R(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -3690,8 +4181,8 @@
       "id": "family.ideal_gas.mass_volume.T",
       "entity": "family_variant",
       "source": "ideal_gas.mass_volume",
-      "python_module": "equations.families.ideal_gas",
-      "python_name": "mass_volume_solve_t",
+      "python_module": "equations.families.ideal_gas.mass_volume",
+      "python_name": "solve_t",
       "excel_name": "ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_T",
       "op": "equation.solve",
       "fixed_args": {
@@ -3719,7 +4210,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law variant Mass-Volume Form for T",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"T\").value()?",
-      "python_example": "engpy.equations.families.ideal_gas.mass_volume_solve_t(p=\"...\", v=\"...\", m=\"...\", r=\"...\")",
+      "python_example": "engpy.equations.families.ideal_gas.mass_volume.solve_t(p=\"...\", v=\"...\", m=\"...\", r=\"...\")",
       "xloil_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_T(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_T(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -3727,8 +4218,8 @@
       "id": "family.ideal_gas.mass_volume.V",
       "entity": "family_variant",
       "source": "ideal_gas.mass_volume",
-      "python_module": "equations.families.ideal_gas",
-      "python_name": "mass_volume_solve_v",
+      "python_module": "equations.families.ideal_gas.mass_volume",
+      "python_name": "solve_v",
       "excel_name": "ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_V",
       "op": "equation.solve",
       "fixed_args": {
@@ -3756,7 +4247,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law variant Mass-Volume Form for V",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"V\").value()?",
-      "python_example": "engpy.equations.families.ideal_gas.mass_volume_solve_v(p=\"...\", m=\"...\", r=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.families.ideal_gas.mass_volume.solve_v(p=\"...\", m=\"...\", r=\"...\", t=\"...\")",
       "xloil_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_V(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_V(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -3764,8 +4255,8 @@
       "id": "family.ideal_gas.mass_volume.m",
       "entity": "family_variant",
       "source": "ideal_gas.mass_volume",
-      "python_module": "equations.families.ideal_gas",
-      "python_name": "mass_volume_solve_m",
+      "python_module": "equations.families.ideal_gas.mass_volume",
+      "python_name": "solve_m",
       "excel_name": "ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_M",
       "op": "equation.solve",
       "fixed_args": {
@@ -3793,7 +4284,7 @@
       "returns": "f64",
       "help": "Solve Ideal Gas Law variant Mass-Volume Form for m",
       "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"m\").value()?",
-      "python_example": "engpy.equations.families.ideal_gas.mass_volume_solve_m(p=\"...\", v=\"...\", r=\"...\", t=\"...\")",
+      "python_example": "engpy.equations.families.ideal_gas.mass_volume.solve_m(p=\"...\", v=\"...\", r=\"...\", t=\"...\")",
       "xloil_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_M(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_M(\"...\",\"...\",\"...\",\"...\")"
     },
@@ -3863,6 +4354,72 @@
       "python_example": "engpy.fluids.fluid_prop(\"H2O\", \"T\", \"300 K\", \"P\", \"1 bar\", \"rho\")",
       "xloil_example": "=ENG_FLUID_PROP(\"H2O\",\"T\",\"300 K\",\"P\",\"1 bar\",\"rho\")",
       "pyxll_example": "=ENG_FLUID_PROP(\"H2O\",\"T\",\"300 K\",\"P\",\"1 bar\",\"rho\")"
+    },
+    {
+      "id": "fluid.properties.table",
+      "entity": "helper",
+      "source": "fluids",
+      "python_module": "helpers",
+      "python_name": "fluid_properties_table",
+      "excel_name": "ENG_FLUID_PROPERTIES_TABLE",
+      "op": "fluid.properties.table",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "key",
+          "description": "Fluid key/alias"
+        }
+      ],
+      "returns": "list[list]",
+      "help": "Read fluid property table rows [property, default_unit]",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.fluid_properties_table(\"H2O\")",
+      "xloil_example": "=ENG_FLUID_PROPERTIES_TABLE(\"H2O\")",
+      "pyxll_example": "=ENG_FLUID_PROPERTIES_TABLE(\"H2O\")"
+    },
+    {
+      "id": "fluid.properties.text",
+      "entity": "helper",
+      "source": "fluids",
+      "python_module": "helpers",
+      "python_name": "fluid_properties_text",
+      "excel_name": "ENG_FLUID_PROPERTIES_TEXT",
+      "op": "fluid.properties.text",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "key",
+          "description": "Fluid key/alias"
+        }
+      ],
+      "returns": "str",
+      "help": "Read fluid properties as delimited text",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.fluid_properties_text(\"H2O\")",
+      "xloil_example": "=ENG_FLUID_PROPERTIES_TEXT(\"H2O\")",
+      "pyxll_example": "=ENG_FLUID_PROPERTIES_TEXT(\"H2O\")"
+    },
+    {
+      "id": "fluid.property.count",
+      "entity": "helper",
+      "source": "fluids",
+      "python_module": "helpers",
+      "python_name": "fluid_property_count",
+      "excel_name": "ENG_FLUID_PROPERTY_COUNT",
+      "op": "fluid.property.count",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "key",
+          "description": "Fluid key/alias"
+        }
+      ],
+      "returns": "u64",
+      "help": "Read fluid property count",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.fluid_property_count(\"H2O\")",
+      "xloil_example": "=ENG_FLUID_PROPERTY_COUNT(\"H2O\")",
+      "pyxll_example": "=ENG_FLUID_PROPERTY_COUNT(\"H2O\")"
     },
     {
       "id": "format.value",
@@ -3948,6 +4505,72 @@
       "python_example": "engpy.materials.mat_prop(\"stainless_304\", \"elastic_modulus\", \"350 K\")",
       "xloil_example": "=ENG_MAT_PROP(\"stainless_304\",\"elastic_modulus\",\"350 K\")",
       "pyxll_example": "=ENG_MAT_PROP(\"stainless_304\",\"elastic_modulus\",\"350 K\")"
+    },
+    {
+      "id": "material.properties.table",
+      "entity": "helper",
+      "source": "materials",
+      "python_module": "helpers",
+      "python_name": "material_properties_table",
+      "excel_name": "ENG_MATERIAL_PROPERTIES_TABLE",
+      "op": "material.properties.table",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "key",
+          "description": "Material key/alias"
+        }
+      ],
+      "returns": "list[list]",
+      "help": "Read material property table rows [property, unit]",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.material_properties_table(\"stainless_304\")",
+      "xloil_example": "=ENG_MATERIAL_PROPERTIES_TABLE(\"stainless_304\")",
+      "pyxll_example": "=ENG_MATERIAL_PROPERTIES_TABLE(\"stainless_304\")"
+    },
+    {
+      "id": "material.properties.text",
+      "entity": "helper",
+      "source": "materials",
+      "python_module": "helpers",
+      "python_name": "material_properties_text",
+      "excel_name": "ENG_MATERIAL_PROPERTIES_TEXT",
+      "op": "material.properties.text",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "key",
+          "description": "Material key/alias"
+        }
+      ],
+      "returns": "str",
+      "help": "Read material properties as delimited text",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.material_properties_text(\"stainless_304\")",
+      "xloil_example": "=ENG_MATERIAL_PROPERTIES_TEXT(\"stainless_304\")",
+      "pyxll_example": "=ENG_MATERIAL_PROPERTIES_TEXT(\"stainless_304\")"
+    },
+    {
+      "id": "material.property.count",
+      "entity": "helper",
+      "source": "materials",
+      "python_module": "helpers",
+      "python_name": "material_property_count",
+      "excel_name": "ENG_MATERIAL_PROPERTY_COUNT",
+      "op": "material.property.count",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "key",
+          "description": "Material key/alias"
+        }
+      ],
+      "returns": "u64",
+      "help": "Read material property count",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.material_property_count(\"stainless_304\")",
+      "xloil_example": "=ENG_MATERIAL_PROPERTY_COUNT(\"stainless_304\")",
+      "pyxll_example": "=ENG_MATERIAL_PROPERTY_COUNT(\"stainless_304\")"
     },
     {
       "id": "meta.get",

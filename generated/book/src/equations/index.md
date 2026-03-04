@@ -12,6 +12,7 @@
 | [Isentropic Density Ratio](compressible/isentropic_density_ratio.md) | Compressible | 2 | - |
 | [Isentropic Pressure Ratio](compressible/isentropic_pressure_ratio.md) | Compressible | 2 | - |
 | [Isentropic Temperature Ratio](compressible/isentropic_temperature_ratio.md) | Compressible | 2 | - |
+| [Mach Angle](compressible/mach_angle.md) | Compressible | 2 | - |
 | [Circular Pipe Flow Area](fluids/circular_pipe_area.md) | Fluids | 2 | `pi` |
 | [Colebrook-White Friction Factor](fluids/colebrook.md) | Fluids | 1 | - |
 | [Continuity Mass Flow](fluids/continuity_mass_flow.md) | Fluids | 4 | - |

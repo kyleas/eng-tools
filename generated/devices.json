@@ -17,6 +17,21 @@
         "reynolds_number"
       ],
       "route": "devices/pipe_loss.md"
+    },
+    {
+      "key": "isentropic_calc",
+      "name": "Isentropic Calculator",
+      "summary": "Calculator-style compressible device: solve any supported isentropic input to any supported output through Mach pivot orchestration.",
+      "supported_modes": [
+        "Input kinds: Mach, MachAngle, p/p0, T/T0, rho/rho0, A/A*",
+        "Branch-aware inversion for A/A*"
+      ],
+      "outputs": [
+        "value_si",
+        "pivot_mach",
+        "path diagnostics"
+      ],
+      "route": "devices/isentropic_calc.md"
     }
   ]
 }
