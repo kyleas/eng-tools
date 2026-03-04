@@ -1603,83 +1603,15 @@ fn parse_isentropic_input_kind(
     raw: &str,
     value: f64,
 ) -> Option<(crate::devices::IsentropicInputKind, f64)> {
-    match raw.trim().to_ascii_lowercase().as_str() {
-        "mach" | "m" => Some((crate::devices::IsentropicInputKind::Mach, value)),
-        "mach_angle" | "mach_angle_rad" | "mu" | "mu_rad" => {
-            Some((crate::devices::IsentropicInputKind::MachAngleRad, value))
-        }
-        "mach_angle_deg" | "mu_deg" => Some((
-            crate::devices::IsentropicInputKind::MachAngleRad,
-            value.to_radians(),
-        )),
-        "prandtl_meyer_angle" | "prandtl_meyer_angle_rad" | "prandtl_meyer" | "nu" | "nu_rad" => {
-            Some((
-                crate::devices::IsentropicInputKind::PrandtlMeyerAngleRad,
-                value,
-            ))
-        }
-        "prandtl_meyer_angle_deg" | "prandtl_meyer_deg" | "nu_deg" => Some((
-            crate::devices::IsentropicInputKind::PrandtlMeyerAngleRad,
-            value.to_radians(),
-        )),
-        "pressure_ratio" | "p_p0" | "p/p0" => {
-            Some((crate::devices::IsentropicInputKind::PressureRatio, value))
-        }
-        "temperature_ratio" | "t_t0" | "t/t0" => {
-            Some((crate::devices::IsentropicInputKind::TemperatureRatio, value))
-        }
-        "density_ratio" | "rho_rho0" | "rho/rho0" => {
-            Some((crate::devices::IsentropicInputKind::DensityRatio, value))
-        }
-        "area_ratio" | "a_astar" | "a/a*" => {
-            Some((crate::devices::IsentropicInputKind::AreaRatio, value))
-        }
-        _ => None,
-    }
+    crate::devices::isentropic::parse_input_kind(raw, value)
 }
 
 fn parse_isentropic_output_kind(raw: &str) -> Option<(crate::devices::IsentropicOutputKind, bool)> {
-    match raw.trim().to_ascii_lowercase().as_str() {
-        "mach" | "m" => Some((crate::devices::IsentropicOutputKind::Mach, false)),
-        "mach_angle" | "mach_angle_rad" | "mu" | "mu_rad" => {
-            Some((crate::devices::IsentropicOutputKind::MachAngleRad, false))
-        }
-        "mach_angle_deg" | "mu_deg" => {
-            Some((crate::devices::IsentropicOutputKind::MachAngleRad, true))
-        }
-        "prandtl_meyer_angle" | "prandtl_meyer_angle_rad" | "prandtl_meyer" | "nu" | "nu_rad" => {
-            Some((
-                crate::devices::IsentropicOutputKind::PrandtlMeyerAngleRad,
-                false,
-            ))
-        }
-        "prandtl_meyer_angle_deg" | "prandtl_meyer_deg" | "nu_deg" => Some((
-            crate::devices::IsentropicOutputKind::PrandtlMeyerAngleRad,
-            true,
-        )),
-        "pressure_ratio" | "p_p0" | "p/p0" => {
-            Some((crate::devices::IsentropicOutputKind::PressureRatio, false))
-        }
-        "temperature_ratio" | "t_t0" | "t/t0" => Some((
-            crate::devices::IsentropicOutputKind::TemperatureRatio,
-            false,
-        )),
-        "density_ratio" | "rho_rho0" | "rho/rho0" => {
-            Some((crate::devices::IsentropicOutputKind::DensityRatio, false))
-        }
-        "area_ratio" | "a_astar" | "a/a*" => {
-            Some((crate::devices::IsentropicOutputKind::AreaRatio, false))
-        }
-        _ => None,
-    }
+    crate::devices::isentropic::parse_output_kind(raw)
 }
 
 fn parse_isentropic_branch(raw: &str) -> Option<crate::devices::IsentropicBranch> {
-    match raw.trim().to_ascii_lowercase().as_str() {
-        "subsonic" => Some(crate::devices::IsentropicBranch::Subsonic),
-        "supersonic" => Some(crate::devices::IsentropicBranch::Supersonic),
-        _ => None,
-    }
+    crate::devices::isentropic::parse_branch(raw)
 }
 
 struct IsentropicInvokeRequest {

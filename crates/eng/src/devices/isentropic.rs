@@ -1,5 +1,94 @@
-use equations::{SolveMethod, compressible, eq};
+use equations::{compressible, eq};
 use thiserror::Error;
+
+use super::framework::{
+    CalculatorDeviceSpec, CalculatorKindSpec, PivotCalcSpec, method_label, path_text,
+    run_pivot_calculation,
+};
+
+pub type CalcStep = super::framework::CalcStep;
+
+const ISENTROPIC_INPUT_KIND_SPECS: &[CalculatorKindSpec] = &[
+    CalculatorKindSpec {
+        key: "mach",
+        label: "Mach",
+    },
+    CalculatorKindSpec {
+        key: "mach_angle_deg",
+        label: "Mach angle (deg)",
+    },
+    CalculatorKindSpec {
+        key: "prandtl_meyer_angle_deg",
+        label: "Prandtl-Meyer angle (deg)",
+    },
+    CalculatorKindSpec {
+        key: "pressure_ratio",
+        label: "p/p0",
+    },
+    CalculatorKindSpec {
+        key: "temperature_ratio",
+        label: "T/T0",
+    },
+    CalculatorKindSpec {
+        key: "density_ratio",
+        label: "rho/rho0",
+    },
+    CalculatorKindSpec {
+        key: "area_ratio",
+        label: "A/A*",
+    },
+];
+
+const ISENTROPIC_OUTPUT_KIND_SPECS: &[CalculatorKindSpec] = &[
+    CalculatorKindSpec {
+        key: "mach",
+        label: "Mach",
+    },
+    CalculatorKindSpec {
+        key: "mach_angle_deg",
+        label: "Mach angle (deg)",
+    },
+    CalculatorKindSpec {
+        key: "prandtl_meyer_angle_deg",
+        label: "Prandtl-Meyer angle (deg)",
+    },
+    CalculatorKindSpec {
+        key: "pressure_ratio",
+        label: "p/p0",
+    },
+    CalculatorKindSpec {
+        key: "temperature_ratio",
+        label: "T/T0",
+    },
+    CalculatorKindSpec {
+        key: "density_ratio",
+        label: "rho/rho0",
+    },
+    CalculatorKindSpec {
+        key: "area_ratio",
+        label: "A/A*",
+    },
+];
+
+pub const DEVICE_SPEC: CalculatorDeviceSpec = CalculatorDeviceSpec {
+    key: "isentropic_calc",
+    name: "Isentropic Calculator",
+    summary: "Calculator-style compressible device: solve any supported isentropic input to any supported output through Mach pivot orchestration.",
+    route: "devices/isentropic_calc.md",
+    pivot_label: "Mach",
+    input_kinds: ISENTROPIC_INPUT_KIND_SPECS,
+    output_kinds: ISENTROPIC_OUTPUT_KIND_SPECS,
+    branches: &["subsonic", "supersonic"],
+};
+
+pub fn supported_input_kinds_text() -> String {
+    DEVICE_SPEC
+        .input_kinds
+        .iter()
+        .map(|k| k.label)
+        .collect::<Vec<_>>()
+        .join(", ")
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum IsentropicInputKind {
@@ -38,6 +127,67 @@ impl IsentropicBranch {
     }
 }
 
+pub fn parse_input_kind(raw: &str, value: f64) -> Option<(IsentropicInputKind, f64)> {
+    match raw.trim().to_ascii_lowercase().as_str() {
+        "mach" | "m" => Some((IsentropicInputKind::Mach, value)),
+        "mach_angle" | "mach_angle_rad" | "mu" | "mu_rad" => {
+            Some((IsentropicInputKind::MachAngleRad, value))
+        }
+        "mach_angle_deg" | "mu_deg" => {
+            Some((IsentropicInputKind::MachAngleRad, value.to_radians()))
+        }
+        "prandtl_meyer_angle" | "prandtl_meyer_angle_rad" | "prandtl_meyer" | "nu" | "nu_rad" => {
+            Some((IsentropicInputKind::PrandtlMeyerAngleRad, value))
+        }
+        "prandtl_meyer_angle_deg" | "prandtl_meyer_deg" | "nu_deg" => Some((
+            IsentropicInputKind::PrandtlMeyerAngleRad,
+            value.to_radians(),
+        )),
+        "pressure_ratio" | "p_p0" | "p/p0" => Some((IsentropicInputKind::PressureRatio, value)),
+        "temperature_ratio" | "t_t0" | "t/t0" => {
+            Some((IsentropicInputKind::TemperatureRatio, value))
+        }
+        "density_ratio" | "rho_rho0" | "rho/rho0" => {
+            Some((IsentropicInputKind::DensityRatio, value))
+        }
+        "area_ratio" | "a_astar" | "a/a*" => Some((IsentropicInputKind::AreaRatio, value)),
+        _ => None,
+    }
+}
+
+pub fn parse_output_kind(raw: &str) -> Option<(IsentropicOutputKind, bool)> {
+    match raw.trim().to_ascii_lowercase().as_str() {
+        "mach" | "m" => Some((IsentropicOutputKind::Mach, false)),
+        "mach_angle" | "mach_angle_rad" | "mu" | "mu_rad" => {
+            Some((IsentropicOutputKind::MachAngleRad, false))
+        }
+        "mach_angle_deg" | "mu_deg" => Some((IsentropicOutputKind::MachAngleRad, true)),
+        "prandtl_meyer_angle" | "prandtl_meyer_angle_rad" | "prandtl_meyer" | "nu" | "nu_rad" => {
+            Some((IsentropicOutputKind::PrandtlMeyerAngleRad, false))
+        }
+        "prandtl_meyer_angle_deg" | "prandtl_meyer_deg" | "nu_deg" => {
+            Some((IsentropicOutputKind::PrandtlMeyerAngleRad, true))
+        }
+        "pressure_ratio" | "p_p0" | "p/p0" => Some((IsentropicOutputKind::PressureRatio, false)),
+        "temperature_ratio" | "t_t0" | "t/t0" => {
+            Some((IsentropicOutputKind::TemperatureRatio, false))
+        }
+        "density_ratio" | "rho_rho0" | "rho/rho0" => {
+            Some((IsentropicOutputKind::DensityRatio, false))
+        }
+        "area_ratio" | "a_astar" | "a/a*" => Some((IsentropicOutputKind::AreaRatio, false)),
+        _ => None,
+    }
+}
+
+pub fn parse_branch(raw: &str) -> Option<IsentropicBranch> {
+    match raw.trim().to_ascii_lowercase().as_str() {
+        "subsonic" => Some(IsentropicBranch::Subsonic),
+        "supersonic" => Some(IsentropicBranch::Supersonic),
+        _ => None,
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct IsentropicCalcRequest {
     pub gamma: f64,
@@ -45,15 +195,6 @@ pub struct IsentropicCalcRequest {
     pub input_value: f64,
     pub target_kind: IsentropicOutputKind,
     pub branch: Option<IsentropicBranch>,
-}
-
-#[derive(Debug, Clone)]
-pub struct CalcStep {
-    pub equation_path_id: String,
-    pub solved_for: String,
-    pub method: String,
-    pub branch: Option<String>,
-    pub inputs_used: Vec<(String, f64)>,
 }
 
 #[derive(Debug, Clone)]
@@ -66,17 +207,7 @@ pub struct IsentropicCalcResponse {
 
 impl IsentropicCalcResponse {
     pub fn path_text(&self) -> String {
-        self.path
-            .iter()
-            .map(|s| match &s.branch {
-                Some(b) => format!(
-                    "{}:{} via {} [{}]",
-                    s.equation_path_id, s.solved_for, s.method, b
-                ),
-                None => format!("{}:{} via {}", s.equation_path_id, s.solved_for, s.method),
-            })
-            .collect::<Vec<_>>()
-            .join(" -> ")
+        path_text(&self.path)
     }
 }
 
@@ -148,290 +279,288 @@ impl IsentropicCalculatorDevice {
     }
 }
 
-pub fn calc(req: IsentropicCalcRequest) -> Result<IsentropicCalcResponse> {
-    if !req.gamma.is_finite() || req.gamma <= 1.0 {
-        return Err(IsentropicCalcError::InvalidGamma { value: req.gamma });
-    }
-    if !req.input_value.is_finite() {
-        return Err(IsentropicCalcError::InvalidInputDomain {
-            kind: input_kind_label(req.input_kind),
-            reason: "must be finite".to_string(),
-        });
-    }
-    if matches!(req.input_kind, IsentropicInputKind::PrandtlMeyerAngleRad) && req.input_value < 0.0
-    {
-        return Err(IsentropicCalcError::InvalidInputDomain {
-            kind: input_kind_label(req.input_kind),
-            reason: "must be >= 0 rad".to_string(),
-        });
+struct IsentropicRuntime;
+
+impl PivotCalcSpec for IsentropicRuntime {
+    type Request = IsentropicCalcRequest;
+    type Error = IsentropicCalcError;
+
+    fn validate_request(&self, req: &Self::Request) -> Result<()> {
+        if !req.gamma.is_finite() || req.gamma <= 1.0 {
+            return Err(IsentropicCalcError::InvalidGamma { value: req.gamma });
+        }
+        if !req.input_value.is_finite() {
+            return Err(IsentropicCalcError::InvalidInputDomain {
+                kind: input_kind_label(req.input_kind),
+                reason: "must be finite".to_string(),
+            });
+        }
+        if matches!(req.input_kind, IsentropicInputKind::PrandtlMeyerAngleRad)
+            && req.input_value < 0.0
+        {
+            return Err(IsentropicCalcError::InvalidInputDomain {
+                kind: input_kind_label(req.input_kind),
+                reason: "must be >= 0 rad".to_string(),
+            });
+        }
+        Ok(())
     }
 
-    let mut path = Vec::<CalcStep>::new();
-    let pivot_mach = resolve_pivot_mach(&req, &mut path)?;
-    if !(pivot_mach.is_finite() && pivot_mach > 0.0) {
-        return Err(IsentropicCalcError::InvalidInputDomain {
-            kind: "Mach",
-            reason: "resolved pivot Mach must be finite and > 0".to_string(),
-        });
-    }
-
-    let value_si = solve_target(
-        req.gamma,
-        req.target_kind,
-        pivot_mach,
-        req.branch,
-        &mut path,
-    )?;
-    Ok(IsentropicCalcResponse {
-        value_si,
-        pivot_mach,
-        path,
-        warnings: Vec::new(),
-    })
-}
-
-fn resolve_pivot_mach(req: &IsentropicCalcRequest, path: &mut Vec<CalcStep>) -> Result<f64> {
-    let gamma = req.gamma;
-    let input = req.input_value;
-    match req.input_kind {
-        IsentropicInputKind::Mach => Ok(input),
-        IsentropicInputKind::MachAngleRad => {
-            let solved = eq
-                .solve(compressible::mach_angle::equation())
-                .target_m()
-                .given_mu(input)
-                .result()?;
-            path.push(CalcStep {
-                equation_path_id: "compressible.mach_angle".to_string(),
-                solved_for: "M".to_string(),
-                method: method_label(solved.method),
-                branch: solved.branch,
-                inputs_used: vec![("mu".to_string(), input)],
-            });
-            Ok(solved.value_si)
-        }
-        IsentropicInputKind::PrandtlMeyerAngleRad => {
-            let solved = eq
-                .solve(compressible::prandtl_meyer::equation())
-                .target_m()
-                .given_nu(input)
-                .given_gamma(gamma)
-                .result()
-                .map_err(|source| {
-                    let nu_max_hint = eq
-                        .solve(compressible::prandtl_meyer::equation())
-                        .target_nu()
-                        .given_m(100.0)
-                        .given_gamma(gamma)
-                        .value()
-                        .unwrap_or(2.276_853_163_690_696);
-                    IsentropicCalcError::InvalidInputDomain {
-                        kind: "PrandtlMeyerAngleRad",
-                        reason: format!(
-                            "expected 0 <= nu < ~{nu_max_hint:.12} rad for gamma={gamma}; solver detail: {source}"
-                        ),
-                    }
-                })?;
-            path.push(CalcStep {
-                equation_path_id: "compressible.prandtl_meyer".to_string(),
-                solved_for: "M".to_string(),
-                method: method_label(solved.method),
-                branch: solved.branch,
-                inputs_used: vec![("nu".to_string(), input), ("gamma".to_string(), gamma)],
-            });
-            Ok(solved.value_si)
-        }
-        IsentropicInputKind::PressureRatio => {
-            let solved = eq
-                .solve(compressible::isentropic_pressure_ratio::equation())
-                .target_m()
-                .given_p_p0(input)
-                .given_gamma(gamma)
-                .result()?;
-            path.push(CalcStep {
-                equation_path_id: "compressible.isentropic_pressure_ratio".to_string(),
-                solved_for: "M".to_string(),
-                method: method_label(solved.method),
-                branch: solved.branch,
-                inputs_used: vec![("p_p0".to_string(), input), ("gamma".to_string(), gamma)],
-            });
-            Ok(solved.value_si)
-        }
-        IsentropicInputKind::TemperatureRatio => {
-            let solved = eq
-                .solve(compressible::isentropic_temperature_ratio::equation())
-                .target_m()
-                .given_t_t0(input)
-                .given_gamma(gamma)
-                .result()?;
-            path.push(CalcStep {
-                equation_path_id: "compressible.isentropic_temperature_ratio".to_string(),
-                solved_for: "M".to_string(),
-                method: method_label(solved.method),
-                branch: solved.branch,
-                inputs_used: vec![("T_T0".to_string(), input), ("gamma".to_string(), gamma)],
-            });
-            Ok(solved.value_si)
-        }
-        IsentropicInputKind::DensityRatio => {
-            let solved = eq
-                .solve(compressible::isentropic_density_ratio::equation())
-                .target_m()
-                .given_rho_rho0(input)
-                .given_gamma(gamma)
-                .result()?;
-            path.push(CalcStep {
-                equation_path_id: "compressible.isentropic_density_ratio".to_string(),
-                solved_for: "M".to_string(),
-                method: method_label(solved.method),
-                branch: solved.branch,
-                inputs_used: vec![
-                    ("rho_rho0".to_string(), input),
-                    ("gamma".to_string(), gamma),
-                ],
-            });
-            Ok(solved.value_si)
-        }
-        IsentropicInputKind::AreaRatio => {
-            let Some(branch) = req.branch else {
-                return Err(IsentropicCalcError::MissingBranch { kind: "AreaRatio" });
-            };
-            let solved = eq
-                .solve(compressible::area_mach::equation())
-                .target_m()
-                .branch(branch.as_str())
-                .given_area_ratio(input)
-                .given_gamma(gamma)
-                .result()?;
-            path.push(CalcStep {
-                equation_path_id: "compressible.area_mach".to_string(),
-                solved_for: "M".to_string(),
-                method: method_label(solved.method),
-                branch: solved.branch,
-                inputs_used: vec![
-                    ("area_ratio".to_string(), input),
-                    ("gamma".to_string(), gamma),
-                ],
-            });
-            Ok(solved.value_si)
-        }
-    }
-}
-
-fn solve_target(
-    gamma: f64,
-    target: IsentropicOutputKind,
-    mach: f64,
-    branch: Option<IsentropicBranch>,
-    path: &mut Vec<CalcStep>,
-) -> Result<f64> {
-    match target {
-        IsentropicOutputKind::Mach => Ok(mach),
-        IsentropicOutputKind::MachAngleRad => {
-            let solved = eq
-                .solve(compressible::mach_angle::equation())
-                .target_mu()
-                .given_m(mach)
-                .result()?;
-            path.push(CalcStep {
-                equation_path_id: "compressible.mach_angle".to_string(),
-                solved_for: "mu".to_string(),
-                method: method_label(solved.method),
-                branch: solved.branch,
-                inputs_used: vec![("M".to_string(), mach)],
-            });
-            Ok(solved.value_si)
-        }
-        IsentropicOutputKind::PrandtlMeyerAngleRad => {
-            let solved = eq
-                .solve(compressible::prandtl_meyer::equation())
-                .target_nu()
-                .given_m(mach)
-                .given_gamma(gamma)
-                .result()?;
-            path.push(CalcStep {
-                equation_path_id: "compressible.prandtl_meyer".to_string(),
-                solved_for: "nu".to_string(),
-                method: method_label(solved.method),
-                branch: solved.branch,
-                inputs_used: vec![("M".to_string(), mach), ("gamma".to_string(), gamma)],
-            });
-            Ok(solved.value_si)
-        }
-        IsentropicOutputKind::PressureRatio => {
-            let solved = eq.solve_result(
-                compressible::isentropic_pressure_ratio::equation(),
-                "p_p0",
-                [("M", mach), ("gamma", gamma)],
-            )?;
-            path.push(CalcStep {
-                equation_path_id: "compressible.isentropic_pressure_ratio".to_string(),
-                solved_for: "p_p0".to_string(),
-                method: method_label(solved.method),
-                branch: solved.branch,
-                inputs_used: vec![("M".to_string(), mach), ("gamma".to_string(), gamma)],
-            });
-            Ok(solved.value_si)
-        }
-        IsentropicOutputKind::TemperatureRatio => {
-            let solved = eq.solve_result(
-                compressible::isentropic_temperature_ratio::equation(),
-                "T_T0",
-                [("M", mach), ("gamma", gamma)],
-            )?;
-            path.push(CalcStep {
-                equation_path_id: "compressible.isentropic_temperature_ratio".to_string(),
-                solved_for: "T_T0".to_string(),
-                method: method_label(solved.method),
-                branch: solved.branch,
-                inputs_used: vec![("M".to_string(), mach), ("gamma".to_string(), gamma)],
-            });
-            Ok(solved.value_si)
-        }
-        IsentropicOutputKind::DensityRatio => {
-            let solved = eq.solve_result(
-                compressible::isentropic_density_ratio::equation(),
-                "rho_rho0",
-                [("M", mach), ("gamma", gamma)],
-            )?;
-            path.push(CalcStep {
-                equation_path_id: "compressible.isentropic_density_ratio".to_string(),
-                solved_for: "rho_rho0".to_string(),
-                method: method_label(solved.method),
-                branch: solved.branch,
-                inputs_used: vec![("M".to_string(), mach), ("gamma".to_string(), gamma)],
-            });
-            Ok(solved.value_si)
-        }
-        IsentropicOutputKind::AreaRatio => {
-            let mut builder = eq
-                .solve(compressible::area_mach::equation())
-                .target_area_ratio()
-                .given_m(mach)
-                .given_gamma(gamma);
-            if let Some(b) = branch {
-                builder = builder.branch(b.as_str());
+    fn resolve_pivot(&self, req: &Self::Request, path: &mut Vec<CalcStep>) -> Result<f64> {
+        let gamma = req.gamma;
+        let input = req.input_value;
+        match req.input_kind {
+            IsentropicInputKind::Mach => Ok(input),
+            IsentropicInputKind::MachAngleRad => {
+                let solved = eq
+                    .solve(compressible::mach_angle::equation())
+                    .target_m()
+                    .given_mu(input)
+                    .result()?;
+                path.push(CalcStep {
+                    equation_path_id: "compressible.mach_angle".to_string(),
+                    solved_for: "M".to_string(),
+                    method: method_label(solved.method),
+                    branch: solved.branch,
+                    inputs_used: vec![("mu".to_string(), input)],
+                });
+                Ok(solved.value_si)
             }
-            let solved = builder.result()?;
-            path.push(CalcStep {
-                equation_path_id: "compressible.area_mach".to_string(),
-                solved_for: "area_ratio".to_string(),
-                method: method_label(solved.method),
-                branch: solved.branch,
-                inputs_used: vec![("M".to_string(), mach), ("gamma".to_string(), gamma)],
-            });
-            Ok(solved.value_si)
+            IsentropicInputKind::PrandtlMeyerAngleRad => {
+                let solved = eq
+                    .solve(compressible::prandtl_meyer::equation())
+                    .target_m()
+                    .given_nu(input)
+                    .given_gamma(gamma)
+                    .result()
+                    .map_err(|source| {
+                        let nu_max_hint = eq
+                            .solve(compressible::prandtl_meyer::equation())
+                            .target_nu()
+                            .given_m(100.0)
+                            .given_gamma(gamma)
+                            .value()
+                            .unwrap_or(2.276_853_163_690_696);
+                        IsentropicCalcError::InvalidInputDomain {
+                            kind: "PrandtlMeyerAngleRad",
+                            reason: format!(
+                                "expected 0 <= nu < ~{nu_max_hint:.12} rad for gamma={gamma}; solver detail: {source}"
+                            ),
+                        }
+                    })?;
+                path.push(CalcStep {
+                    equation_path_id: "compressible.prandtl_meyer".to_string(),
+                    solved_for: "M".to_string(),
+                    method: method_label(solved.method),
+                    branch: solved.branch,
+                    inputs_used: vec![("nu".to_string(), input), ("gamma".to_string(), gamma)],
+                });
+                Ok(solved.value_si)
+            }
+            IsentropicInputKind::PressureRatio => {
+                let solved = eq
+                    .solve(compressible::isentropic_pressure_ratio::equation())
+                    .target_m()
+                    .given_p_p0(input)
+                    .given_gamma(gamma)
+                    .result()?;
+                path.push(CalcStep {
+                    equation_path_id: "compressible.isentropic_pressure_ratio".to_string(),
+                    solved_for: "M".to_string(),
+                    method: method_label(solved.method),
+                    branch: solved.branch,
+                    inputs_used: vec![("p_p0".to_string(), input), ("gamma".to_string(), gamma)],
+                });
+                Ok(solved.value_si)
+            }
+            IsentropicInputKind::TemperatureRatio => {
+                let solved = eq
+                    .solve(compressible::isentropic_temperature_ratio::equation())
+                    .target_m()
+                    .given_t_t0(input)
+                    .given_gamma(gamma)
+                    .result()?;
+                path.push(CalcStep {
+                    equation_path_id: "compressible.isentropic_temperature_ratio".to_string(),
+                    solved_for: "M".to_string(),
+                    method: method_label(solved.method),
+                    branch: solved.branch,
+                    inputs_used: vec![("T_T0".to_string(), input), ("gamma".to_string(), gamma)],
+                });
+                Ok(solved.value_si)
+            }
+            IsentropicInputKind::DensityRatio => {
+                let solved = eq
+                    .solve(compressible::isentropic_density_ratio::equation())
+                    .target_m()
+                    .given_rho_rho0(input)
+                    .given_gamma(gamma)
+                    .result()?;
+                path.push(CalcStep {
+                    equation_path_id: "compressible.isentropic_density_ratio".to_string(),
+                    solved_for: "M".to_string(),
+                    method: method_label(solved.method),
+                    branch: solved.branch,
+                    inputs_used: vec![
+                        ("rho_rho0".to_string(), input),
+                        ("gamma".to_string(), gamma),
+                    ],
+                });
+                Ok(solved.value_si)
+            }
+            IsentropicInputKind::AreaRatio => {
+                let Some(branch) = req.branch else {
+                    return Err(IsentropicCalcError::MissingBranch { kind: "AreaRatio" });
+                };
+                let solved = eq
+                    .solve(compressible::area_mach::equation())
+                    .target_m()
+                    .branch(branch.as_str())
+                    .given_area_ratio(input)
+                    .given_gamma(gamma)
+                    .result()?;
+                path.push(CalcStep {
+                    equation_path_id: "compressible.area_mach".to_string(),
+                    solved_for: "M".to_string(),
+                    method: method_label(solved.method),
+                    branch: solved.branch,
+                    inputs_used: vec![
+                        ("area_ratio".to_string(), input),
+                        ("gamma".to_string(), gamma),
+                    ],
+                });
+                Ok(solved.value_si)
+            }
+        }
+    }
+
+    fn validate_pivot(&self, pivot_value: f64) -> Result<()> {
+        if pivot_value.is_finite() && pivot_value > 0.0 {
+            Ok(())
+        } else {
+            Err(IsentropicCalcError::InvalidInputDomain {
+                kind: "Mach",
+                reason: "resolved pivot Mach must be finite and > 0".to_string(),
+            })
+        }
+    }
+
+    fn solve_target(
+        &self,
+        req: &Self::Request,
+        mach: f64,
+        path: &mut Vec<CalcStep>,
+    ) -> Result<f64> {
+        let gamma = req.gamma;
+        match req.target_kind {
+            IsentropicOutputKind::Mach => Ok(mach),
+            IsentropicOutputKind::MachAngleRad => {
+                let solved = eq
+                    .solve(compressible::mach_angle::equation())
+                    .target_mu()
+                    .given_m(mach)
+                    .result()?;
+                path.push(CalcStep {
+                    equation_path_id: "compressible.mach_angle".to_string(),
+                    solved_for: "mu".to_string(),
+                    method: method_label(solved.method),
+                    branch: solved.branch,
+                    inputs_used: vec![("M".to_string(), mach)],
+                });
+                Ok(solved.value_si)
+            }
+            IsentropicOutputKind::PrandtlMeyerAngleRad => {
+                let solved = eq
+                    .solve(compressible::prandtl_meyer::equation())
+                    .target_nu()
+                    .given_m(mach)
+                    .given_gamma(gamma)
+                    .result()?;
+                path.push(CalcStep {
+                    equation_path_id: "compressible.prandtl_meyer".to_string(),
+                    solved_for: "nu".to_string(),
+                    method: method_label(solved.method),
+                    branch: solved.branch,
+                    inputs_used: vec![("M".to_string(), mach), ("gamma".to_string(), gamma)],
+                });
+                Ok(solved.value_si)
+            }
+            IsentropicOutputKind::PressureRatio => {
+                let solved = eq.solve_result(
+                    compressible::isentropic_pressure_ratio::equation(),
+                    "p_p0",
+                    [("M", mach), ("gamma", gamma)],
+                )?;
+                path.push(CalcStep {
+                    equation_path_id: "compressible.isentropic_pressure_ratio".to_string(),
+                    solved_for: "p_p0".to_string(),
+                    method: method_label(solved.method),
+                    branch: solved.branch,
+                    inputs_used: vec![("M".to_string(), mach), ("gamma".to_string(), gamma)],
+                });
+                Ok(solved.value_si)
+            }
+            IsentropicOutputKind::TemperatureRatio => {
+                let solved = eq.solve_result(
+                    compressible::isentropic_temperature_ratio::equation(),
+                    "T_T0",
+                    [("M", mach), ("gamma", gamma)],
+                )?;
+                path.push(CalcStep {
+                    equation_path_id: "compressible.isentropic_temperature_ratio".to_string(),
+                    solved_for: "T_T0".to_string(),
+                    method: method_label(solved.method),
+                    branch: solved.branch,
+                    inputs_used: vec![("M".to_string(), mach), ("gamma".to_string(), gamma)],
+                });
+                Ok(solved.value_si)
+            }
+            IsentropicOutputKind::DensityRatio => {
+                let solved = eq.solve_result(
+                    compressible::isentropic_density_ratio::equation(),
+                    "rho_rho0",
+                    [("M", mach), ("gamma", gamma)],
+                )?;
+                path.push(CalcStep {
+                    equation_path_id: "compressible.isentropic_density_ratio".to_string(),
+                    solved_for: "rho_rho0".to_string(),
+                    method: method_label(solved.method),
+                    branch: solved.branch,
+                    inputs_used: vec![("M".to_string(), mach), ("gamma".to_string(), gamma)],
+                });
+                Ok(solved.value_si)
+            }
+            IsentropicOutputKind::AreaRatio => {
+                let mut builder = eq
+                    .solve(compressible::area_mach::equation())
+                    .target_area_ratio()
+                    .given_m(mach)
+                    .given_gamma(gamma);
+                if let Some(b) = req.branch {
+                    builder = builder.branch(b.as_str());
+                }
+                let solved = builder.result()?;
+                path.push(CalcStep {
+                    equation_path_id: "compressible.area_mach".to_string(),
+                    solved_for: "area_ratio".to_string(),
+                    method: method_label(solved.method),
+                    branch: solved.branch,
+                    inputs_used: vec![("M".to_string(), mach), ("gamma".to_string(), gamma)],
+                });
+                Ok(solved.value_si)
+            }
         }
     }
 }
 
-fn method_label(method: SolveMethod) -> String {
-    match method {
-        SolveMethod::Auto => "auto",
-        SolveMethod::Explicit => "explicit",
-        SolveMethod::Numerical => "numerical",
-    }
-    .to_string()
+pub fn calc(req: IsentropicCalcRequest) -> Result<IsentropicCalcResponse> {
+    let out = run_pivot_calculation(&IsentropicRuntime, req)?;
+    Ok(IsentropicCalcResponse {
+        value_si: out.value_si,
+        pivot_mach: out.pivot_value,
+        path: out.path,
+        warnings: out.warnings,
+    })
 }
 
 fn input_kind_label(kind: IsentropicInputKind) -> &'static str {
@@ -487,7 +616,7 @@ mod tests {
         let out = calc(IsentropicCalcRequest {
             gamma: 1.4,
             input_kind: IsentropicInputKind::PressureRatio,
-            input_value: 0.127_804_525_462_950_93, // M = 2.0 at gamma=1.4
+            input_value: 0.127_804_525_462_950_93,
             target_kind: IsentropicOutputKind::AreaRatio,
             branch: None,
         })

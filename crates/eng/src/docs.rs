@@ -1630,10 +1630,16 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
             });
         }
         if device.key == "isentropic_calc" {
+            let isentropic_kind_desc = crate::devices::isentropic::DEVICE_SPEC
+                .input_kinds
+                .iter()
+                .map(|k| k.key)
+                .collect::<Vec<_>>()
+                .join(", ");
             let args = vec![
                 BindingArg {
                     name: "input_kind".to_string(),
-                    description: "Input kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)".to_string(),
+                    description: format!("Input kind ({isentropic_kind_desc})"),
                 },
                 BindingArg {
                     name: "input_value".to_string(),
@@ -1641,7 +1647,7 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
                 },
                 BindingArg {
                     name: "target_kind".to_string(),
-                    description: "Target kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)".to_string(),
+                    description: format!("Target kind ({isentropic_kind_desc})"),
                 },
                 BindingArg {
                     name: "gamma".to_string(),
@@ -1649,7 +1655,9 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
                 },
                 BindingArg {
                     name: "branch".to_string(),
-                    description: "Optional branch for double-valued inversions (subsonic/supersonic)".to_string(),
+                    description:
+                        "Optional branch for double-valued inversions (subsonic/supersonic)"
+                            .to_string(),
                 },
             ];
             functions.push(BindingFunction {
@@ -3859,7 +3867,17 @@ fn render_binding_examples_for_family(
 fn render_binding_examples_for_device(device_key: &str) -> String {
     match device_key {
         "pipe_loss" => "## Bindings\n\n### Python\n```python\ndp = engpy.devices.pipe_loss_solve_delta_p(friction_model=\"Colebrook\", v=\"3 m/s\", d=\"0.1 m\", l=\"10 m\", eps=\"0.00015 in\", fluid=\"H2O\", in1_key=\"T\", in1_value=\"300 K\", in2_key=\"P\", in2_value=\"1 atm\")\nengpy.helpers.format_value(dp, \"Pa\", \"psia\")\n```\n\n### Excel\n```excel\n=ENG_PIPE_LOSS_DELTA_P(\"Colebrook\",,\"\",,\"3 m/s\",\"0.1 m\",\"10 m\",\"0.00015 in\",\"H2O\",\"T\",\"300 K\",\"P\",\"1 atm\")\n=ENG_FORMAT(ENG_PIPE_LOSS_DELTA_P(\"Colebrook\",,\"\",,\"3 m/s\",\"0.1 m\",\"10 m\",\"0.00015 in\",\"H2O\",\"T\",\"300 K\",\"P\",\"1 atm\"),\"Pa\",\"psia\")\n=ENG_META(\"device\",\"pipe_loss\",\"supported_modes\")\n```\n\n**Excel arguments**\n- `friction_model`: `Colebrook` or `Fixed`\n- `fixed_f`: fixed Darcy friction factor when model is `Fixed`\n- `density` / `viscosity` / `velocity` / `diameter` / `length` / `roughness`: direct engineering inputs\n- `fluid`, `in1_key`, `in1_value`, `in2_key`, `in2_value`: optional fluid-state context pair\n".to_string(),
-        "isentropic_calc" => "## Bindings\n\n### Python\n```python\nengpy.devices.isentropic_calc(\"mach_angle_deg\", 30.0, \"pressure_ratio\", 1.4)\nengpy.devices.isentropic_from_nu_deg_to_m(26.3797608134, 1.4)\nengpy.devices.isentropic_pivot_mach(\"area_ratio\", 2.0, \"mach\", 1.4, \"supersonic\")\nengpy.devices.isentropic_path_text(\"area_ratio\", 2.0, \"mach\", 1.4, \"subsonic\")\n```\n\n### Excel\n```excel\n=ENG_ISENTROPIC(\"mach_angle_deg\",30,\"pressure_ratio\",1.4,\"\")\n=ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,\"\")\n=ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30,1.4,\"\")\n=ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,\"\")\n=ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,\"\")\n=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")\n=ENG_ISENTROPIC_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,\"subsonic\")\n=ENG_ISENTROPIC_PATH_TEXT(\"mach\",2.0,\"pressure_ratio\",1.4,\"\")\n```\n\n**Excel arguments**\n- `value_kind_in`: `mach`, `mach_angle_deg`, `prandtl_meyer_angle_deg`, `pressure_ratio`, `temperature_ratio`, `density_ratio`, `area_ratio`\n- `value_in`: input value\n- `target_kind_out`: same enum family as input kind\n- `gamma`: specific heat ratio\n- `branch`: optional, required for double-valued inverse paths like `area_ratio -> mach`\n".to_string(),
+        "isentropic_calc" => {
+            let supported = crate::devices::isentropic::DEVICE_SPEC
+                .input_kinds
+                .iter()
+                .map(|k| format!("`{}`", k.key))
+                .collect::<Vec<_>>()
+                .join(", ");
+            format!(
+                "## Bindings\n\n### Python\n```python\nengpy.devices.isentropic_calc(\"mach_angle_deg\", 30.0, \"pressure_ratio\", 1.4)\nengpy.devices.isentropic_from_nu_deg_to_m(26.3797608134, 1.4)\nengpy.devices.isentropic_pivot_mach(\"area_ratio\", 2.0, \"mach\", 1.4, \"supersonic\")\nengpy.devices.isentropic_path_text(\"area_ratio\", 2.0, \"mach\", 1.4, \"subsonic\")\n```\n\n### Excel\n```excel\n=ENG_ISENTROPIC(\"mach_angle_deg\",30,\"pressure_ratio\",1.4,\"\")\n=ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,\"\")\n=ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30,1.4,\"\")\n=ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,\"\")\n=ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,\"\")\n=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")\n=ENG_ISENTROPIC_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,\"subsonic\")\n=ENG_ISENTROPIC_PATH_TEXT(\"mach\",2.0,\"pressure_ratio\",1.4,\"\")\n```\n\n**Excel arguments**\n- `value_kind_in`: {supported}\n- `value_in`: input value\n- `target_kind_out`: same enum family as input kind\n- `gamma`: specific heat ratio\n- `branch`: optional, required for double-valued inverse paths like `area_ratio -> mach`\n"
+            )
+        }
         "normal_shock_calc" => "## Bindings\n\n### Python\n```python\nengpy.devices.normal_shock_calc(\"m1\", 2.0, \"p2_p1\", 1.4)\nengpy.devices.normal_shock_from_m1_to_m2(2.0, 1.4)\nengpy.devices.normal_shock_pivot_m1(\"p2_p1\", 4.5, \"m2\", 1.4)\nengpy.devices.normal_shock_path_text(\"p02_p01\", 0.7208738615, \"m2\", 1.4)\n```\n\n### Excel\n```excel\n=ENG_NORMAL_SHOCK(\"m1\",2.0,\"p2_p1\",1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_M2(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_RHO2_RHO1(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_T2_T1(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_P02_P01(2.0,1.4)\n=ENG_NORMAL_SHOCK_PIVOT_M1(\"p2_p1\",4.5,\"m2\",1.4)\n=ENG_NORMAL_SHOCK_PATH_TEXT(\"p02_p01\",0.7208738615,\"m2\",1.4)\n```\n\n**Excel arguments**\n- `value_kind_in`: `m1`, `m2`, `p2_p1`, `rho2_rho1`, `t2_t1`, `p02_p01`\n- `value_in`: input value\n- `target_kind_out`: same enum family as input kind\n- `gamma`: specific heat ratio\n".to_string(),
         _ => String::new(),
     }

@@ -1,7 +1,11 @@
+pub mod framework;
 pub mod isentropic;
 pub mod normal_shock;
 pub mod pipe_loss;
 
+pub use framework::{
+    CalcStep as FrameworkCalcStep, CalculatorDeviceSpec, CalculatorKindSpec, PivotCalcResponse,
+};
 pub use isentropic::{
     CalcStep, IsentropicBranch, IsentropicCalcError, IsentropicCalcRequest, IsentropicCalcResponse,
     IsentropicCalculatorDevice, IsentropicInputKind, IsentropicOutputKind,
@@ -41,21 +45,18 @@ pub fn docs_entries() -> Vec<DeviceDocsEntry> {
         },
         DeviceDocsEntry {
             key: "isentropic_calc".to_string(),
-            name: "Isentropic Calculator".to_string(),
-            summary:
-                "Calculator-style compressible device: solve any supported isentropic input to any supported output through Mach pivot orchestration."
-                    .to_string(),
-            supported_modes: vec![
-                "Input kinds: Mach, MachAngle, Prandtl-Meyer angle, p/p0, T/T0, rho/rho0, A/A*"
-                    .to_string(),
-                "Branch-aware inversion for A/A*".to_string(),
-            ],
+            name: isentropic::DEVICE_SPEC.name.to_string(),
+            summary: isentropic::DEVICE_SPEC.summary.to_string(),
+            supported_modes: vec![format!(
+                "Input kinds: {}",
+                isentropic::supported_input_kinds_text()
+            )],
             outputs: vec![
                 "value_si".to_string(),
                 "pivot_mach".to_string(),
                 "path diagnostics".to_string(),
             ],
-            route: "devices/isentropic_calc.md".to_string(),
+            route: isentropic::DEVICE_SPEC.route.to_string(),
         },
         DeviceDocsEntry {
             key: "normal_shock_calc".to_string(),
