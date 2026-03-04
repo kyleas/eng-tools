@@ -111,6 +111,36 @@ def e_n_g_n_o_r_m_a_l_s_h_o_c_k_p_i_v_o_t_m1(input_kind, input_value, target_kin
     """Normal shock calculator helper: return resolved pivot M1 | Arguments: | - input_kind: Input kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - input_value: Input value | - target_kind: Target kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_NORMAL_SHOCK_PIVOT_M1('p2_p1',4.5,'m2',1.4)"""
     return invoke("device.normal_shock_calc.pivot_m1", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma})
 
+@xloil.func(name="ENG_OBLIQUE_SHOCK", help="Oblique shock calculator: (M1 + beta/theta) -> target with weak/strong branch support | Arguments: | - m1: Upstream Mach number M1 | - input_kind: Input kind (beta_deg or theta_deg) | - input_value: Input value in degrees | - target_kind: Target kind (theta_deg, beta_deg, mn1, mn2, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - gamma: Specific heat ratio | - branch: Weak/strong branch required for theta->beta inversion paths | Returns: f64 | Example: =ENG_OBLIQUE_SHOCK(2.0,'theta_deg',10.0,'beta_deg',1.4,'weak')")
+def e_n_g_o_b_l_i_q_u_e_s_h_o_c_k(m1, input_kind, input_value, target_kind, gamma, branch=""):
+    """Oblique shock calculator: (M1 + beta/theta) -> target with weak/strong branch support | Arguments: | - m1: Upstream Mach number M1 | - input_kind: Input kind (beta_deg or theta_deg) | - input_value: Input value in degrees | - target_kind: Target kind (theta_deg, beta_deg, mn1, mn2, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - gamma: Specific heat ratio | - branch: Weak/strong branch required for theta->beta inversion paths | Returns: f64 | Example: =ENG_OBLIQUE_SHOCK(2.0,'theta_deg',10.0,'beta_deg',1.4,'weak')"""
+    return invoke("device.oblique_shock_calc.value", {"m1": m1, "input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_OBLIQUE_SHOCK_FROM_M1_BETA_TO_M2", help="Convenience oblique-shock path: (M1, beta_deg) -> M2 | Arguments: | - m1: Upstream Mach number M1 | - input_value: Shock angle beta in degrees | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_OBLIQUE_SHOCK_FROM_M1_BETA_TO_M2(2.0,40.0,1.4)")
+def e_n_g_o_b_l_i_q_u_e_s_h_o_c_k_f_r_o_m_m1_b_e_t_a_t_o_m2(m1, input_value, gamma):
+    """Convenience oblique-shock path: (M1, beta_deg) -> M2 | Arguments: | - m1: Upstream Mach number M1 | - input_value: Shock angle beta in degrees | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_OBLIQUE_SHOCK_FROM_M1_BETA_TO_M2(2.0,40.0,1.4)"""
+    return invoke("device.oblique_shock_calc.value", {"input_kind": "beta_deg", "target_kind": "m2", "m1": m1, "input_value": input_value, "gamma": gamma})
+
+@xloil.func(name="ENG_OBLIQUE_SHOCK_FROM_M1_BETA_TO_THETA", help="Convenience oblique-shock path: (M1, beta_deg) -> theta_deg | Arguments: | - m1: Upstream Mach number M1 | - input_value: Shock angle beta in degrees | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_OBLIQUE_SHOCK_FROM_M1_BETA_TO_THETA(2.0,40.0,1.4)")
+def e_n_g_o_b_l_i_q_u_e_s_h_o_c_k_f_r_o_m_m1_b_e_t_a_t_o_t_h_e_t_a(m1, input_value, gamma):
+    """Convenience oblique-shock path: (M1, beta_deg) -> theta_deg | Arguments: | - m1: Upstream Mach number M1 | - input_value: Shock angle beta in degrees | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_OBLIQUE_SHOCK_FROM_M1_BETA_TO_THETA(2.0,40.0,1.4)"""
+    return invoke("device.oblique_shock_calc.value", {"input_kind": "beta_deg", "target_kind": "theta_deg", "m1": m1, "input_value": input_value, "gamma": gamma})
+
+@xloil.func(name="ENG_OBLIQUE_SHOCK_FROM_M1_THETA_TO_BETA", help="Convenience oblique-shock path: (M1, theta_deg, branch) -> beta_deg | Arguments: | - m1: Upstream Mach number M1 | - input_value: Flow deflection theta in degrees | - gamma: Specific heat ratio | - branch: Weak or strong branch | Returns: f64 | Example: =ENG_OBLIQUE_SHOCK_FROM_M1_THETA_TO_BETA(2.0,10.0,1.4,'weak')")
+def e_n_g_o_b_l_i_q_u_e_s_h_o_c_k_f_r_o_m_m1_t_h_e_t_a_t_o_b_e_t_a(m1, input_value, gamma, branch=""):
+    """Convenience oblique-shock path: (M1, theta_deg, branch) -> beta_deg | Arguments: | - m1: Upstream Mach number M1 | - input_value: Flow deflection theta in degrees | - gamma: Specific heat ratio | - branch: Weak or strong branch | Returns: f64 | Example: =ENG_OBLIQUE_SHOCK_FROM_M1_THETA_TO_BETA(2.0,10.0,1.4,'weak')"""
+    return invoke("device.oblique_shock_calc.value", {"input_kind": "theta_deg", "target_kind": "beta_deg", "m1": m1, "input_value": input_value, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_OBLIQUE_SHOCK_FROM_M1_THETA_TO_P2_P1", help="Convenience oblique-shock path: (M1, theta_deg, branch) -> p2/p1 | Arguments: | - m1: Upstream Mach number M1 | - input_value: Flow deflection theta in degrees | - gamma: Specific heat ratio | - branch: Weak or strong branch | Returns: f64 | Example: =ENG_OBLIQUE_SHOCK_FROM_M1_THETA_TO_P2_P1(2.0,10.0,1.4,'weak')")
+def e_n_g_o_b_l_i_q_u_e_s_h_o_c_k_f_r_o_m_m1_t_h_e_t_a_t_o_p2_p1(m1, input_value, gamma, branch=""):
+    """Convenience oblique-shock path: (M1, theta_deg, branch) -> p2/p1 | Arguments: | - m1: Upstream Mach number M1 | - input_value: Flow deflection theta in degrees | - gamma: Specific heat ratio | - branch: Weak or strong branch | Returns: f64 | Example: =ENG_OBLIQUE_SHOCK_FROM_M1_THETA_TO_P2_P1(2.0,10.0,1.4,'weak')"""
+    return invoke("device.oblique_shock_calc.value", {"input_kind": "theta_deg", "target_kind": "p2_p1", "m1": m1, "input_value": input_value, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_OBLIQUE_SHOCK_PATH_TEXT", help="Oblique shock calculator helper: compact step trace text | Arguments: | - m1: Upstream Mach number M1 | - input_kind: Input kind (beta_deg or theta_deg) | - input_value: Input value in degrees | - target_kind: Target kind (theta_deg, beta_deg, mn1, mn2, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - gamma: Specific heat ratio | - branch: Weak/strong branch required for theta->beta inversion paths | Returns: str | Example: =ENG_OBLIQUE_SHOCK_PATH_TEXT(2.0,'theta_deg',10.0,'p2_p1',1.4,'weak')")
+def e_n_g_o_b_l_i_q_u_e_s_h_o_c_k_p_a_t_h_t_e_x_t(m1, input_kind, input_value, target_kind, gamma, branch=""):
+    """Oblique shock calculator helper: compact step trace text | Arguments: | - m1: Upstream Mach number M1 | - input_kind: Input kind (beta_deg or theta_deg) | - input_value: Input value in degrees | - target_kind: Target kind (theta_deg, beta_deg, mn1, mn2, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - gamma: Specific heat ratio | - branch: Weak/strong branch required for theta->beta inversion paths | Returns: str | Example: =ENG_OBLIQUE_SHOCK_PATH_TEXT(2.0,'theta_deg',10.0,'p2_p1',1.4,'weak')"""
+    return invoke("device.oblique_shock_calc.path_text", {"m1": m1, "input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
 @xloil.func(name="ENG_PIPE_LOSS_DELTA_P", help="Solve pipe pressure drop using Fixed/Colebrook friction model | Arguments: | - friction_model: Colebrook or Fixed | - fixed_f: Required when friction_model=Fixed | - density: Density input (optional with fluid context) | - viscosity: Viscosity input (required for Colebrook without fluid context) | - velocity: Velocity | - diameter: Diameter | - length: Length | - roughness: Roughness (Colebrook) | - fluid: Optional fluid key (e.g. H2O) | - in1_key: Fluid state input key 1 | - in1_value: Fluid state input value 1 | - in2_key: Fluid state input key 2 | - in2_value: Fluid state input value 2 | Returns: f64 | Example: =ENG_PIPE_LOSS_DELTA_P(...)")
 def e_n_g_p_i_p_e_l_o_s_s_d_e_l_t_a_p(friction_model, fixed_f, density, viscosity, velocity, diameter, length, roughness, fluid, in1_key, in1_value, in2_key, in2_value):
     """Solve pipe pressure drop using Fixed/Colebrook friction model | Arguments: | - friction_model: Colebrook or Fixed | - fixed_f: Required when friction_model=Fixed | - density: Density input (optional with fluid context) | - viscosity: Viscosity input (required for Colebrook without fluid context) | - velocity: Velocity | - diameter: Diameter | - length: Length | - roughness: Roughness (Colebrook) | - fluid: Optional fluid key (e.g. H2O) | - in1_key: Fluid state input key 1 | - in1_value: Fluid state input value 1 | - in2_key: Fluid state input key 2 | - in2_value: Fluid state input value 2 | Returns: f64 | Example: =ENG_PIPE_LOSS_DELTA_P(...)"""
@@ -235,6 +265,51 @@ def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_n_o_r_m_a_l_s_h_o_c_k_t_e_m_p_e_r_a_t_u_r_e_r_
 def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_n_o_r_m_a_l_s_h_o_c_k_t_e_m_p_e_r_a_t_u_r_e_r_a_t_i_o_t2_t1(m1, gamma):
     """Solve Normal Shock Temperature Ratio for T2_T1 | Arguments: | - m1: Upstream Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_TEMPERATURE_RATIO_T2_T1('...','...')"""
     return invoke("equation.solve", {"path_id": "compressible.normal_shock_temperature_ratio", "target": "T2_T1", "M1": m1, "gamma": gamma})
+
+@xloil.func(name="ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_BETA", help="Solve Oblique Shock Downstream Mach for beta | Arguments: | - m2: Downstream Mach number | - mn2: Downstream normal Mach | - theta: Flow deflection angle | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_BETA('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_o_b_l_i_q_u_e_s_h_o_c_k_m2_b_e_t_a(m2, mn2, theta):
+    """Solve Oblique Shock Downstream Mach for beta | Arguments: | - m2: Downstream Mach number | - mn2: Downstream normal Mach | - theta: Flow deflection angle | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_BETA('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.oblique_shock_m2", "target": "beta", "m2": m2, "mn2": mn2, "theta": theta})
+
+@xloil.func(name="ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_M2", help="Solve Oblique Shock Downstream Mach for m2 | Arguments: | - mn2: Downstream normal Mach | - beta: Shock angle | - theta: Flow deflection angle | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_M2('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_o_b_l_i_q_u_e_s_h_o_c_k_m2_m2(mn2, beta, theta):
+    """Solve Oblique Shock Downstream Mach for m2 | Arguments: | - mn2: Downstream normal Mach | - beta: Shock angle | - theta: Flow deflection angle | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_M2('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.oblique_shock_m2", "target": "m2", "mn2": mn2, "beta": beta, "theta": theta})
+
+@xloil.func(name="ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_MN2", help="Solve Oblique Shock Downstream Mach for mn2 | Arguments: | - m2: Downstream Mach number | - beta: Shock angle | - theta: Flow deflection angle | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_MN2('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_o_b_l_i_q_u_e_s_h_o_c_k_m2_m_n2(m2, beta, theta):
+    """Solve Oblique Shock Downstream Mach for mn2 | Arguments: | - m2: Downstream Mach number | - beta: Shock angle | - theta: Flow deflection angle | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_MN2('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.oblique_shock_m2", "target": "mn2", "m2": m2, "beta": beta, "theta": theta})
+
+@xloil.func(name="ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_THETA", help="Solve Oblique Shock Downstream Mach for theta | Arguments: | - m2: Downstream Mach number | - mn2: Downstream normal Mach | - beta: Shock angle | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_THETA('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_o_b_l_i_q_u_e_s_h_o_c_k_m2_t_h_e_t_a(m2, mn2, beta):
+    """Solve Oblique Shock Downstream Mach for theta | Arguments: | - m2: Downstream Mach number | - mn2: Downstream normal Mach | - beta: Shock angle | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_THETA('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.oblique_shock_m2", "target": "theta", "m2": m2, "mn2": mn2, "beta": beta})
+
+@xloil.func(name="ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_BETA", help="Solve Oblique Shock Normal Upstream Mach for beta | Arguments: | - mn1: Upstream normal Mach | - m1: Upstream Mach number | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_BETA('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_o_b_l_i_q_u_e_s_h_o_c_k_m_n1_b_e_t_a(mn1, m1):
+    """Solve Oblique Shock Normal Upstream Mach for beta | Arguments: | - mn1: Upstream normal Mach | - m1: Upstream Mach number | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_BETA('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.oblique_shock_mn1", "target": "beta", "mn1": mn1, "m1": m1})
+
+@xloil.func(name="ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_M1", help="Solve Oblique Shock Normal Upstream Mach for m1 | Arguments: | - mn1: Upstream normal Mach | - beta: Shock angle | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_M1('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_o_b_l_i_q_u_e_s_h_o_c_k_m_n1_m1(mn1, beta):
+    """Solve Oblique Shock Normal Upstream Mach for m1 | Arguments: | - mn1: Upstream normal Mach | - beta: Shock angle | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_M1('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.oblique_shock_mn1", "target": "m1", "mn1": mn1, "beta": beta})
+
+@xloil.func(name="ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_MN1", help="Solve Oblique Shock Normal Upstream Mach for mn1 | Arguments: | - m1: Upstream Mach number | - beta: Shock angle | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_MN1('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_o_b_l_i_q_u_e_s_h_o_c_k_m_n1_m_n1(m1, beta):
+    """Solve Oblique Shock Normal Upstream Mach for mn1 | Arguments: | - m1: Upstream Mach number | - beta: Shock angle | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_MN1('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.oblique_shock_mn1", "target": "mn1", "m1": m1, "beta": beta})
+
+@xloil.func(name="ENG_COMPRESSIBLE_OBLIQUE_SHOCK_THETA_BETA_M_BETA", help="Solve Oblique Shock Theta-Beta-M Relation for beta | Arguments: | - theta: Flow deflection angle | - m1: Upstream Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: weak, strong | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_THETA_BETA_M_BETA('...','...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_o_b_l_i_q_u_e_s_h_o_c_k_t_h_e_t_a_b_e_t_a_m_b_e_t_a(theta, m1, gamma, branch=""):
+    """Solve Oblique Shock Theta-Beta-M Relation for beta | Arguments: | - theta: Flow deflection angle | - m1: Upstream Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: weak, strong | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_THETA_BETA_M_BETA('...','...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.oblique_shock_theta_beta_m", "target": "beta", "theta": theta, "m1": m1, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_COMPRESSIBLE_OBLIQUE_SHOCK_THETA_BETA_M_THETA", help="Solve Oblique Shock Theta-Beta-M Relation for theta | Arguments: | - beta: Shock angle | - m1: Upstream Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: weak, strong | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_THETA_BETA_M_THETA('...','...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_o_b_l_i_q_u_e_s_h_o_c_k_t_h_e_t_a_b_e_t_a_m_t_h_e_t_a(beta, m1, gamma, branch=""):
+    """Solve Oblique Shock Theta-Beta-M Relation for theta | Arguments: | - beta: Shock angle | - m1: Upstream Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: weak, strong | Returns: f64 | Example: =ENG_COMPRESSIBLE_OBLIQUE_SHOCK_THETA_BETA_M_THETA('...','...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.oblique_shock_theta_beta_m", "target": "theta", "beta": beta, "m1": m1, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
 
 @xloil.func(name="ENG_COMPRESSIBLE_PRANDTL_MEYER_M", help="Solve Prandtl-Meyer Expansion Angle for M | Arguments: | - nu: Prandtl-Meyer angle | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_PRANDTL_MEYER_M('...','...')")
 def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_p_r_a_n_d_t_l_m_e_y_e_r_m(nu, gamma):

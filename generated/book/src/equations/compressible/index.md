@@ -11,4 +11,7 @@
 - [Normal Shock Static Pressure Ratio](./normal_shock_pressure_ratio.md)
 - [Normal Shock Stagnation Pressure Ratio](./normal_shock_stagnation_pressure_ratio.md)
 - [Normal Shock Temperature Ratio](./normal_shock_temperature_ratio.md)
+- [Oblique Shock Downstream Mach](./oblique_shock_m2.md)
+- [Oblique Shock Normal Upstream Mach](./oblique_shock_mn1.md)
+- [Oblique Shock Theta-Beta-M Relation](./oblique_shock_theta_beta_m.md)
 - [Prandtl-Meyer Expansion Angle](./prandtl_meyer.md)

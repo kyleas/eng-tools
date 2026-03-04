@@ -1,0 +1,56 @@
+key: oblique_shock_mn1
+taxonomy:
+  category: compressible
+name: Oblique Shock Normal Upstream Mach
+source: "Anderson, Modern Compressible Flow: With Historical Perspective"
+display:
+  latex: 'M_{n1} = M_1 \sin\beta'
+  unicode: "mn1 = m1 * sin(beta)"
+  ascii: "mn1 = m1 * sin(beta)"
+  description: Normal component of upstream Mach number for oblique shock geometry.
+variables:
+  mn1:
+    name: Upstream normal Mach
+    symbol: 'M_{n1}'
+    dimension: mach
+    constraints:
+      positive: true
+  m1:
+    name: Upstream Mach number
+    symbol: 'M_1'
+    dimension: mach
+    constraints:
+      min: 1.000001
+  beta:
+    name: Shock angle
+    symbol: '\beta'
+    dimension: angle
+    constraints:
+      min: 1e-6
+      max: 1.5707963267948966
+residual: mn1 - (m1 * sin(beta))
+solve:
+  explicit_forms:
+    mn1: m1 * sin(beta)
+    m1: mn1 / sin(beta)
+    beta: asin(mn1 / m1)
+assumptions:
+  - Attached oblique shock geometry.
+tests:
+  units_policy: auto_convert_to_si
+  relation_tolerance:
+    abs: 1e-12
+    rel: 1e-10
+  cases:
+    - id: mn1_from_m1_beta
+      full_state:
+        m1: 2.0
+        beta: 0.6981317007977318
+        mn1: 1.2855752193730785
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: mn1
+            methods: [explicit]
+          - target: m1
+            methods: [explicit]

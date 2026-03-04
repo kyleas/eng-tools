@@ -333,6 +333,69 @@ fn invoke_isentropic_calc_rejects_out_of_domain_prandtl_meyer_angle() {
 }
 
 #[test]
+fn invoke_oblique_shock_calc_supports_weak_and_strong_branches() {
+    let weak_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "device.oblique_shock_calc.value",
+        "args": {
+            "m1": 2.0,
+            "input_kind": "theta_deg",
+            "input_value": 10.0,
+            "target_kind": "beta_deg",
+            "gamma": 1.4,
+            "branch": "weak"
+        }
+    });
+    let weak_resp = run_invoke(weak_req);
+    assert_eq!(weak_resp["ok"], true, "response: {weak_resp}");
+    let beta_weak = weak_resp["value"].as_f64().unwrap_or(0.0);
+
+    let strong_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "device.oblique_shock_calc.value",
+        "args": {
+            "m1": 2.0,
+            "input_kind": "theta_deg",
+            "input_value": 10.0,
+            "target_kind": "beta_deg",
+            "gamma": 1.4,
+            "branch": "strong"
+        }
+    });
+    let strong_resp = run_invoke(strong_req);
+    assert_eq!(strong_resp["ok"], true, "response: {strong_resp}");
+    let beta_strong = strong_resp["value"].as_f64().unwrap_or(0.0);
+
+    assert!(beta_weak > 30.0 && beta_weak < 60.0);
+    assert!(beta_strong > 70.0 && beta_strong < 90.0);
+}
+
+#[test]
+fn invoke_oblique_shock_calc_requires_branch_for_theta_input() {
+    let req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "device.oblique_shock_calc.value",
+        "args": {
+            "m1": 2.0,
+            "input_kind": "theta_deg",
+            "input_value": 10.0,
+            "target_kind": "p2_p1",
+            "gamma": 1.4
+        }
+    });
+    let resp = run_invoke(req);
+    assert_eq!(resp["ok"], false, "response: {resp}");
+    assert_eq!(resp["error"]["code"], "device_oblique_shock_calc_failed");
+    assert!(
+        resp["error"]["message"]
+            .as_str()
+            .unwrap_or("")
+            .contains("branch is required"),
+        "expected branch-required guidance"
+    );
+}
+
+#[test]
 fn invoke_format_and_meta_helpers_work() {
     let fmt_req = json!({
         "protocol_version": "eng-invoke.v1",

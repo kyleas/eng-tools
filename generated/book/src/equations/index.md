@@ -18,6 +18,9 @@
 | [Normal Shock Static Pressure Ratio](compressible/normal_shock_pressure_ratio.md) | Compressible | 2 | - |
 | [Normal Shock Stagnation Pressure Ratio](compressible/normal_shock_stagnation_pressure_ratio.md) | Compressible | 2 | - |
 | [Normal Shock Temperature Ratio](compressible/normal_shock_temperature_ratio.md) | Compressible | 2 | - |
+| [Oblique Shock Downstream Mach](compressible/oblique_shock_m2.md) | Compressible | 4 | - |
+| [Oblique Shock Normal Upstream Mach](compressible/oblique_shock_mn1.md) | Compressible | 3 | - |
+| [Oblique Shock Theta-Beta-M Relation](compressible/oblique_shock_theta_beta_m.md) | Compressible | 2 | - |
 | [Prandtl-Meyer Expansion Angle](compressible/prandtl_meyer.md) | Compressible | 2 | - |
 | [Circular Pipe Flow Area](fluids/circular_pipe_area.md) | Fluids | 2 | `pi` |
 | [Colebrook-White Friction Factor](fluids/colebrook.md) | Fluids | 1 | - |

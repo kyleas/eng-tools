@@ -1246,6 +1246,473 @@
       ]
     },
     {
+      "key": "oblique_shock_m2",
+      "path_id": "compressible.oblique_shock_m2",
+      "slug": "oblique_shock_m2",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Oblique Shock Downstream Mach",
+      "description": "Downstream Mach number from downstream normal Mach and oblique-shock geometry.",
+      "latex": "M_2 = \\frac{M_{n2}}{\\sin(\\beta-\\theta)}",
+      "unicode": "m2 = mn2 / sin(beta - theta)",
+      "ascii": "m2 = mn2 / sin(beta - theta)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "beta",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "m2",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        },
+        {
+          "target": "mn2",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        },
+        {
+          "target": "theta",
+          "methods": [
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Attached oblique shock geometry with beta > theta."
+      ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
+      "references": [],
+      "variables": [
+        {
+          "key": "m2",
+          "name": "Downstream Mach number",
+          "symbol": "M_2",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "mn2",
+          "name": "Downstream normal Mach",
+          "symbol": "M_{n2}",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "beta",
+          "name": "Shock angle",
+          "symbol": "\\beta",
+          "symbol_authored": true,
+          "dimension": "angle",
+          "default_unit": "rad",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "theta",
+          "name": "Flow deflection angle",
+          "symbol": "\\theta",
+          "symbol_authored": true,
+          "dimension": "angle",
+          "default_unit": "rad",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::oblique_shock_m2::equation())\n    .target_m2()\n    .given_mn2(0.7933844244)\n    .given_beta(0.6981317008)\n    .given_theta(0.1854047491)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::oblique_shock_m2::equation())\n    .target_m2()\n    .given_mn2(0.7933844244)\n    .given_beta(0.6981317008)\n    .given_theta(0.1854047491)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_m2",
+          "style": "convenience",
+          "code": "let value = equations::compressible::oblique_shock_m2::solve_m2(\n    0.7933844244,\n    0.6981317008,\n    0.1854047491,\n)?;",
+          "target": "m2",
+          "signature": "equations::compressible::oblique_shock_m2::solve_m2(mn2, beta, theta) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "mn2",
+              "description": "Downstream normal Mach"
+            },
+            {
+              "name": "beta",
+              "description": "Shock angle"
+            },
+            {
+              "name": "theta",
+              "description": "Flow deflection angle"
+            }
+          ]
+        },
+        {
+          "label": "convenience_mn2",
+          "style": "convenience",
+          "code": "let value = equations::compressible::oblique_shock_m2::solve_mn2(\n    1.617318834,\n    0.6981317008,\n    0.1854047491,\n)?;",
+          "target": "mn2",
+          "signature": "equations::compressible::oblique_shock_m2::solve_mn2(m2, beta, theta) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "m2",
+              "description": "Downstream Mach number"
+            },
+            {
+              "name": "beta",
+              "description": "Shock angle"
+            },
+            {
+              "name": "theta",
+              "description": "Flow deflection angle"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "oblique_shock_mn1",
+      "path_id": "compressible.oblique_shock_mn1",
+      "slug": "oblique_shock_mn1",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Oblique Shock Normal Upstream Mach",
+      "description": "Normal component of upstream Mach number for oblique shock geometry.",
+      "latex": "M_{n1} = M_1 \\sin\\beta",
+      "unicode": "mn1 = m1 * sin(beta)",
+      "ascii": "mn1 = m1 * sin(beta)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "beta",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        },
+        {
+          "target": "m1",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        },
+        {
+          "target": "mn1",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Attached oblique shock geometry."
+      ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
+      "references": [],
+      "variables": [
+        {
+          "key": "mn1",
+          "name": "Upstream normal Mach",
+          "symbol": "M_{n1}",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "m1",
+          "name": "Upstream Mach number",
+          "symbol": "M_1",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "beta",
+          "name": "Shock angle",
+          "symbol": "\\beta",
+          "symbol_authored": true,
+          "dimension": "angle",
+          "default_unit": "rad",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::oblique_shock_mn1::equation())\n    .target_mn1()\n    .given_m1(2.0)\n    .given_beta(0.6981317008)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::oblique_shock_mn1::equation())\n    .target_mn1()\n    .given_m1(2.0)\n    .given_beta(0.6981317008)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_mn1",
+          "style": "convenience",
+          "code": "let value = equations::compressible::oblique_shock_mn1::solve_mn1(\n    2.0,\n    0.6981317008,\n)?;",
+          "target": "mn1",
+          "signature": "equations::compressible::oblique_shock_mn1::solve_mn1(m1, beta) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "m1",
+              "description": "Upstream Mach number"
+            },
+            {
+              "name": "beta",
+              "description": "Shock angle"
+            }
+          ]
+        },
+        {
+          "label": "convenience_m1",
+          "style": "convenience",
+          "code": "let value = equations::compressible::oblique_shock_mn1::solve_m1(\n    1.2855752194,\n    0.6981317008,\n)?;",
+          "target": "m1",
+          "signature": "equations::compressible::oblique_shock_mn1::solve_m1(mn1, beta) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "mn1",
+              "description": "Upstream normal Mach"
+            },
+            {
+              "name": "beta",
+              "description": "Shock angle"
+            }
+          ]
+        },
+        {
+          "label": "convenience_beta",
+          "style": "convenience",
+          "code": "let value = equations::compressible::oblique_shock_mn1::solve_beta(\n    1.2855752194,\n    2.0,\n)?;",
+          "target": "beta",
+          "signature": "equations::compressible::oblique_shock_mn1::solve_beta(mn1, m1) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "mn1",
+              "description": "Upstream normal Mach"
+            },
+            {
+              "name": "m1",
+              "description": "Upstream Mach number"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "oblique_shock_theta_beta_m",
+      "path_id": "compressible.oblique_shock_theta_beta_m",
+      "slug": "oblique_shock_theta_beta_m",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Oblique Shock Theta-Beta-M Relation",
+      "description": "Oblique-shock flow deflection angle from upstream Mach number and shock angle.",
+      "latex": "\\tan\\theta = \\frac{2\\cot\\beta\\left(M_1^2\\sin^2\\beta - 1\\right)}{M_1^2\\left(\\gamma + \\cos 2\\beta\\right)+2}",
+      "unicode": "tan(theta) = (2*cot(beta)*(M1^2*sin(beta)^2 - 1)) / (M1^2*(gamma + cos(2*beta)) + 2)",
+      "ascii": "tan(theta) = (2*cot(beta)*(m1^2*sin(beta)^2 - 1)) / (m1^2*(gamma + cos(2*beta)) + 2)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "beta",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "theta",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [
+        {
+          "name": "weak",
+          "condition": "((asin(1 / m1) + 1.5707963267948966) / 2) - beta",
+          "preferred": true
+        },
+        {
+          "name": "strong",
+          "condition": "beta - ((asin(1 / m1) + 1.5707963267948966) / 2)",
+          "preferred": false
+        }
+      ],
+      "diagram_labels": [],
+      "assumptions": [
+        "Attached oblique shock, inviscid perfect-gas flow.",
+        "Upstream Mach number is supersonic (M1 > 1)."
+      ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
+      "references": [],
+      "variables": [
+        {
+          "key": "theta",
+          "name": "Flow deflection angle",
+          "symbol": "\\theta",
+          "symbol_authored": true,
+          "dimension": "angle",
+          "default_unit": "rad",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "beta",
+          "name": "Shock angle",
+          "symbol": "\\beta",
+          "symbol_authored": true,
+          "dimension": "angle",
+          "default_unit": "rad",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "m1",
+          "name": "Upstream Mach number",
+          "symbol": "M_1",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::oblique_shock_theta_beta_m::equation())\n    .target_theta()\n    .given_beta(0.6981317008)\n    .given_m1(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::oblique_shock_theta_beta_m::equation())\n    .target_theta()\n    .given_beta(0.6981317008)\n    .given_m1(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_theta",
+          "style": "convenience",
+          "code": "let value = equations::compressible::oblique_shock_theta_beta_m::solve_theta(\n    0.6981317008,\n    2.0,\n    1.4,\n)?;",
+          "target": "theta",
+          "signature": "equations::compressible::oblique_shock_theta_beta_m::solve_theta(beta, m1, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "beta",
+              "description": "Shock angle"
+            },
+            {
+              "name": "m1",
+              "description": "Upstream Mach number"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        },
+        {
+          "label": "typed_builder_branch",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::oblique_shock_theta_beta_m::equation())\n    .target_theta()\n    .branch_strong()\n    .given_beta(1.4608419868)\n    .given_m1(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        }
+      ]
+    },
+    {
       "key": "prandtl_meyer",
       "path_id": "compressible.prandtl_meyer",
       "slug": "prandtl_meyer",

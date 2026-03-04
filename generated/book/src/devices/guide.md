@@ -26,6 +26,14 @@ Devices/components compose multiple atomic equations into higher-level engineeri
 - Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01
 - Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01
 
+## Oblique Shock Calculator
+
+- Key: `oblique_shock_calc`
+- Calculator-style compressible device: solve oblique-shock input pairs (M1+beta / M1+theta) to target outputs with explicit weak/strong branch handling.
+- Route: `devices/oblique_shock_calc.md`
+- Input pairs: (M1, beta), (M1, theta)
+- Branch-aware inversion for (M1, theta) -> beta
+
 ## Fixed-f Mode
 
 ```rust

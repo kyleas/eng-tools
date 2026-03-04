@@ -1,6 +1,7 @@
 pub mod framework;
 pub mod isentropic;
 pub mod normal_shock;
+pub mod oblique_shock;
 pub mod pipe_loss;
 
 pub use framework::{
@@ -15,6 +16,11 @@ pub use normal_shock::{
     NormalShockCalcError, NormalShockCalcRequest, NormalShockCalcResponse, NormalShockCalcStep,
     NormalShockCalculatorDevice, NormalShockInputKind, NormalShockOutputKind,
     calc as normal_shock_calc_from_request, normal_shock_calc,
+};
+pub use oblique_shock::{
+    ObliqueShockBranch, ObliqueShockCalcError, ObliqueShockCalcRequest, ObliqueShockCalcResponse,
+    ObliqueShockCalcStep, ObliqueShockCalculatorDevice, ObliqueShockInputKind,
+    ObliqueShockOutputKind, calc as oblique_shock_calc_from_request, oblique_shock_calc,
 };
 pub use pipe_loss::{PipeFrictionModel, PipeLossDevice, PipeLossError, PipeLossResult, pipe_loss};
 
@@ -59,6 +65,7 @@ pub fn generation_specs() -> Vec<DeviceGenerationSpec> {
         pipe_loss::generation_spec(),
         isentropic::generation_spec(),
         normal_shock::generation_spec(),
+        oblique_shock::generation_spec(),
     ]
 }
 

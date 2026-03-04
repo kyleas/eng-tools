@@ -160,6 +160,84 @@
       "style": "convenience"
     },
     {
+      "code": "let value = eq\n    .solve(compressible::oblique_shock_m2::equation())\n    .target_m2()\n    .given_mn2(0.7933844244)\n    .given_beta(0.6981317008)\n    .given_theta(0.1854047491)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.oblique_shock_m2",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::oblique_shock_m2::equation())\n    .target_m2()\n    .given_mn2(0.7933844244)\n    .given_beta(0.6981317008)\n    .given_theta(0.1854047491)\n    .value()?;",
+      "label": "typed_builder_units",
+      "path_id": "compressible.oblique_shock_m2",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::oblique_shock_m2::solve_m2(\n    0.7933844244,\n    0.6981317008,\n    0.1854047491,\n)?;",
+      "label": "convenience_m2",
+      "path_id": "compressible.oblique_shock_m2",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = equations::compressible::oblique_shock_m2::solve_mn2(\n    1.617318834,\n    0.6981317008,\n    0.1854047491,\n)?;",
+      "label": "convenience_mn2",
+      "path_id": "compressible.oblique_shock_m2",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::oblique_shock_mn1::equation())\n    .target_mn1()\n    .given_m1(2.0)\n    .given_beta(0.6981317008)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.oblique_shock_mn1",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::oblique_shock_mn1::equation())\n    .target_mn1()\n    .given_m1(2.0)\n    .given_beta(0.6981317008)\n    .value()?;",
+      "label": "typed_builder_units",
+      "path_id": "compressible.oblique_shock_mn1",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::oblique_shock_mn1::solve_mn1(\n    2.0,\n    0.6981317008,\n)?;",
+      "label": "convenience_mn1",
+      "path_id": "compressible.oblique_shock_mn1",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = equations::compressible::oblique_shock_mn1::solve_m1(\n    1.2855752194,\n    0.6981317008,\n)?;",
+      "label": "convenience_m1",
+      "path_id": "compressible.oblique_shock_mn1",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = equations::compressible::oblique_shock_mn1::solve_beta(\n    1.2855752194,\n    2.0,\n)?;",
+      "label": "convenience_beta",
+      "path_id": "compressible.oblique_shock_mn1",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::oblique_shock_theta_beta_m::equation())\n    .target_theta()\n    .given_beta(0.6981317008)\n    .given_m1(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.oblique_shock_theta_beta_m",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::oblique_shock_theta_beta_m::equation())\n    .target_theta()\n    .given_beta(0.6981317008)\n    .given_m1(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_units",
+      "path_id": "compressible.oblique_shock_theta_beta_m",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::oblique_shock_theta_beta_m::solve_theta(\n    0.6981317008,\n    2.0,\n    1.4,\n)?;",
+      "label": "convenience_theta",
+      "path_id": "compressible.oblique_shock_theta_beta_m",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::oblique_shock_theta_beta_m::equation())\n    .target_theta()\n    .branch_strong()\n    .given_beta(1.4608419868)\n    .given_m1(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_branch",
+      "path_id": "compressible.oblique_shock_theta_beta_m",
+      "style": "typed_builder"
+    },
+    {
       "code": "let value = eq\n    .solve(compressible::prandtl_meyer::equation())\n    .target_nu()\n    .given_m(1.0)\n    .given_gamma(1.4)\n    .value()?;",
       "label": "typed_builder_si",
       "path_id": "compressible.prandtl_meyer",

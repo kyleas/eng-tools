@@ -18,6 +18,9 @@
           "normal_shock_pressure_ratio",
           "normal_shock_stagnation_pressure_ratio",
           "normal_shock_temperature_ratio",
+          "oblique_shock_m2",
+          "oblique_shock_mn1",
+          "oblique_shock_theta_beta_m",
           "prandtl_meyer"
         ]
       }

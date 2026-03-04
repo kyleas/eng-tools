@@ -621,6 +621,230 @@
       "pyxll_example": "=ENG_NORMAL_SHOCK_PIVOT_M1(\"p2_p1\",4.5,\"m2\",1.4)"
     },
     {
+      "id": "device.oblique_shock_calc",
+      "entity": "device",
+      "source": "oblique_shock_calc",
+      "python_module": "devices",
+      "python_name": "oblique_shock_calc",
+      "excel_name": "ENG_OBLIQUE_SHOCK",
+      "op": "device.oblique_shock_calc.value",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "m1",
+          "description": "Upstream Mach number M1"
+        },
+        {
+          "name": "input_kind",
+          "description": "Input kind (beta_deg or theta_deg)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input value in degrees"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (theta_deg, beta_deg, mn1, mn2, m2, p2_p1, rho2_rho1, t2_t1, p02_p01)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Weak/strong branch required for theta->beta inversion paths"
+        }
+      ],
+      "returns": "f64",
+      "help": "Oblique shock calculator: (M1 + beta/theta) -> target with weak/strong branch support",
+      "rust_example": "eng::devices::oblique_shock_calc().solve()?",
+      "python_example": "engpy.devices.oblique_shock_calc(2.0, \"theta_deg\", 10.0, \"beta_deg\", 1.4, \"weak\")",
+      "xloil_example": "=ENG_OBLIQUE_SHOCK(2.0,\"theta_deg\",10.0,\"beta_deg\",1.4,\"weak\")",
+      "pyxll_example": "=ENG_OBLIQUE_SHOCK(2.0,\"theta_deg\",10.0,\"beta_deg\",1.4,\"weak\")"
+    },
+    {
+      "id": "device.oblique_shock_calc.from_m1_beta.to_m2",
+      "entity": "device",
+      "source": "oblique_shock_calc",
+      "python_module": "devices",
+      "python_name": "oblique_shock_from_m1_beta_to_m2",
+      "excel_name": "ENG_OBLIQUE_SHOCK_FROM_M1_BETA_TO_M2",
+      "op": "device.oblique_shock_calc.value",
+      "fixed_args": {
+        "input_kind": "beta_deg",
+        "target_kind": "m2"
+      },
+      "args": [
+        {
+          "name": "m1",
+          "description": "Upstream Mach number M1"
+        },
+        {
+          "name": "input_value",
+          "description": "Shock angle beta in degrees"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience oblique-shock path: (M1, beta_deg) -> M2",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.oblique_shock_from_m1_beta_to_m2(2.0, 40.0, 1.4)",
+      "xloil_example": "=ENG_OBLIQUE_SHOCK_FROM_M1_BETA_TO_M2(2.0,40.0,1.4)",
+      "pyxll_example": "=ENG_OBLIQUE_SHOCK_FROM_M1_BETA_TO_M2(2.0,40.0,1.4)"
+    },
+    {
+      "id": "device.oblique_shock_calc.from_m1_beta.to_theta",
+      "entity": "device",
+      "source": "oblique_shock_calc",
+      "python_module": "devices",
+      "python_name": "oblique_shock_from_m1_beta_to_theta",
+      "excel_name": "ENG_OBLIQUE_SHOCK_FROM_M1_BETA_TO_THETA",
+      "op": "device.oblique_shock_calc.value",
+      "fixed_args": {
+        "input_kind": "beta_deg",
+        "target_kind": "theta_deg"
+      },
+      "args": [
+        {
+          "name": "m1",
+          "description": "Upstream Mach number M1"
+        },
+        {
+          "name": "input_value",
+          "description": "Shock angle beta in degrees"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience oblique-shock path: (M1, beta_deg) -> theta_deg",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.oblique_shock_from_m1_beta_to_theta(2.0, 40.0, 1.4)",
+      "xloil_example": "=ENG_OBLIQUE_SHOCK_FROM_M1_BETA_TO_THETA(2.0,40.0,1.4)",
+      "pyxll_example": "=ENG_OBLIQUE_SHOCK_FROM_M1_BETA_TO_THETA(2.0,40.0,1.4)"
+    },
+    {
+      "id": "device.oblique_shock_calc.from_m1_theta.to_beta",
+      "entity": "device",
+      "source": "oblique_shock_calc",
+      "python_module": "devices",
+      "python_name": "oblique_shock_from_m1_theta_to_beta",
+      "excel_name": "ENG_OBLIQUE_SHOCK_FROM_M1_THETA_TO_BETA",
+      "op": "device.oblique_shock_calc.value",
+      "fixed_args": {
+        "input_kind": "theta_deg",
+        "target_kind": "beta_deg"
+      },
+      "args": [
+        {
+          "name": "m1",
+          "description": "Upstream Mach number M1"
+        },
+        {
+          "name": "input_value",
+          "description": "Flow deflection theta in degrees"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Weak or strong branch"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience oblique-shock path: (M1, theta_deg, branch) -> beta_deg",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.oblique_shock_from_m1_theta_to_beta(2.0, 10.0, 1.4, \"weak\")",
+      "xloil_example": "=ENG_OBLIQUE_SHOCK_FROM_M1_THETA_TO_BETA(2.0,10.0,1.4,\"weak\")",
+      "pyxll_example": "=ENG_OBLIQUE_SHOCK_FROM_M1_THETA_TO_BETA(2.0,10.0,1.4,\"weak\")"
+    },
+    {
+      "id": "device.oblique_shock_calc.from_m1_theta.to_p2_p1",
+      "entity": "device",
+      "source": "oblique_shock_calc",
+      "python_module": "devices",
+      "python_name": "oblique_shock_from_m1_theta_to_p2_p1",
+      "excel_name": "ENG_OBLIQUE_SHOCK_FROM_M1_THETA_TO_P2_P1",
+      "op": "device.oblique_shock_calc.value",
+      "fixed_args": {
+        "input_kind": "theta_deg",
+        "target_kind": "p2_p1"
+      },
+      "args": [
+        {
+          "name": "m1",
+          "description": "Upstream Mach number M1"
+        },
+        {
+          "name": "input_value",
+          "description": "Flow deflection theta in degrees"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Weak or strong branch"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience oblique-shock path: (M1, theta_deg, branch) -> p2/p1",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.oblique_shock_from_m1_theta_to_p2_p1(2.0, 10.0, 1.4, \"weak\")",
+      "xloil_example": "=ENG_OBLIQUE_SHOCK_FROM_M1_THETA_TO_P2_P1(2.0,10.0,1.4,\"weak\")",
+      "pyxll_example": "=ENG_OBLIQUE_SHOCK_FROM_M1_THETA_TO_P2_P1(2.0,10.0,1.4,\"weak\")"
+    },
+    {
+      "id": "device.oblique_shock_calc.path_text",
+      "entity": "device",
+      "source": "oblique_shock_calc",
+      "python_module": "devices",
+      "python_name": "oblique_shock_path_text",
+      "excel_name": "ENG_OBLIQUE_SHOCK_PATH_TEXT",
+      "op": "device.oblique_shock_calc.path_text",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "m1",
+          "description": "Upstream Mach number M1"
+        },
+        {
+          "name": "input_kind",
+          "description": "Input kind (beta_deg or theta_deg)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input value in degrees"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (theta_deg, beta_deg, mn1, mn2, m2, p2_p1, rho2_rho1, t2_t1, p02_p01)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Weak/strong branch required for theta->beta inversion paths"
+        }
+      ],
+      "returns": "str",
+      "help": "Oblique shock calculator helper: compact step trace text",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.oblique_shock_path_text(2.0, \"theta_deg\", 10.0, \"p2_p1\", 1.4, \"weak\")",
+      "xloil_example": "=ENG_OBLIQUE_SHOCK_PATH_TEXT(2.0,\"theta_deg\",10.0,\"p2_p1\",1.4,\"weak\")",
+      "pyxll_example": "=ENG_OBLIQUE_SHOCK_PATH_TEXT(2.0,\"theta_deg\",10.0,\"p2_p1\",1.4,\"weak\")"
+    },
+    {
       "id": "device.pipe_loss.solve_delta_p",
       "entity": "device",
       "source": "pipe_loss",
@@ -1372,6 +1596,299 @@
       "python_example": "engpy.equations.compressible.normal_shock_temperature_ratio.solve_t2_t1(m1=\"...\", gamma=\"...\")",
       "xloil_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_TEMPERATURE_RATIO_T2_T1(\"...\",\"...\")",
       "pyxll_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_TEMPERATURE_RATIO_T2_T1(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.oblique_shock_m2.beta",
+      "entity": "equation",
+      "source": "compressible.oblique_shock_m2",
+      "python_module": "equations.compressible.oblique_shock_m2",
+      "python_name": "solve_beta",
+      "excel_name": "ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_BETA",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.oblique_shock_m2",
+        "target": "beta"
+      },
+      "args": [
+        {
+          "name": "m2",
+          "description": "Downstream Mach number"
+        },
+        {
+          "name": "mn2",
+          "description": "Downstream normal Mach"
+        },
+        {
+          "name": "theta",
+          "description": "Flow deflection angle"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Oblique Shock Downstream Mach for beta",
+      "rust_example": "eq.solve(equations::compressible::oblique_shock_m2::equation()).for_target(\"beta\").value()?",
+      "python_example": "engpy.equations.compressible.oblique_shock_m2.solve_beta(m2=\"...\", mn2=\"...\", theta=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_BETA(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_BETA(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.oblique_shock_m2.m2",
+      "entity": "equation",
+      "source": "compressible.oblique_shock_m2",
+      "python_module": "equations.compressible.oblique_shock_m2",
+      "python_name": "solve_m2",
+      "excel_name": "ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_M2",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.oblique_shock_m2",
+        "target": "m2"
+      },
+      "args": [
+        {
+          "name": "mn2",
+          "description": "Downstream normal Mach"
+        },
+        {
+          "name": "beta",
+          "description": "Shock angle"
+        },
+        {
+          "name": "theta",
+          "description": "Flow deflection angle"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Oblique Shock Downstream Mach for m2",
+      "rust_example": "eq.solve(equations::compressible::oblique_shock_m2::equation()).for_target(\"m2\").value()?",
+      "python_example": "engpy.equations.compressible.oblique_shock_m2.solve_m2(mn2=\"...\", beta=\"...\", theta=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_M2(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_M2(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.oblique_shock_m2.mn2",
+      "entity": "equation",
+      "source": "compressible.oblique_shock_m2",
+      "python_module": "equations.compressible.oblique_shock_m2",
+      "python_name": "solve_mn2",
+      "excel_name": "ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_MN2",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.oblique_shock_m2",
+        "target": "mn2"
+      },
+      "args": [
+        {
+          "name": "m2",
+          "description": "Downstream Mach number"
+        },
+        {
+          "name": "beta",
+          "description": "Shock angle"
+        },
+        {
+          "name": "theta",
+          "description": "Flow deflection angle"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Oblique Shock Downstream Mach for mn2",
+      "rust_example": "eq.solve(equations::compressible::oblique_shock_m2::equation()).for_target(\"mn2\").value()?",
+      "python_example": "engpy.equations.compressible.oblique_shock_m2.solve_mn2(m2=\"...\", beta=\"...\", theta=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_MN2(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_MN2(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.oblique_shock_m2.theta",
+      "entity": "equation",
+      "source": "compressible.oblique_shock_m2",
+      "python_module": "equations.compressible.oblique_shock_m2",
+      "python_name": "solve_theta",
+      "excel_name": "ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_THETA",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.oblique_shock_m2",
+        "target": "theta"
+      },
+      "args": [
+        {
+          "name": "m2",
+          "description": "Downstream Mach number"
+        },
+        {
+          "name": "mn2",
+          "description": "Downstream normal Mach"
+        },
+        {
+          "name": "beta",
+          "description": "Shock angle"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Oblique Shock Downstream Mach for theta",
+      "rust_example": "eq.solve(equations::compressible::oblique_shock_m2::equation()).for_target(\"theta\").value()?",
+      "python_example": "engpy.equations.compressible.oblique_shock_m2.solve_theta(m2=\"...\", mn2=\"...\", beta=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_THETA(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_M2_THETA(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.oblique_shock_mn1.beta",
+      "entity": "equation",
+      "source": "compressible.oblique_shock_mn1",
+      "python_module": "equations.compressible.oblique_shock_mn1",
+      "python_name": "solve_beta",
+      "excel_name": "ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_BETA",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.oblique_shock_mn1",
+        "target": "beta"
+      },
+      "args": [
+        {
+          "name": "mn1",
+          "description": "Upstream normal Mach"
+        },
+        {
+          "name": "m1",
+          "description": "Upstream Mach number"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Oblique Shock Normal Upstream Mach for beta",
+      "rust_example": "eq.solve(equations::compressible::oblique_shock_mn1::equation()).for_target(\"beta\").value()?",
+      "python_example": "engpy.equations.compressible.oblique_shock_mn1.solve_beta(mn1=\"...\", m1=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_BETA(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_BETA(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.oblique_shock_mn1.m1",
+      "entity": "equation",
+      "source": "compressible.oblique_shock_mn1",
+      "python_module": "equations.compressible.oblique_shock_mn1",
+      "python_name": "solve_m1",
+      "excel_name": "ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_M1",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.oblique_shock_mn1",
+        "target": "m1"
+      },
+      "args": [
+        {
+          "name": "mn1",
+          "description": "Upstream normal Mach"
+        },
+        {
+          "name": "beta",
+          "description": "Shock angle"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Oblique Shock Normal Upstream Mach for m1",
+      "rust_example": "eq.solve(equations::compressible::oblique_shock_mn1::equation()).for_target(\"m1\").value()?",
+      "python_example": "engpy.equations.compressible.oblique_shock_mn1.solve_m1(mn1=\"...\", beta=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_M1(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_M1(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.oblique_shock_mn1.mn1",
+      "entity": "equation",
+      "source": "compressible.oblique_shock_mn1",
+      "python_module": "equations.compressible.oblique_shock_mn1",
+      "python_name": "solve_mn1",
+      "excel_name": "ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_MN1",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.oblique_shock_mn1",
+        "target": "mn1"
+      },
+      "args": [
+        {
+          "name": "m1",
+          "description": "Upstream Mach number"
+        },
+        {
+          "name": "beta",
+          "description": "Shock angle"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Oblique Shock Normal Upstream Mach for mn1",
+      "rust_example": "eq.solve(equations::compressible::oblique_shock_mn1::equation()).for_target(\"mn1\").value()?",
+      "python_example": "engpy.equations.compressible.oblique_shock_mn1.solve_mn1(m1=\"...\", beta=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_MN1(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_MN1_MN1(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.oblique_shock_theta_beta_m.beta",
+      "entity": "equation",
+      "source": "compressible.oblique_shock_theta_beta_m",
+      "python_module": "equations.compressible.oblique_shock_theta_beta_m",
+      "python_name": "solve_beta",
+      "excel_name": "ENG_COMPRESSIBLE_OBLIQUE_SHOCK_THETA_BETA_M_BETA",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.oblique_shock_theta_beta_m",
+        "target": "beta"
+      },
+      "args": [
+        {
+          "name": "theta",
+          "description": "Flow deflection angle"
+        },
+        {
+          "name": "m1",
+          "description": "Upstream Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: weak, strong"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Oblique Shock Theta-Beta-M Relation for beta",
+      "rust_example": "eq.solve(equations::compressible::oblique_shock_theta_beta_m::equation()).for_target(\"beta\").value()?",
+      "python_example": "engpy.equations.compressible.oblique_shock_theta_beta_m.solve_beta(theta=\"...\", m1=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_THETA_BETA_M_BETA(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_THETA_BETA_M_BETA(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.oblique_shock_theta_beta_m.theta",
+      "entity": "equation",
+      "source": "compressible.oblique_shock_theta_beta_m",
+      "python_module": "equations.compressible.oblique_shock_theta_beta_m",
+      "python_name": "solve_theta",
+      "excel_name": "ENG_COMPRESSIBLE_OBLIQUE_SHOCK_THETA_BETA_M_THETA",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.oblique_shock_theta_beta_m",
+        "target": "theta"
+      },
+      "args": [
+        {
+          "name": "beta",
+          "description": "Shock angle"
+        },
+        {
+          "name": "m1",
+          "description": "Upstream Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: weak, strong"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Oblique Shock Theta-Beta-M Relation for theta",
+      "rust_example": "eq.solve(equations::compressible::oblique_shock_theta_beta_m::equation()).for_target(\"theta\").value()?",
+      "python_example": "engpy.equations.compressible.oblique_shock_theta_beta_m.solve_theta(beta=\"...\", m1=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_THETA_BETA_M_THETA(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_OBLIQUE_SHOCK_THETA_BETA_M_THETA(\"...\",\"...\",\"...\",\"...\")"
     },
     {
       "id": "equation.compressible.prandtl_meyer.M",

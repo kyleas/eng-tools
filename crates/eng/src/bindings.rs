@@ -40,6 +40,9 @@ pub const INVOKE_SUPPORTED_OPS: &[&str] = &[
     "device.normal_shock_calc.value",
     "device.normal_shock_calc.pivot_m1",
     "device.normal_shock_calc.path_text",
+    "device.oblique_shock_calc",
+    "device.oblique_shock_calc.value",
+    "device.oblique_shock_calc.path_text",
     "device.pipe_loss.solve_delta_p",
     "fluid.prop",
     "material.prop",
@@ -284,6 +287,17 @@ pub fn invoke_protocol_spec() -> InvokeProtocolSpec {
                     }
                     "device.normal_shock_calc.path_text" => {
                         "Run normal-shock calculator device and return compact path trace text"
+                            .to_string()
+                    }
+                    "device.oblique_shock_calc" => {
+                        "Run oblique-shock calculator device and return value+resolved geometry+path diagnostics".to_string()
+                    }
+                    "device.oblique_shock_calc.value" => {
+                        "Run oblique-shock calculator device and return scalar output value"
+                            .to_string()
+                    }
+                    "device.oblique_shock_calc.path_text" => {
+                        "Run oblique-shock calculator device and return compact path trace text"
                             .to_string()
                     }
                     "device.pipe_loss.solve_delta_p" => {

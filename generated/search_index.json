@@ -148,6 +148,48 @@
       ]
     },
     {
+      "key": "oblique_shock_m2",
+      "path_id": "compressible.oblique_shock_m2",
+      "name": "Oblique Shock Downstream Mach",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Downstream Mach number from downstream normal Mach and oblique-shock geometry.",
+      "aliases": [],
+      "solve_targets": [
+        "m2",
+        "mn2",
+        "beta",
+        "theta"
+      ]
+    },
+    {
+      "key": "oblique_shock_mn1",
+      "path_id": "compressible.oblique_shock_mn1",
+      "name": "Oblique Shock Normal Upstream Mach",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Normal component of upstream Mach number for oblique shock geometry.",
+      "aliases": [],
+      "solve_targets": [
+        "mn1",
+        "m1",
+        "beta"
+      ]
+    },
+    {
+      "key": "oblique_shock_theta_beta_m",
+      "path_id": "compressible.oblique_shock_theta_beta_m",
+      "name": "Oblique Shock Theta-Beta-M Relation",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Oblique-shock flow deflection angle from upstream Mach number and shock angle.",
+      "aliases": [],
+      "solve_targets": [
+        "theta",
+        "beta"
+      ]
+    },
+    {
       "key": "prandtl_meyer",
       "path_id": "compressible.prandtl_meyer",
       "name": "Prandtl-Meyer Expansion Angle",

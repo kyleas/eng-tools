@@ -1,0 +1,91 @@
+key: oblique_shock_theta_beta_m
+taxonomy:
+  category: compressible
+name: Oblique Shock Theta-Beta-M Relation
+source: "Anderson, Modern Compressible Flow: With Historical Perspective"
+display:
+  latex: '\tan\theta = \frac{2\cot\beta\left(M_1^2\sin^2\beta - 1\right)}{M_1^2\left(\gamma + \cos 2\beta\right)+2}'
+  unicode: "tan(theta) = (2*cot(beta)*(M1^2*sin(beta)^2 - 1)) / (M1^2*(gamma + cos(2*beta)) + 2)"
+  ascii: "tan(theta) = (2*cot(beta)*(m1^2*sin(beta)^2 - 1)) / (m1^2*(gamma + cos(2*beta)) + 2)"
+  description: Oblique-shock flow deflection angle from upstream Mach number and shock angle.
+variables:
+  theta:
+    name: Flow deflection angle
+    symbol: '\theta'
+    dimension: angle
+    constraints:
+      min: 0.0
+      max: 1.5707963267948966
+  beta:
+    name: Shock angle
+    symbol: '\beta'
+    dimension: angle
+    constraints:
+      min: 1e-6
+      max: 1.5707963267948966
+  m1:
+    name: Upstream Mach number
+    symbol: 'M_1'
+    dimension: mach
+    constraints:
+      min: 1.000001
+  gamma:
+    name: Specific heat ratio
+    symbol: '\gamma'
+    dimension: dimensionless
+    constraints:
+      min: 1.01
+residual: tan(theta) - ((2 * (cos(beta) / sin(beta)) * ((m1^2 * sin(beta)^2) - 1)) / (m1^2 * (gamma + cos(2 * beta)) + 2))
+solve:
+  explicit_forms:
+    theta: atan((2 * (cos(beta) / sin(beta)) * ((m1^2 * sin(beta)^2) - 1)) / (m1^2 * (gamma + cos(2 * beta)) + 2))
+  numerical:
+    unsupported_targets: [m1, gamma]
+    solver: bisection
+    initial_guess: 0.8
+    bracket: [0.001, 1.569]
+    tolerance_abs: 1e-12
+    tolerance_rel: 1e-10
+    max_iter: 500
+branches:
+  - name: weak
+    condition: ((asin(1 / m1) + 1.5707963267948966) / 2) - beta
+    preferred: true
+  - name: strong
+    condition: beta - ((asin(1 / m1) + 1.5707963267948966) / 2)
+    preferred: false
+assumptions:
+  - Attached oblique shock, inviscid perfect-gas flow.
+  - Upstream Mach number is supersonic (M1 > 1).
+tests:
+  units_policy: auto_convert_to_si
+  relation_tolerance:
+    abs: 1e-10
+    rel: 1e-8
+  cases:
+    - id: forward_m1_beta_to_theta
+      full_state:
+        m1: 2.0
+        gamma: 1.4
+        beta: 0.6981317007977318
+        theta: 0.18540474909716562
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: theta
+            methods: [explicit]
+    - id: inverse_strong_branch
+      branch: strong
+      full_state:
+        m1: 2.0
+        gamma: 1.4
+        theta: 0.17453292519943295
+        beta: 1.4608419867698104
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: beta
+            methods: [numerical]
+            tolerances:
+              abs: 1e-8
+              rel: 1e-7

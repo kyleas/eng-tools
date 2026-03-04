@@ -47,6 +47,25 @@
         "path diagnostics"
       ],
       "route": "devices/normal_shock_calc.md"
+    },
+    {
+      "key": "oblique_shock_calc",
+      "name": "Oblique Shock Calculator",
+      "summary": "Calculator-style compressible device: solve oblique-shock input pairs (M1+beta / M1+theta) to target outputs with explicit weak/strong branch handling.",
+      "supported_modes": [
+        "Input pairs: (M1, beta), (M1, theta)",
+        "Branch-aware inversion for (M1, theta) -> beta"
+      ],
+      "outputs": [
+        "value_si",
+        "beta_rad",
+        "theta_rad",
+        "mn1",
+        "mn2",
+        "m2",
+        "path diagnostics"
+      ],
+      "route": "devices/oblique_shock_calc.md"
     }
   ]
 }

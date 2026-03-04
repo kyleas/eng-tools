@@ -187,6 +187,18 @@
       "description": "Run normal-shock calculator device and return compact path trace text"
     },
     {
+      "op": "device.oblique_shock_calc",
+      "description": "Run oblique-shock calculator device and return value+resolved geometry+path diagnostics"
+    },
+    {
+      "op": "device.oblique_shock_calc.value",
+      "description": "Run oblique-shock calculator device and return scalar output value"
+    },
+    {
+      "op": "device.oblique_shock_calc.path_text",
+      "description": "Run oblique-shock calculator device and return compact path trace text"
+    },
+    {
       "op": "device.pipe_loss.solve_delta_p",
       "description": "Solve pipe-loss device pressure drop"
     },

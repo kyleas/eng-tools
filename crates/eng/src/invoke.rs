@@ -94,6 +94,13 @@ pub fn handle_invoke(req: InvokeRequest) -> InvokeResponse {
         "device.normal_shock_calc.path_text" => {
             invoke_normal_shock_calc_path_text(&op, request_id, &args)
         }
+        "device.oblique_shock_calc" => invoke_oblique_shock_calc(&op, request_id, &args),
+        "device.oblique_shock_calc.value" => {
+            invoke_oblique_shock_calc_value(&op, request_id, &args)
+        }
+        "device.oblique_shock_calc.path_text" => {
+            invoke_oblique_shock_calc_path_text(&op, request_id, &args)
+        }
         "device.pipe_loss.solve_delta_p" => invoke_pipe_loss(&op, request_id, &args),
         "fluid.prop" => invoke_fluid_prop(&op, request_id, &args),
         "material.prop" => invoke_material_prop(&op, request_id, &args),
@@ -2033,6 +2040,199 @@ fn invoke_normal_shock_calc_path_text(
             op,
             request_id,
             "device_normal_shock_calc_failed",
+            e.to_string(),
+            None,
+            None,
+        ),
+    }
+}
+
+struct ObliqueShockInvokeRequest {
+    req: crate::devices::ObliqueShockCalcRequest,
+    output_angle_deg: bool,
+}
+
+fn oblique_shock_request_from_args(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> std::result::Result<ObliqueShockInvokeRequest, InvokeResponse> {
+    let gamma = req_f64(args, "gamma").map_err(|e| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("gamma"),
+            None,
+        )
+    })?;
+    let m1 = req_f64(args, "m1").map_err(|e| {
+        InvokeResponse::err(op, request_id.clone(), "missing_arg", e, Some("m1"), None)
+    })?;
+    let input_kind_raw = req_str(args, "input_kind").map_err(|e| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("input_kind"),
+            None,
+        )
+    })?;
+    let input_value_raw = req_f64(args, "input_value").map_err(|e| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("input_value"),
+            None,
+        )
+    })?;
+    let target_kind_raw = req_str(args, "target_kind").map_err(|e| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("target_kind"),
+            None,
+        )
+    })?;
+
+    let input_kind =
+        crate::devices::oblique_shock::parse_input_kind(input_kind_raw, input_value_raw)
+            .ok_or_else(|| {
+                InvokeResponse::err(
+                    op,
+                    request_id.clone(),
+                    "invalid_arg",
+                    format!("unsupported input_kind '{input_kind_raw}'"),
+                    Some("input_kind"),
+                    None,
+                )
+            })?;
+    let input_value =
+        crate::devices::oblique_shock::input_value_to_si(input_kind_raw, input_value_raw);
+    let (target_kind, output_angle_deg) =
+        crate::devices::oblique_shock::parse_output_kind(target_kind_raw).ok_or_else(|| {
+            InvokeResponse::err(
+                op,
+                request_id.clone(),
+                "invalid_arg",
+                format!("unsupported target_kind '{target_kind_raw}'"),
+                Some("target_kind"),
+                None,
+            )
+        })?;
+    let branch = opt_str(args, "branch").and_then(crate::devices::oblique_shock::parse_branch);
+
+    Ok(ObliqueShockInvokeRequest {
+        req: crate::devices::ObliqueShockCalcRequest {
+            gamma,
+            m1,
+            input_kind,
+            input_value,
+            target_kind,
+            branch,
+        },
+        output_angle_deg,
+    })
+}
+
+fn invoke_oblique_shock_calc(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+    let invoke_req = match oblique_shock_request_from_args(op, request_id.clone(), args) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    match crate::devices::oblique_shock_calc_from_request(invoke_req.req) {
+        Ok(r) => {
+            let value = if invoke_req.output_angle_deg {
+                r.value_si.to_degrees()
+            } else {
+                r.value_si
+            };
+            InvokeResponse::ok(
+                op,
+                request_id,
+                json!({
+                    "value": value,
+                    "value_unit": if invoke_req.output_angle_deg { "deg" } else { "si" },
+                    "beta_rad": r.beta_rad,
+                    "theta_rad": r.theta_rad,
+                    "beta_deg": r.beta_rad.to_degrees(),
+                    "theta_deg": r.theta_rad.to_degrees(),
+                    "mn1": r.mn1,
+                    "mn2": r.mn2,
+                    "m2": r.m2,
+                    "path": r.path.iter().map(|s| json!({
+                        "equation_path_id": s.equation_path_id,
+                        "solved_for": s.solved_for,
+                        "method": s.method,
+                        "branch": s.branch,
+                        "inputs_used": s.inputs_used.iter().map(|(k,v)| json!({"key":k, "value": v})).collect::<Vec<_>>()
+                    })).collect::<Vec<_>>(),
+                    "path_text": r.path_text(),
+                    "warnings": r.warnings,
+                }),
+            )
+        }
+        Err(e) => InvokeResponse::err(
+            op,
+            request_id,
+            "device_oblique_shock_calc_failed",
+            e.to_string(),
+            None,
+            None,
+        ),
+    }
+}
+
+fn invoke_oblique_shock_calc_value(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
+    let invoke_req = match oblique_shock_request_from_args(op, request_id.clone(), args) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    match crate::devices::oblique_shock_calc_from_request(invoke_req.req) {
+        Ok(r) => {
+            let value = if invoke_req.output_angle_deg {
+                r.value_si.to_degrees()
+            } else {
+                r.value_si
+            };
+            InvokeResponse::ok(op, request_id, json!(value))
+        }
+        Err(e) => InvokeResponse::err(
+            op,
+            request_id,
+            "device_oblique_shock_calc_failed",
+            e.to_string(),
+            None,
+            None,
+        ),
+    }
+}
+
+fn invoke_oblique_shock_calc_path_text(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
+    let invoke_req = match oblique_shock_request_from_args(op, request_id.clone(), args) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    match crate::devices::oblique_shock_calc_from_request(invoke_req.req) {
+        Ok(r) => InvokeResponse::ok(op, request_id, json!(r.path_text())),
+        Err(e) => InvokeResponse::err(
+            op,
+            request_id,
+            "device_oblique_shock_calc_failed",
             e.to_string(),
             None,
             None,

@@ -1,0 +1,63 @@
+key: oblique_shock_m2
+taxonomy:
+  category: compressible
+name: Oblique Shock Downstream Mach
+source: "Anderson, Modern Compressible Flow: With Historical Perspective"
+display:
+  latex: 'M_2 = \frac{M_{n2}}{\sin(\beta-\theta)}'
+  unicode: "m2 = mn2 / sin(beta - theta)"
+  ascii: "m2 = mn2 / sin(beta - theta)"
+  description: Downstream Mach number from downstream normal Mach and oblique-shock geometry.
+variables:
+  m2:
+    name: Downstream Mach number
+    symbol: 'M_2'
+    dimension: mach
+    constraints:
+      positive: true
+  mn2:
+    name: Downstream normal Mach
+    symbol: 'M_{n2}'
+    dimension: mach
+    constraints:
+      positive: true
+  beta:
+    name: Shock angle
+    symbol: '\beta'
+    dimension: angle
+    constraints:
+      min: 1e-6
+      max: 1.5707963267948966
+  theta:
+    name: Flow deflection angle
+    symbol: '\theta'
+    dimension: angle
+    constraints:
+      min: 0.0
+      max: 1.5707963267948966
+residual: m2 - (mn2 / sin(beta - theta))
+solve:
+  explicit_forms:
+    m2: mn2 / sin(beta - theta)
+    mn2: m2 * sin(beta - theta)
+assumptions:
+  - Attached oblique shock geometry with beta > theta.
+tests:
+  units_policy: auto_convert_to_si
+  relation_tolerance:
+    abs: 1e-12
+    rel: 1e-10
+  cases:
+    - id: m2_from_mn2_beta_theta
+      full_state:
+        mn2: 0.7933844243902838
+        beta: 0.6981317007977318
+        theta: 0.18540474909716562
+        m2: 1.6173188340262654
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: m2
+            methods: [explicit]
+          - target: mn2
+            methods: [explicit]

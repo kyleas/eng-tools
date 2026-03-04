@@ -115,6 +115,36 @@
         "resolver_contexts": []
       },
       {
+        "key": "oblique_shock_m2",
+        "path_id": "compressible.oblique_shock_m2",
+        "name": "Oblique Shock Downstream Mach",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "oblique_shock_mn1",
+        "path_id": "compressible.oblique_shock_mn1",
+        "name": "Oblique Shock Normal Upstream Mach",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "oblique_shock_theta_beta_m",
+        "path_id": "compressible.oblique_shock_theta_beta_m",
+        "name": "Oblique Shock Theta-Beta-M Relation",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
         "key": "prandtl_meyer",
         "path_id": "compressible.prandtl_meyer",
         "name": "Prandtl-Meyer Expansion Angle",
@@ -531,6 +561,25 @@
           "path diagnostics"
         ],
         "route": "devices/normal_shock_calc.md"
+      },
+      {
+        "key": "oblique_shock_calc",
+        "name": "Oblique Shock Calculator",
+        "summary": "Calculator-style compressible device: solve oblique-shock input pairs (M1+beta / M1+theta) to target outputs with explicit weak/strong branch handling.",
+        "supported_modes": [
+          "Input pairs: (M1, beta), (M1, theta)",
+          "Branch-aware inversion for (M1, theta) -> beta"
+        ],
+        "outputs": [
+          "value_si",
+          "beta_rad",
+          "theta_rad",
+          "mn1",
+          "mn2",
+          "m2",
+          "path diagnostics"
+        ],
+        "route": "devices/oblique_shock_calc.md"
       }
     ],
     "fluids": [
@@ -1513,6 +1562,46 @@
         "relation": "device_uses_equation",
         "from": "normal_shock_calc",
         "to": "compressible.normal_shock_temperature_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "oblique_shock_calc",
+        "to": "compressible.normal_shock_density_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "oblique_shock_calc",
+        "to": "compressible.normal_shock_m2"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "oblique_shock_calc",
+        "to": "compressible.normal_shock_pressure_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "oblique_shock_calc",
+        "to": "compressible.normal_shock_stagnation_pressure_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "oblique_shock_calc",
+        "to": "compressible.normal_shock_temperature_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "oblique_shock_calc",
+        "to": "compressible.oblique_shock_m2"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "oblique_shock_calc",
+        "to": "compressible.oblique_shock_mn1"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "oblique_shock_calc",
+        "to": "compressible.oblique_shock_theta_beta_m"
       },
       {
         "relation": "device_uses_equation",

@@ -196,6 +196,86 @@ Returns:
 """
     return invoke("device.normal_shock_calc.pivot_m1", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma})
 
+def oblique_shock_calc(m1, input_kind, input_value, target_kind, gamma, branch=None):
+    """Oblique shock calculator: (M1 + beta/theta) -> target with weak/strong branch support
+
+Args:
+  m1: Upstream Mach number M1
+  input_kind: Input kind (beta_deg or theta_deg)
+  input_value: Input value in degrees
+  target_kind: Target kind (theta_deg, beta_deg, mn1, mn2, m2, p2_p1, rho2_rho1, t2_t1, p02_p01)
+  gamma: Specific heat ratio
+  branch: Weak/strong branch required for theta->beta inversion paths
+Returns:
+  f64
+"""
+    return invoke("device.oblique_shock_calc.value", {"m1": m1, "input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+def oblique_shock_from_m1_beta_to_m2(m1, input_value, gamma):
+    """Convenience oblique-shock path: (M1, beta_deg) -> M2
+
+Args:
+  m1: Upstream Mach number M1
+  input_value: Shock angle beta in degrees
+  gamma: Specific heat ratio
+Returns:
+  f64
+"""
+    return invoke("device.oblique_shock_calc.value", {"input_kind": "beta_deg", "target_kind": "m2", "m1": m1, "input_value": input_value, "gamma": gamma})
+
+def oblique_shock_from_m1_beta_to_theta(m1, input_value, gamma):
+    """Convenience oblique-shock path: (M1, beta_deg) -> theta_deg
+
+Args:
+  m1: Upstream Mach number M1
+  input_value: Shock angle beta in degrees
+  gamma: Specific heat ratio
+Returns:
+  f64
+"""
+    return invoke("device.oblique_shock_calc.value", {"input_kind": "beta_deg", "target_kind": "theta_deg", "m1": m1, "input_value": input_value, "gamma": gamma})
+
+def oblique_shock_from_m1_theta_to_beta(m1, input_value, gamma, branch=None):
+    """Convenience oblique-shock path: (M1, theta_deg, branch) -> beta_deg
+
+Args:
+  m1: Upstream Mach number M1
+  input_value: Flow deflection theta in degrees
+  gamma: Specific heat ratio
+  branch: Weak or strong branch
+Returns:
+  f64
+"""
+    return invoke("device.oblique_shock_calc.value", {"input_kind": "theta_deg", "target_kind": "beta_deg", "m1": m1, "input_value": input_value, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+def oblique_shock_from_m1_theta_to_p2_p1(m1, input_value, gamma, branch=None):
+    """Convenience oblique-shock path: (M1, theta_deg, branch) -> p2/p1
+
+Args:
+  m1: Upstream Mach number M1
+  input_value: Flow deflection theta in degrees
+  gamma: Specific heat ratio
+  branch: Weak or strong branch
+Returns:
+  f64
+"""
+    return invoke("device.oblique_shock_calc.value", {"input_kind": "theta_deg", "target_kind": "p2_p1", "m1": m1, "input_value": input_value, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+def oblique_shock_path_text(m1, input_kind, input_value, target_kind, gamma, branch=None):
+    """Oblique shock calculator helper: compact step trace text
+
+Args:
+  m1: Upstream Mach number M1
+  input_kind: Input kind (beta_deg or theta_deg)
+  input_value: Input value in degrees
+  target_kind: Target kind (theta_deg, beta_deg, mn1, mn2, m2, p2_p1, rho2_rho1, t2_t1, p02_p01)
+  gamma: Specific heat ratio
+  branch: Weak/strong branch required for theta->beta inversion paths
+Returns:
+  str
+"""
+    return invoke("device.oblique_shock_calc.path_text", {"m1": m1, "input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
 def pipe_loss_solve_delta_p(friction_model="Colebrook", fixed_f=None, rho=None, mu=None, v=None, d=None, l=None, eps=None, fluid=None, in1_key=None, in1_value=None, in2_key=None, in2_value=None):
     """Solve pipe pressure drop using composed Reynolds/Colebrook/Darcy behavior.
 
