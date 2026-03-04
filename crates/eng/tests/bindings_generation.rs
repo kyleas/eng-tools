@@ -1,6 +1,7 @@
 use std::{fs, process::Command};
 
 use eng::docs::export_unified_docs_to;
+use regex::Regex;
 use tempfile::tempdir;
 
 #[test]
@@ -12,6 +13,7 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     let protocol = tmp.path().join("bindings").join("invoke_protocol.json");
     let py_pkg = tmp.path().join("bindings/python/engpy/__init__.py");
     let py_runtime = tmp.path().join("bindings/python/engpy/_runtime.py");
+    let py_helpers = tmp.path().join("bindings/python/engpy/helpers.py");
     let pyproject = tmp.path().join("bindings/python/pyproject.toml");
     let py_eq_init = tmp
         .path()
@@ -23,6 +25,7 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(protocol.exists(), "missing {}", protocol.display());
     assert!(py_pkg.exists(), "missing {}", py_pkg.display());
     assert!(py_runtime.exists(), "missing {}", py_runtime.display());
+    assert!(py_helpers.exists(), "missing {}", py_helpers.display());
     assert!(pyproject.exists(), "missing {}", pyproject.display());
     assert!(py_eq_init.exists(), "missing {}", py_eq_init.display());
     assert!(xloil.exists(), "missing {}", xloil.display());
@@ -33,6 +36,15 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(text.contains("\"equation.meta\""));
     assert!(text.contains("\"equation.ascii\""));
     assert!(text.contains("\"equation.default_unit\""));
+    assert!(text.contains("\"equation.unicode\""));
+    assert!(text.contains("\"equation.latex\""));
+    assert!(text.contains("\"equation.targets\""));
+    assert!(text.contains("\"equation.variables\""));
+    assert!(text.contains("\"equation.name\""));
+    assert!(text.contains("\"equation.description\""));
+    assert!(text.contains("\"equation.family\""));
+    assert!(text.contains("\"format.value\""));
+    assert!(text.contains("\"meta.get\""));
     assert!(text.contains("\"device.pipe_loss.solve_delta_p\""));
     assert!(text.contains("\"fluid.prop\""));
     assert!(text.contains("\"material.prop\""));
@@ -47,6 +59,9 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(xloil_text.contains("ENG_PIPE_LOSS_DELTA_P"));
     assert!(xloil_text.contains("ENG_EQUATION_META"));
     assert!(xloil_text.contains("ENG_EQUATION_DEFAULT_UNIT"));
+    assert!(xloil_text.contains("ENG_FORMAT"));
+    assert!(xloil_text.contains("ENG_META"));
+    assert!(xloil_text.contains("ENG_EQUATION_TARGETS"));
     assert!(xloil_text.contains("Arguments:"));
     assert!(xloil_text.contains("density"));
     assert!(xloil_text.contains("roughness"));
@@ -55,6 +70,10 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(pyxll_text.contains("@xl_func"));
     assert!(pyxll_text.contains("ENG_FLUID_PROP"));
     assert!(pyxll_text.contains("ENG_EQUATION_ASCII"));
+    assert!(pyxll_text.contains("ENG_EQUATION_UNICODE"));
+    assert!(pyxll_text.contains("ENG_EQUATION_LATEX"));
+    assert!(pyxll_text.contains("ENG_FORMAT"));
+    assert!(pyxll_text.contains("ENG_META"));
     assert!(pyxll_text.contains("Arguments:"));
     assert!(pyxll_text.contains("state_prop_1"));
 
@@ -63,12 +82,50 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(runtime_text.contains("import engpy_native"));
     assert!(runtime_text.contains("def runtime_mode("));
     assert!(runtime_text.contains("def worker_stats("));
+    assert!(runtime_text.contains("def runtime_info("));
     assert!(runtime_text.contains("builtins._ENGPY_CLIENT"));
     assert!(runtime_text.contains("\"encoding\": \"utf-8\""));
+    assert!(runtime_text.contains("native_incompatible_no_worker"));
+    assert!(runtime_text.contains("_switch_to_worker_fallback"));
 
     let pyproject_text = fs::read_to_string(pyproject).expect("read generated pyproject");
     assert!(pyproject_text.contains("maturin"));
     assert!(pyproject_text.contains("engpy_native"));
+}
+
+#[test]
+fn generated_excel_bindings_only_use_supported_invoke_ops() {
+    let tmp = tempdir().expect("tempdir");
+    export_unified_docs_to(tmp.path()).expect("export unified docs");
+
+    let protocol = tmp.path().join("bindings").join("invoke_protocol.json");
+    let xloil = tmp.path().join("bindings/excel/eng_xloil.py");
+    let pyxll = tmp.path().join("bindings/excel/eng_pyxll.py");
+
+    let proto_text = fs::read_to_string(protocol).expect("read invoke protocol");
+    let supported: serde_json::Value =
+        serde_json::from_str(&proto_text).expect("parse invoke protocol json");
+    let supported_ops: std::collections::HashSet<String> = supported["operations"]
+        .as_array()
+        .expect("protocol operations array")
+        .iter()
+        .filter_map(|v| v["op"].as_str())
+        .map(|s| s.to_string())
+        .collect();
+
+    let invoke_re = Regex::new(r#"invoke\("([^"]+)""#).expect("regex");
+    for path in [xloil, pyxll] {
+        let text = fs::read_to_string(&path).expect("read generated excel binding");
+        for cap in invoke_re.captures_iter(&text) {
+            let op = cap.get(1).expect("capture op").as_str();
+            assert!(
+                supported_ops.contains(op),
+                "generated op '{}' in {} is not in invoke protocol supported ops",
+                op,
+                path.display()
+            );
+        }
+    }
 }
 
 #[test]
@@ -83,8 +140,9 @@ fn generated_python_package_imports_when_python_available() {
 
     let python_root = tmp.path().join("bindings").join("python");
     let script = format!(
-        "import sys; sys.path.insert(0, r'{}'); import engpy; import engpy.equations; import engpy.fluids; import engpy.materials; import engpy.devices; import engpy.constants; import engpy._runtime as rt; \
+        "import sys; sys.path.insert(0, r'{}'); import engpy; import engpy.equations; import engpy.fluids; import engpy.materials; import engpy.devices; import engpy.constants; import engpy.helpers; import engpy._runtime as rt; \
 engpy.constants.get_constant(\"g0\"); s1 = rt.worker_stats(); mode = rt.runtime_mode(); engpy.constants.get_constant(\"pi\"); s2 = rt.worker_stats(); \
+engpy.helpers.meta_get(\"equation\", \"structures.hoop_stress\", \"ascii\"); \
 assert mode in ('native', 'worker'); assert s2.get('request_count', 0) >= 2; \
 assert s2.get('runtime_mode') in ('native', 'worker'); \
 assert (mode == 'native') or (s1.get('worker_pid') is not None and s1.get('worker_pid') == s2.get('worker_pid'))",

@@ -117,11 +117,16 @@ let value = eq.solve(equations::fluids::reynolds_number::equation()).for_target(
 ### Python
 ```python
 engpy.equations.fluids.solve_d(re="...", rho="...", v="...", mu="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.fluids.solve_d(re="...", rho="...", v="...", mu="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("fluids.reynolds_number")
 ```
 
 ### Excel
 ```excel
 =ENG_FLUIDS_REYNOLDS_NUMBER_D("...","...","...","...")
+=ENG_FORMAT(ENG_FLUIDS_REYNOLDS_NUMBER_D("...","...","...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("fluids.reynolds_number")
 ```
 
 **Excel arguments**

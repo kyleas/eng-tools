@@ -13,6 +13,11 @@ def e_n_g_c_o_n_s_t(key):
     """Get constant value from registry | Arguments: | - key: Constant key | Returns: f64 | Example: =ENG_CONST('g0')"""
     return invoke("constant.get", {"key": key})
 
+@xl_func(name="ENG_DEVICE_MODES", doc="Read supported modes for a device | Arguments: | - key: Device key | Returns: list | Example: =ENG_DEVICE_MODES('pipe_loss')")
+def e_n_g_d_e_v_i_c_e_m_o_d_e_s(key):
+    """Read supported modes for a device | Arguments: | - key: Device key | Returns: list | Example: =ENG_DEVICE_MODES('pipe_loss')"""
+    return invoke("meta.get", {"entity": "device", "field": "supported_modes", "key": key})
+
 @xl_func(name="ENG_PIPE_LOSS_DELTA_P", doc="Solve pipe pressure drop using Fixed/Colebrook friction model | Arguments: | - friction_model: Colebrook or Fixed | - fixed_f: Required when friction_model=Fixed | - density: Density input (optional with fluid context) | - viscosity: Viscosity input (required for Colebrook without fluid context) | - velocity: Velocity | - diameter: Diameter | - length: Length | - roughness: Roughness (Colebrook) | - fluid: Optional fluid key (e.g. H2O) | - in1_key: Fluid state input key 1 | - in1_value: Fluid state input value 1 | - in2_key: Fluid state input key 2 | - in2_value: Fluid state input value 2 | Returns: f64 | Example: =ENG_PIPE_LOSS_DELTA_P(...)")
 def e_n_g_p_i_p_e_l_o_s_s_d_e_l_t_a_p(friction_model, fixed_f, density, viscosity, velocity, diameter, length, roughness, fluid, in1_key, in1_value, in2_key, in2_value):
     """Solve pipe pressure drop using Fixed/Colebrook friction model | Arguments: | - friction_model: Colebrook or Fixed | - fixed_f: Required when friction_model=Fixed | - density: Density input (optional with fluid context) | - viscosity: Viscosity input (required for Colebrook without fluid context) | - velocity: Velocity | - diameter: Diameter | - length: Length | - roughness: Roughness (Colebrook) | - fluid: Optional fluid key (e.g. H2O) | - in1_key: Fluid state input key 1 | - in1_value: Fluid state input value 1 | - in2_key: Fluid state input key 2 | - in2_value: Fluid state input value 2 | Returns: f64 | Example: =ENG_PIPE_LOSS_DELTA_P(...)"""
@@ -72,6 +77,16 @@ def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_i_s_e_n_t_r_o_p_i_c_t_e_m_p_e_r_a_t_u_r_e_r_a_
 def e_n_g_e_q_u_a_t_i_o_n_d_e_f_a_u_l_t_u_n_i_t(path_id, variable):
     """Read canonical default unit for one equation variable | Arguments: | - path_id: Equation path id | - variable: Variable key (case-insensitive) | Returns: str | Example: =ENG_EQUATION_DEFAULT_UNIT('fluids.reynolds_number','mu')"""
     return invoke("equation.default_unit", {"path_id": path_id, "variable": variable})
+
+@xl_func(name="ENG_EQUATION_DESCRIPTION", doc="Read equation description | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_DESCRIPTION('fluids.reynolds_number')")
+def e_n_g_e_q_u_a_t_i_o_n_d_e_s_c_r_i_p_t_i_o_n(path_id):
+    """Read equation description | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_DESCRIPTION('fluids.reynolds_number')"""
+    return invoke("equation.description", {"path_id": path_id})
+
+@xl_func(name="ENG_EQUATION_FAMILY", doc="Read parent family/variant metadata for an equation | Arguments: | - path_id: Equation path id | Returns: dict|null | Example: =ENG_EQUATION_FAMILY('thermo.ideal_gas.density')")
+def e_n_g_e_q_u_a_t_i_o_n_f_a_m_i_l_y(path_id):
+    """Read parent family/variant metadata for an equation | Arguments: | - path_id: Equation path id | Returns: dict|null | Example: =ENG_EQUATION_FAMILY('thermo.ideal_gas.density')"""
+    return invoke("equation.family", {"path_id": path_id})
 
 @xl_func(name="ENG_FLUIDS_CIRCULAR_PIPE_AREA_A", doc="Solve Circular Pipe Flow Area for A | Arguments: | - d: Diameter | Returns: f64 | Example: =ENG_FLUIDS_CIRCULAR_PIPE_AREA_A('...')")
 def e_n_g_f_l_u_i_d_s_c_i_r_c_u_l_a_r_p_i_p_e_a_r_e_a_a(d):
@@ -283,10 +298,20 @@ def e_n_g_h_e_a_t_t_r_a_n_s_f_e_r_t_h_e_r_m_a_l_r_e_s_i_s_t_a_n_c_e_c_o_n_v_e_c_
     """Solve Convection Thermal Resistance for h | Arguments: | - r_th: Thermal resistance | - a: Surface area | Returns: f64 | Example: =ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_H('...','...')"""
     return invoke("equation.solve", {"path_id": "heat_transfer.thermal_resistance_convection", "target": "h", "R_th": r_th, "A": a})
 
+@xl_func(name="ENG_EQUATION_LATEX", doc="Read LaTeX display form for an equation | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_LATEX('fluids.reynolds_number')")
+def e_n_g_e_q_u_a_t_i_o_n_l_a_t_e_x(path_id):
+    """Read LaTeX display form for an equation | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_LATEX('fluids.reynolds_number')"""
+    return invoke("equation.latex", {"path_id": path_id})
+
 @xl_func(name="ENG_EQUATION_META", doc="Read equation metadata (display forms, variables, dimensions, units, targets) | Arguments: | - path_id: Equation path id (for example `fluids.reynolds_number`) | Returns: dict | Example: =ENG_EQUATION_META('fluids.reynolds_number')")
 def e_n_g_e_q_u_a_t_i_o_n_m_e_t_a(path_id):
     """Read equation metadata (display forms, variables, dimensions, units, targets) | Arguments: | - path_id: Equation path id (for example `fluids.reynolds_number`) | Returns: dict | Example: =ENG_EQUATION_META('fluids.reynolds_number')"""
     return invoke("equation.meta", {"path_id": path_id})
+
+@xl_func(name="ENG_EQUATION_NAME", doc="Read equation name | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_NAME('fluids.reynolds_number')")
+def e_n_g_e_q_u_a_t_i_o_n_n_a_m_e(path_id):
+    """Read equation name | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_NAME('fluids.reynolds_number')"""
+    return invoke("equation.name", {"path_id": path_id})
 
 @xl_func(name="ENG_ROCKETS_CSTAR_IDEAL_C_STAR", doc="Solve Ideal Characteristic Velocity for c_star | Arguments: | - r: Gas constant | - t_c: Chamber temperature | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_ROCKETS_CSTAR_IDEAL_C_STAR('...','...','...')")
 def e_n_g_r_o_c_k_e_t_s_c_s_t_a_r_i_d_e_a_l_c_s_t_a_r(r, t_c, gamma):
@@ -448,6 +473,11 @@ def e_n_g_s_t_r_u_c_t_u_r_e_s_s_h_a_f_t_t_o_r_s_i_o_n_s_t_r_e_s_s_t_a_u(t, r, j)
     """Solve Circular Shaft Torsion Stress for tau | Arguments: | - t: Torque | - r: Radius | - j: Polar moment of inertia | Returns: f64 | Example: =ENG_STRUCTURES_SHAFT_TORSION_STRESS_TAU('...','...','...')"""
     return invoke("equation.solve", {"path_id": "structures.shaft_torsion_stress", "target": "tau", "T": t, "r": r, "J": j})
 
+@xl_func(name="ENG_EQUATION_TARGETS", doc="Read solve targets for an equation | Arguments: | - path_id: Equation path id | Returns: list | Example: =ENG_EQUATION_TARGETS('fluids.reynolds_number')")
+def e_n_g_e_q_u_a_t_i_o_n_t_a_r_g_e_t_s(path_id):
+    """Read solve targets for an equation | Arguments: | - path_id: Equation path id | Returns: list | Example: =ENG_EQUATION_TARGETS('fluids.reynolds_number')"""
+    return invoke("equation.targets", {"path_id": path_id})
+
 @xl_func(name="ENG_THERMO_IDEAL_GAS_DENSITY_P", doc="Solve Ideal Gas Law (Density Form) for P | Arguments: | - rho: Density | - r: Specific gas constant | - t: Absolute temperature | Returns: f64 | Example: =ENG_THERMO_IDEAL_GAS_DENSITY_P('...','...','...')")
 def e_n_g_t_h_e_r_m_o_i_d_e_a_l_g_a_s_d_e_n_s_i_t_y_p(rho, r, t):
     """Solve Ideal Gas Law (Density Form) for P | Arguments: | - rho: Density | - r: Specific gas constant | - t: Absolute temperature | Returns: f64 | Example: =ENG_THERMO_IDEAL_GAS_DENSITY_P('...','...','...')"""
@@ -492,6 +522,16 @@ def e_n_g_t_h_e_r_m_o_i_d_e_a_l_g_a_s_m_a_s_s_v_o_l_u_m_e_v(p, m, r, t):
 def e_n_g_t_h_e_r_m_o_i_d_e_a_l_g_a_s_m_a_s_s_v_o_l_u_m_e_m(p, v, r, t):
     """Solve Ideal Gas Law (Mass-Volume Form) for m | Arguments: | - p: Absolute pressure | - v: Control-volume | - r: Specific gas constant | - t: Absolute temperature | Returns: f64 | Example: =ENG_THERMO_IDEAL_GAS_MASS_VOLUME_M('...','...','...','...')"""
     return invoke("equation.solve", {"path_id": "thermo.ideal_gas.mass_volume", "target": "m", "P": p, "V": v, "R": r, "T": t})
+
+@xl_func(name="ENG_EQUATION_UNICODE", doc="Read Unicode display form for an equation | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_UNICODE('fluids.reynolds_number')")
+def e_n_g_e_q_u_a_t_i_o_n_u_n_i_c_o_d_e(path_id):
+    """Read Unicode display form for an equation | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_UNICODE('fluids.reynolds_number')"""
+    return invoke("equation.unicode", {"path_id": path_id})
+
+@xl_func(name="ENG_EQUATION_VARIABLES", doc="Read variable metadata for an equation | Arguments: | - path_id: Equation path id | Returns: list | Example: =ENG_EQUATION_VARIABLES('fluids.reynolds_number')")
+def e_n_g_e_q_u_a_t_i_o_n_v_a_r_i_a_b_l_e_s(path_id):
+    """Read variable metadata for an equation | Arguments: | - path_id: Equation path id | Returns: list | Example: =ENG_EQUATION_VARIABLES('fluids.reynolds_number')"""
+    return invoke("equation.variables", {"path_id": path_id})
 
 @xl_func(name="ENG_FAMILY_IDEAL_GAS_DENSITY_P", doc="Solve Ideal Gas Law variant Density Form for P | Arguments: | - rho: Density | - r: Specific gas constant | - t: Absolute temperature | Returns: f64 | Example: =ENG_FAMILY_IDEAL_GAS_DENSITY_P('...','...','...')")
 def e_n_g_f_a_m_i_l_y_i_d_e_a_l_g_a_s_d_e_n_s_i_t_y_p(rho, r, t):
@@ -538,13 +578,33 @@ def e_n_g_f_a_m_i_l_y_i_d_e_a_l_g_a_s_m_a_s_s_v_o_l_u_m_e_m(p, v, r, t):
     """Solve Ideal Gas Law variant Mass-Volume Form for m | Arguments: | - p: Absolute pressure | - v: Control-volume | - r: Specific gas constant | - t: Absolute temperature | Returns: f64 | Example: =ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_M('...','...','...','...')"""
     return invoke("equation.solve", {"path_id": "thermo.ideal_gas.mass_volume", "target": "m", "P": p, "V": v, "R": r, "T": t})
 
+@xl_func(name="ENG_FLUID_PROPERTIES", doc="Read supported properties for a fluid | Arguments: | - key: Fluid key/alias | Returns: list | Example: =ENG_FLUID_PROPERTIES('H2O')")
+def e_n_g_f_l_u_i_d_p_r_o_p_e_r_t_i_e_s(key):
+    """Read supported properties for a fluid | Arguments: | - key: Fluid key/alias | Returns: list | Example: =ENG_FLUID_PROPERTIES('H2O')"""
+    return invoke("meta.get", {"entity": "fluid", "field": "supported_properties", "key": key})
+
 @xl_func(name="ENG_FLUID_PROP", doc="Binding-friendly fluid property lookup | Arguments: | - fluid: Fluid key/name | - state_prop_1: State input key 1 | - state_value_1: State input value 1 | - state_prop_2: State input key 2 | - state_value_2: State input value 2 | - out_prop: Output property key | Returns: f64 | Example: =ENG_FLUID_PROP('H2O','T','300 K','P','1 bar','rho')")
 def e_n_g_f_l_u_i_d_p_r_o_p(fluid, state_prop_1, state_value_1, state_prop_2, state_value_2, out_prop):
     """Binding-friendly fluid property lookup | Arguments: | - fluid: Fluid key/name | - state_prop_1: State input key 1 | - state_value_1: State input value 1 | - state_prop_2: State input key 2 | - state_value_2: State input value 2 | - out_prop: Output property key | Returns: f64 | Example: =ENG_FLUID_PROP('H2O','T','300 K','P','1 bar','rho')"""
     return invoke("fluid.prop", {"fluid": fluid, "in1_key": state_prop_1, "in1_value": state_value_1, "in2_key": state_prop_2, "in2_value": state_value_2, "out_prop": out_prop})
 
+@xl_func(name="ENG_FORMAT", doc="Convert a numeric value from input units to output units (with dimensional checks) | Arguments: | - value: Input value in `in_unit` | - in_unit: Input unit expression (for example Pa, m, psia, kg/(m*s)) | - out_unit: Requested output unit expression | Returns: f64 | Example: =ENG_FORMAT(2500000,'Pa','psia')")
+def e_n_g_f_o_r_m_a_t(value, in_unit, out_unit):
+    """Convert a numeric value from input units to output units (with dimensional checks) | Arguments: | - value: Input value in `in_unit` | - in_unit: Input unit expression (for example Pa, m, psia, kg/(m*s)) | - out_unit: Requested output unit expression | Returns: f64 | Example: =ENG_FORMAT(2500000,'Pa','psia')"""
+    return invoke("format.value", {"value": value, "in_unit": in_unit, "out_unit": out_unit})
+
+@xl_func(name="ENG_MATERIAL_PROPERTIES", doc="Read available properties for a material | Arguments: | - key: Material key/alias | Returns: list | Example: =ENG_MATERIAL_PROPERTIES('stainless_304')")
+def e_n_g_m_a_t_e_r_i_a_l_p_r_o_p_e_r_t_i_e_s(key):
+    """Read available properties for a material | Arguments: | - key: Material key/alias | Returns: list | Example: =ENG_MATERIAL_PROPERTIES('stainless_304')"""
+    return invoke("meta.get", {"entity": "material", "field": "properties", "key": key})
+
 @xl_func(name="ENG_MAT_PROP", doc="Binding-friendly material property lookup | Arguments: | - material: Material key/name | - property_key: Property key | - temperature: Temperature input | Returns: f64 | Example: =ENG_MAT_PROP('stainless_304','elastic_modulus','350 K')")
 def e_n_g_m_a_t_p_r_o_p(material, property_key, temperature):
     """Binding-friendly material property lookup | Arguments: | - material: Material key/name | - property_key: Property key | - temperature: Temperature input | Returns: f64 | Example: =ENG_MAT_PROP('stainless_304','elastic_modulus','350 K')"""
     return invoke("material.prop", {"material": material, "property": property_key, "temperature": temperature})
+
+@xl_func(name="ENG_META", doc="General metadata helper for bindings | Arguments: | - entity: equation | device | fluid | material | constant | - key: Entity id/key | - field: Metadata field to read | Returns: scalar|list|dict | Example: =ENG_META('equation','structures.hoop_stress','ascii')")
+def e_n_g_m_e_t_a(entity, key, field):
+    """General metadata helper for bindings | Arguments: | - entity: equation | device | fluid | material | constant | - key: Entity id/key | - field: Metadata field to read | Returns: scalar|list|dict | Example: =ENG_META('equation','structures.hoop_stress','ascii')"""
+    return invoke("meta.get", {"entity": entity, "key": key, "field": field})
 

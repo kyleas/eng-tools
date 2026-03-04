@@ -83,11 +83,16 @@ let value = eq.solve(equations::heat_transfer::thermal_resistance_convection::eq
 ### Python
 ```python
 engpy.equations.heat_transfer.solve_a(r_th="...", h="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.heat_transfer.solve_a(r_th="...", h="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("heat_transfer.thermal_resistance_convection")
 ```
 
 ### Excel
 ```excel
 =ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_A("...","...")
+=ENG_FORMAT(ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_A("...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("heat_transfer.thermal_resistance_convection")
 ```
 
 **Excel arguments**

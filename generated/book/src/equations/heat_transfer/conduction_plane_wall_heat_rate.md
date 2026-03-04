@@ -144,11 +144,16 @@ let value = eq.solve(equations::heat_transfer::conduction_plane_wall_heat_rate::
 ### Python
 ```python
 engpy.equations.heat_transfer.solve_a(q_dot="...", k="...", t_h="...", t_c="...", l="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.heat_transfer.solve_a(q_dot="...", k="...", t_h="...", t_c="...", l="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("heat_transfer.conduction_plane_wall_heat_rate")
 ```
 
 ### Excel
 ```excel
 =ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_A("...","...","...","...","...")
+=ENG_FORMAT(ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_A("...","...","...","...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("heat_transfer.conduction_plane_wall_heat_rate")
 ```
 
 **Excel arguments**

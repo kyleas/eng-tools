@@ -24,13 +24,40 @@ Rust remains the authoritative implementation. Generated Python and Excel bindin
 - Python:
   - `engpy.equations.meta.equation_meta(path_id)`
   - `engpy.equations.meta.equation_ascii(path_id)`
+  - `engpy.equations.meta.equation_unicode(path_id)`
+  - `engpy.equations.meta.equation_latex(path_id)`
+  - `engpy.equations.meta.equation_targets(path_id)`
+  - `engpy.equations.meta.equation_variables(path_id)`
+  - `engpy.equations.meta.equation_name(path_id)`
+  - `engpy.equations.meta.equation_description(path_id)`
+  - `engpy.equations.meta.equation_family(path_id)`
   - `engpy.equations.meta.equation_default_unit(path_id, variable)`
+  - `engpy.helpers.format_value(value, in_unit, out_unit)`
+  - `engpy.helpers.meta_get(entity, key, field)`
 - Excel:
+  - `ENG_FORMAT(value, in_unit, out_unit)`
+  - `ENG_META(entity, key, field)`
   - `ENG_EQUATION_META(path_id)`
   - `ENG_EQUATION_ASCII(path_id)`
+  - `ENG_EQUATION_UNICODE(path_id)`
+  - `ENG_EQUATION_LATEX(path_id)`
+  - `ENG_EQUATION_TARGETS(path_id)`
+  - `ENG_EQUATION_VARIABLES(path_id)`
+  - `ENG_EQUATION_NAME(path_id)`
+  - `ENG_EQUATION_DESCRIPTION(path_id)`
+  - `ENG_EQUATION_FAMILY(path_id)`
   - `ENG_EQUATION_DEFAULT_UNIT(path_id, variable)`
 
-Use these to pull equation forms and canonical units directly into Python/Excel workflows.
+Use these helpers for a composable workflow: keep core engineering calls simple, then layer formatting/reference metadata as needed.
+
+### Clean Excel Pattern
+
+```excel
+=ENG_HOOP_STRESS_SIGMA_H(P, r, t)
+=ENG_FORMAT(ENG_HOOP_STRESS_SIGMA_H(P, r, t), "Pa", "psia")
+=ENG_EQUATION_ASCII("structures.hoop_stress")
+=ENG_META("equation", "structures.hoop_stress", "targets")
+```
 
 Native in-process runtime supports Python usage on Linux and Windows without requiring a platform-specific executable per call.
 

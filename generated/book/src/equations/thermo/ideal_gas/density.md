@@ -106,11 +106,16 @@ let value = eq.solve(equations::thermo::ideal_gas::density::equation()).for_targ
 ### Python
 ```python
 engpy.equations.thermo.solve_p(rho="...", r="...", t="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.thermo.solve_p(rho="...", r="...", t="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("thermo.ideal_gas.density")
 ```
 
 ### Excel
 ```excel
 =ENG_THERMO_IDEAL_GAS_DENSITY_P("...","...","...")
+=ENG_FORMAT(ENG_THERMO_IDEAL_GAS_DENSITY_P("...","...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("thermo.ideal_gas.density")
 ```
 
 **Excel arguments**

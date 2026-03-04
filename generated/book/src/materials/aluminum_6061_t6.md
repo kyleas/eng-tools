@@ -12,11 +12,13 @@ Heat-treated aluminum alloy with dense temperature-property series.
 ### Python
 ```python
 engpy.materials.mat_prop("stainless_304", "elastic_modulus", "350 K")
+engpy.helpers.material_properties("stainless_304")
 ```
 
 ### Excel
 ```excel
 =ENG_MAT_PROP("stainless_304","elastic_modulus","350 K")
+=ENG_MATERIAL_PROPERTIES("stainless_304")
 ```
 
 **Excel arguments**

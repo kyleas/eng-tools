@@ -143,7 +143,7 @@ pub mod pressure {
             kind: QuantityKind::Pressure,
         }
     }
-    pub fn psi(v: f64) -> UnitInput {
+    pub fn psia(v: f64) -> UnitInput {
         UnitInput {
             value_si: v * 6_894.757_293_168,
             kind: QuantityKind::Pressure,

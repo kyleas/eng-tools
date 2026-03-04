@@ -117,11 +117,16 @@ let value = eq.solve(equations::heat_transfer::convection_heat_rate::equation())
 ### Python
 ```python
 engpy.equations.heat_transfer.solve_a(q_dot="...", h="...", t_s="...", t_inf="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.heat_transfer.solve_a(q_dot="...", h="...", t_s="...", t_inf="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("heat_transfer.convection_heat_rate")
 ```
 
 ### Excel
 ```excel
 =ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_A("...","...","...","...")
+=ENG_FORMAT(ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_A("...","...","...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("heat_transfer.convection_heat_rate")
 ```
 
 **Excel arguments**

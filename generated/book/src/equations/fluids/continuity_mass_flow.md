@@ -99,11 +99,16 @@ let value = eq.solve(equations::fluids::continuity_mass_flow::equation()).for_ta
 ### Python
 ```python
 engpy.equations.fluids.solve_a(m_dot="...", rho="...", v="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.fluids.solve_a(m_dot="...", rho="...", v="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("fluids.continuity_mass_flow")
 ```
 
 ### Excel
 ```excel
 =ENG_FLUIDS_CONTINUITY_MASS_FLOW_A("...","...","...")
+=ENG_FORMAT(ENG_FLUIDS_CONTINUITY_MASS_FLOW_A("...","...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("fluids.continuity_mass_flow")
 ```
 
 **Excel arguments**

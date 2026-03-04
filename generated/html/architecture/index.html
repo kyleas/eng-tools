@@ -37,7 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-782acd31.js";
+            window.path_to_searchindex_js = "../searchindex-b9b2989c.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-e22846d2.js"></script>
@@ -187,13 +187,20 @@
 <li><strong>External Bindings</strong>: generated Python/Excel surfaces over Rust-owned implementations.</li>
 </ol>
 <h2 id="ownership-map"><a class="header" href="#ownership-map">Ownership Map</a></h2>
-<p>| Layer | Owner | Owns | Does not own |
-| — | — | — | — | — |
-| <code>AtomicEquation</code> | <code>Equations</code> | equation registry + normalization + validation; scalar solve behavior + diagnostics; equation-level docs/examples/export fragments | multi-step component orchestration; top-level graph execution engine; excel/python runtime implementations |
-| <code>EquationFamily</code> | <code>Equations</code> | canonical law identity + variant metadata; variant discovery/docs/search surfaces; family-to-atomic mapping | component iterative strategies; graph scheduling; external binding runtimes |
-| <code>ComponentModel</code> | <code>Eng</code> | multi-equation orchestration; iteration policy and convergence strategy; context-aware model IO surfaces | single-relation canonical equations; global graph scheduling; backend-native fluid/material implementations |
-| <code>SolveGraph</code> | <code>Eng</code> | node/edge orchestration across equations/components; dependency ordering and graph solve execution; cross-domain chained workflows | atomic equation definitions; fluid/material property backends; binding runtime logic |
-| <code>ExternalBinding</code> | <code>Eng</code> | python/excel surface generation spec; binding package metadata + naming rules; catalog-driven API exposure policy | core numeric implementations; domain registry truth; independent duplicate logic |</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Layer</th><th>Owner</th><th>Owns</th><th>Does not own</th></tr>
+</thead>
+<tbody>
+<tr><td><code>AtomicEquation</code></td><td><code>Equations</code></td><td>equation registry + normalization + validation; scalar solve behavior + diagnostics; equation-level docs/examples/export fragments</td><td>multi-step component orchestration; top-level graph execution engine; excel/python runtime implementations</td></tr>
+<tr><td><code>EquationFamily</code></td><td><code>Equations</code></td><td>canonical law identity + variant metadata; variant discovery/docs/search surfaces; family-to-atomic mapping</td><td>component iterative strategies; graph scheduling; external binding runtimes</td></tr>
+<tr><td><code>ComponentModel</code></td><td><code>Eng</code></td><td>multi-equation orchestration; iteration policy and convergence strategy; context-aware model IO surfaces</td><td>single-relation canonical equations; global graph scheduling; backend-native fluid/material implementations</td></tr>
+<tr><td><code>SolveGraph</code></td><td><code>Eng</code></td><td>node/edge orchestration across equations/components; dependency ordering and graph solve execution; cross-domain chained workflows</td><td>atomic equation definitions; fluid/material property backends; binding runtime logic</td></tr>
+<tr><td><code>ExternalBinding</code></td><td><code>Eng</code></td><td>python/excel surface generation spec; binding package metadata + naming rules; catalog-driven API exposure policy</td><td>core numeric implementations; domain registry truth; independent duplicate logic</td></tr>
+</tbody>
+</table>
+</div>
 <h2 id="belongs-here--not-here-rules"><a class="header" href="#belongs-here--not-here-rules">Belongs Here / Not Here Rules</a></h2>
 <h3 id="atomicequation"><a class="header" href="#atomicequation"><code>AtomicEquation</code></a></h3>
 <p>Belongs here:</p>

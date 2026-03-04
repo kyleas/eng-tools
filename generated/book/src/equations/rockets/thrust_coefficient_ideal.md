@@ -60,11 +60,16 @@ let value = eq.solve(equations::rockets::thrust_coefficient_ideal::equation()).f
 ### Python
 ```python
 engpy.equations.rockets.solve_c_f(gamma="...", p_e_p_c="...", p_a_p_c="...", a_e_a_t="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.rockets.solve_c_f(gamma="...", p_e_p_c="...", p_a_p_c="...", a_e_a_t="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("rockets.thrust_coefficient_ideal")
 ```
 
 ### Excel
 ```excel
 =ENG_ROCKETS_THRUST_COEFFICIENT_IDEAL_C_F("...","...","...","...")
+=ENG_FORMAT(ENG_ROCKETS_THRUST_COEFFICIENT_IDEAL_C_F("...","...","...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("rockets.thrust_coefficient_ideal")
 ```
 
 **Excel arguments**

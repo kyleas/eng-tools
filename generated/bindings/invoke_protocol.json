@@ -55,6 +55,42 @@
       "description": "Read one variable's canonical default unit for an equation"
     },
     {
+      "op": "equation.unicode",
+      "description": "Read Unicode equation display form for one equation"
+    },
+    {
+      "op": "equation.latex",
+      "description": "Read LaTeX equation display form for one equation"
+    },
+    {
+      "op": "equation.targets",
+      "description": "Read solve targets supported by one equation"
+    },
+    {
+      "op": "equation.variables",
+      "description": "Read equation variable keys"
+    },
+    {
+      "op": "equation.name",
+      "description": "Read equation display name"
+    },
+    {
+      "op": "equation.description",
+      "description": "Read equation description"
+    },
+    {
+      "op": "equation.family",
+      "description": "Read parent equation family metadata when available"
+    },
+    {
+      "op": "format.value",
+      "description": "Convert/format SI values into requested engineering units"
+    },
+    {
+      "op": "meta.get",
+      "description": "Read scalar/list metadata from equation/device/fluid/material/constant"
+    },
+    {
       "op": "device.pipe_loss.solve_delta_p",
       "description": "Solve pipe-loss device pressure drop"
     },

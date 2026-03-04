@@ -255,7 +255,7 @@ mod tests {
 
     #[test]
     fn converts_pressure() {
-        let pa = convert_equation_value_to_si("pressure", "psi", 100.0).expect("convert");
+        let pa = convert_equation_value_to_si("pressure", "psia", 100.0).expect("convert");
         assert!((pa - 689_475.729_316_8).abs() < 1e-6);
     }
 
@@ -267,9 +267,16 @@ mod tests {
 
     #[test]
     fn converts_pressure_from_si() {
-        let psi =
-            convert_equation_value_from_si("pressure", "psi", 689_475.729_316_8).expect("convert");
-        assert!((psi - 100.0).abs() < 1e-9);
+        let psia =
+            convert_equation_value_from_si("pressure", "psia", 689_475.729_316_8).expect("convert");
+        assert!((psia - 100.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn converts_pressure_from_si_psia_alias() {
+        let psia = convert_equation_value_from_si("pressure", "psia", 101_325.0).expect("convert");
+        let expected = 101_325.0 / 6_894.757_293_168;
+        assert!((psia - expected).abs() < 1e-12);
     }
 
     #[test]
@@ -292,9 +299,15 @@ mod tests {
 
     #[test]
     fn pressure_quantity_expression_is_supported() {
-        let v = parse_equation_quantity_to_si("pressure", "5 MPa + 12 psi").unwrap();
+        let v = parse_equation_quantity_to_si("pressure", "5 MPa + 12 psia").unwrap();
         let expected = 5.0e6 + 12.0 * 6_894.757_293_168;
         assert!((v - expected).abs() < 1e-6);
+    }
+
+    #[test]
+    fn ambiguous_pressure_psi_is_rejected() {
+        let err = parse_equation_quantity_to_si("pressure", "12 psi").unwrap_err();
+        assert!(err.to_string().contains("ambiguous pressure unit"));
     }
 
     #[test]
@@ -325,13 +338,13 @@ mod tests {
 
     #[test]
     fn invalid_quantity_expression_syntax_is_rejected() {
-        let err = parse_equation_quantity_to_si("pressure", "5 MPa + * 2 psi").unwrap_err();
+        let err = parse_equation_quantity_to_si("pressure", "5 MPa + * 2 psia").unwrap_err();
         assert!(err.to_string().contains("invalid quantity expression"));
     }
 
     #[test]
     fn unknown_unit_in_expression_is_rejected() {
-        let err = parse_equation_quantity_to_si("pressure", "5 blarg + 2 psi").unwrap_err();
+        let err = parse_equation_quantity_to_si("pressure", "5 blarg + 2 psia").unwrap_err();
         assert!(err.to_string().contains("Unknown unit"));
     }
 }

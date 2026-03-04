@@ -37,7 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-782acd31.js";
+            window.path_to_searchindex_js = "../searchindex-b9b2989c.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-e22846d2.js"></script>
@@ -200,18 +200,42 @@
 <ul>
 <li><code>engpy.equations.meta.equation_meta(path_id)</code></li>
 <li><code>engpy.equations.meta.equation_ascii(path_id)</code></li>
+<li><code>engpy.equations.meta.equation_unicode(path_id)</code></li>
+<li><code>engpy.equations.meta.equation_latex(path_id)</code></li>
+<li><code>engpy.equations.meta.equation_targets(path_id)</code></li>
+<li><code>engpy.equations.meta.equation_variables(path_id)</code></li>
+<li><code>engpy.equations.meta.equation_name(path_id)</code></li>
+<li><code>engpy.equations.meta.equation_description(path_id)</code></li>
+<li><code>engpy.equations.meta.equation_family(path_id)</code></li>
 <li><code>engpy.equations.meta.equation_default_unit(path_id, variable)</code></li>
+<li><code>engpy.helpers.format_value(value, in_unit, out_unit)</code></li>
+<li><code>engpy.helpers.meta_get(entity, key, field)</code></li>
 </ul>
 </li>
 <li>Excel:
 <ul>
+<li><code>ENG_FORMAT(value, in_unit, out_unit)</code></li>
+<li><code>ENG_META(entity, key, field)</code></li>
 <li><code>ENG_EQUATION_META(path_id)</code></li>
 <li><code>ENG_EQUATION_ASCII(path_id)</code></li>
+<li><code>ENG_EQUATION_UNICODE(path_id)</code></li>
+<li><code>ENG_EQUATION_LATEX(path_id)</code></li>
+<li><code>ENG_EQUATION_TARGETS(path_id)</code></li>
+<li><code>ENG_EQUATION_VARIABLES(path_id)</code></li>
+<li><code>ENG_EQUATION_NAME(path_id)</code></li>
+<li><code>ENG_EQUATION_DESCRIPTION(path_id)</code></li>
+<li><code>ENG_EQUATION_FAMILY(path_id)</code></li>
 <li><code>ENG_EQUATION_DEFAULT_UNIT(path_id, variable)</code></li>
 </ul>
 </li>
 </ul>
-<p>Use these to pull equation forms and canonical units directly into Python/Excel workflows.</p>
+<p>Use these helpers for a composable workflow: keep core engineering calls simple, then layer formatting/reference metadata as needed.</p>
+<h3 id="clean-excel-pattern"><a class="header" href="#clean-excel-pattern">Clean Excel Pattern</a></h3>
+<pre><code class="language-excel">=ENG_HOOP_STRESS_SIGMA_H(P, r, t)
+=ENG_FORMAT(ENG_HOOP_STRESS_SIGMA_H(P, r, t), "Pa", "psia")
+=ENG_EQUATION_ASCII("structures.hoop_stress")
+=ENG_META("equation", "structures.hoop_stress", "targets")
+</code></pre>
 <p>Native in-process runtime supports Python usage on Linux and Windows without requiring a platform-specific executable per call.</p>
 <h2 id="build--install-native-python-runtime"><a class="header" href="#build--install-native-python-runtime">Build / Install (Native Python Runtime)</a></h2>
 <ul>

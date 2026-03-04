@@ -83,11 +83,16 @@ let value = eq.solve(equations::rockets::thrust_from_mass_flow::equation()).for_
 ### Python
 ```python
 engpy.equations.rockets.solve_f(m_dot="...", c_eff="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.rockets.solve_f(m_dot="...", c_eff="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("rockets.thrust_from_mass_flow")
 ```
 
 ### Excel
 ```excel
 =ENG_ROCKETS_THRUST_FROM_MASS_FLOW_F("...","...")
+=ENG_FORMAT(ENG_ROCKETS_THRUST_FROM_MASS_FLOW_F("...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("rockets.thrust_from_mass_flow")
 ```
 
 **Excel arguments**

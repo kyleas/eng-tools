@@ -99,11 +99,16 @@ let value = eq.solve(equations::structures::shaft_torsion_stress::equation()).fo
 ### Python
 ```python
 engpy.equations.structures.solve_j(tau="...", t="...", r="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.structures.solve_j(tau="...", t="...", r="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("structures.shaft_torsion_stress")
 ```
 
 ### Excel
 ```excel
 =ENG_STRUCTURES_SHAFT_TORSION_STRESS_J("...","...","...")
+=ENG_FORMAT(ENG_STRUCTURES_SHAFT_TORSION_STRESS_J("...","...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("structures.shaft_torsion_stress")
 ```
 
 **Excel arguments**

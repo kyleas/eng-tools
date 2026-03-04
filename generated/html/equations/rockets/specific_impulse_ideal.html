@@ -37,7 +37,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
+            window.path_to_searchindex_js = "../../searchindex-b9b2989c.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-e22846d2.js"></script>
@@ -261,9 +261,14 @@ I_{sp} = \frac{C_f c^*}{g_0}
 <span class="boring">}</span></code></pre>
 <h3 id="python"><a class="header" href="#python">Python</a></h3>
 <pre><code class="language-python">engpy.equations.rockets.solve_c_f(i_sp="...", c_star="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.rockets.solve_c_f(i_sp="...", c_star="..."), "&lt;in_unit&gt;", "&lt;out_unit&gt;")
+engpy.equations.meta.equation_ascii("rockets.specific_impulse_ideal")
 </code></pre>
 <h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
 <pre><code class="language-excel">=ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_F("...","...")
+=ENG_FORMAT(ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_F("...","..."),"&lt;in_unit&gt;","&lt;out_unit&gt;")
+=ENG_EQUATION_ASCII("rockets.specific_impulse_ideal")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>

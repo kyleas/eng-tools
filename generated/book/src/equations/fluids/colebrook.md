@@ -46,11 +46,16 @@ let value = eq.solve(equations::fluids::colebrook::equation()).for_target("f").v
 ### Python
 ```python
 engpy.equations.fluids.solve_f(eps_d="...", re="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.fluids.solve_f(eps_d="...", re="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("fluids.colebrook")
 ```
 
 ### Excel
 ```excel
 =ENG_FLUIDS_COLEBROOK_F("...","...")
+=ENG_FORMAT(ENG_FLUIDS_COLEBROOK_F("...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("fluids.colebrook")
 ```
 
 **Excel arguments**

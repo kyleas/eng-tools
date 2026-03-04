@@ -177,9 +177,7 @@ pub fn invoke_protocol_spec() -> InvokeProtocolSpec {
                     "equation.targets" => {
                         "Read solve targets supported by one equation".to_string()
                     }
-                    "equation.variables" => {
-                        "Read equation variable keys".to_string()
-                    }
+                    "equation.variables" => "Read equation variable keys".to_string(),
                     "equation.name" => "Read equation display name".to_string(),
                     "equation.description" => "Read equation description".to_string(),
                     "equation.family" => {

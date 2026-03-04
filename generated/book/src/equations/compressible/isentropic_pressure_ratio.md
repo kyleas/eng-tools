@@ -54,11 +54,16 @@ let value = eq.solve(equations::compressible::isentropic_pressure_ratio::equatio
 ### Python
 ```python
 engpy.equations.compressible.solve_m(p_p0="...", gamma="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.compressible.solve_m(p_p0="...", gamma="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("compressible.isentropic_pressure_ratio")
 ```
 
 ### Excel
 ```excel
 =ENG_COMPRESSIBLE_ISENTROPIC_PRESSURE_RATIO_M("...","...")
+=ENG_FORMAT(ENG_COMPRESSIBLE_ISENTROPIC_PRESSURE_RATIO_M("...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("compressible.isentropic_pressure_ratio")
 ```
 
 **Excel arguments**

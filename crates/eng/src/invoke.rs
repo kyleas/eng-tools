@@ -417,11 +417,7 @@ fn invoke_equation_targets(op: &str, request_id: Option<String>, args: &Value) -
     InvokeResponse::ok(op, request_id, json!(targets))
 }
 
-fn invoke_equation_variables(
-    op: &str,
-    request_id: Option<String>,
-    args: &Value,
-) -> InvokeResponse {
+fn invoke_equation_variables(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
     let path_id = match req_str(args, "path_id") {
         Ok(v) => v,
         Err(e) => {
@@ -525,7 +521,8 @@ fn invoke_equation_family(op: &str, request_id: Option<String>, args: &Value) ->
             );
         }
     };
-    let families = match equations::equation_families::load_default_validated(registry.equations()) {
+    let families = match equations::equation_families::load_default_validated(registry.equations())
+    {
         Ok(f) => f,
         Err(e) => {
             return InvokeResponse::err(
@@ -558,30 +555,88 @@ fn invoke_equation_family(op: &str, request_id: Option<String>, args: &Value) ->
 }
 
 fn invoke_format_value(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+    fn unit_to_si_factor_and_sig(unit: &str) -> Result<(f64, eng_core::units::DimensionSignature), String> {
+        let expr = format!("1 {unit}");
+        match eng_core::units::parse_quantity_expression(&expr) {
+            Ok(v) => Ok((v.value_si, v.signature)),
+            Err(e) => Err(e.to_string()),
+        }
+    }
+
     let value = match req_f64(args, "value") {
         Ok(v) => v,
         Err(e) => {
             return InvokeResponse::err(op, request_id, "missing_arg", e, Some("value"), None);
         }
     };
-    let quantity = match req_str(args, "quantity") {
-        Ok(v) => v,
-        Err(e) => {
-            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("quantity"), None);
-        }
-    };
+    let in_unit = opt_str(args, "in_unit");
     let out_unit = match req_str(args, "out_unit") {
         Ok(v) => v,
         Err(e) => {
             return InvokeResponse::err(op, request_id, "missing_arg", e, Some("out_unit"), None);
         }
     };
-    let in_unit = opt_str(args, "in_unit");
     let mode = opt_str(args, "mode").unwrap_or("value");
-    let dimension = canonical_dimension(quantity);
 
-    let value_si = if let Some(u) = in_unit {
-        match eng_core::units::convert_equation_value_to_si(&dimension, u, value) {
+    // Primary path: explicit in/out units with dimensional compatibility check.
+    let converted = if let Some(u_in) = in_unit {
+        let (in_factor, in_sig) = match unit_to_si_factor_and_sig(u_in) {
+            Ok(v) => v,
+            Err(e) => {
+                return InvokeResponse::err(
+                    op,
+                    request_id,
+                    "format_conversion_error",
+                    e,
+                    Some("in_unit"),
+                    Some(json!({ "in_unit": u_in, "out_unit": out_unit })),
+                );
+            }
+        };
+        let (out_factor, out_sig) = match unit_to_si_factor_and_sig(out_unit) {
+            Ok(v) => v,
+            Err(e) => {
+                return InvokeResponse::err(
+                    op,
+                    request_id,
+                    "format_conversion_error",
+                    e,
+                    Some("out_unit"),
+                    Some(json!({ "in_unit": u_in, "out_unit": out_unit })),
+                );
+            }
+        };
+        if in_sig != out_sig {
+            return InvokeResponse::err(
+                op,
+                request_id,
+                "format_dimension_mismatch",
+                format!(
+                    "input/output unit dimensions do not match: in {:?}, out {:?}",
+                    in_sig, out_sig
+                ),
+                Some("out_unit"),
+                Some(json!({ "in_unit": u_in, "out_unit": out_unit })),
+            );
+        }
+        value * in_factor / out_factor
+    } else {
+        // Legacy path for compatibility: value interpreted as SI for provided quantity.
+        let quantity = match req_str(args, "quantity") {
+            Ok(v) => v,
+            Err(_) => {
+                return InvokeResponse::err(
+                    op,
+                    request_id,
+                    "missing_arg",
+                    "missing string arg 'in_unit' (preferred) or legacy 'quantity'",
+                    Some("in_unit"),
+                    None,
+                );
+            }
+        };
+        let dimension = canonical_dimension(quantity);
+        match convert_equation_value_from_si(&dimension, out_unit, value) {
             Ok(v) => v,
             Err(e) => {
                 return InvokeResponse::err(
@@ -589,26 +644,10 @@ fn invoke_format_value(op: &str, request_id: Option<String>, args: &Value) -> In
                     request_id,
                     "format_conversion_error",
                     e.to_string(),
-                    Some("in_unit"),
+                    Some("out_unit"),
                     Some(json!({ "quantity": quantity, "dimension": dimension })),
                 );
             }
-        }
-    } else {
-        value
-    };
-
-    let converted = match convert_equation_value_from_si(&dimension, out_unit, value_si) {
-        Ok(v) => v,
-        Err(e) => {
-            return InvokeResponse::err(
-                op,
-                request_id,
-                "format_conversion_error",
-                e.to_string(),
-                Some("out_unit"),
-                Some(json!({ "quantity": quantity, "dimension": dimension })),
-            );
         }
     };
 

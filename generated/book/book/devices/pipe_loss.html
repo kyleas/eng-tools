@@ -37,7 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-782acd31.js";
+            window.path_to_searchindex_js = "../searchindex-b9b2989c.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-e22846d2.js"></script>
@@ -244,10 +244,13 @@
 </ul>
 <h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
 <h3 id="python"><a class="header" href="#python">Python</a></h3>
-<pre><code class="language-python">engpy.devices.pipe_loss_solve_delta_p(friction_model="Colebrook", v="3 m/s", d="0.1 m", l="10 m", eps="0.00015 in", fluid="H2O", in1_key="T", in1_value="300 K", in2_key="P", in2_value="1 atm")
+<pre><code class="language-python">dp = engpy.devices.pipe_loss_solve_delta_p(friction_model="Colebrook", v="3 m/s", d="0.1 m", l="10 m", eps="0.00015 in", fluid="H2O", in1_key="T", in1_value="300 K", in2_key="P", in2_value="1 atm")
+engpy.helpers.format_value(dp, "Pa", "psia")
 </code></pre>
 <h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
 <pre><code class="language-excel">=ENG_PIPE_LOSS_DELTA_P("Colebrook",,"",,"3 m/s","0.1 m","10 m","0.00015 in","H2O","T","300 K","P","1 atm")
+=ENG_FORMAT(ENG_PIPE_LOSS_DELTA_P("Colebrook",,"",,"3 m/s","0.1 m","10 m","0.00015 in","H2O","T","300 K","P","1 atm"),"Pa","psia")
+=ENG_META("device","pipe_loss","supported_modes")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>

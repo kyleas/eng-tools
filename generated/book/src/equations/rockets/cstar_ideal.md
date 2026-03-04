@@ -69,11 +69,16 @@ let value = eq.solve(equations::rockets::cstar_ideal::equation()).for_target("c_
 ### Python
 ```python
 engpy.equations.rockets.solve_c_star(r="...", t_c="...", gamma="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.rockets.solve_c_star(r="...", t_c="...", gamma="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("rockets.cstar_ideal")
 ```
 
 ### Excel
 ```excel
 =ENG_ROCKETS_CSTAR_IDEAL_C_STAR("...","...","...")
+=ENG_FORMAT(ENG_ROCKETS_CSTAR_IDEAL_C_STAR("...","...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("rockets.cstar_ideal")
 ```
 
 **Excel arguments**

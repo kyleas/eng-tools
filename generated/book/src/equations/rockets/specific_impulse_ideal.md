@@ -87,11 +87,16 @@ let value = eq.solve(equations::rockets::specific_impulse_ideal::equation()).for
 ### Python
 ```python
 engpy.equations.rockets.solve_c_f(i_sp="...", c_star="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.rockets.solve_c_f(i_sp="...", c_star="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("rockets.specific_impulse_ideal")
 ```
 
 ### Excel
 ```excel
 =ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_F("...","...")
+=ENG_FORMAT(ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_F("...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("rockets.specific_impulse_ideal")
 ```
 
 **Excel arguments**

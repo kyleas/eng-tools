@@ -128,11 +128,16 @@ let value = eq.solve(equations::structures::euler_buckling_load::equation()).for
 ### Python
 ```python
 engpy.equations.structures.solve_e(p_cr="...", i="...", k="...", l="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.structures.solve_e(p_cr="...", i="...", k="...", l="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("structures.euler_buckling_load")
 ```
 
 ### Excel
 ```excel
 =ENG_STRUCTURES_EULER_BUCKLING_LOAD_E("...","...","...","...")
+=ENG_FORMAT(ENG_STRUCTURES_EULER_BUCKLING_LOAD_E("...","...","...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("structures.euler_buckling_load")
 ```
 
 **Excel arguments**

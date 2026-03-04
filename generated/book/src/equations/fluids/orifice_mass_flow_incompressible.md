@@ -117,11 +117,16 @@ let value = eq.solve(equations::fluids::orifice_mass_flow_incompressible::equati
 ### Python
 ```python
 engpy.equations.fluids.solve_a(m_dot="...", c_d="...", rho="...", delta_p="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.fluids.solve_a(m_dot="...", c_d="...", rho="...", delta_p="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("fluids.orifice_mass_flow_incompressible")
 ```
 
 ### Excel
 ```excel
 =ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_A("...","...","...","...")
+=ENG_FORMAT(ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_A("...","...","...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("fluids.orifice_mass_flow_incompressible")
 ```
 
 **Excel arguments**

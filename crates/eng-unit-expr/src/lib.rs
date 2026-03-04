@@ -408,7 +408,13 @@ fn resolve_atom(raw: &str) -> Result<(f64, Signature), ExprError> {
         "kpa" => (1e3, Signature::new(1, -1, -2, 0, 0)),
         "mpa" => (1e6, Signature::new(1, -1, -2, 0, 0)),
         "bar" => (1e5, Signature::new(1, -1, -2, 0, 0)),
-        "psi" => (6_894.757_293_168, Signature::new(1, -1, -2, 0, 0)),
+        "psia" => (6_894.757_293_168, Signature::new(1, -1, -2, 0, 0)),
+        "psi" => {
+            return Err(ExprError::AmbiguousUnit(
+                "ambiguous pressure unit 'psi'; use 'psia' (absolute) or 'psig' (gauge)"
+                    .to_string(),
+            ));
+        }
         "lbf" => (4.448_221_615_260_5, Signature::new(1, 1, -2, 0, 0)),
         "kw" => (1e3, Signature::new(1, 2, -3, 0, 0)),
         "cp" => (1e-3, Signature::new(1, -1, -1, 0, 0)),
@@ -467,8 +473,14 @@ mod tests {
 
     #[test]
     fn evaluates_pressure_expression() {
-        let q = evaluate("5 MPa + 12 psi").unwrap();
+        let q = evaluate("5 MPa + 12 psia").unwrap();
         let expected = 5.0e6 + 12.0 * 6_894.757_293_168;
         assert!((q.value_si - expected).abs() < 1e-6);
+    }
+
+    #[test]
+    fn rejects_ambiguous_psi() {
+        let err = evaluate("12 psi").unwrap_err();
+        assert!(err.to_string().contains("ambiguous pressure unit"));
     }
 }

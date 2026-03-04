@@ -5,7 +5,7 @@ Catalog-backed fluid wrappers with typed and generic state APIs.
 - [Fluids Guide](./guide.md)
 
 | Fluid | Key | Aliases | Supported State Inputs | Properties |
-| --- | --- | --- | --- |
+| --- | --- | --- | --- | --- |
 | [Air](./air.md) | `Air` | `atmosphere` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
 | [Argon](./ar.md) | `Ar` | `argon` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
 | [Methane](./c_h4.md) | `CH4` | `methane` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |

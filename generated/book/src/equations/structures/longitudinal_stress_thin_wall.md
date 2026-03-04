@@ -99,11 +99,16 @@ let value = eq.solve(equations::structures::longitudinal_stress_thin_wall::equat
 ### Python
 ```python
 engpy.equations.structures.solve_p(sigma_l="...", r="...", t="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.structures.solve_p(sigma_l="...", r="...", t="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("structures.longitudinal_stress_thin_wall")
 ```
 
 ### Excel
 ```excel
 =ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_P("...","...","...")
+=ENG_FORMAT(ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_P("...","...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("structures.longitudinal_stress_thin_wall")
 ```
 
 **Excel arguments**

@@ -65,11 +65,16 @@ let value = eq.solve(equations::heat_transfer::log_mean_temperature_difference::
 ### Python
 ```python
 engpy.equations.heat_transfer.solve_delta_t_lm(delta_t_1="...", delta_t_2="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.heat_transfer.solve_delta_t_lm(delta_t_1="...", delta_t_2="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("heat_transfer.log_mean_temperature_difference")
 ```
 
 ### Excel
 ```excel
 =ENG_HEAT_TRANSFER_LOG_MEAN_TEMPERATURE_DIFFERENCE_DELTA_T_LM("...","...")
+=ENG_FORMAT(ENG_HEAT_TRANSFER_LOG_MEAN_TEMPERATURE_DIFFERENCE_DELTA_T_LM("...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("heat_transfer.log_mean_temperature_difference")
 ```
 
 **Excel arguments**

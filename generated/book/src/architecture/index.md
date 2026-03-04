@@ -13,7 +13,7 @@ This chapter defines strict ownership boundaries for work after atomic equations
 ## Ownership Map
 
 | Layer | Owner | Owns | Does not own |
-| --- | --- | --- | --- | --- |
+| --- | --- | --- | --- |
 | `AtomicEquation` | `Equations` | equation registry + normalization + validation; scalar solve behavior + diagnostics; equation-level docs/examples/export fragments | multi-step component orchestration; top-level graph execution engine; excel/python runtime implementations |
 | `EquationFamily` | `Equations` | canonical law identity + variant metadata; variant discovery/docs/search surfaces; family-to-atomic mapping | component iterative strategies; graph scheduling; external binding runtimes |
 | `ComponentModel` | `Eng` | multi-equation orchestration; iteration policy and convergence strategy; context-aware model IO surfaces | single-relation canonical equations; global graph scheduling; backend-native fluid/material implementations |

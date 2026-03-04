@@ -99,11 +99,16 @@ let value = eq.solve(equations::structures::beam_bending_stress::equation()).for
 ### Python
 ```python
 engpy.equations.structures.solve_i(sigma_b="...", m="...", c="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.structures.solve_i(sigma_b="...", m="...", c="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("structures.beam_bending_stress")
 ```
 
 ### Excel
 ```excel
 =ENG_STRUCTURES_BEAM_BENDING_STRESS_I("...","...","...")
+=ENG_FORMAT(ENG_STRUCTURES_BEAM_BENDING_STRESS_I("...","...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("structures.beam_bending_stress")
 ```
 
 **Excel arguments**

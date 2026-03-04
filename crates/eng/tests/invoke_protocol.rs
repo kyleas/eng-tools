@@ -151,3 +151,59 @@ fn invoke_equation_ascii_and_default_unit_return_scalars() {
     assert_eq!(unit_resp["ok"], true, "response: {unit_resp}");
     assert_eq!(unit_resp["value"], "Pa*s");
 }
+
+#[test]
+fn invoke_format_and_meta_helpers_work() {
+    let fmt_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "format.value",
+        "args": {
+            "value": 2.5e6,
+            "in_unit": "Pa",
+            "out_unit": "psia"
+        }
+    });
+    let fmt_resp = run_invoke(fmt_req);
+    assert_eq!(fmt_resp["ok"], true, "response: {fmt_resp}");
+    assert!(fmt_resp["value"].as_f64().unwrap_or(0.0) > 300.0);
+
+    let fmt_psia_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "format.value",
+        "args": {
+            "value": 101325.0,
+            "in_unit": "Pa",
+            "out_unit": "psia"
+        }
+    });
+    let fmt_psia_resp = run_invoke(fmt_psia_req);
+    assert_eq!(fmt_psia_resp["ok"], true, "response: {fmt_psia_resp}");
+    let psia = fmt_psia_resp["value"].as_f64().unwrap_or(0.0);
+    assert!((psia - 14.695_948_8).abs() < 1e-4);
+
+    let mismatch_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "format.value",
+        "args": {
+            "value": 1.0,
+            "in_unit": "Pa",
+            "out_unit": "m"
+        }
+    });
+    let mismatch_resp = run_invoke(mismatch_req);
+    assert_eq!(mismatch_resp["ok"], false, "response: {mismatch_resp}");
+    assert_eq!(mismatch_resp["error"]["code"], "format_dimension_mismatch");
+
+    let meta_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "meta.get",
+        "args": {
+            "entity": "equation",
+            "key": "structures.hoop_stress",
+            "field": "ascii"
+        }
+    });
+    let meta_resp = run_invoke(meta_req);
+    assert_eq!(meta_resp["ok"], true, "response: {meta_resp}");
+    assert!(meta_resp["value"].as_str().unwrap_or("").contains("sigma"));
+}

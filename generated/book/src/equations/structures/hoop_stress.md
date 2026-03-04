@@ -100,11 +100,16 @@ let value = eq.solve(equations::structures::hoop_stress::equation()).for_target(
 ### Python
 ```python
 engpy.equations.structures.solve_p(sigma_h="...", r="...", t="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.structures.solve_p(sigma_h="...", r="...", t="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("structures.hoop_stress")
 ```
 
 ### Excel
 ```excel
 =ENG_STRUCTURES_HOOP_STRESS_P("...","...","...")
+=ENG_FORMAT(ENG_STRUCTURES_HOOP_STRESS_P("...","...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("structures.hoop_stress")
 ```
 
 **Excel arguments**

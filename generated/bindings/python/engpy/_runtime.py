@@ -275,9 +275,46 @@ def worker_stats():
     return stats
 
 
+def runtime_info():
+    info = worker_stats()
+    info["native_fallback_reason"] = getattr(builtins, "_ENGPY_NATIVE_FALLBACK_REASON", None)
+    return info
+
+
 def stop_worker():
     _CLIENT._stop()
 
 
+def _switch_to_worker_fallback(reason: str):
+    global _CLIENT, _RUNTIME_MODE
+    worker = _WorkerClient()
+    _CLIENT = worker
+    _RUNTIME_MODE = "worker"
+    builtins._ENGPY_CLIENT = worker
+    builtins._ENGPY_CLIENT_MODE = "worker"
+    builtins._ENGPY_NATIVE_FALLBACK_REASON = reason
+    return worker
+
+
 def invoke(op: str, args: dict, request_id=None):
-    return _CLIENT.invoke(op, args, request_id=request_id)
+    try:
+        return _CLIENT.invoke(op, args, request_id=request_id)
+    except EngBindingError as exc:
+        # If a stale native extension is loaded, allow transparent fallback.
+        allow_fallback = os.environ.get("ENGPY_NATIVE_FALLBACK", "1").strip().lower() not in {"0", "false", "no"}
+        if (
+            allow_fallback
+            and _RUNTIME_MODE == "native"
+            and exc.code in {"unknown_operation", "protocol_version_mismatch"}
+        ):
+            reason = f"native incompatibility ({exc.code}) on op '{op}'"
+            try:
+                return _switch_to_worker_fallback(reason).invoke(op, args, request_id=request_id)
+            except Exception as worker_exc:
+                raise EngBindingError(
+                    "native_incompatible_no_worker",
+                    f"{reason}; worker fallback failed: {worker_exc}. Rebuild engpy_native (scripts/setup-native-bindings.*).",
+                    op=op,
+                    request_id=request_id,
+                )
+        raise

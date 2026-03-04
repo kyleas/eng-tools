@@ -124,11 +124,16 @@ let value = eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_
 ### Python
 ```python
 engpy.equations.thermo.solve_p(v="...", m="...", r="...", t="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.thermo.solve_p(v="...", m="...", r="...", t="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("thermo.ideal_gas.mass_volume")
 ```
 
 ### Excel
 ```excel
 =ENG_THERMO_IDEAL_GAS_MASS_VOLUME_P("...","...","...","...")
+=ENG_FORMAT(ENG_THERMO_IDEAL_GAS_MASS_VOLUME_P("...","...","...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("thermo.ideal_gas.mass_volume")
 ```
 
 **Excel arguments**

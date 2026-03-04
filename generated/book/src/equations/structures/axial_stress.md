@@ -83,11 +83,16 @@ let value = eq.solve(equations::structures::axial_stress::equation()).for_target
 ### Python
 ```python
 engpy.equations.structures.solve_a(sigma="...", f="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.structures.solve_a(sigma="...", f="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("structures.axial_stress")
 ```
 
 ### Excel
 ```excel
 =ENG_STRUCTURES_AXIAL_STRESS_A("...","...")
+=ENG_FORMAT(ENG_STRUCTURES_AXIAL_STRESS_A("...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("structures.axial_stress")
 ```
 
 **Excel arguments**

@@ -137,11 +137,16 @@ let value = eq.solve(equations::fluids::darcy_weisbach_pressure_drop::equation()
 ### Python
 ```python
 engpy.equations.fluids.solve_d(delta_p="...", f="...", l="...", rho="...", v="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.fluids.solve_d(delta_p="...", f="...", l="...", rho="...", v="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("fluids.darcy_weisbach_pressure_drop")
 ```
 
 ### Excel
 ```excel
 =ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_D("...","...","...","...","...")
+=ENG_FORMAT(ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_D("...","...","...","...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("fluids.darcy_weisbach_pressure_drop")
 ```
 
 **Excel arguments**

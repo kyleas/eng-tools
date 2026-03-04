@@ -68,11 +68,16 @@ let value = eq.solve(equations::compressible::area_mach::equation()).for_target(
 ### Python
 ```python
 engpy.equations.compressible.solve_m(area_ratio="...", gamma="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.compressible.solve_m(area_ratio="...", gamma="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("compressible.area_mach")
 ```
 
 ### Excel
 ```excel
 =ENG_COMPRESSIBLE_AREA_MACH_M("...","...")
+=ENG_FORMAT(ENG_COMPRESSIBLE_AREA_MACH_M("...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("compressible.area_mach")
 ```
 
 **Excel arguments**

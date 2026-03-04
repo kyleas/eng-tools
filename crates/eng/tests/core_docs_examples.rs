@@ -30,7 +30,7 @@ fn core_handbook_workflows_execute() -> Result<(), Box<dyn std::error::Error>> {
     let sigma_h_qty = eq
         .solve(equations::structures::hoop_stress::equation())
         .target_sigma_h()
-        .given_p(qty!("5 MPa + 12 psi"))
+        .given_p(qty!("5 MPa + 12 psia"))
         .given_r(qty!("0.2 m"))
         .given_t(qty!("8 mm"))
         .value()?;
@@ -39,7 +39,7 @@ fn core_handbook_workflows_execute() -> Result<(), Box<dyn std::error::Error>> {
     let sigma_h_runtime = eq
         .solve(equations::structures::hoop_stress::equation())
         .target_sigma_h()
-        .given_p("5 MPa + 12 psi")
+        .given_p("5 MPa + 12 psia")
         .given_r("0.2 m")
         .given_t("8 mm")
         .value()?;

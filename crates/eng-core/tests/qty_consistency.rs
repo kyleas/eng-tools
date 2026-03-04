@@ -2,8 +2,8 @@ use eng_core::units::{parse_quantity_expression, qty};
 
 #[test]
 fn qty_macro_matches_runtime_for_pressure_expression() {
-    let runtime = parse_quantity_expression("5 MPa + 12 psi").expect("runtime parse");
-    let compiled = qty!("5 MPa + 12 psi");
+    let runtime = parse_quantity_expression("5 MPa + 12 psia").expect("runtime parse");
+    let compiled = qty!("5 MPa + 12 psia");
     assert!((runtime.value_si - compiled.value_si).abs() < 1e-9);
     assert_eq!(runtime.signature, compiled.signature);
 }

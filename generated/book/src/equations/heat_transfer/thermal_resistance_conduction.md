@@ -99,11 +99,16 @@ let value = eq.solve(equations::heat_transfer::thermal_resistance_conduction::eq
 ### Python
 ```python
 engpy.equations.heat_transfer.solve_a(r_th="...", l="...", k="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.heat_transfer.solve_a(r_th="...", l="...", k="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("heat_transfer.thermal_resistance_conduction")
 ```
 
 ### Excel
 ```excel
 =ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_A("...","...","...")
+=ENG_FORMAT(ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_A("...","...","..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("heat_transfer.thermal_resistance_conduction")
 ```
 
 **Excel arguments**

@@ -73,11 +73,16 @@ let value = eq.solve(equations::fluids::circular_pipe_area::equation()).for_targ
 ### Python
 ```python
 engpy.equations.fluids.solve_a(d="...")
+# helper layer
+engpy.helpers.format_value(engpy.equations.fluids.solve_a(d="..."), "<in_unit>", "<out_unit>")
+engpy.equations.meta.equation_ascii("fluids.circular_pipe_area")
 ```
 
 ### Excel
 ```excel
 =ENG_FLUIDS_CIRCULAR_PIPE_AREA_A("...")
+=ENG_FORMAT(ENG_FLUIDS_CIRCULAR_PIPE_AREA_A("..."),"<in_unit>","<out_unit>")
+=ENG_EQUATION_ASCII("fluids.circular_pipe_area")
 ```
 
 **Excel arguments**

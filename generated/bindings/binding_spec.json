@@ -26,6 +26,31 @@
       "pyxll_example": "=ENG_CONST(\"g0\")"
     },
     {
+      "id": "device.meta.modes",
+      "entity": "helper",
+      "source": "devices",
+      "python_module": "helpers",
+      "python_name": "device_modes",
+      "excel_name": "ENG_DEVICE_MODES",
+      "op": "meta.get",
+      "fixed_args": {
+        "entity": "device",
+        "field": "supported_modes"
+      },
+      "args": [
+        {
+          "name": "key",
+          "description": "Device key"
+        }
+      ],
+      "returns": "list",
+      "help": "Read supported modes for a device",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.device_modes(\"pipe_loss\")",
+      "xloil_example": "=ENG_DEVICE_MODES(\"pipe_loss\")",
+      "pyxll_example": "=ENG_DEVICE_MODES(\"pipe_loss\")"
+    },
+    {
       "id": "device.pipe_loss.solve_delta_p",
       "entity": "device",
       "source": "pipe_loss",
@@ -411,6 +436,50 @@
       "python_example": "engpy.equations.meta.equation_default_unit(\"fluids.reynolds_number\", \"mu\")",
       "xloil_example": "=ENG_EQUATION_DEFAULT_UNIT(\"fluids.reynolds_number\",\"mu\")",
       "pyxll_example": "=ENG_EQUATION_DEFAULT_UNIT(\"fluids.reynolds_number\",\"mu\")"
+    },
+    {
+      "id": "equation.description",
+      "entity": "equation_meta",
+      "source": "equations",
+      "python_module": "equations.meta",
+      "python_name": "equation_description",
+      "excel_name": "ENG_EQUATION_DESCRIPTION",
+      "op": "equation.description",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        }
+      ],
+      "returns": "str",
+      "help": "Read equation description",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.equations.meta.equation_description(\"fluids.reynolds_number\")",
+      "xloil_example": "=ENG_EQUATION_DESCRIPTION(\"fluids.reynolds_number\")",
+      "pyxll_example": "=ENG_EQUATION_DESCRIPTION(\"fluids.reynolds_number\")"
+    },
+    {
+      "id": "equation.family",
+      "entity": "equation_meta",
+      "source": "equations",
+      "python_module": "equations.meta",
+      "python_name": "equation_family",
+      "excel_name": "ENG_EQUATION_FAMILY",
+      "op": "equation.family",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        }
+      ],
+      "returns": "dict|null",
+      "help": "Read parent family/variant metadata for an equation",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.equations.meta.equation_family(\"thermo.ideal_gas.density\")",
+      "xloil_example": "=ENG_EQUATION_FAMILY(\"thermo.ideal_gas.density\")",
+      "pyxll_example": "=ENG_EQUATION_FAMILY(\"thermo.ideal_gas.density\")"
     },
     {
       "id": "equation.fluids.circular_pipe_area.A",
@@ -1919,6 +1988,28 @@
       "pyxll_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_H(\"...\",\"...\")"
     },
     {
+      "id": "equation.latex",
+      "entity": "equation_meta",
+      "source": "equations",
+      "python_module": "equations.meta",
+      "python_name": "equation_latex",
+      "excel_name": "ENG_EQUATION_LATEX",
+      "op": "equation.latex",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        }
+      ],
+      "returns": "str",
+      "help": "Read LaTeX display form for an equation",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.equations.meta.equation_latex(\"fluids.reynolds_number\")",
+      "xloil_example": "=ENG_EQUATION_LATEX(\"fluids.reynolds_number\")",
+      "pyxll_example": "=ENG_EQUATION_LATEX(\"fluids.reynolds_number\")"
+    },
+    {
       "id": "equation.meta",
       "entity": "equation_meta",
       "source": "equations",
@@ -1939,6 +2030,28 @@
       "python_example": "engpy.equations.meta.equation_meta(\"fluids.reynolds_number\")",
       "xloil_example": "=ENG_EQUATION_META(\"fluids.reynolds_number\")",
       "pyxll_example": "=ENG_EQUATION_META(\"fluids.reynolds_number\")"
+    },
+    {
+      "id": "equation.name",
+      "entity": "equation_meta",
+      "source": "equations",
+      "python_module": "equations.meta",
+      "python_name": "equation_name",
+      "excel_name": "ENG_EQUATION_NAME",
+      "op": "equation.name",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        }
+      ],
+      "returns": "str",
+      "help": "Read equation name",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.equations.meta.equation_name(\"fluids.reynolds_number\")",
+      "xloil_example": "=ENG_EQUATION_NAME(\"fluids.reynolds_number\")",
+      "pyxll_example": "=ENG_EQUATION_NAME(\"fluids.reynolds_number\")"
     },
     {
       "id": "equation.rockets.cstar_ideal.c_star",
@@ -2985,6 +3098,28 @@
       "pyxll_example": "=ENG_STRUCTURES_SHAFT_TORSION_STRESS_TAU(\"...\",\"...\",\"...\")"
     },
     {
+      "id": "equation.targets",
+      "entity": "equation_meta",
+      "source": "equations",
+      "python_module": "equations.meta",
+      "python_name": "equation_targets",
+      "excel_name": "ENG_EQUATION_TARGETS",
+      "op": "equation.targets",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        }
+      ],
+      "returns": "list",
+      "help": "Read solve targets for an equation",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.equations.meta.equation_targets(\"fluids.reynolds_number\")",
+      "xloil_example": "=ENG_EQUATION_TARGETS(\"fluids.reynolds_number\")",
+      "pyxll_example": "=ENG_EQUATION_TARGETS(\"fluids.reynolds_number\")"
+    },
+    {
       "id": "equation.thermo.ideal_gas.density.P",
       "entity": "equation",
       "source": "thermo.ideal_gas.density",
@@ -3300,6 +3435,50 @@
       "python_example": "engpy.equations.thermo.solve_m(p=\"...\", v=\"...\", r=\"...\", t=\"...\")",
       "xloil_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_M(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_M(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.unicode",
+      "entity": "equation_meta",
+      "source": "equations",
+      "python_module": "equations.meta",
+      "python_name": "equation_unicode",
+      "excel_name": "ENG_EQUATION_UNICODE",
+      "op": "equation.unicode",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        }
+      ],
+      "returns": "str",
+      "help": "Read Unicode display form for an equation",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.equations.meta.equation_unicode(\"fluids.reynolds_number\")",
+      "xloil_example": "=ENG_EQUATION_UNICODE(\"fluids.reynolds_number\")",
+      "pyxll_example": "=ENG_EQUATION_UNICODE(\"fluids.reynolds_number\")"
+    },
+    {
+      "id": "equation.variables",
+      "entity": "equation_meta",
+      "source": "equations",
+      "python_module": "equations.meta",
+      "python_name": "equation_variables",
+      "excel_name": "ENG_EQUATION_VARIABLES",
+      "op": "equation.variables",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        }
+      ],
+      "returns": "list",
+      "help": "Read variable metadata for an equation",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.equations.meta.equation_variables(\"fluids.reynolds_number\")",
+      "xloil_example": "=ENG_EQUATION_VARIABLES(\"fluids.reynolds_number\")",
+      "pyxll_example": "=ENG_EQUATION_VARIABLES(\"fluids.reynolds_number\")"
     },
     {
       "id": "family.ideal_gas.density.P",
@@ -3619,6 +3798,31 @@
       "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_M(\"...\",\"...\",\"...\",\"...\")"
     },
     {
+      "id": "fluid.meta.properties",
+      "entity": "helper",
+      "source": "fluids",
+      "python_module": "helpers",
+      "python_name": "fluid_properties",
+      "excel_name": "ENG_FLUID_PROPERTIES",
+      "op": "meta.get",
+      "fixed_args": {
+        "entity": "fluid",
+        "field": "supported_properties"
+      },
+      "args": [
+        {
+          "name": "key",
+          "description": "Fluid key/alias"
+        }
+      ],
+      "returns": "list",
+      "help": "Read supported properties for a fluid",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.fluid_properties(\"H2O\")",
+      "xloil_example": "=ENG_FLUID_PROPERTIES(\"H2O\")",
+      "pyxll_example": "=ENG_FLUID_PROPERTIES(\"H2O\")"
+    },
+    {
       "id": "fluid.prop",
       "entity": "fluid",
       "source": "fluids",
@@ -3661,6 +3865,61 @@
       "pyxll_example": "=ENG_FLUID_PROP(\"H2O\",\"T\",\"300 K\",\"P\",\"1 bar\",\"rho\")"
     },
     {
+      "id": "format.value",
+      "entity": "helper",
+      "source": "helpers",
+      "python_module": "helpers",
+      "python_name": "format_value",
+      "excel_name": "ENG_FORMAT",
+      "op": "format.value",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "value",
+          "description": "Input value in `in_unit`"
+        },
+        {
+          "name": "in_unit",
+          "description": "Input unit expression (for example Pa, m, psia, kg/(m*s))"
+        },
+        {
+          "name": "out_unit",
+          "description": "Requested output unit expression"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convert a numeric value from input units to output units (with dimensional checks)",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.format_value(2500000, \"Pa\", \"psia\")",
+      "xloil_example": "=ENG_FORMAT(2500000,\"Pa\",\"psia\")",
+      "pyxll_example": "=ENG_FORMAT(2500000,\"Pa\",\"psia\")"
+    },
+    {
+      "id": "material.meta.properties",
+      "entity": "helper",
+      "source": "materials",
+      "python_module": "helpers",
+      "python_name": "material_properties",
+      "excel_name": "ENG_MATERIAL_PROPERTIES",
+      "op": "meta.get",
+      "fixed_args": {
+        "entity": "material",
+        "field": "properties"
+      },
+      "args": [
+        {
+          "name": "key",
+          "description": "Material key/alias"
+        }
+      ],
+      "returns": "list",
+      "help": "Read available properties for a material",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.material_properties(\"stainless_304\")",
+      "xloil_example": "=ENG_MATERIAL_PROPERTIES(\"stainless_304\")",
+      "pyxll_example": "=ENG_MATERIAL_PROPERTIES(\"stainless_304\")"
+    },
+    {
       "id": "material.prop",
       "entity": "material",
       "source": "materials",
@@ -3689,6 +3948,36 @@
       "python_example": "engpy.materials.mat_prop(\"stainless_304\", \"elastic_modulus\", \"350 K\")",
       "xloil_example": "=ENG_MAT_PROP(\"stainless_304\",\"elastic_modulus\",\"350 K\")",
       "pyxll_example": "=ENG_MAT_PROP(\"stainless_304\",\"elastic_modulus\",\"350 K\")"
+    },
+    {
+      "id": "meta.get",
+      "entity": "helper",
+      "source": "helpers",
+      "python_module": "helpers",
+      "python_name": "meta_get",
+      "excel_name": "ENG_META",
+      "op": "meta.get",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "entity",
+          "description": "equation | device | fluid | material | constant"
+        },
+        {
+          "name": "key",
+          "description": "Entity id/key"
+        },
+        {
+          "name": "field",
+          "description": "Metadata field to read"
+        }
+      ],
+      "returns": "scalar|list|dict",
+      "help": "General metadata helper for bindings",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.helpers.meta_get(\"equation\", \"structures.hoop_stress\", \"ascii\")",
+      "xloil_example": "=ENG_META(\"equation\",\"structures.hoop_stress\",\"ascii\")",
+      "pyxll_example": "=ENG_META(\"equation\",\"structures.hoop_stress\",\"ascii\")"
     }
   ]
 }
