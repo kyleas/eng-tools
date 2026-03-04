@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-2317f53e.js";
+            window.path_to_searchindex_js = "../searchindex-569e16a3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-3884b304.js"></script>
+        <script src="../toc-c035a1b0.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -209,6 +209,14 @@
 <li>Route: <code>devices/oblique_shock_calc.md</code></li>
 <li>Input pairs: (M1, beta), (M1, theta)</li>
 <li>Branch-aware inversion for (M1, theta) -&gt; beta</li>
+</ul>
+<h2 id="fanno-flow-calculator"><a class="header" href="#fanno-flow-calculator">Fanno Flow Calculator</a></h2>
+<ul>
+<li>Key: <code>fanno_flow_calc</code></li>
+<li>Calculator-style compressible device: solve Fanno star-reference input kinds to target kinds through Mach pivot orchestration.</li>
+<li>Route: <code>devices/fanno_flow_calc.md</code></li>
+<li>Input kinds: Mach, T/T*, p/p*, rho/rho*, p0/p0*, 4fL*/D</li>
+<li>Branch-aware inversion for ratio -&gt; Mach</li>
 </ul>
 <h2 id="fixed-f-mode"><a class="header" href="#fixed-f-mode">Fixed-f Mode</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]

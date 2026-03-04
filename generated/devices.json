@@ -66,6 +66,21 @@
         "path diagnostics"
       ],
       "route": "devices/oblique_shock_calc.md"
+    },
+    {
+      "key": "fanno_flow_calc",
+      "name": "Fanno Flow Calculator",
+      "summary": "Calculator-style compressible device: solve Fanno star-reference input kinds to target kinds through Mach pivot orchestration.",
+      "supported_modes": [
+        "Input kinds: Mach, T/T*, p/p*, rho/rho*, p0/p0*, 4fL*/D",
+        "Branch-aware inversion for ratio -> Mach"
+      ],
+      "outputs": [
+        "value_si",
+        "pivot_mach",
+        "path diagnostics"
+      ],
+      "route": "devices/fanno_flow_calc.md"
     }
   ]
 }

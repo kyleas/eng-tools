@@ -1,9 +1,15 @@
+pub mod fanno_flow;
 pub mod framework;
 pub mod isentropic;
 pub mod normal_shock;
 pub mod oblique_shock;
 pub mod pipe_loss;
 
+pub use fanno_flow::{
+    FannoFlowBranch, FannoFlowCalcError, FannoFlowCalcRequest, FannoFlowCalcResponse,
+    FannoFlowCalculatorDevice, FannoFlowInputKind, FannoFlowOutputKind,
+    calc as fanno_flow_calc_from_request, fanno_flow_calc,
+};
 pub use framework::{
     CalcStep as FrameworkCalcStep, CalculatorDeviceSpec, CalculatorKindSpec, PivotCalcResponse,
 };
@@ -66,6 +72,7 @@ pub fn generation_specs() -> Vec<DeviceGenerationSpec> {
         isentropic::generation_spec(),
         normal_shock::generation_spec(),
         oblique_shock::generation_spec(),
+        fanno_flow::generation_spec(),
     ]
 }
 

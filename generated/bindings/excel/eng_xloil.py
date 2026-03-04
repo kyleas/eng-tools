@@ -16,6 +16,61 @@ def e_n_g_c_o_n_s_t(key):
     """Get constant value from registry | Arguments: | - key: Constant key | Returns: f64 | Example: =ENG_CONST('g0')"""
     return invoke("constant.get", {"key": key})
 
+@xloil.func(name="ENG_FANNO_FLOW", help="Fanno-flow calculator: input kind -> target kind through Mach pivot | Arguments: | - input_kind: Input kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, four_flstar_d) | - input_value: Input value | - target_kind: Target kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, v_vstar, four_flstar_d) | - gamma: Specific heat ratio | - branch: Subsonic/supersonic branch for inverse paths | Returns: f64 | Example: =ENG_FANNO_FLOW('mach',2.0,'p_pstar',1.4,'')")
+def e_n_g_f_a_n_n_o_f_l_o_w(input_kind, input_value, target_kind, gamma, branch=""):
+    """Fanno-flow calculator: input kind -> target kind through Mach pivot | Arguments: | - input_kind: Input kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, four_flstar_d) | - input_value: Input value | - target_kind: Target kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, v_vstar, four_flstar_d) | - gamma: Specific heat ratio | - branch: Subsonic/supersonic branch for inverse paths | Returns: f64 | Example: =ENG_FANNO_FLOW('mach',2.0,'p_pstar',1.4,'')"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_FANNO_FLOW_FROM_4FLSTAR_D_TO_M", help="Convenience Fanno path: 4fL*/D -> Mach (branch required) | Arguments: | - input_value: Input ratio value | - gamma: Specific heat ratio | - branch: Subsonic or supersonic branch | Returns: f64 | Example: =ENG_FANNO_FLOW_FROM_4FLSTAR_D_TO_M(0.3049965026,1.4,'supersonic')")
+def e_n_g_f_a_n_n_o_f_l_o_w_f_r_o_m_4_f_l_s_t_a_r_d_t_o_m(input_value, gamma, branch=""):
+    """Convenience Fanno path: 4fL*/D -> Mach (branch required) | Arguments: | - input_value: Input ratio value | - gamma: Specific heat ratio | - branch: Subsonic or supersonic branch | Returns: f64 | Example: =ENG_FANNO_FLOW_FROM_4FLSTAR_D_TO_M(0.3049965026,1.4,'supersonic')"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": "four_flstar_d", "target_kind": "mach", "input_value": input_value, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_FANNO_FLOW_FROM_M_TO_4FLSTAR_D", help="Convenience Fanno path: Mach -> 4fL*/D | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_FANNO_FLOW_FROM_M_TO_4FLSTAR_D(2.0,1.4)")
+def e_n_g_f_a_n_n_o_f_l_o_w_f_r_o_m_m_t_o_4_f_l_s_t_a_r_d(input_value, gamma):
+    """Convenience Fanno path: Mach -> 4fL*/D | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_FANNO_FLOW_FROM_M_TO_4FLSTAR_D(2.0,1.4)"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": "mach", "target_kind": "four_flstar_d", "input_value": input_value, "gamma": gamma})
+
+@xloil.func(name="ENG_FANNO_FLOW_FROM_M_TO_P0_P0STAR", help="Convenience Fanno path: Mach -> p0/p0* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_FANNO_FLOW_FROM_M_TO_P0_P0STAR(2.0,1.4)")
+def e_n_g_f_a_n_n_o_f_l_o_w_f_r_o_m_m_t_o_p0_p0_s_t_a_r(input_value, gamma):
+    """Convenience Fanno path: Mach -> p0/p0* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_FANNO_FLOW_FROM_M_TO_P0_P0STAR(2.0,1.4)"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": "mach", "target_kind": "p0_p0star", "input_value": input_value, "gamma": gamma})
+
+@xloil.func(name="ENG_FANNO_FLOW_FROM_M_TO_P_PSTAR", help="Convenience Fanno path: Mach -> p/p* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_FANNO_FLOW_FROM_M_TO_P_PSTAR(2.0,1.4)")
+def e_n_g_f_a_n_n_o_f_l_o_w_f_r_o_m_m_t_o_p_p_s_t_a_r(input_value, gamma):
+    """Convenience Fanno path: Mach -> p/p* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_FANNO_FLOW_FROM_M_TO_P_PSTAR(2.0,1.4)"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": "mach", "target_kind": "p_pstar", "input_value": input_value, "gamma": gamma})
+
+@xloil.func(name="ENG_FANNO_FLOW_FROM_M_TO_RHO_RHOSTAR", help="Convenience Fanno path: Mach -> rho/rho* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_FANNO_FLOW_FROM_M_TO_RHO_RHOSTAR(2.0,1.4)")
+def e_n_g_f_a_n_n_o_f_l_o_w_f_r_o_m_m_t_o_r_h_o_r_h_o_s_t_a_r(input_value, gamma):
+    """Convenience Fanno path: Mach -> rho/rho* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_FANNO_FLOW_FROM_M_TO_RHO_RHOSTAR(2.0,1.4)"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": "mach", "target_kind": "rho_rhostar", "input_value": input_value, "gamma": gamma})
+
+@xloil.func(name="ENG_FANNO_FLOW_FROM_M_TO_T_TSTAR", help="Convenience Fanno path: Mach -> T/T* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_FANNO_FLOW_FROM_M_TO_T_TSTAR(2.0,1.4)")
+def e_n_g_f_a_n_n_o_f_l_o_w_f_r_o_m_m_t_o_t_t_s_t_a_r(input_value, gamma):
+    """Convenience Fanno path: Mach -> T/T* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_FANNO_FLOW_FROM_M_TO_T_TSTAR(2.0,1.4)"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": "mach", "target_kind": "t_tstar", "input_value": input_value, "gamma": gamma})
+
+@xloil.func(name="ENG_FANNO_FLOW_FROM_M_TO_V_VSTAR", help="Convenience Fanno path: Mach -> V/V* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_FANNO_FLOW_FROM_M_TO_V_VSTAR(2.0,1.4)")
+def e_n_g_f_a_n_n_o_f_l_o_w_f_r_o_m_m_t_o_v_v_s_t_a_r(input_value, gamma):
+    """Convenience Fanno path: Mach -> V/V* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_FANNO_FLOW_FROM_M_TO_V_VSTAR(2.0,1.4)"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": "mach", "target_kind": "v_vstar", "input_value": input_value, "gamma": gamma})
+
+@xloil.func(name="ENG_FANNO_FLOW_FROM_P0_P0STAR_TO_M", help="Convenience Fanno path: p0/p0* -> Mach (branch required) | Arguments: | - input_value: Input ratio value | - gamma: Specific heat ratio | - branch: Subsonic or supersonic branch | Returns: f64 | Example: =ENG_FANNO_FLOW_FROM_P0_P0STAR_TO_M(1.33984375,1.4,'subsonic')")
+def e_n_g_f_a_n_n_o_f_l_o_w_f_r_o_m_p0_p0_s_t_a_r_t_o_m(input_value, gamma, branch=""):
+    """Convenience Fanno path: p0/p0* -> Mach (branch required) | Arguments: | - input_value: Input ratio value | - gamma: Specific heat ratio | - branch: Subsonic or supersonic branch | Returns: f64 | Example: =ENG_FANNO_FLOW_FROM_P0_P0STAR_TO_M(1.33984375,1.4,'subsonic')"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": "p0_p0star", "target_kind": "mach", "input_value": input_value, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_FANNO_FLOW_PATH_TEXT", help="Fanno-flow calculator helper: compact step trace text | Arguments: | - input_kind: Input kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, four_flstar_d) | - input_value: Input value | - target_kind: Target kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, v_vstar, four_flstar_d) | - gamma: Specific heat ratio | - branch: Subsonic/supersonic branch for inverse paths | Returns: str | Example: =ENG_FANNO_FLOW_PATH_TEXT('p0_p0star',1.33984375,'mach',1.4,'subsonic')")
+def e_n_g_f_a_n_n_o_f_l_o_w_p_a_t_h_t_e_x_t(input_kind, input_value, target_kind, gamma, branch=""):
+    """Fanno-flow calculator helper: compact step trace text | Arguments: | - input_kind: Input kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, four_flstar_d) | - input_value: Input value | - target_kind: Target kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, v_vstar, four_flstar_d) | - gamma: Specific heat ratio | - branch: Subsonic/supersonic branch for inverse paths | Returns: str | Example: =ENG_FANNO_FLOW_PATH_TEXT('p0_p0star',1.33984375,'mach',1.4,'subsonic')"""
+    return invoke("device.fanno_flow_calc.path_text", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_FANNO_FLOW_PIVOT_MACH", help="Fanno-flow calculator helper: return resolved pivot Mach | Arguments: | - input_kind: Input kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, four_flstar_d) | - input_value: Input value | - target_kind: Target kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, v_vstar, four_flstar_d) | - gamma: Specific heat ratio | - branch: Subsonic/supersonic branch for inverse paths | Returns: f64 | Example: =ENG_FANNO_FLOW_PIVOT_MACH('four_flstar_d',0.3049965026,'mach',1.4,'supersonic')")
+def e_n_g_f_a_n_n_o_f_l_o_w_p_i_v_o_t_m_a_c_h(input_kind, input_value, target_kind, gamma, branch=""):
+    """Fanno-flow calculator helper: return resolved pivot Mach | Arguments: | - input_kind: Input kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, four_flstar_d) | - input_value: Input value | - target_kind: Target kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, v_vstar, four_flstar_d) | - gamma: Specific heat ratio | - branch: Subsonic/supersonic branch for inverse paths | Returns: f64 | Example: =ENG_FANNO_FLOW_PIVOT_MACH('four_flstar_d',0.3049965026,'mach',1.4,'supersonic')"""
+    return invoke("device.fanno_flow_calc.pivot_mach", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
 @xloil.func(name="ENG_ISENTROPIC", help="Isentropic calculator: input kind -> target kind through Mach pivot | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: f64 | Example: =ENG_ISENTROPIC('mach',2.0,'pressure_ratio',1.4,'')")
 def e_n_g_i_s_e_n_t_r_o_p_i_c(value_kind_in, value_in, target_kind_out, gamma, branch=""):
     """Isentropic calculator: input kind -> target kind through Mach pivot | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: f64 | Example: =ENG_ISENTROPIC('mach',2.0,'pressure_ratio',1.4,'')"""
@@ -175,6 +230,66 @@ def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_a_r_e_a_m_a_c_h_a_r_e_a_r_a_t_i_o(m, gamma, br
 def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_c_h_o_k_e_d_m_a_s_s_f_l_u_x_g_s_t_a_r(p0, t0, gamma, r):
     """Solve Choked Mass Flux for G_star | Arguments: | - p0: Stagnation pressure | - t0: Stagnation temperature | - gamma: Specific heat ratio | - r: Gas constant | Returns: f64 | Example: =ENG_COMPRESSIBLE_CHOKED_MASS_FLUX_G_STAR('...','...','...','...')"""
     return invoke("equation.solve", {"path_id": "compressible.choked_mass_flux", "target": "G_star", "p0": p0, "T0": t0, "gamma": gamma, "R": r})
+
+@xloil.func(name="ENG_COMPRESSIBLE_FANNO_DENSITY_RATIO_M", help="Solve Fanno Density Ratio for M | Arguments: | - rho_rhostar: Density ratio to star state | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_DENSITY_RATIO_M('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_f_a_n_n_o_d_e_n_s_i_t_y_r_a_t_i_o_m(rho_rhostar, gamma, branch=""):
+    """Solve Fanno Density Ratio for M | Arguments: | - rho_rhostar: Density ratio to star state | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_DENSITY_RATIO_M('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.fanno_density_ratio", "target": "M", "rho_rhostar": rho_rhostar, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_COMPRESSIBLE_FANNO_DENSITY_RATIO_RHO_RHOSTAR", help="Solve Fanno Density Ratio for rho_rhostar | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_DENSITY_RATIO_RHO_RHOSTAR('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_f_a_n_n_o_d_e_n_s_i_t_y_r_a_t_i_o_r_h_o_r_h_o_s_t_a_r(m, gamma, branch=""):
+    """Solve Fanno Density Ratio for rho_rhostar | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_DENSITY_RATIO_RHO_RHOSTAR('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.fanno_density_ratio", "target": "rho_rhostar", "M": m, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_COMPRESSIBLE_FANNO_FRICTION_PARAMETER_M", help="Solve Fanno Friction Length Parameter for M | Arguments: | - four_flstar_d: Fanno friction length parameter | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_FRICTION_PARAMETER_M('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_f_a_n_n_o_f_r_i_c_t_i_o_n_p_a_r_a_m_e_t_e_r_m(four_flstar_d, gamma, branch=""):
+    """Solve Fanno Friction Length Parameter for M | Arguments: | - four_flstar_d: Fanno friction length parameter | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_FRICTION_PARAMETER_M('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.fanno_friction_parameter", "target": "M", "four_flstar_d": four_flstar_d, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_COMPRESSIBLE_FANNO_FRICTION_PARAMETER_FOUR_FLSTAR_D", help="Solve Fanno Friction Length Parameter for four_flstar_d | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_FRICTION_PARAMETER_FOUR_FLSTAR_D('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_f_a_n_n_o_f_r_i_c_t_i_o_n_p_a_r_a_m_e_t_e_r_f_o_u_r_f_l_s_t_a_r_d(m, gamma, branch=""):
+    """Solve Fanno Friction Length Parameter for four_flstar_d | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_FRICTION_PARAMETER_FOUR_FLSTAR_D('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.fanno_friction_parameter", "target": "four_flstar_d", "M": m, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_COMPRESSIBLE_FANNO_PRESSURE_RATIO_M", help="Solve Fanno Pressure Ratio for M | Arguments: | - p_pstar: Pressure ratio to star state | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_PRESSURE_RATIO_M('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_f_a_n_n_o_p_r_e_s_s_u_r_e_r_a_t_i_o_m(p_pstar, gamma, branch=""):
+    """Solve Fanno Pressure Ratio for M | Arguments: | - p_pstar: Pressure ratio to star state | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_PRESSURE_RATIO_M('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.fanno_pressure_ratio", "target": "M", "p_pstar": p_pstar, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_COMPRESSIBLE_FANNO_PRESSURE_RATIO_P_PSTAR", help="Solve Fanno Pressure Ratio for p_pstar | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_PRESSURE_RATIO_P_PSTAR('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_f_a_n_n_o_p_r_e_s_s_u_r_e_r_a_t_i_o_p_p_s_t_a_r(m, gamma, branch=""):
+    """Solve Fanno Pressure Ratio for p_pstar | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_PRESSURE_RATIO_P_PSTAR('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.fanno_pressure_ratio", "target": "p_pstar", "M": m, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_COMPRESSIBLE_FANNO_STAGNATION_PRESSURE_RATIO_M", help="Solve Fanno Stagnation Pressure Ratio for M | Arguments: | - p0_p0star: Stagnation pressure ratio to star state | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_STAGNATION_PRESSURE_RATIO_M('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_f_a_n_n_o_s_t_a_g_n_a_t_i_o_n_p_r_e_s_s_u_r_e_r_a_t_i_o_m(p0_p0star, gamma, branch=""):
+    """Solve Fanno Stagnation Pressure Ratio for M | Arguments: | - p0_p0star: Stagnation pressure ratio to star state | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_STAGNATION_PRESSURE_RATIO_M('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.fanno_stagnation_pressure_ratio", "target": "M", "p0_p0star": p0_p0star, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_COMPRESSIBLE_FANNO_STAGNATION_PRESSURE_RATIO_P0_P0STAR", help="Solve Fanno Stagnation Pressure Ratio for p0_p0star | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_STAGNATION_PRESSURE_RATIO_P0_P0STAR('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_f_a_n_n_o_s_t_a_g_n_a_t_i_o_n_p_r_e_s_s_u_r_e_r_a_t_i_o_p0_p0_s_t_a_r(m, gamma, branch=""):
+    """Solve Fanno Stagnation Pressure Ratio for p0_p0star | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_STAGNATION_PRESSURE_RATIO_P0_P0STAR('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.fanno_stagnation_pressure_ratio", "target": "p0_p0star", "M": m, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_COMPRESSIBLE_FANNO_TEMPERATURE_RATIO_M", help="Solve Fanno Temperature Ratio for M | Arguments: | - t_tstar: Temperature ratio to star state | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_TEMPERATURE_RATIO_M('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_f_a_n_n_o_t_e_m_p_e_r_a_t_u_r_e_r_a_t_i_o_m(t_tstar, gamma, branch=""):
+    """Solve Fanno Temperature Ratio for M | Arguments: | - t_tstar: Temperature ratio to star state | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_TEMPERATURE_RATIO_M('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.fanno_temperature_ratio", "target": "M", "t_tstar": t_tstar, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_COMPRESSIBLE_FANNO_TEMPERATURE_RATIO_T_TSTAR", help="Solve Fanno Temperature Ratio for t_tstar | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_TEMPERATURE_RATIO_T_TSTAR('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_f_a_n_n_o_t_e_m_p_e_r_a_t_u_r_e_r_a_t_i_o_t_t_s_t_a_r(m, gamma, branch=""):
+    """Solve Fanno Temperature Ratio for t_tstar | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_TEMPERATURE_RATIO_T_TSTAR('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.fanno_temperature_ratio", "target": "t_tstar", "M": m, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_COMPRESSIBLE_FANNO_VELOCITY_RATIO_M", help="Solve Fanno Velocity Ratio for M | Arguments: | - v_vstar: Velocity ratio to star state | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_VELOCITY_RATIO_M('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_f_a_n_n_o_v_e_l_o_c_i_t_y_r_a_t_i_o_m(v_vstar, gamma, branch=""):
+    """Solve Fanno Velocity Ratio for M | Arguments: | - v_vstar: Velocity ratio to star state | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_VELOCITY_RATIO_M('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.fanno_velocity_ratio", "target": "M", "v_vstar": v_vstar, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_COMPRESSIBLE_FANNO_VELOCITY_RATIO_V_VSTAR", help="Solve Fanno Velocity Ratio for v_vstar | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_VELOCITY_RATIO_V_VSTAR('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_f_a_n_n_o_v_e_l_o_c_i_t_y_r_a_t_i_o_v_v_s_t_a_r(m, gamma, branch=""):
+    """Solve Fanno Velocity Ratio for v_vstar | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_FANNO_VELOCITY_RATIO_V_VSTAR('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.fanno_velocity_ratio", "target": "v_vstar", "M": m, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
 
 @xloil.func(name="ENG_COMPRESSIBLE_ISENTROPIC_DENSITY_RATIO_M", help="Solve Isentropic Density Ratio for M | Arguments: | - rho_rho0: Static-to-stagnation density ratio | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_ISENTROPIC_DENSITY_RATIO_M('...','...')")
 def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_i_s_e_n_t_r_o_p_i_c_d_e_n_s_i_t_y_r_a_t_i_o_m(rho_rho0, gamma):

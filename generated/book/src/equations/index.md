@@ -9,6 +9,12 @@
 | --- | --- | --- | --- |
 | [Isentropic Area-Mach Relation](compressible/area_mach.md) | Compressible | 2 | - |
 | [Choked Mass Flux](compressible/choked_mass_flux.md) | Compressible | 1 | - |
+| [Fanno Density Ratio](compressible/fanno_density_ratio.md) | Compressible | 2 | - |
+| [Fanno Friction Length Parameter](compressible/fanno_friction_parameter.md) | Compressible | 2 | - |
+| [Fanno Pressure Ratio](compressible/fanno_pressure_ratio.md) | Compressible | 2 | - |
+| [Fanno Stagnation Pressure Ratio](compressible/fanno_stagnation_pressure_ratio.md) | Compressible | 2 | - |
+| [Fanno Temperature Ratio](compressible/fanno_temperature_ratio.md) | Compressible | 2 | - |
+| [Fanno Velocity Ratio](compressible/fanno_velocity_ratio.md) | Compressible | 2 | - |
 | [Isentropic Density Ratio](compressible/isentropic_density_ratio.md) | Compressible | 2 | - |
 | [Isentropic Pressure Ratio](compressible/isentropic_pressure_ratio.md) | Compressible | 2 | - |
 | [Isentropic Temperature Ratio](compressible/isentropic_temperature_ratio.md) | Compressible | 2 | - |

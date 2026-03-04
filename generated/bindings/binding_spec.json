@@ -26,6 +26,360 @@
       "pyxll_example": "=ENG_CONST(\"g0\")"
     },
     {
+      "id": "device.fanno_flow_calc",
+      "entity": "device",
+      "source": "fanno_flow_calc",
+      "python_module": "devices",
+      "python_name": "fanno_flow_calc",
+      "excel_name": "ENG_FANNO_FLOW",
+      "op": "device.fanno_flow_calc.value",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "input_kind",
+          "description": "Input kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, four_flstar_d)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input value"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, v_vstar, four_flstar_d)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Subsonic/supersonic branch for inverse paths"
+        }
+      ],
+      "returns": "f64",
+      "help": "Fanno-flow calculator: input kind -> target kind through Mach pivot",
+      "rust_example": "eng::devices::fanno_flow_calc().solve()?",
+      "python_example": "engpy.devices.fanno_flow_calc(\"mach\", 2.0, \"p_pstar\", 1.4)",
+      "xloil_example": "=ENG_FANNO_FLOW(\"mach\",2.0,\"p_pstar\",1.4,\"\")",
+      "pyxll_example": "=ENG_FANNO_FLOW(\"mach\",2.0,\"p_pstar\",1.4,\"\")"
+    },
+    {
+      "id": "device.fanno_flow_calc.from_4flstar_d.to_m",
+      "entity": "device",
+      "source": "fanno_flow_calc",
+      "python_module": "devices",
+      "python_name": "fanno_flow_from_4flstar_d_to_m",
+      "excel_name": "ENG_FANNO_FLOW_FROM_4FLSTAR_D_TO_M",
+      "op": "device.fanno_flow_calc.value",
+      "fixed_args": {
+        "input_kind": "four_flstar_d",
+        "target_kind": "mach"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Input ratio value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Subsonic or supersonic branch"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience Fanno path: 4fL*/D -> Mach (branch required)",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.fanno_flow_from_4flstar_d_to_m(0.3049965026, 1.4, \"supersonic\")",
+      "xloil_example": "=ENG_FANNO_FLOW_FROM_4FLSTAR_D_TO_M(0.3049965026,1.4,\"supersonic\")",
+      "pyxll_example": "=ENG_FANNO_FLOW_FROM_4FLSTAR_D_TO_M(0.3049965026,1.4,\"supersonic\")"
+    },
+    {
+      "id": "device.fanno_flow_calc.from_m.to_4flstar_d",
+      "entity": "device",
+      "source": "fanno_flow_calc",
+      "python_module": "devices",
+      "python_name": "fanno_flow_from_m_to_4flstar_d",
+      "excel_name": "ENG_FANNO_FLOW_FROM_M_TO_4FLSTAR_D",
+      "op": "device.fanno_flow_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "four_flstar_d"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach input value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience Fanno path: Mach -> 4fL*/D",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.fanno_flow_from_m_to_4flstar_d(2.0, 1.4)",
+      "xloil_example": "=ENG_FANNO_FLOW_FROM_M_TO_4FLSTAR_D(2.0,1.4)",
+      "pyxll_example": "=ENG_FANNO_FLOW_FROM_M_TO_4FLSTAR_D(2.0,1.4)"
+    },
+    {
+      "id": "device.fanno_flow_calc.from_m.to_p0_p0star",
+      "entity": "device",
+      "source": "fanno_flow_calc",
+      "python_module": "devices",
+      "python_name": "fanno_flow_from_m_to_p0_p0star",
+      "excel_name": "ENG_FANNO_FLOW_FROM_M_TO_P0_P0STAR",
+      "op": "device.fanno_flow_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "p0_p0star"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach input value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience Fanno path: Mach -> p0/p0*",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.fanno_flow_from_m_to_p0_p0star(2.0, 1.4)",
+      "xloil_example": "=ENG_FANNO_FLOW_FROM_M_TO_P0_P0STAR(2.0,1.4)",
+      "pyxll_example": "=ENG_FANNO_FLOW_FROM_M_TO_P0_P0STAR(2.0,1.4)"
+    },
+    {
+      "id": "device.fanno_flow_calc.from_m.to_p_pstar",
+      "entity": "device",
+      "source": "fanno_flow_calc",
+      "python_module": "devices",
+      "python_name": "fanno_flow_from_m_to_p_pstar",
+      "excel_name": "ENG_FANNO_FLOW_FROM_M_TO_P_PSTAR",
+      "op": "device.fanno_flow_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "p_pstar"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach input value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience Fanno path: Mach -> p/p*",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.fanno_flow_from_m_to_p_pstar(2.0, 1.4)",
+      "xloil_example": "=ENG_FANNO_FLOW_FROM_M_TO_P_PSTAR(2.0,1.4)",
+      "pyxll_example": "=ENG_FANNO_FLOW_FROM_M_TO_P_PSTAR(2.0,1.4)"
+    },
+    {
+      "id": "device.fanno_flow_calc.from_m.to_rho_rhostar",
+      "entity": "device",
+      "source": "fanno_flow_calc",
+      "python_module": "devices",
+      "python_name": "fanno_flow_from_m_to_rho_rhostar",
+      "excel_name": "ENG_FANNO_FLOW_FROM_M_TO_RHO_RHOSTAR",
+      "op": "device.fanno_flow_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "rho_rhostar"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach input value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience Fanno path: Mach -> rho/rho*",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.fanno_flow_from_m_to_rho_rhostar(2.0, 1.4)",
+      "xloil_example": "=ENG_FANNO_FLOW_FROM_M_TO_RHO_RHOSTAR(2.0,1.4)",
+      "pyxll_example": "=ENG_FANNO_FLOW_FROM_M_TO_RHO_RHOSTAR(2.0,1.4)"
+    },
+    {
+      "id": "device.fanno_flow_calc.from_m.to_t_tstar",
+      "entity": "device",
+      "source": "fanno_flow_calc",
+      "python_module": "devices",
+      "python_name": "fanno_flow_from_m_to_t_tstar",
+      "excel_name": "ENG_FANNO_FLOW_FROM_M_TO_T_TSTAR",
+      "op": "device.fanno_flow_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "t_tstar"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach input value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience Fanno path: Mach -> T/T*",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.fanno_flow_from_m_to_t_tstar(2.0, 1.4)",
+      "xloil_example": "=ENG_FANNO_FLOW_FROM_M_TO_T_TSTAR(2.0,1.4)",
+      "pyxll_example": "=ENG_FANNO_FLOW_FROM_M_TO_T_TSTAR(2.0,1.4)"
+    },
+    {
+      "id": "device.fanno_flow_calc.from_m.to_v_vstar",
+      "entity": "device",
+      "source": "fanno_flow_calc",
+      "python_module": "devices",
+      "python_name": "fanno_flow_from_m_to_v_vstar",
+      "excel_name": "ENG_FANNO_FLOW_FROM_M_TO_V_VSTAR",
+      "op": "device.fanno_flow_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "v_vstar"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach input value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience Fanno path: Mach -> V/V*",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.fanno_flow_from_m_to_v_vstar(2.0, 1.4)",
+      "xloil_example": "=ENG_FANNO_FLOW_FROM_M_TO_V_VSTAR(2.0,1.4)",
+      "pyxll_example": "=ENG_FANNO_FLOW_FROM_M_TO_V_VSTAR(2.0,1.4)"
+    },
+    {
+      "id": "device.fanno_flow_calc.from_p0_p0star.to_m",
+      "entity": "device",
+      "source": "fanno_flow_calc",
+      "python_module": "devices",
+      "python_name": "fanno_flow_from_p0_p0star_to_m",
+      "excel_name": "ENG_FANNO_FLOW_FROM_P0_P0STAR_TO_M",
+      "op": "device.fanno_flow_calc.value",
+      "fixed_args": {
+        "input_kind": "p0_p0star",
+        "target_kind": "mach"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Input ratio value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Subsonic or supersonic branch"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience Fanno path: p0/p0* -> Mach (branch required)",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.fanno_flow_from_p0_p0star_to_m(1.33984375, 1.4, \"subsonic\")",
+      "xloil_example": "=ENG_FANNO_FLOW_FROM_P0_P0STAR_TO_M(1.33984375,1.4,\"subsonic\")",
+      "pyxll_example": "=ENG_FANNO_FLOW_FROM_P0_P0STAR_TO_M(1.33984375,1.4,\"subsonic\")"
+    },
+    {
+      "id": "device.fanno_flow_calc.path_text",
+      "entity": "device",
+      "source": "fanno_flow_calc",
+      "python_module": "devices",
+      "python_name": "fanno_flow_path_text",
+      "excel_name": "ENG_FANNO_FLOW_PATH_TEXT",
+      "op": "device.fanno_flow_calc.path_text",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "input_kind",
+          "description": "Input kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, four_flstar_d)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input value"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, v_vstar, four_flstar_d)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Subsonic/supersonic branch for inverse paths"
+        }
+      ],
+      "returns": "str",
+      "help": "Fanno-flow calculator helper: compact step trace text",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.fanno_flow_path_text(\"p0_p0star\", 1.33984375, \"mach\", 1.4, \"subsonic\")",
+      "xloil_example": "=ENG_FANNO_FLOW_PATH_TEXT(\"p0_p0star\",1.33984375,\"mach\",1.4,\"subsonic\")",
+      "pyxll_example": "=ENG_FANNO_FLOW_PATH_TEXT(\"p0_p0star\",1.33984375,\"mach\",1.4,\"subsonic\")"
+    },
+    {
+      "id": "device.fanno_flow_calc.pivot",
+      "entity": "device",
+      "source": "fanno_flow_calc",
+      "python_module": "devices",
+      "python_name": "fanno_flow_pivot_mach",
+      "excel_name": "ENG_FANNO_FLOW_PIVOT_MACH",
+      "op": "device.fanno_flow_calc.pivot_mach",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "input_kind",
+          "description": "Input kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, four_flstar_d)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input value"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, v_vstar, four_flstar_d)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Subsonic/supersonic branch for inverse paths"
+        }
+      ],
+      "returns": "f64",
+      "help": "Fanno-flow calculator helper: return resolved pivot Mach",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.fanno_flow_pivot_mach(\"four_flstar_d\", 0.3049965026, \"mach\", 1.4, \"supersonic\")",
+      "xloil_example": "=ENG_FANNO_FLOW_PIVOT_MACH(\"four_flstar_d\",0.3049965026,\"mach\",1.4,\"supersonic\")",
+      "pyxll_example": "=ENG_FANNO_FLOW_PIVOT_MACH(\"four_flstar_d\",0.3049965026,\"mach\",1.4,\"supersonic\")"
+    },
+    {
       "id": "device.isentropic_calc",
       "entity": "device",
       "source": "isentropic_calc",
@@ -1082,6 +1436,402 @@
       "python_example": "engpy.equations.compressible.choked_mass_flux.solve_g_star(p0=\"...\", t0=\"...\", gamma=\"...\", r=\"...\")",
       "xloil_example": "=ENG_COMPRESSIBLE_CHOKED_MASS_FLUX_G_STAR(\"...\",\"...\",\"...\",\"...\")",
       "pyxll_example": "=ENG_COMPRESSIBLE_CHOKED_MASS_FLUX_G_STAR(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.fanno_density_ratio.M",
+      "entity": "equation",
+      "source": "compressible.fanno_density_ratio",
+      "python_module": "equations.compressible.fanno_density_ratio",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_FANNO_DENSITY_RATIO_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.fanno_density_ratio",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "rho_rhostar",
+          "description": "Density ratio to star state"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Fanno Density Ratio for M",
+      "rust_example": "eq.solve(equations::compressible::fanno_density_ratio::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.fanno_density_ratio.solve_m(rho_rhostar=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_FANNO_DENSITY_RATIO_M(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_FANNO_DENSITY_RATIO_M(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.fanno_density_ratio.rho_rhostar",
+      "entity": "equation",
+      "source": "compressible.fanno_density_ratio",
+      "python_module": "equations.compressible.fanno_density_ratio",
+      "python_name": "solve_rho_rhostar",
+      "excel_name": "ENG_COMPRESSIBLE_FANNO_DENSITY_RATIO_RHO_RHOSTAR",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.fanno_density_ratio",
+        "target": "rho_rhostar"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Fanno Density Ratio for rho_rhostar",
+      "rust_example": "eq.solve(equations::compressible::fanno_density_ratio::equation()).for_target(\"rho_rhostar\").value()?",
+      "python_example": "engpy.equations.compressible.fanno_density_ratio.solve_rho_rhostar(m=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_FANNO_DENSITY_RATIO_RHO_RHOSTAR(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_FANNO_DENSITY_RATIO_RHO_RHOSTAR(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.fanno_friction_parameter.M",
+      "entity": "equation",
+      "source": "compressible.fanno_friction_parameter",
+      "python_module": "equations.compressible.fanno_friction_parameter",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_FANNO_FRICTION_PARAMETER_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.fanno_friction_parameter",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "four_flstar_d",
+          "description": "Fanno friction length parameter"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Fanno Friction Length Parameter for M",
+      "rust_example": "eq.solve(equations::compressible::fanno_friction_parameter::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.fanno_friction_parameter.solve_m(four_flstar_d=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_FANNO_FRICTION_PARAMETER_M(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_FANNO_FRICTION_PARAMETER_M(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.fanno_friction_parameter.four_flstar_d",
+      "entity": "equation",
+      "source": "compressible.fanno_friction_parameter",
+      "python_module": "equations.compressible.fanno_friction_parameter",
+      "python_name": "solve_four_flstar_d",
+      "excel_name": "ENG_COMPRESSIBLE_FANNO_FRICTION_PARAMETER_FOUR_FLSTAR_D",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.fanno_friction_parameter",
+        "target": "four_flstar_d"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Fanno Friction Length Parameter for four_flstar_d",
+      "rust_example": "eq.solve(equations::compressible::fanno_friction_parameter::equation()).for_target(\"four_flstar_d\").value()?",
+      "python_example": "engpy.equations.compressible.fanno_friction_parameter.solve_four_flstar_d(m=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_FANNO_FRICTION_PARAMETER_FOUR_FLSTAR_D(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_FANNO_FRICTION_PARAMETER_FOUR_FLSTAR_D(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.fanno_pressure_ratio.M",
+      "entity": "equation",
+      "source": "compressible.fanno_pressure_ratio",
+      "python_module": "equations.compressible.fanno_pressure_ratio",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_FANNO_PRESSURE_RATIO_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.fanno_pressure_ratio",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "p_pstar",
+          "description": "Pressure ratio to star state"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Fanno Pressure Ratio for M",
+      "rust_example": "eq.solve(equations::compressible::fanno_pressure_ratio::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.fanno_pressure_ratio.solve_m(p_pstar=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_FANNO_PRESSURE_RATIO_M(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_FANNO_PRESSURE_RATIO_M(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.fanno_pressure_ratio.p_pstar",
+      "entity": "equation",
+      "source": "compressible.fanno_pressure_ratio",
+      "python_module": "equations.compressible.fanno_pressure_ratio",
+      "python_name": "solve_p_pstar",
+      "excel_name": "ENG_COMPRESSIBLE_FANNO_PRESSURE_RATIO_P_PSTAR",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.fanno_pressure_ratio",
+        "target": "p_pstar"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Fanno Pressure Ratio for p_pstar",
+      "rust_example": "eq.solve(equations::compressible::fanno_pressure_ratio::equation()).for_target(\"p_pstar\").value()?",
+      "python_example": "engpy.equations.compressible.fanno_pressure_ratio.solve_p_pstar(m=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_FANNO_PRESSURE_RATIO_P_PSTAR(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_FANNO_PRESSURE_RATIO_P_PSTAR(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.fanno_stagnation_pressure_ratio.M",
+      "entity": "equation",
+      "source": "compressible.fanno_stagnation_pressure_ratio",
+      "python_module": "equations.compressible.fanno_stagnation_pressure_ratio",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_FANNO_STAGNATION_PRESSURE_RATIO_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.fanno_stagnation_pressure_ratio",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "p0_p0star",
+          "description": "Stagnation pressure ratio to star state"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Fanno Stagnation Pressure Ratio for M",
+      "rust_example": "eq.solve(equations::compressible::fanno_stagnation_pressure_ratio::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.fanno_stagnation_pressure_ratio.solve_m(p0_p0star=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_FANNO_STAGNATION_PRESSURE_RATIO_M(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_FANNO_STAGNATION_PRESSURE_RATIO_M(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.fanno_stagnation_pressure_ratio.p0_p0star",
+      "entity": "equation",
+      "source": "compressible.fanno_stagnation_pressure_ratio",
+      "python_module": "equations.compressible.fanno_stagnation_pressure_ratio",
+      "python_name": "solve_p0_p0star",
+      "excel_name": "ENG_COMPRESSIBLE_FANNO_STAGNATION_PRESSURE_RATIO_P0_P0STAR",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.fanno_stagnation_pressure_ratio",
+        "target": "p0_p0star"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Fanno Stagnation Pressure Ratio for p0_p0star",
+      "rust_example": "eq.solve(equations::compressible::fanno_stagnation_pressure_ratio::equation()).for_target(\"p0_p0star\").value()?",
+      "python_example": "engpy.equations.compressible.fanno_stagnation_pressure_ratio.solve_p0_p0star(m=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_FANNO_STAGNATION_PRESSURE_RATIO_P0_P0STAR(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_FANNO_STAGNATION_PRESSURE_RATIO_P0_P0STAR(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.fanno_temperature_ratio.M",
+      "entity": "equation",
+      "source": "compressible.fanno_temperature_ratio",
+      "python_module": "equations.compressible.fanno_temperature_ratio",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_FANNO_TEMPERATURE_RATIO_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.fanno_temperature_ratio",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "t_tstar",
+          "description": "Temperature ratio to star state"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Fanno Temperature Ratio for M",
+      "rust_example": "eq.solve(equations::compressible::fanno_temperature_ratio::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.fanno_temperature_ratio.solve_m(t_tstar=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_FANNO_TEMPERATURE_RATIO_M(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_FANNO_TEMPERATURE_RATIO_M(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.fanno_temperature_ratio.t_tstar",
+      "entity": "equation",
+      "source": "compressible.fanno_temperature_ratio",
+      "python_module": "equations.compressible.fanno_temperature_ratio",
+      "python_name": "solve_t_tstar",
+      "excel_name": "ENG_COMPRESSIBLE_FANNO_TEMPERATURE_RATIO_T_TSTAR",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.fanno_temperature_ratio",
+        "target": "t_tstar"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Fanno Temperature Ratio for t_tstar",
+      "rust_example": "eq.solve(equations::compressible::fanno_temperature_ratio::equation()).for_target(\"t_tstar\").value()?",
+      "python_example": "engpy.equations.compressible.fanno_temperature_ratio.solve_t_tstar(m=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_FANNO_TEMPERATURE_RATIO_T_TSTAR(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_FANNO_TEMPERATURE_RATIO_T_TSTAR(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.fanno_velocity_ratio.M",
+      "entity": "equation",
+      "source": "compressible.fanno_velocity_ratio",
+      "python_module": "equations.compressible.fanno_velocity_ratio",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_FANNO_VELOCITY_RATIO_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.fanno_velocity_ratio",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "v_vstar",
+          "description": "Velocity ratio to star state"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Fanno Velocity Ratio for M",
+      "rust_example": "eq.solve(equations::compressible::fanno_velocity_ratio::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.fanno_velocity_ratio.solve_m(v_vstar=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_FANNO_VELOCITY_RATIO_M(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_FANNO_VELOCITY_RATIO_M(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.fanno_velocity_ratio.v_vstar",
+      "entity": "equation",
+      "source": "compressible.fanno_velocity_ratio",
+      "python_module": "equations.compressible.fanno_velocity_ratio",
+      "python_name": "solve_v_vstar",
+      "excel_name": "ENG_COMPRESSIBLE_FANNO_VELOCITY_RATIO_V_VSTAR",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.fanno_velocity_ratio",
+        "target": "v_vstar"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Fanno Velocity Ratio for v_vstar",
+      "rust_example": "eq.solve(equations::compressible::fanno_velocity_ratio::equation()).for_target(\"v_vstar\").value()?",
+      "python_example": "engpy.equations.compressible.fanno_velocity_ratio.solve_v_vstar(m=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_FANNO_VELOCITY_RATIO_V_VSTAR(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_FANNO_VELOCITY_RATIO_V_VSTAR(\"...\",\"...\",\"...\")"
     },
     {
       "id": "equation.compressible.isentropic_density_ratio.M",

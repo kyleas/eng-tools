@@ -40,6 +40,114 @@
       "style": "convenience"
     },
     {
+      "code": "let value = eq\n    .solve(compressible::fanno_density_ratio::equation())\n    .target_rho_rhostar()\n    .branch_subsonic()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.fanno_density_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::fanno_density_ratio::solve_rho_rhostar(\n    0.5,\n    1.4,\n)?;",
+      "label": "convenience_rho_rhostar",
+      "path_id": "compressible.fanno_density_ratio",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::fanno_density_ratio::equation())\n    .target_rho_rhostar()\n    .branch_supersonic()\n    .given_m(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_branch",
+      "path_id": "compressible.fanno_density_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::fanno_friction_parameter::equation())\n    .target_four_flstar_d()\n    .branch_subsonic()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.fanno_friction_parameter",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::fanno_friction_parameter::solve_four_flstar_d(\n    0.5,\n    1.4,\n)?;",
+      "label": "convenience_four_flstar_d",
+      "path_id": "compressible.fanno_friction_parameter",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::fanno_friction_parameter::equation())\n    .target_four_flstar_d()\n    .branch_supersonic()\n    .given_m(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_branch",
+      "path_id": "compressible.fanno_friction_parameter",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::fanno_pressure_ratio::equation())\n    .target_p_pstar()\n    .branch_subsonic()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.fanno_pressure_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::fanno_pressure_ratio::solve_p_pstar(\n    0.5,\n    1.4,\n)?;",
+      "label": "convenience_p_pstar",
+      "path_id": "compressible.fanno_pressure_ratio",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::fanno_pressure_ratio::equation())\n    .target_p_pstar()\n    .branch_supersonic()\n    .given_m(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_branch",
+      "path_id": "compressible.fanno_pressure_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::fanno_stagnation_pressure_ratio::equation())\n    .target_p0_p0star()\n    .branch_subsonic()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.fanno_stagnation_pressure_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::fanno_stagnation_pressure_ratio::solve_p0_p0star(\n    0.5,\n    1.4,\n)?;",
+      "label": "convenience_p0_p0star",
+      "path_id": "compressible.fanno_stagnation_pressure_ratio",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::fanno_stagnation_pressure_ratio::equation())\n    .target_p0_p0star()\n    .branch_supersonic()\n    .given_m(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_branch",
+      "path_id": "compressible.fanno_stagnation_pressure_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::fanno_temperature_ratio::equation())\n    .target_t_tstar()\n    .branch_subsonic()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.fanno_temperature_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::fanno_temperature_ratio::solve_t_tstar(\n    0.5,\n    1.4,\n)?;",
+      "label": "convenience_t_tstar",
+      "path_id": "compressible.fanno_temperature_ratio",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::fanno_temperature_ratio::equation())\n    .target_t_tstar()\n    .branch_supersonic()\n    .given_m(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_branch",
+      "path_id": "compressible.fanno_temperature_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::fanno_velocity_ratio::equation())\n    .target_v_vstar()\n    .branch_subsonic()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.fanno_velocity_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::fanno_velocity_ratio::solve_v_vstar(\n    0.5,\n    1.4,\n)?;",
+      "label": "convenience_v_vstar",
+      "path_id": "compressible.fanno_velocity_ratio",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::fanno_velocity_ratio::equation())\n    .target_v_vstar()\n    .branch_supersonic()\n    .given_m(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_branch",
+      "path_id": "compressible.fanno_velocity_ratio",
+      "style": "typed_builder"
+    },
+    {
       "code": "let value = eq\n    .solve(compressible::isentropic_density_ratio::equation())\n    .target_rho_rho0()\n    .given_m(2.0)\n    .given_gamma(1.4)\n    .value()?;",
       "label": "typed_builder_si",
       "path_id": "compressible.isentropic_density_ratio",

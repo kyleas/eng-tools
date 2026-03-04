@@ -31,6 +31,84 @@
       ]
     },
     {
+      "key": "fanno_density_ratio",
+      "path_id": "compressible.fanno_density_ratio",
+      "name": "Fanno Density Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Fanno-flow density ratio relative to sonic star state.",
+      "aliases": [],
+      "solve_targets": [
+        "rho_rhostar",
+        "M"
+      ]
+    },
+    {
+      "key": "fanno_friction_parameter",
+      "path_id": "compressible.fanno_friction_parameter",
+      "name": "Fanno Friction Length Parameter",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Fanno-flow friction length parameter to the sonic star state.",
+      "aliases": [],
+      "solve_targets": [
+        "four_flstar_d",
+        "M"
+      ]
+    },
+    {
+      "key": "fanno_pressure_ratio",
+      "path_id": "compressible.fanno_pressure_ratio",
+      "name": "Fanno Pressure Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Fanno-flow static pressure ratio relative to sonic star state.",
+      "aliases": [],
+      "solve_targets": [
+        "p_pstar",
+        "M"
+      ]
+    },
+    {
+      "key": "fanno_stagnation_pressure_ratio",
+      "path_id": "compressible.fanno_stagnation_pressure_ratio",
+      "name": "Fanno Stagnation Pressure Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Fanno-flow stagnation pressure ratio relative to sonic star state.",
+      "aliases": [],
+      "solve_targets": [
+        "p0_p0star",
+        "M"
+      ]
+    },
+    {
+      "key": "fanno_temperature_ratio",
+      "path_id": "compressible.fanno_temperature_ratio",
+      "name": "Fanno Temperature Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Fanno-flow static temperature ratio relative to sonic star state.",
+      "aliases": [],
+      "solve_targets": [
+        "t_tstar",
+        "M"
+      ]
+    },
+    {
+      "key": "fanno_velocity_ratio",
+      "path_id": "compressible.fanno_velocity_ratio",
+      "name": "Fanno Velocity Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Fanno-flow velocity ratio relative to sonic star state.",
+      "aliases": [],
+      "solve_targets": [
+        "v_vstar",
+        "M"
+      ]
+    },
+    {
       "key": "isentropic_density_ratio",
       "path_id": "compressible.isentropic_density_ratio",
       "name": "Isentropic Density Ratio",

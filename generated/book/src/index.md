@@ -32,4 +32,4 @@ Docs are the primary user interface for this library. Every core workflow exampl
 - [Fluids](fluids/index.md)
 - [Materials](materials/index.md)
 
-**Library size:** 38 equations, 5 constants, 4 devices, 31 fluids, 2 materials.
+**Library size:** 44 equations, 5 constants, 5 devices, 31 fluids, 2 materials.

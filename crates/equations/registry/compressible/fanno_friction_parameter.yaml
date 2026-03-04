@@ -1,0 +1,84 @@
+key: fanno_friction_parameter
+taxonomy:
+  category: compressible
+name: Fanno Friction Length Parameter
+source: "Anderson, Modern Compressible Flow: With Historical Perspective"
+display:
+  latex: '\frac{4 f L^*}{D} = \frac{1-M^2}{\gamma M^2} + \frac{\gamma+1}{2\gamma}\ln\!\left(\frac{\frac{\gamma+1}{2}M^2}{1+\frac{\gamma-1}{2}M^2}\right)'
+  unicode: "4fL*/D = (1-M^2)/(gamma*M^2) + ((gamma+1)/(2*gamma))*ln((((gamma+1)/2)*M^2)/(1+((gamma-1)/2)*M^2))"
+  ascii: "four_flstar_d = (1-M^2)/(gamma*M^2) + ((gamma+1)/(2*gamma))*ln((((gamma+1)/2)*M^2)/(1+((gamma-1)/2)*M^2))"
+  description: Fanno-flow friction length parameter to the sonic star state.
+variables:
+  four_flstar_d:
+    name: Fanno friction length parameter
+    symbol: '\frac{4 f L^*}{D}'
+    dimension: ratio
+    constraints:
+      min: 0.0
+  M:
+    name: Mach number
+    symbol: 'M'
+    dimension: mach
+    constraints:
+      positive: true
+      nonzero: true
+  gamma:
+    name: Specific heat ratio
+    symbol: '\gamma'
+    dimension: dimensionless
+    constraints:
+      min: 1.01
+residual: four_flstar_d - (((1 - M^2) / (gamma * M^2)) + (((gamma + 1) / (2 * gamma)) * ln((((gamma + 1) / 2) * M^2) / (1 + ((gamma - 1) / 2) * M^2))))
+solve:
+  explicit_forms:
+    four_flstar_d: ((1 - M^2) / (gamma * M^2)) + (((gamma + 1) / (2 * gamma)) * ln((((gamma + 1) / 2) * M^2) / (1 + ((gamma - 1) / 2) * M^2)))
+  numerical:
+    unsupported_targets: [gamma]
+    solver: bisection
+    initial_guess: 1.2
+    bracket: [0.01, 20.0]
+    tolerance_abs: 1e-12
+    tolerance_rel: 1e-10
+    max_iter: 500
+branches:
+  - name: subsonic
+    condition: 1 - M
+    preferred: false
+  - name: supersonic
+    condition: M - 1
+    preferred: true
+assumptions:
+  - One-dimensional, steady, adiabatic, constant-area duct flow with wall friction.
+  - Calorically perfect gas with constant gamma.
+tests:
+  units_policy: auto_convert_to_si
+  relation_tolerance:
+    abs: 1e-11
+    rel: 1e-9
+  cases:
+    - id: m_0_5
+      branch: subsonic
+      full_state:
+        gamma: 1.4
+        M: 0.5
+        four_flstar_d: 1.0690603127182559
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: four_flstar_d
+            methods: [explicit]
+          - target: M
+            methods: [numerical]
+    - id: m_2_0
+      branch: supersonic
+      full_state:
+        gamma: 1.4
+        M: 2.0
+        four_flstar_d: 0.3049965025814798
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: four_flstar_d
+            methods: [explicit]
+          - target: M
+            methods: [numerical]

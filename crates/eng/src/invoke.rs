@@ -101,6 +101,14 @@ pub fn handle_invoke(req: InvokeRequest) -> InvokeResponse {
         "device.oblique_shock_calc.path_text" => {
             invoke_oblique_shock_calc_path_text(&op, request_id, &args)
         }
+        "device.fanno_flow_calc" => invoke_fanno_flow_calc(&op, request_id, &args),
+        "device.fanno_flow_calc.value" => invoke_fanno_flow_calc_value(&op, request_id, &args),
+        "device.fanno_flow_calc.pivot_mach" => {
+            invoke_fanno_flow_calc_pivot_mach(&op, request_id, &args)
+        }
+        "device.fanno_flow_calc.path_text" => {
+            invoke_fanno_flow_calc_path_text(&op, request_id, &args)
+        }
         "device.pipe_loss.solve_delta_p" => invoke_pipe_loss(&op, request_id, &args),
         "fluid.prop" => invoke_fluid_prop(&op, request_id, &args),
         "material.prop" => invoke_material_prop(&op, request_id, &args),
@@ -2233,6 +2241,192 @@ fn invoke_oblique_shock_calc_path_text(
             op,
             request_id,
             "device_oblique_shock_calc_failed",
+            e.to_string(),
+            None,
+            None,
+        ),
+    }
+}
+
+struct FannoFlowInvokeRequest {
+    req: crate::devices::FannoFlowCalcRequest,
+}
+
+fn fanno_flow_request_from_args(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> std::result::Result<FannoFlowInvokeRequest, InvokeResponse> {
+    let gamma = req_f64(args, "gamma").map_err(|e| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("gamma"),
+            None,
+        )
+    })?;
+    let input_kind_raw = req_str(args, "input_kind").map_err(|e| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("input_kind"),
+            None,
+        )
+    })?;
+    let input_value = req_f64(args, "input_value").map_err(|e| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("input_value"),
+            None,
+        )
+    })?;
+    let target_kind_raw = req_str(args, "target_kind").map_err(|e| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("target_kind"),
+            None,
+        )
+    })?;
+
+    let input_kind =
+        crate::devices::fanno_flow::parse_input_kind(input_kind_raw).ok_or_else(|| {
+            InvokeResponse::err(
+                op,
+                request_id.clone(),
+                "invalid_arg",
+                format!("unsupported input_kind '{input_kind_raw}'"),
+                Some("input_kind"),
+                None,
+            )
+        })?;
+    let target_kind =
+        crate::devices::fanno_flow::parse_output_kind(target_kind_raw).ok_or_else(|| {
+            InvokeResponse::err(
+                op,
+                request_id.clone(),
+                "invalid_arg",
+                format!("unsupported target_kind '{target_kind_raw}'"),
+                Some("target_kind"),
+                None,
+            )
+        })?;
+    let branch = opt_str(args, "branch").and_then(crate::devices::fanno_flow::parse_branch);
+
+    Ok(FannoFlowInvokeRequest {
+        req: crate::devices::FannoFlowCalcRequest {
+            gamma,
+            input_kind,
+            input_value,
+            target_kind,
+            branch,
+        },
+    })
+}
+
+fn invoke_fanno_flow_calc(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+    let invoke_req = match fanno_flow_request_from_args(op, request_id.clone(), args) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    match crate::devices::fanno_flow_calc_from_request(invoke_req.req) {
+        Ok(r) => InvokeResponse::ok(
+            op,
+            request_id,
+            json!({
+                "value": r.value_si,
+                "value_unit": "si",
+                "pivot_mach": r.pivot_mach,
+                "path": r.path.iter().map(|s| json!({
+                    "equation_path_id": s.equation_path_id,
+                    "solved_for": s.solved_for,
+                    "method": s.method,
+                    "branch": s.branch,
+                    "inputs_used": s.inputs_used.iter().map(|(k,v)| json!({"key":k, "value": v})).collect::<Vec<_>>()
+                })).collect::<Vec<_>>(),
+                "path_text": r.path_text(),
+                "warnings": r.warnings,
+            }),
+        ),
+        Err(e) => InvokeResponse::err(
+            op,
+            request_id,
+            "device_fanno_flow_calc_failed",
+            e.to_string(),
+            None,
+            None,
+        ),
+    }
+}
+
+fn invoke_fanno_flow_calc_value(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
+    let invoke_req = match fanno_flow_request_from_args(op, request_id.clone(), args) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    match crate::devices::fanno_flow_calc_from_request(invoke_req.req) {
+        Ok(r) => InvokeResponse::ok(op, request_id, json!(r.value_si)),
+        Err(e) => InvokeResponse::err(
+            op,
+            request_id,
+            "device_fanno_flow_calc_failed",
+            e.to_string(),
+            None,
+            None,
+        ),
+    }
+}
+
+fn invoke_fanno_flow_calc_pivot_mach(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
+    let invoke_req = match fanno_flow_request_from_args(op, request_id.clone(), args) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    match crate::devices::fanno_flow_calc_from_request(invoke_req.req) {
+        Ok(r) => InvokeResponse::ok(op, request_id, json!(r.pivot_mach)),
+        Err(e) => InvokeResponse::err(
+            op,
+            request_id,
+            "device_fanno_flow_calc_failed",
+            e.to_string(),
+            None,
+            None,
+        ),
+    }
+}
+
+fn invoke_fanno_flow_calc_path_text(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
+    let invoke_req = match fanno_flow_request_from_args(op, request_id.clone(), args) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    match crate::devices::fanno_flow_calc_from_request(invoke_req.req) {
+        Ok(r) => InvokeResponse::ok(op, request_id, json!(r.path_text())),
+        Err(e) => InvokeResponse::err(
+            op,
+            request_id,
+            "device_fanno_flow_calc_failed",
             e.to_string(),
             None,
             None,

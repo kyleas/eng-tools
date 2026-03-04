@@ -1,0 +1,84 @@
+key: fanno_stagnation_pressure_ratio
+taxonomy:
+  category: compressible
+name: Fanno Stagnation Pressure Ratio
+source: "Anderson, Modern Compressible Flow: With Historical Perspective"
+display:
+  latex: '\frac{p_0}{p_0^*} = \frac{1}{M}\left(\frac{1+\frac{\gamma-1}{2}M^2}{\frac{\gamma+1}{2}}\right)^{\frac{\gamma+1}{2(\gamma-1)}}'
+  unicode: "p0/p0* = (1/M) * ((1 + ((gamma-1)/2)*M^2) / ((gamma+1)/2))^((gamma+1)/(2*(gamma-1)))"
+  ascii: "p0_p0star = (1/M) * ((1 + ((gamma-1)/2)*M^2) / ((gamma+1)/2))^((gamma+1)/(2*(gamma-1)))"
+  description: Fanno-flow stagnation pressure ratio relative to sonic star state.
+variables:
+  p0_p0star:
+    name: Stagnation pressure ratio to star state
+    symbol: '\frac{p_0}{p_0^*}'
+    dimension: ratio
+    constraints:
+      min: 1.0
+  M:
+    name: Mach number
+    symbol: 'M'
+    dimension: mach
+    constraints:
+      positive: true
+      nonzero: true
+  gamma:
+    name: Specific heat ratio
+    symbol: '\gamma'
+    dimension: dimensionless
+    constraints:
+      min: 1.01
+residual: p0_p0star - ((1 / M) * pow((1 + ((gamma - 1) / 2) * M^2) / ((gamma + 1) / 2), (gamma + 1) / (2 * (gamma - 1))))
+solve:
+  explicit_forms:
+    p0_p0star: (1 / M) * pow((1 + ((gamma - 1) / 2) * M^2) / ((gamma + 1) / 2), (gamma + 1) / (2 * (gamma - 1)))
+  numerical:
+    unsupported_targets: [gamma]
+    solver: bisection
+    initial_guess: 1.2
+    bracket: [0.01, 20.0]
+    tolerance_abs: 1e-12
+    tolerance_rel: 1e-10
+    max_iter: 400
+branches:
+  - name: subsonic
+    condition: 1 - M
+    preferred: false
+  - name: supersonic
+    condition: M - 1
+    preferred: true
+assumptions:
+  - One-dimensional, steady, adiabatic, constant-area duct flow with wall friction.
+  - Calorically perfect gas with constant gamma.
+tests:
+  units_policy: auto_convert_to_si
+  relation_tolerance:
+    abs: 1e-11
+    rel: 1e-9
+  cases:
+    - id: m_0_5
+      branch: subsonic
+      full_state:
+        gamma: 1.4
+        M: 0.5
+        p0_p0star: 1.3398437500000004
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: p0_p0star
+            methods: [explicit]
+          - target: M
+            methods: [numerical]
+    - id: m_2_0
+      branch: supersonic
+      full_state:
+        gamma: 1.4
+        M: 2.0
+        p0_p0star: 1.6875000000000002
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: p0_p0star
+            methods: [explicit]
+          - target: M
+            methods: [numerical]

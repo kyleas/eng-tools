@@ -2,6 +2,12 @@
 
 - [Isentropic Area-Mach Relation](./area_mach.md)
 - [Choked Mass Flux](./choked_mass_flux.md)
+- [Fanno Density Ratio](./fanno_density_ratio.md)
+- [Fanno Friction Length Parameter](./fanno_friction_parameter.md)
+- [Fanno Pressure Ratio](./fanno_pressure_ratio.md)
+- [Fanno Stagnation Pressure Ratio](./fanno_stagnation_pressure_ratio.md)
+- [Fanno Temperature Ratio](./fanno_temperature_ratio.md)
+- [Fanno Velocity Ratio](./fanno_velocity_ratio.md)
 - [Isentropic Density Ratio](./isentropic_density_ratio.md)
 - [Isentropic Pressure Ratio](./isentropic_pressure_ratio.md)
 - [Isentropic Temperature Ratio](./isentropic_temperature_ratio.md)

@@ -1,0 +1,84 @@
+key: fanno_density_ratio
+taxonomy:
+  category: compressible
+name: Fanno Density Ratio
+source: "Anderson, Modern Compressible Flow: With Historical Perspective"
+display:
+  latex: '\frac{\rho}{\rho^*} = \frac{1}{M}\sqrt{\frac{1+\frac{\gamma-1}{2}M^2}{\frac{\gamma+1}{2}}}'
+  unicode: "rho/rho* = (1/M) * sqrt((1 + ((gamma-1)/2)*M^2) / ((gamma+1)/2))"
+  ascii: "rho_rhostar = (1/M) * sqrt((1 + ((gamma-1)/2)*M^2) / ((gamma+1)/2))"
+  description: Fanno-flow density ratio relative to sonic star state.
+variables:
+  rho_rhostar:
+    name: Density ratio to star state
+    symbol: '\frac{\rho}{\rho^*}'
+    dimension: ratio
+    constraints:
+      positive: true
+  M:
+    name: Mach number
+    symbol: 'M'
+    dimension: mach
+    constraints:
+      positive: true
+      nonzero: true
+  gamma:
+    name: Specific heat ratio
+    symbol: '\gamma'
+    dimension: dimensionless
+    constraints:
+      min: 1.01
+residual: rho_rhostar - ((1 / M) * sqrt((1 + ((gamma - 1) / 2) * M^2) / ((gamma + 1) / 2)))
+solve:
+  explicit_forms:
+    rho_rhostar: (1 / M) * sqrt((1 + ((gamma - 1) / 2) * M^2) / ((gamma + 1) / 2))
+  numerical:
+    unsupported_targets: [gamma]
+    solver: bisection
+    initial_guess: 1.2
+    bracket: [0.01, 20.0]
+    tolerance_abs: 1e-12
+    tolerance_rel: 1e-10
+    max_iter: 400
+branches:
+  - name: subsonic
+    condition: 1 - M
+    preferred: false
+  - name: supersonic
+    condition: M - 1
+    preferred: true
+assumptions:
+  - One-dimensional, steady, adiabatic, constant-area duct flow with wall friction.
+  - Calorically perfect gas with constant gamma.
+tests:
+  units_policy: auto_convert_to_si
+  relation_tolerance:
+    abs: 1e-11
+    rel: 1e-9
+  cases:
+    - id: m_0_5
+      branch: subsonic
+      full_state:
+        gamma: 1.4
+        M: 0.5
+        rho_rhostar: 1.8708286933869709
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: rho_rhostar
+            methods: [explicit]
+          - target: M
+            methods: [numerical]
+    - id: m_2_0
+      branch: supersonic
+      full_state:
+        gamma: 1.4
+        M: 2.0
+        rho_rhostar: 0.6123724356957945
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: rho_rhostar
+            methods: [explicit]
+          - target: M
+            methods: [numerical]

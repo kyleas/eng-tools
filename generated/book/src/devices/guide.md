@@ -34,6 +34,14 @@ Devices/components compose multiple atomic equations into higher-level engineeri
 - Input pairs: (M1, beta), (M1, theta)
 - Branch-aware inversion for (M1, theta) -> beta
 
+## Fanno Flow Calculator
+
+- Key: `fanno_flow_calc`
+- Calculator-style compressible device: solve Fanno star-reference input kinds to target kinds through Mach pivot orchestration.
+- Route: `devices/fanno_flow_calc.md`
+- Input kinds: Mach, T/T*, p/p*, rho/rho*, p0/p0*, 4fL*/D
+- Branch-aware inversion for ratio -> Mach
+
 ## Fixed-f Mode
 
 ```rust

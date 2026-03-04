@@ -1,5 +1,137 @@
 from ._runtime import invoke
 
+def fanno_flow_calc(input_kind, input_value, target_kind, gamma, branch=None):
+    """Fanno-flow calculator: input kind -> target kind through Mach pivot
+
+Args:
+  input_kind: Input kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, four_flstar_d)
+  input_value: Input value
+  target_kind: Target kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, v_vstar, four_flstar_d)
+  gamma: Specific heat ratio
+  branch: Subsonic/supersonic branch for inverse paths
+Returns:
+  f64
+"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+def fanno_flow_from_4flstar_d_to_m(input_value, gamma, branch=None):
+    """Convenience Fanno path: 4fL*/D -> Mach (branch required)
+
+Args:
+  input_value: Input ratio value
+  gamma: Specific heat ratio
+  branch: Subsonic or supersonic branch
+Returns:
+  f64
+"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": "four_flstar_d", "target_kind": "mach", "input_value": input_value, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+def fanno_flow_from_m_to_4flstar_d(input_value, gamma):
+    """Convenience Fanno path: Mach -> 4fL*/D
+
+Args:
+  input_value: Mach input value
+  gamma: Specific heat ratio
+Returns:
+  f64
+"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": "mach", "target_kind": "four_flstar_d", "input_value": input_value, "gamma": gamma})
+
+def fanno_flow_from_m_to_p0_p0star(input_value, gamma):
+    """Convenience Fanno path: Mach -> p0/p0*
+
+Args:
+  input_value: Mach input value
+  gamma: Specific heat ratio
+Returns:
+  f64
+"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": "mach", "target_kind": "p0_p0star", "input_value": input_value, "gamma": gamma})
+
+def fanno_flow_from_m_to_p_pstar(input_value, gamma):
+    """Convenience Fanno path: Mach -> p/p*
+
+Args:
+  input_value: Mach input value
+  gamma: Specific heat ratio
+Returns:
+  f64
+"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": "mach", "target_kind": "p_pstar", "input_value": input_value, "gamma": gamma})
+
+def fanno_flow_from_m_to_rho_rhostar(input_value, gamma):
+    """Convenience Fanno path: Mach -> rho/rho*
+
+Args:
+  input_value: Mach input value
+  gamma: Specific heat ratio
+Returns:
+  f64
+"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": "mach", "target_kind": "rho_rhostar", "input_value": input_value, "gamma": gamma})
+
+def fanno_flow_from_m_to_t_tstar(input_value, gamma):
+    """Convenience Fanno path: Mach -> T/T*
+
+Args:
+  input_value: Mach input value
+  gamma: Specific heat ratio
+Returns:
+  f64
+"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": "mach", "target_kind": "t_tstar", "input_value": input_value, "gamma": gamma})
+
+def fanno_flow_from_m_to_v_vstar(input_value, gamma):
+    """Convenience Fanno path: Mach -> V/V*
+
+Args:
+  input_value: Mach input value
+  gamma: Specific heat ratio
+Returns:
+  f64
+"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": "mach", "target_kind": "v_vstar", "input_value": input_value, "gamma": gamma})
+
+def fanno_flow_from_p0_p0star_to_m(input_value, gamma, branch=None):
+    """Convenience Fanno path: p0/p0* -> Mach (branch required)
+
+Args:
+  input_value: Input ratio value
+  gamma: Specific heat ratio
+  branch: Subsonic or supersonic branch
+Returns:
+  f64
+"""
+    return invoke("device.fanno_flow_calc.value", {"input_kind": "p0_p0star", "target_kind": "mach", "input_value": input_value, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+def fanno_flow_path_text(input_kind, input_value, target_kind, gamma, branch=None):
+    """Fanno-flow calculator helper: compact step trace text
+
+Args:
+  input_kind: Input kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, four_flstar_d)
+  input_value: Input value
+  target_kind: Target kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, v_vstar, four_flstar_d)
+  gamma: Specific heat ratio
+  branch: Subsonic/supersonic branch for inverse paths
+Returns:
+  str
+"""
+    return invoke("device.fanno_flow_calc.path_text", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+def fanno_flow_pivot_mach(input_kind, input_value, target_kind, gamma, branch=None):
+    """Fanno-flow calculator helper: return resolved pivot Mach
+
+Args:
+  input_kind: Input kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, four_flstar_d)
+  input_value: Input value
+  target_kind: Target kind (mach, t_tstar, p_pstar, rho_rhostar, p0_p0star, v_vstar, four_flstar_d)
+  gamma: Specific heat ratio
+  branch: Subsonic/supersonic branch for inverse paths
+Returns:
+  f64
+"""
+    return invoke("device.fanno_flow_calc.pivot_mach", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
 def isentropic_calc(input_kind, input_value, target_kind, gamma, branch=None):
     """Isentropic calculator: input kind -> target kind through Mach pivot
 

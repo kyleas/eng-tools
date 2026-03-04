@@ -199,6 +199,22 @@
       "description": "Run oblique-shock calculator device and return compact path trace text"
     },
     {
+      "op": "device.fanno_flow_calc",
+      "description": "Run Fanno-flow calculator device and return value+pivot+path diagnostics"
+    },
+    {
+      "op": "device.fanno_flow_calc.value",
+      "description": "Run Fanno-flow calculator device and return scalar output value"
+    },
+    {
+      "op": "device.fanno_flow_calc.pivot_mach",
+      "description": "Run Fanno-flow calculator device and return resolved pivot Mach"
+    },
+    {
+      "op": "device.fanno_flow_calc.path_text",
+      "description": "Run Fanno-flow calculator device and return compact path trace text"
+    },
+    {
       "op": "device.pipe_loss.solve_delta_p",
       "description": "Solve pipe-loss device pressure drop"
     },

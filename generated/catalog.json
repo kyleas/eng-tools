@@ -25,6 +25,66 @@
         "resolver_contexts": []
       },
       {
+        "key": "fanno_density_ratio",
+        "path_id": "compressible.fanno_density_ratio",
+        "name": "Fanno Density Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "fanno_friction_parameter",
+        "path_id": "compressible.fanno_friction_parameter",
+        "name": "Fanno Friction Length Parameter",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "fanno_pressure_ratio",
+        "path_id": "compressible.fanno_pressure_ratio",
+        "name": "Fanno Pressure Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "fanno_stagnation_pressure_ratio",
+        "path_id": "compressible.fanno_stagnation_pressure_ratio",
+        "name": "Fanno Stagnation Pressure Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "fanno_temperature_ratio",
+        "path_id": "compressible.fanno_temperature_ratio",
+        "name": "Fanno Temperature Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "fanno_velocity_ratio",
+        "path_id": "compressible.fanno_velocity_ratio",
+        "name": "Fanno Velocity Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
         "key": "isentropic_density_ratio",
         "path_id": "compressible.isentropic_density_ratio",
         "name": "Isentropic Density Ratio",
@@ -580,6 +640,21 @@
           "path diagnostics"
         ],
         "route": "devices/oblique_shock_calc.md"
+      },
+      {
+        "key": "fanno_flow_calc",
+        "name": "Fanno Flow Calculator",
+        "summary": "Calculator-style compressible device: solve Fanno star-reference input kinds to target kinds through Mach pivot orchestration.",
+        "supported_modes": [
+          "Input kinds: Mach, T/T*, p/p*, rho/rho*, p0/p0*, 4fL*/D",
+          "Branch-aware inversion for ratio -> Mach"
+        ],
+        "outputs": [
+          "value_si",
+          "pivot_mach",
+          "path diagnostics"
+        ],
+        "route": "devices/fanno_flow_calc.md"
       }
     ],
     "fluids": [
@@ -1508,6 +1583,36 @@
       }
     ],
     "links": [
+      {
+        "relation": "device_uses_equation",
+        "from": "fanno_flow_calc",
+        "to": "compressible.fanno_density_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "fanno_flow_calc",
+        "to": "compressible.fanno_friction_parameter"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "fanno_flow_calc",
+        "to": "compressible.fanno_pressure_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "fanno_flow_calc",
+        "to": "compressible.fanno_stagnation_pressure_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "fanno_flow_calc",
+        "to": "compressible.fanno_temperature_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "fanno_flow_calc",
+        "to": "compressible.fanno_velocity_ratio"
+      },
       {
         "relation": "device_uses_equation",
         "from": "isentropic_calc",

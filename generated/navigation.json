@@ -9,6 +9,12 @@
         "_root": [
           "area_mach",
           "choked_mass_flux",
+          "fanno_density_ratio",
+          "fanno_friction_parameter",
+          "fanno_pressure_ratio",
+          "fanno_stagnation_pressure_ratio",
+          "fanno_temperature_ratio",
+          "fanno_velocity_ratio",
           "isentropic_density_ratio",
           "isentropic_pressure_ratio",
           "isentropic_temperature_ratio",
