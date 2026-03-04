@@ -1,28 +1,28 @@
 # Fluids Guide
 
-The fluids layer provides typed wrappers, explicit state constructors, a flexible generic state API, direct property accessors, quality support, saturation helpers, and structured state metadata/errors.
+Fluids are first-class engineering objects with typed wrappers, explicit state constructors, a flexible generic state path, direct property accessors, and context integration with equations.
 
-## Recommended Usage Paths
+## Recommended Usage Path
 
-- **Preferred fast path:** explicit constructors such as `state_tp`, `state_ph`, `state_ps`, `state_rho_h`, `state_pq`, and `state_tq`.
-- **Flexible path:** generic `state("T", ..., "P", ...)` with explicit property identity.
-- Generic path does not infer property identity from units; you must provide property keys.
+- **Preferred fast path**: explicit constructors like `state_tp`, `state_ph`, `state_ps`, `state_rho_h`, `state_pq`, `state_tq`.
+- **Flexible path**: generic `state("T", value, "P", value)` where property identity is explicit.
+- Use direct accessor methods (`rho()`, `mu()`, `cp()`, `gamma()`, ...) instead of generic string property reads when writing Rust code.
 
-## State Constructor Patterns
+## Constructor Capability Matrix
 
-| Constructor | Inputs | Typical use |
+| Constructor | Meaning | Typical Use |
 | --- | --- | --- |
-| `state_tp(T, P)` | temperature, pressure | standard single-phase setup |
-| `state_ph(P, h)` | pressure, specific enthalpy | inversion from energy state |
-| `state_ps(P, s)` | pressure, specific entropy | entropy-based state setup |
-| `state_rho_h(rho, h)` | density, specific enthalpy | density/energy-defined state |
-| `state_pq(P, Q)` | pressure, quality | saturation/two-phase state at pressure |
-| `state_tq(T, Q)` | temperature, quality | saturation/two-phase state at temperature |
-| `state("T", v1, "P", v2)` | explicit property keys + values | flexible pair-input construction |
+| `state_tp(T, P)` | Temperature + pressure | Most common fast path |
+| `state_ph(P, h)` | Pressure + specific enthalpy | Thermodynamic inversion workflows |
+| `state_ps(P, s)` | Pressure + specific entropy | Isentropic/entropy constrained workflows |
+| `state_rho_h(rho, h)` | Density + specific enthalpy | Density-driven model integration |
+| `state_pq(P, Q)` | Pressure + quality | Two-phase saturation states |
+| `state_tq(T, Q)` | Temperature + quality | Two-phase saturation states |
+| `state("T", v1, "P", v2)` | Explicit property-name pair | Flexible bindings/CLI/file paths |
 
-## Generic Property Key Aliases
+## Generic Property Alias Map
 
-| Canonical | Aliases |
+| Canonical | Accepted aliases |
 | --- | --- |
 | Temperature | `T`, `temperature` |
 | Pressure | `P`, `pressure` |
@@ -31,24 +31,9 @@ The fluids layer provides typed wrappers, explicit state constructors, a flexibl
 | Specific entropy | `s`, `entropy` |
 | Quality | `Q`, `quality`, `x` |
 
-## Direct Property Accessors
+Property identity is required in the generic path; there is no unit-only inference. This avoids ambiguity (for example `h` vs `u`).
 
-| Property | Accessors |
-| --- | --- |
-| Pressure | `pressure()`, `p()` |
-| Temperature | `temperature()`, `t()` |
-| Density | `density()`, `rho()` |
-| Dynamic viscosity | `dynamic_viscosity()`, `mu()` |
-| Thermal conductivity | `thermal_conductivity()`, `k()` |
-| Specific heat (cp) | `specific_heat_capacity()`, `cp()` |
-| Specific heat (cv) | `specific_heat_capacity_cv()`, `cv()` |
-| Speed of sound | `speed_of_sound()`, `a()` |
-| Specific enthalpy | `specific_enthalpy()`, `h()` |
-| Specific entropy | `specific_entropy()`, `s()` |
-| Heat capacity ratio | `gamma()` |
-| Quality | `quality()` |
-
-## Verified Constructor + Generic State Examples
+## Verified State Construction Examples
 
 ```rust
 {
@@ -76,7 +61,22 @@ The fluids layer provides typed wrappers, explicit state constructors, a flexibl
 }
 ```
 
-## Verified Direct Property Access Example
+## Direct Property Accessors
+
+| Accessor | Meaning |
+| --- | --- |
+| `pressure()` / `p()` | Pressure (Pa) |
+| `temperature()` / `t()` | Temperature (K) |
+| `density()` / `rho()` | Density (kg/m^3) |
+| `dynamic_viscosity()` / `mu()` | Dynamic viscosity (Pa*s) |
+| `thermal_conductivity()` / `k()` | Thermal conductivity (W/(m*K)) |
+| `specific_heat_capacity()` / `cp()` | Cp (J/(kg*K)) |
+| `specific_heat_capacity_cv()` / `cv()` | Cv (J/(kg*K)) |
+| `gamma()` | Heat capacity ratio |
+| `speed_of_sound()` / `a()` | Speed of sound (m/s) |
+| `specific_enthalpy()` / `h()` | Specific enthalpy (J/kg) |
+| `specific_entropy()` / `s()` | Specific entropy (J/(kg*K)) |
+| `quality()` | Quality in `[0,1]` for Q-based states |
 
 ```rust
 use eng::fluids;
@@ -91,7 +91,11 @@ let state_generic = fluids::air().state("T", "300 K", "P", "1 bar")?;
 let gamma = state_generic.gamma()?;
 ```
 
-## Verified Saturation + Metadata Example
+## Quality, Saturation, and State Metadata
+
+- `saturation_at_pressure(P)` returns `{ liquid, vapor }`
+- `saturation_at_temperature(T)` returns `{ liquid, vapor }`
+- State metadata includes `fluid_key()`, `fluid_name()`, `input_pair()`, `input_pair_label()`, `normalized_inputs()`, `quality()`, and `phase()`
 
 ```rust
 {
@@ -109,24 +113,11 @@ let gamma = state_generic.gamma()?;
 }
 ```
 
-## State Metadata
+## Equation Context Integration
 
-- `fluid_key()` and `fluid_name()` identify the wrapper/backend fluid.
-- `input_pair()` and `input_pair_label()` show which pair initialized the state.
-- `normalized_inputs()` reports normalized SI inputs used for backend calls.
-- `quality()` and `phase()` expose two-phase context where available.
+Use direct property lookup when you need one-off values. Use `solve_with_context(...).fluid(state)` when an equation should auto-resolve fluid-dependent variables.
 
-## Error Behavior
-
-- Unsupported state pairs return an explicit supported-pairs list.
-- Unknown generic property keys return actionable key errors.
-- Duplicate keys in generic `state(...)` are rejected.
-- `u`/internal-energy keys are intentionally rejected to avoid ambiguity with enthalpy.
-- Backend failures remain recoverable and include fluid/pair/property context.
-
-## Equation Integration
-
-Use direct fluid property lookups for ad hoc calculations. Use equation context solving (`solve_with_context(...).fluid(...)`) when equations declare resolver metadata and you want automatic property resolution.
+Use fluid states directly in context solves:
 
 ```rust
 use eng::{eq, equations, fluids};
@@ -140,4 +131,13 @@ let re = eq
     .value()?;
 ```
 
-See the [Fluids Catalog](./index.md) for per-fluid reference pages.
+## Common Errors and Gotchas
+
+- Unknown/invalid generic property keys are rejected with explicit supported-key guidance.
+- Unsupported input pairs (for example `rho,T`) return clear pair diagnostics listing supported pairs.
+- `u`/internal-energy identifiers are intentionally rejected in the generic state-input path to avoid confusion with enthalpy `h`.
+- Parse and backend failures are recoverable and include fluid/pair/property context.
+
+## Catalog
+
+- [Fluids Catalog](./index.md)

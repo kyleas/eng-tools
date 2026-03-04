@@ -1,8 +1,6 @@
 use eng_fluids as fluid_repo;
 use eng_materials as material_repo;
-use equations::{
-    eq, export_docs_artifacts, fluids, generate_schema_to_path, run_registry_tests, structures,
-};
+use equations::{eq, fluids, generate_schema_to_path, run_registry_tests, structures};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Legacy quick-start example. For the full workflow set, see:
@@ -47,6 +45,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     generate_schema_to_path("crates/equations/schemas/equation.schema.json")?;
-    export_docs_artifacts(registry.equations(), "generated")?;
+    println!("Unified docs export is owned by `eng` CLI.");
+    println!("Run: cargo run -p eng --bin eng -- export-docs");
     Ok(())
 }

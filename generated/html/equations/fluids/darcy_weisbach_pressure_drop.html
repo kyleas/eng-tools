@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfb3c088.js"></script>
+        <script src="../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,63 +177,41 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="darcy-weisbach-pressure-drop"><a class="header" href="#darcy-weisbach-pressure-drop">Darcy-Weisbach Pressure Drop</a></h1>
-<p><strong>Path:</strong> <code>fluids.darcy_weisbach_pressure_drop</code><br><strong>Category:</strong> <code>fluids</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>fluids.darcy_weisbach_pressure_drop</code></p>
+<p>[
 \Delta p = f \frac{L}{D} \frac{\rho V^2}{2}
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>Δ p = f · (L / D) · (ρ · V² / 2)</code></li>
 <li>ASCII: <code>delta_p = f * (L / D) * (rho * V^2 / 2)</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>delta_p</code></td><td>Pressure drop</td><td>\(\Delta p\)</td><td><code>pressure</code></td><td><code>Pa</code></td></tr>
+
+<tr><td><code>f</code></td><td>Darcy friction factor</td><td>\(f\)</td><td><code>friction_factor</code></td><td><code>1</code></td></tr>
+
+<tr><td><code>L</code></td><td>Pipe length</td><td>\(L\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+
+<tr><td><code>D</code></td><td>Pipe diameter</td><td>\(D\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+
+<tr><td><code>rho</code></td><td>Fluid density</td><td>\(\rho\)</td><td><code>density</code></td><td><code>kg/m3</code></td></tr>
+
+<tr><td><code>V</code></td><td>Mean velocity</td><td>\(V\)</td><td><code>velocity</code></td><td><code>m/s</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>Fully developed internal flow in a constant-diameter conduit.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>delta_p</code></td><td>Pressure drop</td><td><span class="math inline">\(\Delta p\)</span></td><td><code>pressure</code></td><td><code>Pa</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>f</code></td><td>Darcy friction factor</td><td><span class="math inline">\(f\)</span></td><td><code>friction_factor</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>L</code></td><td>Pipe length</td><td><span class="math inline">\(L\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>D</code></td><td>Pipe diameter</td><td><span class="math inline">\(D\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>rho</code></td><td>Fluid density</td><td><span class="math inline">\(\rho\)</span></td><td><code>density</code></td><td><code>kg/m3</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>V</code></td><td>Mean velocity</td><td><span class="math inline">\(V\)</span></td><td><code>velocity</code></td><td><code>m/s</code></td><td><code>-</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>D</code>: explicit</li>
-<li><code>L</code>: explicit</li>
-<li><code>V</code>: explicit</li>
-<li><code>delta_p</code>: explicit</li>
-<li><code>f</code>: explicit</li>
-<li><code>rho</code>: explicit</li>
-</ul>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -246,7 +224,7 @@ $$</p>
     .given_v(3.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-units-aware"><a class="header" href="#typed-builder-units-aware">Typed Builder (Units-Aware)</a></h3>
+<h3 id="typed_builder_units"><a class="header" href="#typed_builder_units">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -259,47 +237,7 @@ $$</p>
     .given_v("3 m/s")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="available-convenience-functions"><a class="header" href="#available-convenience-functions">Available Convenience Functions</a></h3>
-<p>Direct solve helpers are available for these targets.</p>
-<table>
-  
-<thead>
-    
-<tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>delta_p</code></td><td><code>solve_delta_p(f, L, D, rho, V)</code></td><td><code>f</code>, <code>L</code>, <code>D</code>, <code>rho</code>, <code>V</code></td></tr>
-
-    
-<tr><td><code>f</code></td><td><code>solve_f(delta_p, L, D, rho, V)</code></td><td><code>delta_p</code>, <code>L</code>, <code>D</code>, <code>rho</code>, <code>V</code></td></tr>
-
-    
-<tr><td><code>L</code></td><td><code>solve_l(delta_p, f, D, rho, V)</code></td><td><code>delta_p</code>, <code>f</code>, <code>D</code>, <code>rho</code>, <code>V</code></td></tr>
-
-    
-<tr><td><code>D</code></td><td><code>solve_d(delta_p, f, L, rho, V)</code></td><td><code>delta_p</code>, <code>f</code>, <code>L</code>, <code>rho</code>, <code>V</code></td></tr>
-
-    
-<tr><td><code>rho</code></td><td><code>solve_rho(delta_p, f, L, D, V)</code></td><td><code>delta_p</code>, <code>f</code>, <code>L</code>, <code>D</code>, <code>V</code></td></tr>
-
-    
-<tr><td><code>V</code></td><td><code>solve_v(delta_p, f, L, D, rho)</code></td><td><code>delta_p</code>, <code>f</code>, <code>L</code>, <code>D</code>, <code>rho</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h3 id="solve-delta_p"><a class="header" href="#solve-delta_p">Solve <code>delta_p</code></a></h3>
-<p><strong>Function signature</strong></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>equations::fluids::darcy_weisbach_pressure_drop::solve_delta_p(f, L, D, rho, V) -&gt; Result&lt;f64, _&gt;
-<span class="boring">}</span></code></pre>
-<p><strong>Example</strong></p>
+<h3 id="convenience_delta_p"><a class="header" href="#convenience_delta_p">convenience_delta_p</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::fluids::darcy_weisbach_pressure_drop::solve_delta_p(
@@ -310,13 +248,80 @@ $$</p>
     "3 m/s",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="notes"><a class="header" href="#notes">Notes</a></h3>
+<h3 id="convenience_f"><a class="header" href="#convenience_f">convenience_f</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::fluids::darcy_weisbach_pressure_drop::solve_f(
+    "9000 Pa",
+    "10 m",
+    "0.1 m",
+    "1000 kg/m3",
+    "3 m/s",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_l"><a class="header" href="#convenience_l">convenience_l</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::fluids::darcy_weisbach_pressure_drop::solve_l(
+    "9000 Pa",
+    0.02,
+    "0.1 m",
+    "1000 kg/m3",
+    "3 m/s",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_d"><a class="header" href="#convenience_d">convenience_d</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::fluids::darcy_weisbach_pressure_drop::solve_d(
+    "9000 Pa",
+    0.02,
+    "10 m",
+    "1000 kg/m3",
+    "3 m/s",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_rho"><a class="header" href="#convenience_rho">convenience_rho</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::fluids::darcy_weisbach_pressure_drop::solve_rho(
+    "9000 Pa",
+    0.02,
+    "10 m",
+    "0.1 m",
+    "3 m/s",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_v"><a class="header" href="#convenience_v">convenience_v</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::fluids::darcy_weisbach_pressure_drop::solve_v(
+    "9000 Pa",
+    0.02,
+    "10 m",
+    "0.1 m",
+    "1000 kg/m3",
+)?;
+<span class="boring">}</span></code></pre>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::fluids::darcy_weisbach_pressure_drop::equation()).for_target("D").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.fluids.solve_d(delta_p="...", f="...", l="...", rho="...", v="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_D("...","...","...","...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Returns SI by default; use <code>.value_in("&lt;unit&gt;")</code> for display units.</li>
-</ul>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
-<ul>
-<li>Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics</li>
+<li><code>delta_p</code>: Pressure drop</li>
+<li><code>f</code>: Darcy friction factor</li>
+<li><code>l</code>: Pipe length</li>
+<li><code>rho</code>: Fluid density</li>
+<li><code>v</code>: Mean velocity</li>
 </ul>
 
                     </main>

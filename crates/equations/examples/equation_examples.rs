@@ -1,8 +1,8 @@
 use eng_core::units::qty;
 use eng_core::units::typed::{length, pressure};
 use equations::{
-    Registry, SolveMethod, compressible, eq, export_docs_artifacts, families,
-    generate_schema_to_path, run_registry_tests, structures,
+    Registry, SolveMethod, compressible, eq, families, generate_schema_to_path, run_registry_tests,
+    structures,
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -122,8 +122,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // 10) Generation workflows used by docs/tooling.
     generate_schema_to_path("crates/equations/schemas/equation.schema.json")?;
-    export_docs_artifacts(registry.equations(), "generated")?;
-    println!("[artifacts] schema/docs exports refreshed");
+    println!("[artifacts] schema refreshed");
+    println!("[artifacts] unified docs export is owned by the eng CLI:");
+    println!("            cargo run -p eng --bin eng -- export-docs");
 
     Ok(())
 }

@@ -1,0 +1,14 @@
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "engpy-native"
+version = "0.1.0"
+description = "Native in-process Python bindings for the eng Rust library"
+readme = "README.md"
+requires-python = ">=3.9"
+
+[tool.maturin]
+manifest-path = "../../../crates/eng-pyext/Cargo.toml"
+module-name = "engpy_native"

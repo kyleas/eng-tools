@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfb3c088.js"></script>
+        <script src="../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,56 +177,40 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="choked-mass-flux"><a class="header" href="#choked-mass-flux">Choked Mass Flux</a></h1>
-<p><strong>Path:</strong> <code>compressible.choked_mass_flux</code><br><strong>Category:</strong> <code>compressible</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>compressible.choked_mass_flux</code></p>
+<p>[
 G^* = \frac{p_0}{\sqrt{T_0}} \sqrt{\frac{\gamma}{R}} \left(\frac{2}{\gamma+1}\right)^{(\gamma+1)/(2(\gamma-1))}
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>G_star = (p0 / √(T0)) · √(γ / R) · pow(2 / (γ + 1), (γ + 1) / (2 · (γ - 1)))</code></li>
 <li>ASCII: <code>G_star = (p0 / sqrt(T0)) * sqrt(gamma / R) * pow(2 / (gamma + 1), (gamma + 1) / (2 * (gamma - 1)))</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>G_star</code></td><td>Choked mass flux</td><td>\(G_star\)</td><td><code>mass_flux</code></td><td><code>kg/(m2*s)</code></td></tr>
+
+<tr><td><code>p0</code></td><td>Stagnation pressure</td><td>\(p0\)</td><td><code>pressure</code></td><td><code>Pa</code></td></tr>
+
+<tr><td><code>T0</code></td><td>Stagnation temperature</td><td>\(T0\)</td><td><code>temperature</code></td><td><code>K</code></td></tr>
+
+<tr><td><code>gamma</code></td><td>Specific heat ratio</td><td>\(\gamma\)</td><td><code>dimensionless</code></td><td><code>1</code></td></tr>
+
+<tr><td><code>R</code></td><td>Gas constant</td><td>\(R\)</td><td><code>gas_constant</code></td><td><code>J/(kg*K)</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>One-dimensional isentropic converging nozzle at critical condition (M=1 at throat).</li>
 <li>Perfect gas with constant gamma and R.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>G_star</code></td><td>Choked mass flux</td><td><span class="math inline">\(G^*\)</span></td><td><code>mass_flux</code></td><td><code>kg/(m2*s)</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>p0</code></td><td>Stagnation pressure</td><td><span class="math inline">\(p_{0}\)</span></td><td><code>pressure</code></td><td><code>Pa</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>T0</code></td><td>Stagnation temperature</td><td><span class="math inline">\(T_{0}\)</span></td><td><code>temperature</code></td><td><code>K</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>gamma</code></td><td>Specific heat ratio</td><td><span class="math inline">\(\gamma\)</span></td><td><code>dimensionless</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>R</code></td><td>Gas constant</td><td><span class="math inline">\(R\)</span></td><td><code>gas_constant</code></td><td><code>J/(kg*K)</code></td><td><code>-</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>G_star</code>: explicit, numerical</li>
-</ul>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -238,7 +222,7 @@ $$</p>
     .given_r(287.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-units-aware"><a class="header" href="#typed-builder-units-aware">Typed Builder (Units-Aware)</a></h3>
+<h3 id="typed_builder_units"><a class="header" href="#typed_builder_units">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -250,32 +234,7 @@ $$</p>
     .given_r("287 J/(kg*K)")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="available-convenience-functions"><a class="header" href="#available-convenience-functions">Available Convenience Functions</a></h3>
-<p>Direct solve helpers are available for these targets.</p>
-<table>
-  
-<thead>
-    
-<tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>G_star</code></td><td><code>solve_g_star(p0, T0, gamma, R)</code></td><td><code>p0</code>, <code>T0</code>, <code>gamma</code>, <code>R</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h3 id="solve-g_star"><a class="header" href="#solve-g_star">Solve <code>G_star</code></a></h3>
-<p><strong>Function signature</strong></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>equations::compressible::choked_mass_flux::solve_g_star(p0, T0, gamma, R) -&gt; Result&lt;f64, _&gt;
-<span class="boring">}</span></code></pre>
-<p><strong>Example</strong></p>
+<h3 id="convenience_g_star"><a class="header" href="#convenience_g_star">convenience_g_star</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::compressible::choked_mass_flux::solve_g_star(
@@ -285,13 +244,24 @@ $$</p>
     "287 J/(kg*K)",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="notes"><a class="header" href="#notes">Notes</a></h3>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::compressible::choked_mass_flux::equation()).for_target("G_star").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.compressible.solve_g_star(p0="...", t0="...", gamma="...", r="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_COMPRESSIBLE_CHOKED_MASS_FLUX_G_STAR("...","...","...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Returns SI by default; use <code>.value_in("&lt;unit&gt;")</code> for display units.</li>
-</ul>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
-<ul>
-<li>Anderson, Modern Compressible Flow: With Historical Perspective</li>
+<li><code>p0</code>: Stagnation pressure</li>
+<li><code>t0</code>: Stagnation temperature</li>
+<li><code>gamma</code>: Specific heat ratio</li>
+<li><code>r</code>: Gas constant</li>
 </ul>
 
                     </main>

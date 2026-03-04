@@ -1,45 +1,30 @@
 # Thin-Wall Longitudinal Stress
 
-**Path:** `structures.longitudinal_stress_thin_wall`  
-**Category:** `structures`
+**Path ID:** `structures.longitudinal_stress_thin_wall`
 
-## Equation
-
-$$
+\[
 \sigma_l = \frac{P r}{2 t}
-$$
+\]
 
 - Unicode: `σ_l = P · r / (2 · t)`
 - ASCII: `sigma_l = P * r / (2 * t)`
+
+## Variables
+
+<table><thead><tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr></thead><tbody>
+<tr><td><code>sigma_l</code></td><td>Longitudinal stress</td><td>\(\sigma_l\)</td><td><code>stress</code></td><td><code>Pa</code></td></tr>
+<tr><td><code>P</code></td><td>Internal pressure</td><td>\(P\)</td><td><code>pressure</code></td><td><code>Pa</code></td></tr>
+<tr><td><code>r</code></td><td>Mean radius</td><td>\(r\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+<tr><td><code>t</code></td><td>Wall thickness</td><td>\(t\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+</tbody></table>
 
 ## Assumptions
 
 - Thin-wall cylindrical vessel behavior.
 
-## Variables
-
-<table>
-  <thead>
-    <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>sigma_l</code></td><td>Longitudinal stress</td><td><span class="math inline">\(\sigma_l\)</span></td><td><code>stress</code></td><td><code>Pa</code></td><td><code>-</code></td></tr>
-    <tr><td><code>P</code></td><td>Internal pressure</td><td><span class="math inline">\(P\)</span></td><td><code>pressure</code></td><td><code>Pa</code></td><td><code>-</code></td></tr>
-    <tr><td><code>r</code></td><td>Mean radius</td><td><span class="math inline">\(r\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-    <tr><td><code>t</code></td><td>Wall thickness</td><td><span class="math inline">\(t\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-  </tbody>
-</table>
-
-## Solve Targets
-
-- `P`: explicit
-- `r`: explicit
-- `sigma_l`: explicit
-- `t`: explicit
-
 ## Examples
 
-### Typed Builder (SI Numeric)
+### typed_builder_si
 
 ```rust
 let value = eq
@@ -51,7 +36,7 @@ let value = eq
     .value()?;
 ```
 
-### Typed Builder (Units-Aware)
+### typed_builder_units
 
 ```rust
 let value = eq
@@ -63,31 +48,7 @@ let value = eq
     .value()?;
 ```
 
-### Available Convenience Functions
-
-Direct solve helpers are available for these targets.
-
-<table>
-  <thead>
-    <tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>sigma_l</code></td><td><code>solve_sigma_l(P, r, t)</code></td><td><code>P</code>, <code>r</code>, <code>t</code></td></tr>
-    <tr><td><code>P</code></td><td><code>solve_p(sigma_l, r, t)</code></td><td><code>sigma_l</code>, <code>r</code>, <code>t</code></td></tr>
-    <tr><td><code>r</code></td><td><code>solve_r(sigma_l, P, t)</code></td><td><code>sigma_l</code>, <code>P</code>, <code>t</code></td></tr>
-    <tr><td><code>t</code></td><td><code>solve_t(sigma_l, P, r)</code></td><td><code>sigma_l</code>, <code>P</code>, <code>r</code></td></tr>
-  </tbody>
-</table>
-
-### Solve `sigma_l`
-
-**Function signature**
-
-```rust
-equations::structures::longitudinal_stress_thin_wall::solve_sigma_l(P, r, t) -> Result<f64, _>
-```
-
-**Example**
+### convenience_sigma_l
 
 ```rust
 let value = equations::structures::longitudinal_stress_thin_wall::solve_sigma_l(
@@ -97,11 +58,56 @@ let value = equations::structures::longitudinal_stress_thin_wall::solve_sigma_l(
 )?;
 ```
 
-### Notes
+### convenience_p
 
-- Returns SI by default; use `.value_in("<unit>")` for display units.
+```rust
+let value = equations::structures::longitudinal_stress_thin_wall::solve_p(
+    "31.25 MPa",
+    "0.2 m",
+    "8 mm",
+)?;
+```
 
-## Source
+### convenience_r
 
-- Roark's Formulas for Stress and Strain
+```rust
+let value = equations::structures::longitudinal_stress_thin_wall::solve_r(
+    "31.25 MPa",
+    "2.5 MPa",
+    "8 mm",
+)?;
+```
+
+### convenience_t
+
+```rust
+let value = equations::structures::longitudinal_stress_thin_wall::solve_t(
+    "31.25 MPa",
+    "2.5 MPa",
+    "0.2 m",
+)?;
+```
+
+
+## Bindings
+
+### Rust
+```rust
+let value = eq.solve(equations::structures::longitudinal_stress_thin_wall::equation()).for_target("P").value()?;
+```
+
+### Python
+```python
+engpy.equations.structures.solve_p(sigma_l="...", r="...", t="...")
+```
+
+### Excel
+```excel
+=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_P("...","...","...")
+```
+
+**Excel arguments**
+- `sigma_l`: Longitudinal stress
+- `r`: Mean radius
+- `t`: Wall thickness
 

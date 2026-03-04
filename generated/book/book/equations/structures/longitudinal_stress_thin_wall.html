@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfb3c088.js"></script>
+        <script src="../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,55 +177,37 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="thin-wall-longitudinal-stress"><a class="header" href="#thin-wall-longitudinal-stress">Thin-Wall Longitudinal Stress</a></h1>
-<p><strong>Path:</strong> <code>structures.longitudinal_stress_thin_wall</code><br><strong>Category:</strong> <code>structures</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>structures.longitudinal_stress_thin_wall</code></p>
+<p>[
 \sigma_l = \frac{P r}{2 t}
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>σ_l = P · r / (2 · t)</code></li>
 <li>ASCII: <code>sigma_l = P * r / (2 * t)</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>sigma_l</code></td><td>Longitudinal stress</td><td>\(\sigma_l\)</td><td><code>stress</code></td><td><code>Pa</code></td></tr>
+
+<tr><td><code>P</code></td><td>Internal pressure</td><td>\(P\)</td><td><code>pressure</code></td><td><code>Pa</code></td></tr>
+
+<tr><td><code>r</code></td><td>Mean radius</td><td>\(r\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+
+<tr><td><code>t</code></td><td>Wall thickness</td><td>\(t\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>Thin-wall cylindrical vessel behavior.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>sigma_l</code></td><td>Longitudinal stress</td><td><span class="math inline">\(\sigma_l\)</span></td><td><code>stress</code></td><td><code>Pa</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>P</code></td><td>Internal pressure</td><td><span class="math inline">\(P\)</span></td><td><code>pressure</code></td><td><code>Pa</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>r</code></td><td>Mean radius</td><td><span class="math inline">\(r\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>t</code></td><td>Wall thickness</td><td><span class="math inline">\(t\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>P</code>: explicit</li>
-<li><code>r</code>: explicit</li>
-<li><code>sigma_l</code>: explicit</li>
-<li><code>t</code>: explicit</li>
-</ul>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -236,7 +218,7 @@ $$</p>
     .given_t(0.008)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-units-aware"><a class="header" href="#typed-builder-units-aware">Typed Builder (Units-Aware)</a></h3>
+<h3 id="typed_builder_units"><a class="header" href="#typed_builder_units">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -247,41 +229,7 @@ $$</p>
     .given_t("8 mm")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="available-convenience-functions"><a class="header" href="#available-convenience-functions">Available Convenience Functions</a></h3>
-<p>Direct solve helpers are available for these targets.</p>
-<table>
-  
-<thead>
-    
-<tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>sigma_l</code></td><td><code>solve_sigma_l(P, r, t)</code></td><td><code>P</code>, <code>r</code>, <code>t</code></td></tr>
-
-    
-<tr><td><code>P</code></td><td><code>solve_p(sigma_l, r, t)</code></td><td><code>sigma_l</code>, <code>r</code>, <code>t</code></td></tr>
-
-    
-<tr><td><code>r</code></td><td><code>solve_r(sigma_l, P, t)</code></td><td><code>sigma_l</code>, <code>P</code>, <code>t</code></td></tr>
-
-    
-<tr><td><code>t</code></td><td><code>solve_t(sigma_l, P, r)</code></td><td><code>sigma_l</code>, <code>P</code>, <code>r</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h3 id="solve-sigma_l"><a class="header" href="#solve-sigma_l">Solve <code>sigma_l</code></a></h3>
-<p><strong>Function signature</strong></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>equations::structures::longitudinal_stress_thin_wall::solve_sigma_l(P, r, t) -&gt; Result&lt;f64, _&gt;
-<span class="boring">}</span></code></pre>
-<p><strong>Example</strong></p>
+<h3 id="convenience_sigma_l"><a class="header" href="#convenience_sigma_l">convenience_sigma_l</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::structures::longitudinal_stress_thin_wall::solve_sigma_l(
@@ -290,13 +238,50 @@ $$</p>
     "8 mm",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="notes"><a class="header" href="#notes">Notes</a></h3>
+<h3 id="convenience_p"><a class="header" href="#convenience_p">convenience_p</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::structures::longitudinal_stress_thin_wall::solve_p(
+    "31.25 MPa",
+    "0.2 m",
+    "8 mm",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_r"><a class="header" href="#convenience_r">convenience_r</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::structures::longitudinal_stress_thin_wall::solve_r(
+    "31.25 MPa",
+    "2.5 MPa",
+    "8 mm",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_t"><a class="header" href="#convenience_t">convenience_t</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::structures::longitudinal_stress_thin_wall::solve_t(
+    "31.25 MPa",
+    "2.5 MPa",
+    "0.2 m",
+)?;
+<span class="boring">}</span></code></pre>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::structures::longitudinal_stress_thin_wall::equation()).for_target("P").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.structures.solve_p(sigma_l="...", r="...", t="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_P("...","...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Returns SI by default; use <code>.value_in("&lt;unit&gt;")</code> for display units.</li>
-</ul>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
-<ul>
-<li>Roark’s Formulas for Stress and Strain</li>
+<li><code>sigma_l</code>: Longitudinal stress</li>
+<li><code>r</code>: Mean radius</li>
+<li><code>t</code>: Wall thickness</li>
 </ul>
 
                     </main>

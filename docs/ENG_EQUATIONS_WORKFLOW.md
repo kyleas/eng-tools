@@ -163,10 +163,10 @@ CLI tooling (currently implemented by the `equations` binary):
 cargo run -p equations --bin equations -- generate-schema
 cargo run -p equations --bin equations -- validate --with-tests
 cargo run -p equations --bin equations -- test-registry
-cargo run -p equations --bin equations -- export-docs
-cargo run -p equations --bin equations -- export-mdbook
-cargo run -p equations --bin equations -- export-html   # alias to export mdBook source/build
-cargo run -p equations --bin equations -- export-pdf
+cargo run -p eng --bin eng -- export-docs
+cargo run -p eng --bin eng -- export-mdbook
+cargo run -p eng --bin eng -- export-html
+cargo run -p eng --bin eng -- export-pdf
 cargo run -p equations --bin equations -- lint
 cargo run -p equations --bin equations -- scaffold --key hoop_stress --category structures
 ```

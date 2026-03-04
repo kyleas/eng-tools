@@ -1,53 +1,32 @@
 # Plane-Wall Conduction Heat Rate
 
-**Path:** `heat_transfer.conduction_plane_wall_heat_rate`  
-**Category:** `heat_transfer`
+**Path ID:** `heat_transfer.conduction_plane_wall_heat_rate`
 
-## Equation
-
-$$
+\[
 \dot{Q} = k A \frac{T_h - T_c}{L}
-$$
+\]
 
 - Unicode: `Q_dot = k · A · (T_h - T_c) / L`
 - ASCII: `Q_dot = k * A * (T_h - T_c) / L`
+
+## Variables
+
+<table><thead><tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr></thead><tbody>
+<tr><td><code>Q_dot</code></td><td>Heat transfer rate</td><td>\(Q_dot\)</td><td><code>heat_rate</code></td><td><code>W</code></td></tr>
+<tr><td><code>k</code></td><td>Thermal conductivity</td><td>\(k\)</td><td><code>thermal_conductivity</code></td><td><code>W/(m*K)</code></td></tr>
+<tr><td><code>A</code></td><td>Area normal to heat flow</td><td>\(A\)</td><td><code>area</code></td><td><code>m2</code></td></tr>
+<tr><td><code>T_h</code></td><td>Hot-side temperature</td><td>\(T_h\)</td><td><code>temperature</code></td><td><code>K</code></td></tr>
+<tr><td><code>T_c</code></td><td>Cold-side temperature</td><td>\(T_c\)</td><td><code>temperature</code></td><td><code>K</code></td></tr>
+<tr><td><code>L</code></td><td>Wall thickness</td><td>\(L\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+</tbody></table>
 
 ## Assumptions
 
 - One-dimensional steady conduction through a homogeneous plane wall.
 
-## Variables
-
-<table>
-  <thead>
-    <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Q_dot</code></td><td>Heat transfer rate</td><td><span class="math inline">\(Q_{dot}\)</span></td><td><code>heat_rate</code></td><td><code>W</code></td><td><code>-</code></td></tr>
-    <tr><td><code>k</code></td><td>Thermal conductivity</td><td><span class="math inline">\(k\)</span></td><td><code>thermal_conductivity</code></td><td><code>W/(m*K)</code></td><td><code>material_property:thermal_conductivity</code> from <code>material</code></td></tr>
-    <tr><td><code>A</code></td><td>Area normal to heat flow</td><td><span class="math inline">\(A\)</span></td><td><code>area</code></td><td><code>m2</code></td><td><code>-</code></td></tr>
-    <tr><td><code>T_h</code></td><td>Hot-side temperature</td><td><span class="math inline">\(T_{h}\)</span></td><td><code>temperature</code></td><td><code>K</code></td><td><code>-</code></td></tr>
-    <tr><td><code>T_c</code></td><td>Cold-side temperature</td><td><span class="math inline">\(T_{c}\)</span></td><td><code>temperature</code></td><td><code>K</code></td><td><code>-</code></td></tr>
-    <tr><td><code>L</code></td><td>Wall thickness</td><td><span class="math inline">\(L\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-  </tbody>
-</table>
-
-## Resolvable from Contexts
-
-- `k` from context `material` via `material_property`:`thermal_conductivity`
-
-## Solve Targets
-
-- `A`: explicit
-- `L`: explicit
-- `Q_dot`: explicit
-- `T_c`: explicit
-- `T_h`: explicit
-- `k`: explicit
-
 ## Examples
 
-### Typed Builder (SI Numeric)
+### typed_builder_si
 
 ```rust
 let value = eq
@@ -60,7 +39,7 @@ let value = eq
     .value()?;
 ```
 
-### Typed Builder (Units-Aware)
+### typed_builder_units
 
 ```rust
 let value = eq
@@ -73,7 +52,7 @@ let value = eq
     .value()?;
 ```
 
-### Typed Builder (Context-Assisted)
+### typed_builder_context
 
 ```rust
 let value = eq
@@ -87,33 +66,7 @@ let value = eq
     .value()?;
 ```
 
-### Available Convenience Functions
-
-Direct solve helpers are available for these targets.
-
-<table>
-  <thead>
-    <tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Q_dot</code></td><td><code>solve_q_dot(A, T_h, T_c, L)</code></td><td><code>A</code>, <code>T_h</code>, <code>T_c</code>, <code>L</code></td></tr>
-    <tr><td><code>k</code></td><td><code>solve_k(Q_dot, A, T_h, T_c, L)</code></td><td><code>Q_dot</code>, <code>A</code>, <code>T_h</code>, <code>T_c</code>, <code>L</code></td></tr>
-    <tr><td><code>A</code></td><td><code>solve_a(Q_dot, T_h, T_c, L)</code></td><td><code>Q_dot</code>, <code>T_h</code>, <code>T_c</code>, <code>L</code></td></tr>
-    <tr><td><code>T_h</code></td><td><code>solve_t_h(Q_dot, A, T_c, L)</code></td><td><code>Q_dot</code>, <code>A</code>, <code>T_c</code>, <code>L</code></td></tr>
-    <tr><td><code>T_c</code></td><td><code>solve_t_c(Q_dot, A, T_h, L)</code></td><td><code>Q_dot</code>, <code>A</code>, <code>T_h</code>, <code>L</code></td></tr>
-    <tr><td><code>L</code></td><td><code>solve_l(Q_dot, A, T_h, T_c)</code></td><td><code>Q_dot</code>, <code>A</code>, <code>T_h</code>, <code>T_c</code></td></tr>
-  </tbody>
-</table>
-
-### Solve `Q_dot`
-
-**Function signature**
-
-```rust
-equations::heat_transfer::conduction_plane_wall_heat_rate::solve_q_dot(A, T_h, T_c, L) -> Result<f64, _>
-```
-
-**Example**
+### convenience_q_dot
 
 ```rust
 let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_q_dot(
@@ -124,11 +77,84 @@ let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_q_d
 )?;
 ```
 
-### Notes
+### convenience_k
 
-- Returns SI by default; use `.value_in("<unit>")` for display units.
+```rust
+let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_k(
+    "1600 W",
+    "2 m2",
+    "330 K",
+    "280 K",
+    "1 m",
+)?;
+```
 
-## Source
+### convenience_a
 
-- Incropera et al., Fundamentals of Heat and Mass Transfer
+```rust
+let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_a(
+    "1600 W",
+    "330 K",
+    "280 K",
+    "1 m",
+)?;
+```
+
+### convenience_t_h
+
+```rust
+let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_t_h(
+    "1600 W",
+    "2 m2",
+    "280 K",
+    "1 m",
+)?;
+```
+
+### convenience_t_c
+
+```rust
+let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_t_c(
+    "1600 W",
+    "2 m2",
+    "330 K",
+    "1 m",
+)?;
+```
+
+### convenience_l
+
+```rust
+let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_l(
+    "1600 W",
+    "2 m2",
+    "330 K",
+    "280 K",
+)?;
+```
+
+
+## Bindings
+
+### Rust
+```rust
+let value = eq.solve(equations::heat_transfer::conduction_plane_wall_heat_rate::equation()).for_target("A").value()?;
+```
+
+### Python
+```python
+engpy.equations.heat_transfer.solve_a(q_dot="...", k="...", t_h="...", t_c="...", l="...")
+```
+
+### Excel
+```excel
+=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_A("...","...","...","...","...")
+```
+
+**Excel arguments**
+- `q_dot`: Heat transfer rate
+- `k`: Thermal conductivity
+- `t_h`: Hot-side temperature
+- `t_c`: Cold-side temperature
+- `l`: Wall thickness
 

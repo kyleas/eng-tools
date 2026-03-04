@@ -1,44 +1,41 @@
-# Fluids Catalog
+# Fluids
 
-Catalog-backed fluid wrappers generated from the supported backend set.
+Catalog-backed fluid wrappers with typed and generic state APIs.
 
 - [Fluids Guide](./guide.md)
 
-<table>
-  <thead><tr><th>Fluid</th><th>Key</th><th>Aliases</th><th>Supported State Inputs</th><th>Properties</th></tr></thead>
-  <tbody>
-    <tr><td><a href="air.md">Air</a></td><td><code>Air</code></td><td>atmosphere</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="n2.md">Nitrogen</a></td><td><code>N2</code></td><td>nitrogen</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="o2.md">Oxygen</a></td><td><code>O2</code></td><td>oxygen</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="n2_o.md">Nitrous Oxide</a></td><td><code>N2O</code></td><td>nitrous oxide</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="h2.md">Hydrogen</a></td><td><code>H2</code></td><td>hydrogen</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="he.md">Helium</a></td><td><code>He</code></td><td>helium</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="ar.md">Argon</a></td><td><code>Ar</code></td><td>argon</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="ne.md">Neon</a></td><td><code>Ne</code></td><td>neon</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="kr.md">Krypton</a></td><td><code>Kr</code></td><td>krypton</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="xe.md">Xenon</a></td><td><code>Xe</code></td><td>xenon</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="c_h4.md">Methane</a></td><td><code>CH4</code></td><td>methane</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="ethane.md">Ethane</a></td><td><code>Ethane</code></td><td>c2h6</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="ethylene.md">Ethylene</a></td><td><code>Ethylene</code></td><td>c2h4</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="propane.md">Propane</a></td><td><code>Propane</code></td><td>c3h8, n-propane</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="propylene.md">Propylene</a></td><td><code>Propylene</code></td><td>c3h6</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="n_butane.md">n-Butane</a></td><td><code>nButane</code></td><td>butane, n-butane</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="isobutane.md">Isobutane</a></td><td><code>Isobutane</code></td><td>i-butane</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="n_pentane.md">n-Pentane</a></td><td><code>nPentane</code></td><td>pentane, n-pentane</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="isopentane.md">Isopentane</a></td><td><code>Isopentane</code></td><td>i-pentane</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="n_hexane.md">n-Hexane</a></td><td><code>nHexane</code></td><td>hexane, n-hexane</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="c_o2.md">Carbon Dioxide</a></td><td><code>CO2</code></td><td>carbon dioxide</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="c_o.md">Carbon Monoxide</a></td><td><code>CO</code></td><td>carbon monoxide</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="h2_o.md">Water</a></td><td><code>H2O</code></td><td>water</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="n_h3.md">Ammonia</a></td><td><code>NH3</code></td><td>ammonia</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="s_o2.md">Sulfur Dioxide</a></td><td><code>SO2</code></td><td>sulfur dioxide</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="r32.md">R32</a></td><td><code>R32</code></td><td>-</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="r125.md">R125</a></td><td><code>R125</code></td><td>-</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="r134a.md">R134a</a></td><td><code>R134a</code></td><td>-</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="r152a.md">R152a</a></td><td><code>R152a</code></td><td>-</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="r245fa.md">R245fa</a></td><td><code>R245fa</code></td><td>-</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-    <tr><td><a href="r1234yf.md">R1234yf</a></td><td><code>R1234yf</code></td><td>-</td><td><code>T,P | P,h | P,s | rho,h | P,Q | T,Q</code></td><td>12</td></tr>
-  </tbody>
-</table>
+| Fluid | Key | Aliases | Supported State Inputs | Properties |
+| --- | --- | --- | --- |
+| [Air](./air.md) | `Air` | `atmosphere` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Argon](./ar.md) | `Ar` | `argon` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Methane](./c_h4.md) | `CH4` | `methane` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Carbon Monoxide](./c_o.md) | `CO` | `carbon monoxide` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Carbon Dioxide](./c_o2.md) | `CO2` | `carbon dioxide` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Ethane](./ethane.md) | `Ethane` | `c2h6` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Ethylene](./ethylene.md) | `Ethylene` | `c2h4` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Hydrogen](./h2.md) | `H2` | `hydrogen` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Water](./h2_o.md) | `H2O` | `water` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Helium](./he.md) | `He` | `helium` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Isobutane](./isobutane.md) | `Isobutane` | `i-butane` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Isopentane](./isopentane.md) | `Isopentane` | `i-pentane` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Krypton](./kr.md) | `Kr` | `krypton` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Nitrogen](./n2.md) | `N2` | `nitrogen` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Nitrous Oxide](./n2_o.md) | `N2O` | `nitrous oxide` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Ammonia](./n_h3.md) | `NH3` | `ammonia` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Neon](./ne.md) | `Ne` | `neon` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Oxygen](./o2.md) | `O2` | `oxygen` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Propane](./propane.md) | `Propane` | `c3h8`, `n-propane` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Propylene](./propylene.md) | `Propylene` | `c3h6` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [R1234yf](./r1234yf.md) | `R1234yf` | - | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [R125](./r125.md) | `R125` | - | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [R134a](./r134a.md) | `R134a` | - | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [R152a](./r152a.md) | `R152a` | - | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [R245fa](./r245fa.md) | `R245fa` | - | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [R32](./r32.md) | `R32` | - | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Sulfur Dioxide](./s_o2.md) | `SO2` | `sulfur dioxide` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [Xenon](./xe.md) | `Xe` | `xenon` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [n-Butane](./n_butane.md) | `nButane` | `butane`, `n-butane` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [n-Hexane](./n_hexane.md) | `nHexane` | `hexane`, `n-hexane` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
+| [n-Pentane](./n_pentane.md) | `nPentane` | `pentane`, `n-pentane` | `T,P, P,h, P,s, rho,h, P,Q, T,Q` | 12 |
 
-Each fluid page includes explicit constructor and generic `state(...)` examples, direct accessor mapping, saturation/quality notes, metadata notes, and context-equation links.
+Each fluid page includes constructor patterns, generic input aliases, direct accessor guidance, saturation helpers, and equation-context usage.

@@ -1,16 +1,22 @@
 # Ideal Gas Law (Density Form)
 
-**Path:** `thermo.ideal_gas.density`  
-**Category:** `thermo`
+**Path ID:** `thermo.ideal_gas.density`
 
-## Equation
-
-$$
+\[
 P = \rho R T
-$$
+\]
 
 - Unicode: `P = ρ · R · T`
 - ASCII: `P = rho * R * T`
+
+## Variables
+
+<table><thead><tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr></thead><tbody>
+<tr><td><code>P</code></td><td>Absolute pressure</td><td>\(P\)</td><td><code>pressure</code></td><td><code>Pa</code></td></tr>
+<tr><td><code>rho</code></td><td>Density</td><td>\(\rho\)</td><td><code>density</code></td><td><code>kg/m3</code></td></tr>
+<tr><td><code>R</code></td><td>Specific gas constant</td><td>\(R\)</td><td><code>gas_constant</code></td><td><code>J/(kg*K)</code></td></tr>
+<tr><td><code>T</code></td><td>Absolute temperature</td><td>\(T\)</td><td><code>temperature</code></td><td><code>K</code></td></tr>
+</tbody></table>
 
 ## Assumptions
 
@@ -23,30 +29,9 @@ $$
 - Variant: `Density Form` (`density`)
 - Use when: Use when density-based flow/property calculations are primary.
 
-## Variables
-
-<table>
-  <thead>
-    <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>P</code></td><td>Absolute pressure</td><td><span class="math inline">\(P\)</span></td><td><code>pressure</code></td><td><code>Pa</code></td><td><code>-</code></td></tr>
-    <tr><td><code>rho</code></td><td>Density</td><td><span class="math inline">\(\rho\)</span></td><td><code>density</code></td><td><code>kg/m3</code></td><td><code>-</code></td></tr>
-    <tr><td><code>R</code></td><td>Specific gas constant</td><td><span class="math inline">\(R\)</span></td><td><code>gas_constant</code></td><td><code>J/(kg*K)</code></td><td><code>-</code></td></tr>
-    <tr><td><code>T</code></td><td>Absolute temperature</td><td><span class="math inline">\(T\)</span></td><td><code>temperature</code></td><td><code>K</code></td><td><code>-</code></td></tr>
-  </tbody>
-</table>
-
-## Solve Targets
-
-- `P`: explicit, numerical
-- `R`: explicit, numerical
-- `T`: explicit, numerical
-- `rho`: explicit, numerical
-
 ## Examples
 
-### Typed Builder (SI Numeric)
+### typed_builder_si
 
 ```rust
 let value = eq
@@ -58,7 +43,7 @@ let value = eq
     .value()?;
 ```
 
-### Typed Builder (Units-Aware)
+### typed_builder_units
 
 ```rust
 let value = eq
@@ -70,31 +55,7 @@ let value = eq
     .value()?;
 ```
 
-### Available Convenience Functions
-
-Direct solve helpers are available for these targets.
-
-<table>
-  <thead>
-    <tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>P</code></td><td><code>solve_p(rho, R, T)</code></td><td><code>rho</code>, <code>R</code>, <code>T</code></td></tr>
-    <tr><td><code>rho</code></td><td><code>solve_rho(P, R, T)</code></td><td><code>P</code>, <code>R</code>, <code>T</code></td></tr>
-    <tr><td><code>R</code></td><td><code>solve_r(P, rho, T)</code></td><td><code>P</code>, <code>rho</code>, <code>T</code></td></tr>
-    <tr><td><code>T</code></td><td><code>solve_t(P, rho, R)</code></td><td><code>P</code>, <code>rho</code>, <code>R</code></td></tr>
-  </tbody>
-</table>
-
-### Solve `P`
-
-**Function signature**
-
-```rust
-equations::thermo::density::solve_p(rho, R, T) -> Result<f64, _>
-```
-
-**Example**
+### convenience_p
 
 ```rust
 let value = equations::thermo::density::solve_p(
@@ -104,11 +65,56 @@ let value = equations::thermo::density::solve_p(
 )?;
 ```
 
-### Notes
+### convenience_rho
 
-- Returns SI by default; use `.value_in("<unit>")` for display units.
+```rust
+let value = equations::thermo::density::solve_rho(
+    "101325.063 Pa",
+    "287 J/(kg*K)",
+    "300 K",
+)?;
+```
 
-## Source
+### convenience_r
 
-- Moran et al., Fundamentals of Engineering Thermodynamics
+```rust
+let value = equations::thermo::density::solve_r(
+    "101325.063 Pa",
+    "1.17683 kg/m3",
+    "300 K",
+)?;
+```
+
+### convenience_t
+
+```rust
+let value = equations::thermo::density::solve_t(
+    "101325.063 Pa",
+    "1.17683 kg/m3",
+    "287 J/(kg*K)",
+)?;
+```
+
+
+## Bindings
+
+### Rust
+```rust
+let value = eq.solve(equations::thermo::ideal_gas::density::equation()).for_target("P").value()?;
+```
+
+### Python
+```python
+engpy.equations.thermo.solve_p(rho="...", r="...", t="...")
+```
+
+### Excel
+```excel
+=ENG_THERMO_IDEAL_GAS_DENSITY_P("...","...","...")
+```
+
+**Excel arguments**
+- `rho`: Density
+- `r`: Specific gas constant
+- `t`: Absolute temperature
 

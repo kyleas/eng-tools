@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-dfb3c088.js"></script>
+        <script src="../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,60 +177,13 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="archimedes-constant"><a class="header" href="#archimedes-constant">Archimedes Constant</a></h1>
-<table>
-  
-<thead>
-    
-<tr><th>Field</th><th>Value</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td>Key</td><td><code>pi</code></td></tr>
-
-    
-<tr><td>Symbol</td><td><span class="math inline">\(\pi\)</span></td></tr>
-
-    
-<tr><td>Dimension</td><td><code>dimensionless</code></td></tr>
-
-    
-<tr><td>Value</td><td>3.141592653590e0 <code>1</code></td></tr>
-
-    
-<tr><td>Trust</td><td>Conventional / reference</td></tr>
-
-    
-<tr><td>Source</td><td>Mathematical constant</td></tr>
-
-    
-<tr><td>Note</td><td>Irrational constant represented in f64 precision for evaluation.</td></tr>
-
-  </tbody>
-
-</table>
-
-<p>Ratio of a circle’s circumference to its diameter.</p>
-<h2 id="rust-usage"><a class="header" href="#rust-usage">Rust Usage</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use eng::{constants};
-use equations::get_constant;
-
-let c = constants::pi();
-assert_eq!(c.key, "pi");
-println!("pi = π {}", c.value, c.unit);
-
-let by_id = get_constant("pi").expect("constant lookup");
-assert_eq!(by_id.key, "pi");
-<span class="boring">}</span></code></pre>
-<h2 id="equations-using-this-constant"><a class="header" href="#equations-using-this-constant">Equations Using This Constant</a></h2>
 <ul>
-<li><a href="../equations/fluids/circular_pipe_area.html">Circular Pipe Flow Area</a></li>
-<li><a href="../equations/structures/euler_buckling_load.html">Euler Buckling Critical Load</a></li>
+<li>Key: <code>pi</code></li>
+<li>Symbol: (\pi)</li>
+<li>Value: <code>3.141592653589793</code> <code>1</code></li>
+<li>Source: Mathematical constant</li>
 </ul>
+<p>Irrational constant represented in f64 precision for evaluation.</p>
 
                     </main>
 

@@ -1,0 +1,74 @@
+{
+  "protocol_version": "eng-invoke.v1",
+  "request_shape": {
+    "required_fields": [
+      "protocol_version",
+      "op",
+      "args"
+    ],
+    "optional_fields": [
+      "request_id"
+    ]
+  },
+  "success_response_shape": {
+    "required_fields": [
+      "protocol_version",
+      "op",
+      "ok",
+      "value"
+    ],
+    "optional_fields": [
+      "request_id",
+      "error"
+    ]
+  },
+  "error_response_shape": {
+    "required_fields": [
+      "protocol_version",
+      "op",
+      "ok",
+      "error.code",
+      "error.message"
+    ],
+    "optional_fields": [
+      "request_id",
+      "value",
+      "error.field",
+      "error.detail"
+    ]
+  },
+  "operations": [
+    {
+      "op": "equation.solve",
+      "description": "Solve an equation target with named inputs"
+    },
+    {
+      "op": "equation.meta",
+      "description": "Read structured equation metadata (display, variables, units, targets)"
+    },
+    {
+      "op": "equation.ascii",
+      "description": "Read ASCII equation display form for one equation"
+    },
+    {
+      "op": "equation.default_unit",
+      "description": "Read one variable's canonical default unit for an equation"
+    },
+    {
+      "op": "device.pipe_loss.solve_delta_p",
+      "description": "Solve pipe-loss device pressure drop"
+    },
+    {
+      "op": "fluid.prop",
+      "description": "Resolve one fluid property from a fluid state pair"
+    },
+    {
+      "op": "material.prop",
+      "description": "Resolve one material property at a given temperature"
+    },
+    {
+      "op": "constant.get",
+      "description": "Read one engineering constant value"
+    }
+  ]
+}

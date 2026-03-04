@@ -1,7 +1,5 @@
 use eng::{
-    eq, equations,
-    fluids,
-    materials, qty,
+    eq, equations, fluids, materials, qty,
     units::typed::{length, pressure},
 };
 
@@ -58,6 +56,15 @@ fn core_handbook_workflows_execute() -> Result<(), Box<dyn std::error::Error>> {
 
     {
         include!("../docs_snippets/fluid_saturation_metadata.rs");
+    }
+    {
+        include!("../docs_snippets/device_pipe_loss_fixed.rs");
+    }
+    {
+        include!("../docs_snippets/device_pipe_loss_colebrook_direct.rs");
+    }
+    {
+        include!("../docs_snippets/device_pipe_loss_colebrook_fluid.rs");
     }
 
     let steel = materials::stainless_304().temperature("350 K")?;

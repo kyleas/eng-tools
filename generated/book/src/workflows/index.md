@@ -1,12 +1,8 @@
 # Examples & Workflows
 
-## Unified Top-Level API
+These examples are sourced from verified snippets and corresponding tests.
 
-```rust
-use eng::{constants, eq, equations, fluids, materials, qty};
-```
-
-## Simple Equation Solve
+## 1. Simple Equation Solve
 
 ```rust
 use eng::{eq, equations};
@@ -20,7 +16,7 @@ let sigma_h_pa = eq
     .value()?;
 ```
 
-## Typed Unit Solve
+## 2. Typed Unit Solve
 
 ```rust
 use eng::{eq, equations};
@@ -35,7 +31,7 @@ let sigma_h_pa = eq
     .value()?;
 ```
 
-## `qty!` Solve
+## 3. `qty!` Solve
 
 ```rust
 use eng::{eq, equations, qty};
@@ -49,7 +45,7 @@ let sigma_h_pa = eq
     .value()?;
 ```
 
-## Runtime String Solve
+## 4. Runtime String Solve
 
 ```rust
 use eng::{eq, equations};
@@ -63,7 +59,7 @@ let sigma_h_pa = eq
     .value()?;
 ```
 
-## Fluid-Assisted Solve
+## 5. Fluid-Assisted Solve
 
 ```rust
 use eng::{eq, equations, fluids};
@@ -77,7 +73,7 @@ let re = eq
     .value()?;
 ```
 
-## Family Variant Solve
+## 6. Family Variant Solve
 
 ```rust
 use eng::{eq, equations};
@@ -91,7 +87,7 @@ let p_pa = eq
     .value()?;
 ```
 
-## Property Lookups
+## 7. Direct Fluid/Material Property Lookup
 
 ```rust
 use eng::fluids;
@@ -112,4 +108,52 @@ use eng::materials;
 let state = materials::stainless_304().temperature("350 K")?;
 let e = state.property("elastic_modulus")?;
 let sy = state.property("yield_strength")?;
+```
+
+## 8. Device Workflow: Pipe Pressure Drop (Fixed f)
+
+```rust
+{
+    let _dp = eng::devices::pipe_loss()
+        .friction_model(eng::devices::PipeFrictionModel::Fixed(0.02))
+        .given_rho("1000 kg/m3")
+        .given_v("3 m/s")
+        .given_d("0.1 m")
+        .given_l("10 m")
+        .solve_delta_p()?;
+}
+```
+
+## 9. Device Workflow: Pipe Pressure Drop (Colebrook Direct Inputs)
+
+```rust
+{
+    let result = eng::devices::pipe_loss()
+        .friction_model(eng::devices::PipeFrictionModel::Colebrook)
+        .given_rho("1000 kg/m^3")
+        .given_mu("1 cP")
+        .given_v("3 m/s")
+        .given_d("0.1 m")
+        .given_l("10 m")
+        .given_eps("0.00015 in")
+        .solve()?;
+
+    let _dp = result.delta_p();
+    let _re = result.reynolds_number().unwrap_or_default();
+}
+```
+
+## 10. Device Workflow: Pipe Pressure Drop (Colebrook + Fluid Context)
+
+```rust
+{
+    let _dp = eng::devices::pipe_loss()
+        .friction_model(eng::devices::PipeFrictionModel::Colebrook)
+        .fluid(eng::fluids::water().state_tp("300 K", "1 atm")?)
+        .given_v("3 m/s")
+        .given_d("0.1 m")
+        .given_l("10 m")
+        .given_eps("0.00015 in")
+        .solve_delta_p()?;
+}
 ```

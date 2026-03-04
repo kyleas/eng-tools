@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfb3c088.js"></script>
+        <script src="../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,55 +177,37 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="circular-shaft-torsion-stress"><a class="header" href="#circular-shaft-torsion-stress">Circular Shaft Torsion Stress</a></h1>
-<p><strong>Path:</strong> <code>structures.shaft_torsion_stress</code><br><strong>Category:</strong> <code>structures</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>structures.shaft_torsion_stress</code></p>
+<p>[
 \tau = \frac{T r}{J}
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>\tau = T · r / J</code></li>
 <li>ASCII: <code>tau = T * r / J</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>tau</code></td><td>Shear stress</td><td>\(\tau\)</td><td><code>stress</code></td><td><code>Pa</code></td></tr>
+
+<tr><td><code>T</code></td><td>Torque</td><td>\(T\)</td><td><code>moment</code></td><td><code>N*m</code></td></tr>
+
+<tr><td><code>r</code></td><td>Radius</td><td>\(r\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+
+<tr><td><code>J</code></td><td>Polar moment of inertia</td><td>\(J\)</td><td><code>polar_moment_of_inertia</code></td><td><code>m4</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>Circular shaft in Saint-Venant torsion.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>tau</code></td><td>Shear stress</td><td><span class="math inline">\(\tau\)</span></td><td><code>stress</code></td><td><code>Pa</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>T</code></td><td>Torque</td><td><span class="math inline">\(T\)</span></td><td><code>moment</code></td><td><code>N*m</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>r</code></td><td>Radius</td><td><span class="math inline">\(r\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>J</code></td><td>Polar moment of inertia</td><td><span class="math inline">\(J\)</span></td><td><code>polar_moment_of_inertia</code></td><td><code>m4</code></td><td><code>-</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>J</code>: explicit</li>
-<li><code>T</code>: explicit</li>
-<li><code>r</code>: explicit</li>
-<li><code>tau</code>: explicit</li>
-</ul>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -236,7 +218,7 @@ $$</p>
     .given_j(1.6e-5)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-units-aware"><a class="header" href="#typed-builder-units-aware">Typed Builder (Units-Aware)</a></h3>
+<h3 id="typed_builder_units"><a class="header" href="#typed_builder_units">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -247,41 +229,7 @@ $$</p>
     .given_j("1.6e-5 m4")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="available-convenience-functions"><a class="header" href="#available-convenience-functions">Available Convenience Functions</a></h3>
-<p>Direct solve helpers are available for these targets.</p>
-<table>
-  
-<thead>
-    
-<tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>tau</code></td><td><code>solve_tau(T, r, J)</code></td><td><code>T</code>, <code>r</code>, <code>J</code></td></tr>
-
-    
-<tr><td><code>T</code></td><td><code>solve_t(tau, r, J)</code></td><td><code>tau</code>, <code>r</code>, <code>J</code></td></tr>
-
-    
-<tr><td><code>r</code></td><td><code>solve_r(tau, T, J)</code></td><td><code>tau</code>, <code>T</code>, <code>J</code></td></tr>
-
-    
-<tr><td><code>J</code></td><td><code>solve_j(tau, T, r)</code></td><td><code>tau</code>, <code>T</code>, <code>r</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h3 id="solve-tau"><a class="header" href="#solve-tau">Solve <code>tau</code></a></h3>
-<p><strong>Function signature</strong></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>equations::structures::shaft_torsion_stress::solve_tau(T, r, J) -&gt; Result&lt;f64, _&gt;
-<span class="boring">}</span></code></pre>
-<p><strong>Example</strong></p>
+<h3 id="convenience_tau"><a class="header" href="#convenience_tau">convenience_tau</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::structures::shaft_torsion_stress::solve_tau(
@@ -290,13 +238,50 @@ $$</p>
     "1.6e-5 m4",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="notes"><a class="header" href="#notes">Notes</a></h3>
+<h3 id="convenience_t"><a class="header" href="#convenience_t">convenience_t</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::structures::shaft_torsion_stress::solve_t(
+    "3 MPa",
+    "0.04 m",
+    "1.6e-5 m4",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_r"><a class="header" href="#convenience_r">convenience_r</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::structures::shaft_torsion_stress::solve_r(
+    "3 MPa",
+    "1200 N*m",
+    "1.6e-5 m4",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_j"><a class="header" href="#convenience_j">convenience_j</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::structures::shaft_torsion_stress::solve_j(
+    "3 MPa",
+    "1200 N*m",
+    "0.04 m",
+)?;
+<span class="boring">}</span></code></pre>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::structures::shaft_torsion_stress::equation()).for_target("J").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.structures.solve_j(tau="...", t="...", r="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_STRUCTURES_SHAFT_TORSION_STRESS_J("...","...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Returns SI by default; use <code>.value_in("&lt;unit&gt;")</code> for display units.</li>
-</ul>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
-<ul>
-<li>Roark’s Formulas for Stress and Strain</li>
+<li><code>tau</code>: Shear stress</li>
+<li><code>t</code>: Torque</li>
+<li><code>r</code>: Radius</li>
 </ul>
 
                     </main>

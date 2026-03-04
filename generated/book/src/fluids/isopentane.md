@@ -1,27 +1,24 @@
 # Isopentane
 
-<table>
-  <thead><tr><th>Field</th><th>Value</th></tr></thead>
-  <tbody>
-    <tr><td>Key</td><td><code>Isopentane</code></td></tr>
-    <tr><td>Aliases</td><td><code>i-pentane</code></td></tr>
-    <tr><td>Supported state inputs</td><td><code>state_tp(T, P)</code>, <code>state_ph(P, h)</code>, <code>state_ps(P, s)</code>, <code>state_rho_h(rho, h)</code>, <code>state_pq(P, Q)</code>, <code>state_tq(T, Q)</code>, <code>state("T", ..., "P", ...)</code></td></tr>
-    <tr><td>Supported properties</td><td><code>density</code>, <code>specific_heat_capacity</code>, <code>specific_heat_capacity_cv</code>, <code>gamma</code>, <code>speed_of_sound</code>, <code>dynamic_viscosity</code>, <code>thermal_conductivity</code>, <code>temperature</code>, <code>pressure</code>, <code>specific_enthalpy</code>, <code>specific_entropy</code>, <code>quality</code></td></tr>
-  </tbody>
-</table>
+| Field | Value |
+| --- | --- |
+| Key | `Isopentane` |
+| Aliases | i-pentane |
+| Supported state inputs | `T,P, P,h, P,s, rho,h, P,Q, T,Q` |
+| Supported properties | 12 |
 
 ## Supported State Input Pairs
 
-| Pair | Explicit constructor | Notes |
-| --- | --- | --- |
-| `T,P` | `state_tp` | General single-phase path |
-| `P,h` | `state_ph` | Enthalpy inversion |
-| `P,s` | `state_ps` | Entropy inversion |
-| `rho,h` | `state_rho_h` | Density/enthalpy path |
-| `P,Q` | `state_pq` | Two-phase by pressure |
-| `T,Q` | `state_tq` | Two-phase by temperature |
+| Pair | Notes |
+| --- | --- |
+| `T,P` | General purpose explicit state constructor (`state_tp`) |
+| `P,h` | Pressure/enthalpy inversion (`state_ph`) |
+| `P,s` | Pressure/entropy inversion (`state_ps`) |
+| `rho,h` | Density/enthalpy construction (`state_rho_h`) |
+| `P,Q` | Two-phase saturation by pressure (`state_pq`) |
+| `T,Q` | Two-phase saturation by temperature (`state_tq`) |
 
-## Constructor Examples (explicit + generic)
+## Verified Constructor and Generic Examples
 
 ```rust
 {
@@ -46,10 +43,9 @@
         "T",
         eng::units::typed::temperature::k(300.0),
     )?;
-}
-```
+}```
 
-## Generic Property Name Aliases
+## Generic Property Aliases
 
 | Canonical | Aliases |
 | --- | --- |
@@ -60,32 +56,36 @@
 | Specific entropy | `s`, `entropy` |
 | Quality | `Q`, `quality`, `x` |
 
-## Property Accessors
+## Supported Property Keys
 
-| Property key | Accessors |
+| Property key | Direct accessor |
 | --- | --- |
-| `pressure` | `pressure()`, `p()` |
-| `temperature` | `temperature()`, `t()` |
 | `density` | `density()`, `rho()` |
-| `dynamic_viscosity` | `dynamic_viscosity()`, `mu()` |
-| `thermal_conductivity` | `thermal_conductivity()`, `k()` |
 | `specific_heat_capacity` | `specific_heat_capacity()`, `cp()` |
 | `specific_heat_capacity_cv` | `specific_heat_capacity_cv()`, `cv()` |
+| `gamma` | `gamma()` |
 | `speed_of_sound` | `speed_of_sound()`, `a()` |
+| `dynamic_viscosity` | `dynamic_viscosity()`, `mu()` |
+| `thermal_conductivity` | `thermal_conductivity()`, `k()` |
+| `temperature` | `temperature()`, `t()` |
+| `pressure` | `pressure()`, `p()` |
 | `specific_enthalpy` | `specific_enthalpy()`, `h()` |
 | `specific_entropy` | `specific_entropy()`, `s()` |
-| `gamma` | `gamma()` |
 | `quality` | `quality()` |
 
 ## Direct Property Access Example
 
 ```rust
-use eng_fluids as fluids;
+use eng::fluids;
+use eng::units::typed::{pressure, temperature};
 
-let state = fluids::isopentane().state_tp("300 K", "1 bar")?;
-let rho = state.rho();
+let state = fluids::water().state_tp(temperature::k(300.0), pressure::bar(1.0))?;
+let rho = state.rho()?;
 let mu = state.mu()?;
-println!("rho = {rho} kg/m^3, mu = {mu} Pa*s");
+let cp = state.cp()?;
+
+let state_generic = fluids::air().state("T", "300 K", "P", "1 bar")?;
+let gamma = state_generic.gamma()?;
 ```
 
 ## Saturation and Metadata Example
@@ -106,23 +106,7 @@ println!("rho = {rho} kg/m^3, mu = {mu} Pa*s");
 }
 ```
 
-## State Metadata
-
-- `fluid_key()` / `fluid_name()`
-- `input_pair_label()` / `normalized_inputs()`
-- `quality()` and `phase()` when available
-
-## Error Behavior
-
-- Unsupported pairs include a supported-pairs list.
-- Unknown keys in generic `state(...)` return actionable key diagnostics.
-- Duplicate keys in generic `state(...)` are rejected.
-- `u`/internal-energy keys are rejected to avoid ambiguity with `h`.
-- Backend failures remain recoverable and include context.
-
-## Example Equations Using Fluid Context
-
-Use `solve_with_context(...).fluid(...)` when equations declare fluid resolvers.
+## Using This Fluid With Equations
 
 ```rust
 use eng::{eq, equations, fluids};
@@ -136,4 +120,31 @@ let re = eq
     .value()?;
 ```
 
+### Equations currently using `fluid` context
+
 - [Reynolds Number](../equations/fluids/reynolds_number.md)
+
+## Error Behavior
+
+- Unsupported input pairs return explicit pair diagnostics with a supported-pairs list.
+- Unknown/invalid generic property keys return actionable key guidance.
+- `u`/internal-energy keys are rejected intentionally to prevent ambiguity with `h`.
+- Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.
+
+## Bindings
+
+### Python
+```python
+engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
+```
+
+### Excel
+```excel
+=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
+```
+
+**Excel arguments**
+- `fluid`: fluid key or alias
+- `state_prop_1`, `state_value_1`: first state-defining property and value
+- `state_prop_2`, `state_value_2`: second state-defining property and value
+- `out_prop`: property to return (for example `rho`, `mu`, `cp`)

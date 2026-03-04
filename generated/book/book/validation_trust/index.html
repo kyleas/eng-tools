@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-dfb3c088.js"></script>
+        <script src="../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,12 +177,14 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="validation--trust"><a class="header" href="#validation--trust">Validation / Trust</a></h1>
+<p>Trust is enforced by registry validation, solver tests, generated-link checks, and docs export verification.</p>
 <ul>
-<li>Registry validation for equations/families</li>
-<li>Solver-path tests (SI, typed units, <code>qty!</code>, runtime strings)</li>
+<li>Equation and family schema/consistency validation</li>
+<li>Core solver/path tests (SI, typed, <code>qty!</code>, runtime string)</li>
 <li>mdBook link integrity tests</li>
-<li>Unified verification script with docs regeneration</li>
+<li>Unified export verification script</li>
 </ul>
+<p>Docs examples for core workflows are backed by executable tests.</p>
 
                     </main>
 

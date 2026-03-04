@@ -1,17 +1,9 @@
 use std::path::PathBuf;
 
-use equations::{Registry, docs::export_docs_artifacts, generate_schema_to_path};
+use equations::{Registry, generate_schema_to_path};
 
 fn crate_root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-}
-
-fn workspace_root() -> PathBuf {
-    crate_root()
-        .parent()
-        .and_then(|p| p.parent())
-        .map(PathBuf::from)
-        .unwrap_or_else(crate_root)
 }
 
 #[test]
@@ -25,13 +17,11 @@ fn registry_is_valid_and_self_tested() {
 }
 
 #[test]
-fn schema_and_docs_export_generate() {
+fn schema_generation_runs() {
     let root = crate_root();
     let registry = Registry::load_from_dir(root.join("registry")).expect("load");
     registry.validate().expect("validate");
     generate_schema_to_path(root.join("schemas/equation.schema.json")).expect("schema");
-    export_docs_artifacts(registry.equations(), workspace_root().join("generated"))
-        .expect("docs export");
 }
 
 #[test]

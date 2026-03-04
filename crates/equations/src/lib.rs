@@ -115,7 +115,6 @@ pub use api::{
 };
 pub use api_context::{ContextBinding, ContextSolveBuilder};
 pub use constants::{EngineeringConstant, all as all_constants, get as get_constant};
-pub use docs::export_docs_artifacts;
 pub use error::{EquationError, Result};
 pub use facade::EqFacade;
 pub use registry::Registry;

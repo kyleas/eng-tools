@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfb3c088.js"></script>
+        <script src="../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,51 +177,35 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="axial-normal-stress"><a class="header" href="#axial-normal-stress">Axial Normal Stress</a></h1>
-<p><strong>Path:</strong> <code>structures.axial_stress</code><br><strong>Category:</strong> <code>structures</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>structures.axial_stress</code></p>
+<p>[
 \sigma = \frac{F}{A}
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>σ = F / A</code></li>
 <li>ASCII: <code>sigma = F / A</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>sigma</code></td><td>Axial stress</td><td>\(\sigma\)</td><td><code>stress</code></td><td><code>Pa</code></td></tr>
+
+<tr><td><code>F</code></td><td>Axial force</td><td>\(F\)</td><td><code>force</code></td><td><code>N</code></td></tr>
+
+<tr><td><code>A</code></td><td>Cross-sectional area</td><td>\(A\)</td><td><code>area</code></td><td><code>m2</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>Uniform axial loading and stress distribution.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>sigma</code></td><td>Axial stress</td><td><span class="math inline">\(\sigma\)</span></td><td><code>stress</code></td><td><code>Pa</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>F</code></td><td>Axial force</td><td><span class="math inline">\(F\)</span></td><td><code>force</code></td><td><code>N</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>A</code></td><td>Cross-sectional area</td><td><span class="math inline">\(A\)</span></td><td><code>area</code></td><td><code>m2</code></td><td><code>-</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>A</code>: explicit</li>
-<li><code>F</code>: explicit</li>
-<li><code>sigma</code>: explicit</li>
-</ul>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -231,7 +215,7 @@ $$</p>
     .given_a(1.9999999999999998e-4)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-units-aware"><a class="header" href="#typed-builder-units-aware">Typed Builder (Units-Aware)</a></h3>
+<h3 id="typed_builder_units"><a class="header" href="#typed_builder_units">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -241,38 +225,7 @@ $$</p>
     .given_a("200 mm2")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="available-convenience-functions"><a class="header" href="#available-convenience-functions">Available Convenience Functions</a></h3>
-<p>Direct solve helpers are available for these targets.</p>
-<table>
-  
-<thead>
-    
-<tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>sigma</code></td><td><code>solve_sigma(F, A)</code></td><td><code>F</code>, <code>A</code></td></tr>
-
-    
-<tr><td><code>F</code></td><td><code>solve_f(sigma, A)</code></td><td><code>sigma</code>, <code>A</code></td></tr>
-
-    
-<tr><td><code>A</code></td><td><code>solve_a(sigma, F)</code></td><td><code>sigma</code>, <code>F</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h3 id="solve-sigma"><a class="header" href="#solve-sigma">Solve <code>sigma</code></a></h3>
-<p><strong>Function signature</strong></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>equations::structures::axial_stress::solve_sigma(F, A) -&gt; Result&lt;f64, _&gt;
-<span class="boring">}</span></code></pre>
-<p><strong>Example</strong></p>
+<h3 id="convenience_sigma"><a class="header" href="#convenience_sigma">convenience_sigma</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::structures::axial_stress::solve_sigma(
@@ -280,13 +233,38 @@ $$</p>
     "200 mm2",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="notes"><a class="header" href="#notes">Notes</a></h3>
+<h3 id="convenience_f"><a class="header" href="#convenience_f">convenience_f</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::structures::axial_stress::solve_f(
+    "50 MPa",
+    "200 mm2",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_a"><a class="header" href="#convenience_a">convenience_a</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::structures::axial_stress::solve_a(
+    "50 MPa",
+    "10000 N",
+)?;
+<span class="boring">}</span></code></pre>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::structures::axial_stress::equation()).for_target("A").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.structures.solve_a(sigma="...", f="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_STRUCTURES_AXIAL_STRESS_A("...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Returns SI by default; use <code>.value_in("&lt;unit&gt;")</code> for display units.</li>
-</ul>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
-<ul>
-<li>Roark’s Formulas for Stress and Strain</li>
+<li><code>sigma</code>: Axial stress</li>
+<li><code>f</code>: Axial force</li>
 </ul>
 
                     </main>

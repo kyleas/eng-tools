@@ -1,0 +1,3694 @@
+{
+  "schema_version": "1",
+  "generated_from": "generated/catalog.json",
+  "python_package": "engpy",
+  "functions": [
+    {
+      "id": "constant.get",
+      "entity": "constant",
+      "source": "constants",
+      "python_module": "constants",
+      "python_name": "get_constant",
+      "excel_name": "ENG_CONST",
+      "op": "constant.get",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "key",
+          "description": "Constant key"
+        }
+      ],
+      "returns": "f64",
+      "help": "Get constant value from registry",
+      "rust_example": "equations::get_constant(\"g0\")?.value",
+      "python_example": "engpy.constants.get_constant(\"g0\")",
+      "xloil_example": "=ENG_CONST(\"g0\")",
+      "pyxll_example": "=ENG_CONST(\"g0\")"
+    },
+    {
+      "id": "device.pipe_loss.solve_delta_p",
+      "entity": "device",
+      "source": "pipe_loss",
+      "python_module": "devices",
+      "python_name": "pipe_loss_solve_delta_p",
+      "excel_name": "ENG_PIPE_LOSS_DELTA_P",
+      "op": "device.pipe_loss.solve_delta_p",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "friction_model",
+          "description": "Colebrook or Fixed"
+        },
+        {
+          "name": "fixed_f",
+          "description": "Required when friction_model=Fixed"
+        },
+        {
+          "name": "rho",
+          "description": "Density input (optional with fluid context)"
+        },
+        {
+          "name": "mu",
+          "description": "Viscosity input (required for Colebrook without fluid context)"
+        },
+        {
+          "name": "v",
+          "description": "Velocity"
+        },
+        {
+          "name": "d",
+          "description": "Diameter"
+        },
+        {
+          "name": "l",
+          "description": "Length"
+        },
+        {
+          "name": "eps",
+          "description": "Roughness (Colebrook)"
+        },
+        {
+          "name": "fluid",
+          "description": "Optional fluid key (e.g. H2O)"
+        },
+        {
+          "name": "in1_key",
+          "description": "Fluid state input key 1"
+        },
+        {
+          "name": "in1_value",
+          "description": "Fluid state input value 1"
+        },
+        {
+          "name": "in2_key",
+          "description": "Fluid state input key 2"
+        },
+        {
+          "name": "in2_value",
+          "description": "Fluid state input value 2"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve pipe pressure drop using Fixed/Colebrook friction model",
+      "rust_example": "eng::devices::pipe_loss().solve_delta_p()?",
+      "python_example": "engpy.devices.pipe_loss_solve_delta_p(...)",
+      "xloil_example": "=ENG_PIPE_LOSS_DELTA_P(...)",
+      "pyxll_example": "=ENG_PIPE_LOSS_DELTA_P(...)"
+    },
+    {
+      "id": "equation.ascii",
+      "entity": "equation_meta",
+      "source": "equations",
+      "python_module": "equations.meta",
+      "python_name": "equation_ascii",
+      "excel_name": "ENG_EQUATION_ASCII",
+      "op": "equation.ascii",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        }
+      ],
+      "returns": "str",
+      "help": "Read ASCII display form for an equation",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.equations.meta.equation_ascii(\"fluids.reynolds_number\")",
+      "xloil_example": "=ENG_EQUATION_ASCII(\"fluids.reynolds_number\")",
+      "pyxll_example": "=ENG_EQUATION_ASCII(\"fluids.reynolds_number\")"
+    },
+    {
+      "id": "equation.compressible.area_mach.M",
+      "entity": "equation",
+      "source": "compressible.area_mach",
+      "python_module": "equations.compressible",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_AREA_MACH_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.area_mach",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "area_ratio",
+          "description": "Area ratio"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Isentropic Area-Mach Relation for M",
+      "rust_example": "eq.solve(equations::compressible::area_mach::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.solve_m(area_ratio=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_AREA_MACH_M(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_AREA_MACH_M(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.area_mach.area_ratio",
+      "entity": "equation",
+      "source": "compressible.area_mach",
+      "python_module": "equations.compressible",
+      "python_name": "solve_area_ratio",
+      "excel_name": "ENG_COMPRESSIBLE_AREA_MACH_AREA_RATIO",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.area_mach",
+        "target": "area_ratio"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Isentropic Area-Mach Relation for area_ratio",
+      "rust_example": "eq.solve(equations::compressible::area_mach::equation()).for_target(\"area_ratio\").value()?",
+      "python_example": "engpy.equations.compressible.solve_area_ratio(m=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_AREA_MACH_AREA_RATIO(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_AREA_MACH_AREA_RATIO(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.choked_mass_flux.G_star",
+      "entity": "equation",
+      "source": "compressible.choked_mass_flux",
+      "python_module": "equations.compressible",
+      "python_name": "solve_g_star",
+      "excel_name": "ENG_COMPRESSIBLE_CHOKED_MASS_FLUX_G_STAR",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.choked_mass_flux",
+        "target": "G_star"
+      },
+      "args": [
+        {
+          "name": "p0",
+          "description": "Stagnation pressure"
+        },
+        {
+          "name": "T0",
+          "description": "Stagnation temperature"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "R",
+          "description": "Gas constant"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Choked Mass Flux for G_star",
+      "rust_example": "eq.solve(equations::compressible::choked_mass_flux::equation()).for_target(\"G_star\").value()?",
+      "python_example": "engpy.equations.compressible.solve_g_star(p0=\"...\", t0=\"...\", gamma=\"...\", r=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_CHOKED_MASS_FLUX_G_STAR(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_CHOKED_MASS_FLUX_G_STAR(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.isentropic_density_ratio.M",
+      "entity": "equation",
+      "source": "compressible.isentropic_density_ratio",
+      "python_module": "equations.compressible",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_ISENTROPIC_DENSITY_RATIO_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.isentropic_density_ratio",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "rho_rho0",
+          "description": "Static-to-stagnation density ratio"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Isentropic Density Ratio for M",
+      "rust_example": "eq.solve(equations::compressible::isentropic_density_ratio::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.solve_m(rho_rho0=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_ISENTROPIC_DENSITY_RATIO_M(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_ISENTROPIC_DENSITY_RATIO_M(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.isentropic_density_ratio.rho_rho0",
+      "entity": "equation",
+      "source": "compressible.isentropic_density_ratio",
+      "python_module": "equations.compressible",
+      "python_name": "solve_rho_rho0",
+      "excel_name": "ENG_COMPRESSIBLE_ISENTROPIC_DENSITY_RATIO_RHO_RHO0",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.isentropic_density_ratio",
+        "target": "rho_rho0"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Isentropic Density Ratio for rho_rho0",
+      "rust_example": "eq.solve(equations::compressible::isentropic_density_ratio::equation()).for_target(\"rho_rho0\").value()?",
+      "python_example": "engpy.equations.compressible.solve_rho_rho0(m=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_ISENTROPIC_DENSITY_RATIO_RHO_RHO0(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_ISENTROPIC_DENSITY_RATIO_RHO_RHO0(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.isentropic_pressure_ratio.M",
+      "entity": "equation",
+      "source": "compressible.isentropic_pressure_ratio",
+      "python_module": "equations.compressible",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_ISENTROPIC_PRESSURE_RATIO_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.isentropic_pressure_ratio",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "p_p0",
+          "description": "Static-to-stagnation pressure ratio"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Isentropic Pressure Ratio for M",
+      "rust_example": "eq.solve(equations::compressible::isentropic_pressure_ratio::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.solve_m(p_p0=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_ISENTROPIC_PRESSURE_RATIO_M(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_ISENTROPIC_PRESSURE_RATIO_M(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.isentropic_pressure_ratio.p_p0",
+      "entity": "equation",
+      "source": "compressible.isentropic_pressure_ratio",
+      "python_module": "equations.compressible",
+      "python_name": "solve_p_p0",
+      "excel_name": "ENG_COMPRESSIBLE_ISENTROPIC_PRESSURE_RATIO_P_P0",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.isentropic_pressure_ratio",
+        "target": "p_p0"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Isentropic Pressure Ratio for p_p0",
+      "rust_example": "eq.solve(equations::compressible::isentropic_pressure_ratio::equation()).for_target(\"p_p0\").value()?",
+      "python_example": "engpy.equations.compressible.solve_p_p0(m=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_ISENTROPIC_PRESSURE_RATIO_P_P0(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_ISENTROPIC_PRESSURE_RATIO_P_P0(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.isentropic_temperature_ratio.M",
+      "entity": "equation",
+      "source": "compressible.isentropic_temperature_ratio",
+      "python_module": "equations.compressible",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.isentropic_temperature_ratio",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "T_T0",
+          "description": "Static-to-stagnation temperature ratio"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Isentropic Temperature Ratio for M",
+      "rust_example": "eq.solve(equations::compressible::isentropic_temperature_ratio::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.solve_m(t_t0=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_M(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_M(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.isentropic_temperature_ratio.T_T0",
+      "entity": "equation",
+      "source": "compressible.isentropic_temperature_ratio",
+      "python_module": "equations.compressible",
+      "python_name": "solve_t_t0",
+      "excel_name": "ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_T_T0",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.isentropic_temperature_ratio",
+        "target": "T_T0"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Isentropic Temperature Ratio for T_T0",
+      "rust_example": "eq.solve(equations::compressible::isentropic_temperature_ratio::equation()).for_target(\"T_T0\").value()?",
+      "python_example": "engpy.equations.compressible.solve_t_t0(m=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_T_T0(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_T_T0(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.default_unit",
+      "entity": "equation_meta",
+      "source": "equations",
+      "python_module": "equations.meta",
+      "python_name": "equation_default_unit",
+      "excel_name": "ENG_EQUATION_DEFAULT_UNIT",
+      "op": "equation.default_unit",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        },
+        {
+          "name": "variable",
+          "description": "Variable key (case-insensitive)"
+        }
+      ],
+      "returns": "str",
+      "help": "Read canonical default unit for one equation variable",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.equations.meta.equation_default_unit(\"fluids.reynolds_number\", \"mu\")",
+      "xloil_example": "=ENG_EQUATION_DEFAULT_UNIT(\"fluids.reynolds_number\",\"mu\")",
+      "pyxll_example": "=ENG_EQUATION_DEFAULT_UNIT(\"fluids.reynolds_number\",\"mu\")"
+    },
+    {
+      "id": "equation.fluids.circular_pipe_area.A",
+      "entity": "equation",
+      "source": "fluids.circular_pipe_area",
+      "python_module": "equations.fluids",
+      "python_name": "solve_a",
+      "excel_name": "ENG_FLUIDS_CIRCULAR_PIPE_AREA_A",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.circular_pipe_area",
+        "target": "A"
+      },
+      "args": [
+        {
+          "name": "D",
+          "description": "Diameter"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Circular Pipe Flow Area for A",
+      "rust_example": "eq.solve(equations::fluids::circular_pipe_area::equation()).for_target(\"A\").value()?",
+      "python_example": "engpy.equations.fluids.solve_a(d=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_CIRCULAR_PIPE_AREA_A(\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_CIRCULAR_PIPE_AREA_A(\"...\")"
+    },
+    {
+      "id": "equation.fluids.circular_pipe_area.D",
+      "entity": "equation",
+      "source": "fluids.circular_pipe_area",
+      "python_module": "equations.fluids",
+      "python_name": "solve_d",
+      "excel_name": "ENG_FLUIDS_CIRCULAR_PIPE_AREA_D",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.circular_pipe_area",
+        "target": "D"
+      },
+      "args": [
+        {
+          "name": "A",
+          "description": "Area"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Circular Pipe Flow Area for D",
+      "rust_example": "eq.solve(equations::fluids::circular_pipe_area::equation()).for_target(\"D\").value()?",
+      "python_example": "engpy.equations.fluids.solve_d(a=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_CIRCULAR_PIPE_AREA_D(\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_CIRCULAR_PIPE_AREA_D(\"...\")"
+    },
+    {
+      "id": "equation.fluids.colebrook.f",
+      "entity": "equation",
+      "source": "fluids.colebrook",
+      "python_module": "equations.fluids",
+      "python_name": "solve_f",
+      "excel_name": "ENG_FLUIDS_COLEBROOK_F",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.colebrook",
+        "target": "f"
+      },
+      "args": [
+        {
+          "name": "eps_D",
+          "description": "Relative roughness"
+        },
+        {
+          "name": "Re",
+          "description": "Reynolds number"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Colebrook-White Friction Factor for f",
+      "rust_example": "eq.solve(equations::fluids::colebrook::equation()).for_target(\"f\").value()?",
+      "python_example": "engpy.equations.fluids.solve_f(eps_d=\"...\", re=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_COLEBROOK_F(\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_COLEBROOK_F(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.continuity_mass_flow.A",
+      "entity": "equation",
+      "source": "fluids.continuity_mass_flow",
+      "python_module": "equations.fluids",
+      "python_name": "solve_a",
+      "excel_name": "ENG_FLUIDS_CONTINUITY_MASS_FLOW_A",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.continuity_mass_flow",
+        "target": "A"
+      },
+      "args": [
+        {
+          "name": "m_dot",
+          "description": "Mass flow rate"
+        },
+        {
+          "name": "rho",
+          "description": "Fluid density"
+        },
+        {
+          "name": "V",
+          "description": "Mean velocity"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Continuity Mass Flow for A",
+      "rust_example": "eq.solve(equations::fluids::continuity_mass_flow::equation()).for_target(\"A\").value()?",
+      "python_example": "engpy.equations.fluids.solve_a(m_dot=\"...\", rho=\"...\", v=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_CONTINUITY_MASS_FLOW_A(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_CONTINUITY_MASS_FLOW_A(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.continuity_mass_flow.V",
+      "entity": "equation",
+      "source": "fluids.continuity_mass_flow",
+      "python_module": "equations.fluids",
+      "python_name": "solve_v",
+      "excel_name": "ENG_FLUIDS_CONTINUITY_MASS_FLOW_V",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.continuity_mass_flow",
+        "target": "V"
+      },
+      "args": [
+        {
+          "name": "m_dot",
+          "description": "Mass flow rate"
+        },
+        {
+          "name": "rho",
+          "description": "Fluid density"
+        },
+        {
+          "name": "A",
+          "description": "Flow area"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Continuity Mass Flow for V",
+      "rust_example": "eq.solve(equations::fluids::continuity_mass_flow::equation()).for_target(\"V\").value()?",
+      "python_example": "engpy.equations.fluids.solve_v(m_dot=\"...\", rho=\"...\", a=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_CONTINUITY_MASS_FLOW_V(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_CONTINUITY_MASS_FLOW_V(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.continuity_mass_flow.m_dot",
+      "entity": "equation",
+      "source": "fluids.continuity_mass_flow",
+      "python_module": "equations.fluids",
+      "python_name": "solve_m_dot",
+      "excel_name": "ENG_FLUIDS_CONTINUITY_MASS_FLOW_M_DOT",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.continuity_mass_flow",
+        "target": "m_dot"
+      },
+      "args": [
+        {
+          "name": "rho",
+          "description": "Fluid density"
+        },
+        {
+          "name": "A",
+          "description": "Flow area"
+        },
+        {
+          "name": "V",
+          "description": "Mean velocity"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Continuity Mass Flow for m_dot",
+      "rust_example": "eq.solve(equations::fluids::continuity_mass_flow::equation()).for_target(\"m_dot\").value()?",
+      "python_example": "engpy.equations.fluids.solve_m_dot(rho=\"...\", a=\"...\", v=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_CONTINUITY_MASS_FLOW_M_DOT(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_CONTINUITY_MASS_FLOW_M_DOT(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.continuity_mass_flow.rho",
+      "entity": "equation",
+      "source": "fluids.continuity_mass_flow",
+      "python_module": "equations.fluids",
+      "python_name": "solve_rho",
+      "excel_name": "ENG_FLUIDS_CONTINUITY_MASS_FLOW_RHO",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.continuity_mass_flow",
+        "target": "rho"
+      },
+      "args": [
+        {
+          "name": "m_dot",
+          "description": "Mass flow rate"
+        },
+        {
+          "name": "A",
+          "description": "Flow area"
+        },
+        {
+          "name": "V",
+          "description": "Mean velocity"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Continuity Mass Flow for rho",
+      "rust_example": "eq.solve(equations::fluids::continuity_mass_flow::equation()).for_target(\"rho\").value()?",
+      "python_example": "engpy.equations.fluids.solve_rho(m_dot=\"...\", a=\"...\", v=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_CONTINUITY_MASS_FLOW_RHO(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_CONTINUITY_MASS_FLOW_RHO(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.darcy_weisbach_pressure_drop.D",
+      "entity": "equation",
+      "source": "fluids.darcy_weisbach_pressure_drop",
+      "python_module": "equations.fluids",
+      "python_name": "solve_d",
+      "excel_name": "ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_D",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.darcy_weisbach_pressure_drop",
+        "target": "D"
+      },
+      "args": [
+        {
+          "name": "delta_p",
+          "description": "Pressure drop"
+        },
+        {
+          "name": "f",
+          "description": "Darcy friction factor"
+        },
+        {
+          "name": "L",
+          "description": "Pipe length"
+        },
+        {
+          "name": "rho",
+          "description": "Fluid density"
+        },
+        {
+          "name": "V",
+          "description": "Mean velocity"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Darcy-Weisbach Pressure Drop for D",
+      "rust_example": "eq.solve(equations::fluids::darcy_weisbach_pressure_drop::equation()).for_target(\"D\").value()?",
+      "python_example": "engpy.equations.fluids.solve_d(delta_p=\"...\", f=\"...\", l=\"...\", rho=\"...\", v=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_D(\"...\",\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_D(\"...\",\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.darcy_weisbach_pressure_drop.L",
+      "entity": "equation",
+      "source": "fluids.darcy_weisbach_pressure_drop",
+      "python_module": "equations.fluids",
+      "python_name": "solve_l",
+      "excel_name": "ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_L",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.darcy_weisbach_pressure_drop",
+        "target": "L"
+      },
+      "args": [
+        {
+          "name": "delta_p",
+          "description": "Pressure drop"
+        },
+        {
+          "name": "f",
+          "description": "Darcy friction factor"
+        },
+        {
+          "name": "D",
+          "description": "Pipe diameter"
+        },
+        {
+          "name": "rho",
+          "description": "Fluid density"
+        },
+        {
+          "name": "V",
+          "description": "Mean velocity"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Darcy-Weisbach Pressure Drop for L",
+      "rust_example": "eq.solve(equations::fluids::darcy_weisbach_pressure_drop::equation()).for_target(\"L\").value()?",
+      "python_example": "engpy.equations.fluids.solve_l(delta_p=\"...\", f=\"...\", d=\"...\", rho=\"...\", v=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_L(\"...\",\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_L(\"...\",\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.darcy_weisbach_pressure_drop.V",
+      "entity": "equation",
+      "source": "fluids.darcy_weisbach_pressure_drop",
+      "python_module": "equations.fluids",
+      "python_name": "solve_v",
+      "excel_name": "ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_V",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.darcy_weisbach_pressure_drop",
+        "target": "V"
+      },
+      "args": [
+        {
+          "name": "delta_p",
+          "description": "Pressure drop"
+        },
+        {
+          "name": "f",
+          "description": "Darcy friction factor"
+        },
+        {
+          "name": "L",
+          "description": "Pipe length"
+        },
+        {
+          "name": "D",
+          "description": "Pipe diameter"
+        },
+        {
+          "name": "rho",
+          "description": "Fluid density"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Darcy-Weisbach Pressure Drop for V",
+      "rust_example": "eq.solve(equations::fluids::darcy_weisbach_pressure_drop::equation()).for_target(\"V\").value()?",
+      "python_example": "engpy.equations.fluids.solve_v(delta_p=\"...\", f=\"...\", l=\"...\", d=\"...\", rho=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_V(\"...\",\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_V(\"...\",\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.darcy_weisbach_pressure_drop.delta_p",
+      "entity": "equation",
+      "source": "fluids.darcy_weisbach_pressure_drop",
+      "python_module": "equations.fluids",
+      "python_name": "solve_delta_p",
+      "excel_name": "ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_DELTA_P",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.darcy_weisbach_pressure_drop",
+        "target": "delta_p"
+      },
+      "args": [
+        {
+          "name": "f",
+          "description": "Darcy friction factor"
+        },
+        {
+          "name": "L",
+          "description": "Pipe length"
+        },
+        {
+          "name": "D",
+          "description": "Pipe diameter"
+        },
+        {
+          "name": "rho",
+          "description": "Fluid density"
+        },
+        {
+          "name": "V",
+          "description": "Mean velocity"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Darcy-Weisbach Pressure Drop for delta_p",
+      "rust_example": "eq.solve(equations::fluids::darcy_weisbach_pressure_drop::equation()).for_target(\"delta_p\").value()?",
+      "python_example": "engpy.equations.fluids.solve_delta_p(f=\"...\", l=\"...\", d=\"...\", rho=\"...\", v=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_DELTA_P(\"...\",\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_DELTA_P(\"...\",\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.darcy_weisbach_pressure_drop.f",
+      "entity": "equation",
+      "source": "fluids.darcy_weisbach_pressure_drop",
+      "python_module": "equations.fluids",
+      "python_name": "solve_f",
+      "excel_name": "ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_F",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.darcy_weisbach_pressure_drop",
+        "target": "f"
+      },
+      "args": [
+        {
+          "name": "delta_p",
+          "description": "Pressure drop"
+        },
+        {
+          "name": "L",
+          "description": "Pipe length"
+        },
+        {
+          "name": "D",
+          "description": "Pipe diameter"
+        },
+        {
+          "name": "rho",
+          "description": "Fluid density"
+        },
+        {
+          "name": "V",
+          "description": "Mean velocity"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Darcy-Weisbach Pressure Drop for f",
+      "rust_example": "eq.solve(equations::fluids::darcy_weisbach_pressure_drop::equation()).for_target(\"f\").value()?",
+      "python_example": "engpy.equations.fluids.solve_f(delta_p=\"...\", l=\"...\", d=\"...\", rho=\"...\", v=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_F(\"...\",\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_F(\"...\",\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.darcy_weisbach_pressure_drop.rho",
+      "entity": "equation",
+      "source": "fluids.darcy_weisbach_pressure_drop",
+      "python_module": "equations.fluids",
+      "python_name": "solve_rho",
+      "excel_name": "ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_RHO",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.darcy_weisbach_pressure_drop",
+        "target": "rho"
+      },
+      "args": [
+        {
+          "name": "delta_p",
+          "description": "Pressure drop"
+        },
+        {
+          "name": "f",
+          "description": "Darcy friction factor"
+        },
+        {
+          "name": "L",
+          "description": "Pipe length"
+        },
+        {
+          "name": "D",
+          "description": "Pipe diameter"
+        },
+        {
+          "name": "V",
+          "description": "Mean velocity"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Darcy-Weisbach Pressure Drop for rho",
+      "rust_example": "eq.solve(equations::fluids::darcy_weisbach_pressure_drop::equation()).for_target(\"rho\").value()?",
+      "python_example": "engpy.equations.fluids.solve_rho(delta_p=\"...\", f=\"...\", l=\"...\", d=\"...\", v=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_RHO(\"...\",\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_RHO(\"...\",\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.orifice_mass_flow_incompressible.A",
+      "entity": "equation",
+      "source": "fluids.orifice_mass_flow_incompressible",
+      "python_module": "equations.fluids",
+      "python_name": "solve_a",
+      "excel_name": "ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_A",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.orifice_mass_flow_incompressible",
+        "target": "A"
+      },
+      "args": [
+        {
+          "name": "m_dot",
+          "description": "Mass flow rate"
+        },
+        {
+          "name": "C_d",
+          "description": "Discharge coefficient"
+        },
+        {
+          "name": "rho",
+          "description": "Fluid density"
+        },
+        {
+          "name": "delta_p",
+          "description": "Pressure drop"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Incompressible Orifice Mass Flow for A",
+      "rust_example": "eq.solve(equations::fluids::orifice_mass_flow_incompressible::equation()).for_target(\"A\").value()?",
+      "python_example": "engpy.equations.fluids.solve_a(m_dot=\"...\", c_d=\"...\", rho=\"...\", delta_p=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_A(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_A(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.orifice_mass_flow_incompressible.C_d",
+      "entity": "equation",
+      "source": "fluids.orifice_mass_flow_incompressible",
+      "python_module": "equations.fluids",
+      "python_name": "solve_c_d",
+      "excel_name": "ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_C_D",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.orifice_mass_flow_incompressible",
+        "target": "C_d"
+      },
+      "args": [
+        {
+          "name": "m_dot",
+          "description": "Mass flow rate"
+        },
+        {
+          "name": "A",
+          "description": "Orifice area"
+        },
+        {
+          "name": "rho",
+          "description": "Fluid density"
+        },
+        {
+          "name": "delta_p",
+          "description": "Pressure drop"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Incompressible Orifice Mass Flow for C_d",
+      "rust_example": "eq.solve(equations::fluids::orifice_mass_flow_incompressible::equation()).for_target(\"C_d\").value()?",
+      "python_example": "engpy.equations.fluids.solve_c_d(m_dot=\"...\", a=\"...\", rho=\"...\", delta_p=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_C_D(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_C_D(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.orifice_mass_flow_incompressible.delta_p",
+      "entity": "equation",
+      "source": "fluids.orifice_mass_flow_incompressible",
+      "python_module": "equations.fluids",
+      "python_name": "solve_delta_p",
+      "excel_name": "ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_DELTA_P",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.orifice_mass_flow_incompressible",
+        "target": "delta_p"
+      },
+      "args": [
+        {
+          "name": "m_dot",
+          "description": "Mass flow rate"
+        },
+        {
+          "name": "C_d",
+          "description": "Discharge coefficient"
+        },
+        {
+          "name": "A",
+          "description": "Orifice area"
+        },
+        {
+          "name": "rho",
+          "description": "Fluid density"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Incompressible Orifice Mass Flow for delta_p",
+      "rust_example": "eq.solve(equations::fluids::orifice_mass_flow_incompressible::equation()).for_target(\"delta_p\").value()?",
+      "python_example": "engpy.equations.fluids.solve_delta_p(m_dot=\"...\", c_d=\"...\", a=\"...\", rho=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_DELTA_P(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_DELTA_P(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.orifice_mass_flow_incompressible.m_dot",
+      "entity": "equation",
+      "source": "fluids.orifice_mass_flow_incompressible",
+      "python_module": "equations.fluids",
+      "python_name": "solve_m_dot",
+      "excel_name": "ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_M_DOT",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.orifice_mass_flow_incompressible",
+        "target": "m_dot"
+      },
+      "args": [
+        {
+          "name": "C_d",
+          "description": "Discharge coefficient"
+        },
+        {
+          "name": "A",
+          "description": "Orifice area"
+        },
+        {
+          "name": "rho",
+          "description": "Fluid density"
+        },
+        {
+          "name": "delta_p",
+          "description": "Pressure drop"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Incompressible Orifice Mass Flow for m_dot",
+      "rust_example": "eq.solve(equations::fluids::orifice_mass_flow_incompressible::equation()).for_target(\"m_dot\").value()?",
+      "python_example": "engpy.equations.fluids.solve_m_dot(c_d=\"...\", a=\"...\", rho=\"...\", delta_p=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_M_DOT(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_M_DOT(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.orifice_mass_flow_incompressible.rho",
+      "entity": "equation",
+      "source": "fluids.orifice_mass_flow_incompressible",
+      "python_module": "equations.fluids",
+      "python_name": "solve_rho",
+      "excel_name": "ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_RHO",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.orifice_mass_flow_incompressible",
+        "target": "rho"
+      },
+      "args": [
+        {
+          "name": "m_dot",
+          "description": "Mass flow rate"
+        },
+        {
+          "name": "C_d",
+          "description": "Discharge coefficient"
+        },
+        {
+          "name": "A",
+          "description": "Orifice area"
+        },
+        {
+          "name": "delta_p",
+          "description": "Pressure drop"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Incompressible Orifice Mass Flow for rho",
+      "rust_example": "eq.solve(equations::fluids::orifice_mass_flow_incompressible::equation()).for_target(\"rho\").value()?",
+      "python_example": "engpy.equations.fluids.solve_rho(m_dot=\"...\", c_d=\"...\", a=\"...\", delta_p=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_RHO(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_RHO(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.reynolds_number.D",
+      "entity": "equation",
+      "source": "fluids.reynolds_number",
+      "python_module": "equations.fluids",
+      "python_name": "solve_d",
+      "excel_name": "ENG_FLUIDS_REYNOLDS_NUMBER_D",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.reynolds_number",
+        "target": "D"
+      },
+      "args": [
+        {
+          "name": "Re",
+          "description": "Reynolds number"
+        },
+        {
+          "name": "rho",
+          "description": "Fluid density"
+        },
+        {
+          "name": "V",
+          "description": "Mean velocity"
+        },
+        {
+          "name": "mu",
+          "description": "Dynamic viscosity"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Reynolds Number for D",
+      "rust_example": "eq.solve(equations::fluids::reynolds_number::equation()).for_target(\"D\").value()?",
+      "python_example": "engpy.equations.fluids.solve_d(re=\"...\", rho=\"...\", v=\"...\", mu=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_D(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_D(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.reynolds_number.Re",
+      "entity": "equation",
+      "source": "fluids.reynolds_number",
+      "python_module": "equations.fluids",
+      "python_name": "solve_re",
+      "excel_name": "ENG_FLUIDS_REYNOLDS_NUMBER_RE",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.reynolds_number",
+        "target": "Re"
+      },
+      "args": [
+        {
+          "name": "rho",
+          "description": "Fluid density"
+        },
+        {
+          "name": "V",
+          "description": "Mean velocity"
+        },
+        {
+          "name": "D",
+          "description": "Hydraulic diameter"
+        },
+        {
+          "name": "mu",
+          "description": "Dynamic viscosity"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Reynolds Number for Re",
+      "rust_example": "eq.solve(equations::fluids::reynolds_number::equation()).for_target(\"Re\").value()?",
+      "python_example": "engpy.equations.fluids.solve_re(rho=\"...\", v=\"...\", d=\"...\", mu=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_RE(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_RE(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.reynolds_number.V",
+      "entity": "equation",
+      "source": "fluids.reynolds_number",
+      "python_module": "equations.fluids",
+      "python_name": "solve_v",
+      "excel_name": "ENG_FLUIDS_REYNOLDS_NUMBER_V",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.reynolds_number",
+        "target": "V"
+      },
+      "args": [
+        {
+          "name": "Re",
+          "description": "Reynolds number"
+        },
+        {
+          "name": "rho",
+          "description": "Fluid density"
+        },
+        {
+          "name": "D",
+          "description": "Hydraulic diameter"
+        },
+        {
+          "name": "mu",
+          "description": "Dynamic viscosity"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Reynolds Number for V",
+      "rust_example": "eq.solve(equations::fluids::reynolds_number::equation()).for_target(\"V\").value()?",
+      "python_example": "engpy.equations.fluids.solve_v(re=\"...\", rho=\"...\", d=\"...\", mu=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_V(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_V(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.reynolds_number.mu",
+      "entity": "equation",
+      "source": "fluids.reynolds_number",
+      "python_module": "equations.fluids",
+      "python_name": "solve_mu",
+      "excel_name": "ENG_FLUIDS_REYNOLDS_NUMBER_MU",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.reynolds_number",
+        "target": "mu"
+      },
+      "args": [
+        {
+          "name": "Re",
+          "description": "Reynolds number"
+        },
+        {
+          "name": "rho",
+          "description": "Fluid density"
+        },
+        {
+          "name": "V",
+          "description": "Mean velocity"
+        },
+        {
+          "name": "D",
+          "description": "Hydraulic diameter"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Reynolds Number for mu",
+      "rust_example": "eq.solve(equations::fluids::reynolds_number::equation()).for_target(\"mu\").value()?",
+      "python_example": "engpy.equations.fluids.solve_mu(re=\"...\", rho=\"...\", v=\"...\", d=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_MU(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_MU(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.fluids.reynolds_number.rho",
+      "entity": "equation",
+      "source": "fluids.reynolds_number",
+      "python_module": "equations.fluids",
+      "python_name": "solve_rho",
+      "excel_name": "ENG_FLUIDS_REYNOLDS_NUMBER_RHO",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "fluids.reynolds_number",
+        "target": "rho"
+      },
+      "args": [
+        {
+          "name": "Re",
+          "description": "Reynolds number"
+        },
+        {
+          "name": "V",
+          "description": "Mean velocity"
+        },
+        {
+          "name": "D",
+          "description": "Hydraulic diameter"
+        },
+        {
+          "name": "mu",
+          "description": "Dynamic viscosity"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Reynolds Number for rho",
+      "rust_example": "eq.solve(equations::fluids::reynolds_number::equation()).for_target(\"rho\").value()?",
+      "python_example": "engpy.equations.fluids.solve_rho(re=\"...\", v=\"...\", d=\"...\", mu=\"...\")",
+      "xloil_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_RHO(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FLUIDS_REYNOLDS_NUMBER_RHO(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.conduction_plane_wall_heat_rate.A",
+      "entity": "equation",
+      "source": "heat_transfer.conduction_plane_wall_heat_rate",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_a",
+      "excel_name": "ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_A",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.conduction_plane_wall_heat_rate",
+        "target": "A"
+      },
+      "args": [
+        {
+          "name": "Q_dot",
+          "description": "Heat transfer rate"
+        },
+        {
+          "name": "k",
+          "description": "Thermal conductivity"
+        },
+        {
+          "name": "T_h",
+          "description": "Hot-side temperature"
+        },
+        {
+          "name": "T_c",
+          "description": "Cold-side temperature"
+        },
+        {
+          "name": "L",
+          "description": "Wall thickness"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Plane-Wall Conduction Heat Rate for A",
+      "rust_example": "eq.solve(equations::heat_transfer::conduction_plane_wall_heat_rate::equation()).for_target(\"A\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_a(q_dot=\"...\", k=\"...\", t_h=\"...\", t_c=\"...\", l=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_A(\"...\",\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_A(\"...\",\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.conduction_plane_wall_heat_rate.L",
+      "entity": "equation",
+      "source": "heat_transfer.conduction_plane_wall_heat_rate",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_l",
+      "excel_name": "ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_L",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.conduction_plane_wall_heat_rate",
+        "target": "L"
+      },
+      "args": [
+        {
+          "name": "Q_dot",
+          "description": "Heat transfer rate"
+        },
+        {
+          "name": "k",
+          "description": "Thermal conductivity"
+        },
+        {
+          "name": "A",
+          "description": "Area normal to heat flow"
+        },
+        {
+          "name": "T_h",
+          "description": "Hot-side temperature"
+        },
+        {
+          "name": "T_c",
+          "description": "Cold-side temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Plane-Wall Conduction Heat Rate for L",
+      "rust_example": "eq.solve(equations::heat_transfer::conduction_plane_wall_heat_rate::equation()).for_target(\"L\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_l(q_dot=\"...\", k=\"...\", a=\"...\", t_h=\"...\", t_c=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_L(\"...\",\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_L(\"...\",\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.conduction_plane_wall_heat_rate.Q_dot",
+      "entity": "equation",
+      "source": "heat_transfer.conduction_plane_wall_heat_rate",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_q_dot",
+      "excel_name": "ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_Q_DOT",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.conduction_plane_wall_heat_rate",
+        "target": "Q_dot"
+      },
+      "args": [
+        {
+          "name": "k",
+          "description": "Thermal conductivity"
+        },
+        {
+          "name": "A",
+          "description": "Area normal to heat flow"
+        },
+        {
+          "name": "T_h",
+          "description": "Hot-side temperature"
+        },
+        {
+          "name": "T_c",
+          "description": "Cold-side temperature"
+        },
+        {
+          "name": "L",
+          "description": "Wall thickness"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Plane-Wall Conduction Heat Rate for Q_dot",
+      "rust_example": "eq.solve(equations::heat_transfer::conduction_plane_wall_heat_rate::equation()).for_target(\"Q_dot\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_q_dot(k=\"...\", a=\"...\", t_h=\"...\", t_c=\"...\", l=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_Q_DOT(\"...\",\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_Q_DOT(\"...\",\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.conduction_plane_wall_heat_rate.T_c",
+      "entity": "equation",
+      "source": "heat_transfer.conduction_plane_wall_heat_rate",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_t_c",
+      "excel_name": "ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_T_C",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.conduction_plane_wall_heat_rate",
+        "target": "T_c"
+      },
+      "args": [
+        {
+          "name": "Q_dot",
+          "description": "Heat transfer rate"
+        },
+        {
+          "name": "k",
+          "description": "Thermal conductivity"
+        },
+        {
+          "name": "A",
+          "description": "Area normal to heat flow"
+        },
+        {
+          "name": "T_h",
+          "description": "Hot-side temperature"
+        },
+        {
+          "name": "L",
+          "description": "Wall thickness"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Plane-Wall Conduction Heat Rate for T_c",
+      "rust_example": "eq.solve(equations::heat_transfer::conduction_plane_wall_heat_rate::equation()).for_target(\"T_c\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_t_c(q_dot=\"...\", k=\"...\", a=\"...\", t_h=\"...\", l=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_T_C(\"...\",\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_T_C(\"...\",\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.conduction_plane_wall_heat_rate.T_h",
+      "entity": "equation",
+      "source": "heat_transfer.conduction_plane_wall_heat_rate",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_t_h",
+      "excel_name": "ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_T_H",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.conduction_plane_wall_heat_rate",
+        "target": "T_h"
+      },
+      "args": [
+        {
+          "name": "Q_dot",
+          "description": "Heat transfer rate"
+        },
+        {
+          "name": "k",
+          "description": "Thermal conductivity"
+        },
+        {
+          "name": "A",
+          "description": "Area normal to heat flow"
+        },
+        {
+          "name": "T_c",
+          "description": "Cold-side temperature"
+        },
+        {
+          "name": "L",
+          "description": "Wall thickness"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Plane-Wall Conduction Heat Rate for T_h",
+      "rust_example": "eq.solve(equations::heat_transfer::conduction_plane_wall_heat_rate::equation()).for_target(\"T_h\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_t_h(q_dot=\"...\", k=\"...\", a=\"...\", t_c=\"...\", l=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_T_H(\"...\",\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_T_H(\"...\",\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.conduction_plane_wall_heat_rate.k",
+      "entity": "equation",
+      "source": "heat_transfer.conduction_plane_wall_heat_rate",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_k",
+      "excel_name": "ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_K",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.conduction_plane_wall_heat_rate",
+        "target": "k"
+      },
+      "args": [
+        {
+          "name": "Q_dot",
+          "description": "Heat transfer rate"
+        },
+        {
+          "name": "A",
+          "description": "Area normal to heat flow"
+        },
+        {
+          "name": "T_h",
+          "description": "Hot-side temperature"
+        },
+        {
+          "name": "T_c",
+          "description": "Cold-side temperature"
+        },
+        {
+          "name": "L",
+          "description": "Wall thickness"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Plane-Wall Conduction Heat Rate for k",
+      "rust_example": "eq.solve(equations::heat_transfer::conduction_plane_wall_heat_rate::equation()).for_target(\"k\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_k(q_dot=\"...\", a=\"...\", t_h=\"...\", t_c=\"...\", l=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_K(\"...\",\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_K(\"...\",\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.convection_heat_rate.A",
+      "entity": "equation",
+      "source": "heat_transfer.convection_heat_rate",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_a",
+      "excel_name": "ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_A",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.convection_heat_rate",
+        "target": "A"
+      },
+      "args": [
+        {
+          "name": "Q_dot",
+          "description": "Heat transfer rate"
+        },
+        {
+          "name": "h",
+          "description": "Convective heat transfer coefficient"
+        },
+        {
+          "name": "T_s",
+          "description": "Surface temperature"
+        },
+        {
+          "name": "T_inf",
+          "description": "Free-stream temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Convection Heat Transfer Rate for A",
+      "rust_example": "eq.solve(equations::heat_transfer::convection_heat_rate::equation()).for_target(\"A\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_a(q_dot=\"...\", h=\"...\", t_s=\"...\", t_inf=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_A(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_A(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.convection_heat_rate.Q_dot",
+      "entity": "equation",
+      "source": "heat_transfer.convection_heat_rate",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_q_dot",
+      "excel_name": "ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_Q_DOT",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.convection_heat_rate",
+        "target": "Q_dot"
+      },
+      "args": [
+        {
+          "name": "h",
+          "description": "Convective heat transfer coefficient"
+        },
+        {
+          "name": "A",
+          "description": "Surface area"
+        },
+        {
+          "name": "T_s",
+          "description": "Surface temperature"
+        },
+        {
+          "name": "T_inf",
+          "description": "Free-stream temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Convection Heat Transfer Rate for Q_dot",
+      "rust_example": "eq.solve(equations::heat_transfer::convection_heat_rate::equation()).for_target(\"Q_dot\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_q_dot(h=\"...\", a=\"...\", t_s=\"...\", t_inf=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_Q_DOT(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_Q_DOT(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.convection_heat_rate.T_inf",
+      "entity": "equation",
+      "source": "heat_transfer.convection_heat_rate",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_t_inf",
+      "excel_name": "ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_T_INF",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.convection_heat_rate",
+        "target": "T_inf"
+      },
+      "args": [
+        {
+          "name": "Q_dot",
+          "description": "Heat transfer rate"
+        },
+        {
+          "name": "h",
+          "description": "Convective heat transfer coefficient"
+        },
+        {
+          "name": "A",
+          "description": "Surface area"
+        },
+        {
+          "name": "T_s",
+          "description": "Surface temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Convection Heat Transfer Rate for T_inf",
+      "rust_example": "eq.solve(equations::heat_transfer::convection_heat_rate::equation()).for_target(\"T_inf\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_t_inf(q_dot=\"...\", h=\"...\", a=\"...\", t_s=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_T_INF(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_T_INF(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.convection_heat_rate.T_s",
+      "entity": "equation",
+      "source": "heat_transfer.convection_heat_rate",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_t_s",
+      "excel_name": "ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_T_S",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.convection_heat_rate",
+        "target": "T_s"
+      },
+      "args": [
+        {
+          "name": "Q_dot",
+          "description": "Heat transfer rate"
+        },
+        {
+          "name": "h",
+          "description": "Convective heat transfer coefficient"
+        },
+        {
+          "name": "A",
+          "description": "Surface area"
+        },
+        {
+          "name": "T_inf",
+          "description": "Free-stream temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Convection Heat Transfer Rate for T_s",
+      "rust_example": "eq.solve(equations::heat_transfer::convection_heat_rate::equation()).for_target(\"T_s\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_t_s(q_dot=\"...\", h=\"...\", a=\"...\", t_inf=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_T_S(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_T_S(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.convection_heat_rate.h",
+      "entity": "equation",
+      "source": "heat_transfer.convection_heat_rate",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_h",
+      "excel_name": "ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_H",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.convection_heat_rate",
+        "target": "h"
+      },
+      "args": [
+        {
+          "name": "Q_dot",
+          "description": "Heat transfer rate"
+        },
+        {
+          "name": "A",
+          "description": "Surface area"
+        },
+        {
+          "name": "T_s",
+          "description": "Surface temperature"
+        },
+        {
+          "name": "T_inf",
+          "description": "Free-stream temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Convection Heat Transfer Rate for h",
+      "rust_example": "eq.solve(equations::heat_transfer::convection_heat_rate::equation()).for_target(\"h\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_h(q_dot=\"...\", a=\"...\", t_s=\"...\", t_inf=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_H(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_H(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.log_mean_temperature_difference.delta_T_lm",
+      "entity": "equation",
+      "source": "heat_transfer.log_mean_temperature_difference",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_delta_t_lm",
+      "excel_name": "ENG_HEAT_TRANSFER_LOG_MEAN_TEMPERATURE_DIFFERENCE_DELTA_T_LM",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.log_mean_temperature_difference",
+        "target": "delta_T_lm"
+      },
+      "args": [
+        {
+          "name": "delta_T_1",
+          "description": "End temperature difference 1"
+        },
+        {
+          "name": "delta_T_2",
+          "description": "End temperature difference 2"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Log-Mean Temperature Difference for delta_T_lm",
+      "rust_example": "eq.solve(equations::heat_transfer::log_mean_temperature_difference::equation()).for_target(\"delta_T_lm\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_delta_t_lm(delta_t_1=\"...\", delta_t_2=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_LOG_MEAN_TEMPERATURE_DIFFERENCE_DELTA_T_LM(\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_LOG_MEAN_TEMPERATURE_DIFFERENCE_DELTA_T_LM(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.thermal_resistance_conduction.A",
+      "entity": "equation",
+      "source": "heat_transfer.thermal_resistance_conduction",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_a",
+      "excel_name": "ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_A",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.thermal_resistance_conduction",
+        "target": "A"
+      },
+      "args": [
+        {
+          "name": "R_th",
+          "description": "Thermal resistance"
+        },
+        {
+          "name": "L",
+          "description": "Wall thickness"
+        },
+        {
+          "name": "k",
+          "description": "Thermal conductivity"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Conduction Thermal Resistance for A",
+      "rust_example": "eq.solve(equations::heat_transfer::thermal_resistance_conduction::equation()).for_target(\"A\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_a(r_th=\"...\", l=\"...\", k=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_A(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_A(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.thermal_resistance_conduction.L",
+      "entity": "equation",
+      "source": "heat_transfer.thermal_resistance_conduction",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_l",
+      "excel_name": "ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_L",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.thermal_resistance_conduction",
+        "target": "L"
+      },
+      "args": [
+        {
+          "name": "R_th",
+          "description": "Thermal resistance"
+        },
+        {
+          "name": "k",
+          "description": "Thermal conductivity"
+        },
+        {
+          "name": "A",
+          "description": "Area"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Conduction Thermal Resistance for L",
+      "rust_example": "eq.solve(equations::heat_transfer::thermal_resistance_conduction::equation()).for_target(\"L\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_l(r_th=\"...\", k=\"...\", a=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_L(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_L(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.thermal_resistance_conduction.R_th",
+      "entity": "equation",
+      "source": "heat_transfer.thermal_resistance_conduction",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_r_th",
+      "excel_name": "ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_R_TH",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.thermal_resistance_conduction",
+        "target": "R_th"
+      },
+      "args": [
+        {
+          "name": "L",
+          "description": "Wall thickness"
+        },
+        {
+          "name": "k",
+          "description": "Thermal conductivity"
+        },
+        {
+          "name": "A",
+          "description": "Area"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Conduction Thermal Resistance for R_th",
+      "rust_example": "eq.solve(equations::heat_transfer::thermal_resistance_conduction::equation()).for_target(\"R_th\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_r_th(l=\"...\", k=\"...\", a=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_R_TH(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_R_TH(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.thermal_resistance_conduction.k",
+      "entity": "equation",
+      "source": "heat_transfer.thermal_resistance_conduction",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_k",
+      "excel_name": "ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_K",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.thermal_resistance_conduction",
+        "target": "k"
+      },
+      "args": [
+        {
+          "name": "R_th",
+          "description": "Thermal resistance"
+        },
+        {
+          "name": "L",
+          "description": "Wall thickness"
+        },
+        {
+          "name": "A",
+          "description": "Area"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Conduction Thermal Resistance for k",
+      "rust_example": "eq.solve(equations::heat_transfer::thermal_resistance_conduction::equation()).for_target(\"k\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_k(r_th=\"...\", l=\"...\", a=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_K(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_K(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.thermal_resistance_convection.A",
+      "entity": "equation",
+      "source": "heat_transfer.thermal_resistance_convection",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_a",
+      "excel_name": "ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_A",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.thermal_resistance_convection",
+        "target": "A"
+      },
+      "args": [
+        {
+          "name": "R_th",
+          "description": "Thermal resistance"
+        },
+        {
+          "name": "h",
+          "description": "Convective heat transfer coefficient"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Convection Thermal Resistance for A",
+      "rust_example": "eq.solve(equations::heat_transfer::thermal_resistance_convection::equation()).for_target(\"A\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_a(r_th=\"...\", h=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_A(\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_A(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.thermal_resistance_convection.R_th",
+      "entity": "equation",
+      "source": "heat_transfer.thermal_resistance_convection",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_r_th",
+      "excel_name": "ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_R_TH",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.thermal_resistance_convection",
+        "target": "R_th"
+      },
+      "args": [
+        {
+          "name": "h",
+          "description": "Convective heat transfer coefficient"
+        },
+        {
+          "name": "A",
+          "description": "Surface area"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Convection Thermal Resistance for R_th",
+      "rust_example": "eq.solve(equations::heat_transfer::thermal_resistance_convection::equation()).for_target(\"R_th\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_r_th(h=\"...\", a=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_R_TH(\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_R_TH(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.heat_transfer.thermal_resistance_convection.h",
+      "entity": "equation",
+      "source": "heat_transfer.thermal_resistance_convection",
+      "python_module": "equations.heat_transfer",
+      "python_name": "solve_h",
+      "excel_name": "ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_H",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "heat_transfer.thermal_resistance_convection",
+        "target": "h"
+      },
+      "args": [
+        {
+          "name": "R_th",
+          "description": "Thermal resistance"
+        },
+        {
+          "name": "A",
+          "description": "Surface area"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Convection Thermal Resistance for h",
+      "rust_example": "eq.solve(equations::heat_transfer::thermal_resistance_convection::equation()).for_target(\"h\").value()?",
+      "python_example": "engpy.equations.heat_transfer.solve_h(r_th=\"...\", a=\"...\")",
+      "xloil_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_H(\"...\",\"...\")",
+      "pyxll_example": "=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_H(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.meta",
+      "entity": "equation_meta",
+      "source": "equations",
+      "python_module": "equations.meta",
+      "python_name": "equation_meta",
+      "excel_name": "ENG_EQUATION_META",
+      "op": "equation.meta",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id (for example `fluids.reynolds_number`)"
+        }
+      ],
+      "returns": "dict",
+      "help": "Read equation metadata (display forms, variables, dimensions, units, targets)",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.equations.meta.equation_meta(\"fluids.reynolds_number\")",
+      "xloil_example": "=ENG_EQUATION_META(\"fluids.reynolds_number\")",
+      "pyxll_example": "=ENG_EQUATION_META(\"fluids.reynolds_number\")"
+    },
+    {
+      "id": "equation.rockets.cstar_ideal.c_star",
+      "entity": "equation",
+      "source": "rockets.cstar_ideal",
+      "python_module": "equations.rockets",
+      "python_name": "solve_c_star",
+      "excel_name": "ENG_ROCKETS_CSTAR_IDEAL_C_STAR",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "rockets.cstar_ideal",
+        "target": "c_star"
+      },
+      "args": [
+        {
+          "name": "R",
+          "description": "Gas constant"
+        },
+        {
+          "name": "T_c",
+          "description": "Chamber temperature"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Characteristic Velocity for c_star",
+      "rust_example": "eq.solve(equations::rockets::cstar_ideal::equation()).for_target(\"c_star\").value()?",
+      "python_example": "engpy.equations.rockets.solve_c_star(r=\"...\", t_c=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_ROCKETS_CSTAR_IDEAL_C_STAR(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_ROCKETS_CSTAR_IDEAL_C_STAR(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.rockets.specific_impulse_ideal.C_f",
+      "entity": "equation",
+      "source": "rockets.specific_impulse_ideal",
+      "python_module": "equations.rockets",
+      "python_name": "solve_c_f",
+      "excel_name": "ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_F",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "rockets.specific_impulse_ideal",
+        "target": "C_f"
+      },
+      "args": [
+        {
+          "name": "I_sp",
+          "description": "Specific impulse"
+        },
+        {
+          "name": "c_star",
+          "description": "Characteristic velocity"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Specific Impulse for C_f",
+      "rust_example": "eq.solve(equations::rockets::specific_impulse_ideal::equation()).for_target(\"C_f\").value()?",
+      "python_example": "engpy.equations.rockets.solve_c_f(i_sp=\"...\", c_star=\"...\")",
+      "xloil_example": "=ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_F(\"...\",\"...\")",
+      "pyxll_example": "=ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_F(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.rockets.specific_impulse_ideal.I_sp",
+      "entity": "equation",
+      "source": "rockets.specific_impulse_ideal",
+      "python_module": "equations.rockets",
+      "python_name": "solve_i_sp",
+      "excel_name": "ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_I_SP",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "rockets.specific_impulse_ideal",
+        "target": "I_sp"
+      },
+      "args": [
+        {
+          "name": "C_f",
+          "description": "Thrust coefficient"
+        },
+        {
+          "name": "c_star",
+          "description": "Characteristic velocity"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Specific Impulse for I_sp",
+      "rust_example": "eq.solve(equations::rockets::specific_impulse_ideal::equation()).for_target(\"I_sp\").value()?",
+      "python_example": "engpy.equations.rockets.solve_i_sp(c_f=\"...\", c_star=\"...\")",
+      "xloil_example": "=ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_I_SP(\"...\",\"...\")",
+      "pyxll_example": "=ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_I_SP(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.rockets.specific_impulse_ideal.c_star",
+      "entity": "equation",
+      "source": "rockets.specific_impulse_ideal",
+      "python_module": "equations.rockets",
+      "python_name": "solve_c_star",
+      "excel_name": "ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_STAR",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "rockets.specific_impulse_ideal",
+        "target": "c_star"
+      },
+      "args": [
+        {
+          "name": "I_sp",
+          "description": "Specific impulse"
+        },
+        {
+          "name": "C_f",
+          "description": "Thrust coefficient"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Specific Impulse for c_star",
+      "rust_example": "eq.solve(equations::rockets::specific_impulse_ideal::equation()).for_target(\"c_star\").value()?",
+      "python_example": "engpy.equations.rockets.solve_c_star(i_sp=\"...\", c_f=\"...\")",
+      "xloil_example": "=ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_STAR(\"...\",\"...\")",
+      "pyxll_example": "=ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_STAR(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.rockets.thrust_coefficient_ideal.C_f",
+      "entity": "equation",
+      "source": "rockets.thrust_coefficient_ideal",
+      "python_module": "equations.rockets",
+      "python_name": "solve_c_f",
+      "excel_name": "ENG_ROCKETS_THRUST_COEFFICIENT_IDEAL_C_F",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "rockets.thrust_coefficient_ideal",
+        "target": "C_f"
+      },
+      "args": [
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "p_e_p_c",
+          "description": "Exit-to-chamber pressure ratio"
+        },
+        {
+          "name": "p_a_p_c",
+          "description": "Ambient-to-chamber pressure ratio"
+        },
+        {
+          "name": "A_e_A_t",
+          "description": "Area expansion ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Thrust Coefficient for C_f",
+      "rust_example": "eq.solve(equations::rockets::thrust_coefficient_ideal::equation()).for_target(\"C_f\").value()?",
+      "python_example": "engpy.equations.rockets.solve_c_f(gamma=\"...\", p_e_p_c=\"...\", p_a_p_c=\"...\", a_e_a_t=\"...\")",
+      "xloil_example": "=ENG_ROCKETS_THRUST_COEFFICIENT_IDEAL_C_F(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_ROCKETS_THRUST_COEFFICIENT_IDEAL_C_F(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.rockets.thrust_from_mass_flow.F",
+      "entity": "equation",
+      "source": "rockets.thrust_from_mass_flow",
+      "python_module": "equations.rockets",
+      "python_name": "solve_f",
+      "excel_name": "ENG_ROCKETS_THRUST_FROM_MASS_FLOW_F",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "rockets.thrust_from_mass_flow",
+        "target": "F"
+      },
+      "args": [
+        {
+          "name": "m_dot",
+          "description": "Mass flow rate"
+        },
+        {
+          "name": "c_eff",
+          "description": "Effective exhaust velocity"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Thrust From Mass Flow and Effective Exhaust Velocity for F",
+      "rust_example": "eq.solve(equations::rockets::thrust_from_mass_flow::equation()).for_target(\"F\").value()?",
+      "python_example": "engpy.equations.rockets.solve_f(m_dot=\"...\", c_eff=\"...\")",
+      "xloil_example": "=ENG_ROCKETS_THRUST_FROM_MASS_FLOW_F(\"...\",\"...\")",
+      "pyxll_example": "=ENG_ROCKETS_THRUST_FROM_MASS_FLOW_F(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.rockets.thrust_from_mass_flow.c_eff",
+      "entity": "equation",
+      "source": "rockets.thrust_from_mass_flow",
+      "python_module": "equations.rockets",
+      "python_name": "solve_c_eff",
+      "excel_name": "ENG_ROCKETS_THRUST_FROM_MASS_FLOW_C_EFF",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "rockets.thrust_from_mass_flow",
+        "target": "c_eff"
+      },
+      "args": [
+        {
+          "name": "F",
+          "description": "Thrust"
+        },
+        {
+          "name": "m_dot",
+          "description": "Mass flow rate"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Thrust From Mass Flow and Effective Exhaust Velocity for c_eff",
+      "rust_example": "eq.solve(equations::rockets::thrust_from_mass_flow::equation()).for_target(\"c_eff\").value()?",
+      "python_example": "engpy.equations.rockets.solve_c_eff(f=\"...\", m_dot=\"...\")",
+      "xloil_example": "=ENG_ROCKETS_THRUST_FROM_MASS_FLOW_C_EFF(\"...\",\"...\")",
+      "pyxll_example": "=ENG_ROCKETS_THRUST_FROM_MASS_FLOW_C_EFF(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.rockets.thrust_from_mass_flow.m_dot",
+      "entity": "equation",
+      "source": "rockets.thrust_from_mass_flow",
+      "python_module": "equations.rockets",
+      "python_name": "solve_m_dot",
+      "excel_name": "ENG_ROCKETS_THRUST_FROM_MASS_FLOW_M_DOT",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "rockets.thrust_from_mass_flow",
+        "target": "m_dot"
+      },
+      "args": [
+        {
+          "name": "F",
+          "description": "Thrust"
+        },
+        {
+          "name": "c_eff",
+          "description": "Effective exhaust velocity"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Thrust From Mass Flow and Effective Exhaust Velocity for m_dot",
+      "rust_example": "eq.solve(equations::rockets::thrust_from_mass_flow::equation()).for_target(\"m_dot\").value()?",
+      "python_example": "engpy.equations.rockets.solve_m_dot(f=\"...\", c_eff=\"...\")",
+      "xloil_example": "=ENG_ROCKETS_THRUST_FROM_MASS_FLOW_M_DOT(\"...\",\"...\")",
+      "pyxll_example": "=ENG_ROCKETS_THRUST_FROM_MASS_FLOW_M_DOT(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.axial_stress.A",
+      "entity": "equation",
+      "source": "structures.axial_stress",
+      "python_module": "equations.structures",
+      "python_name": "solve_a",
+      "excel_name": "ENG_STRUCTURES_AXIAL_STRESS_A",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.axial_stress",
+        "target": "A"
+      },
+      "args": [
+        {
+          "name": "sigma",
+          "description": "Axial stress"
+        },
+        {
+          "name": "F",
+          "description": "Axial force"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Axial Normal Stress for A",
+      "rust_example": "eq.solve(equations::structures::axial_stress::equation()).for_target(\"A\").value()?",
+      "python_example": "engpy.equations.structures.solve_a(sigma=\"...\", f=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_AXIAL_STRESS_A(\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_AXIAL_STRESS_A(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.axial_stress.F",
+      "entity": "equation",
+      "source": "structures.axial_stress",
+      "python_module": "equations.structures",
+      "python_name": "solve_f",
+      "excel_name": "ENG_STRUCTURES_AXIAL_STRESS_F",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.axial_stress",
+        "target": "F"
+      },
+      "args": [
+        {
+          "name": "sigma",
+          "description": "Axial stress"
+        },
+        {
+          "name": "A",
+          "description": "Cross-sectional area"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Axial Normal Stress for F",
+      "rust_example": "eq.solve(equations::structures::axial_stress::equation()).for_target(\"F\").value()?",
+      "python_example": "engpy.equations.structures.solve_f(sigma=\"...\", a=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_AXIAL_STRESS_F(\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_AXIAL_STRESS_F(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.axial_stress.sigma",
+      "entity": "equation",
+      "source": "structures.axial_stress",
+      "python_module": "equations.structures",
+      "python_name": "solve_sigma",
+      "excel_name": "ENG_STRUCTURES_AXIAL_STRESS_SIGMA",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.axial_stress",
+        "target": "sigma"
+      },
+      "args": [
+        {
+          "name": "F",
+          "description": "Axial force"
+        },
+        {
+          "name": "A",
+          "description": "Cross-sectional area"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Axial Normal Stress for sigma",
+      "rust_example": "eq.solve(equations::structures::axial_stress::equation()).for_target(\"sigma\").value()?",
+      "python_example": "engpy.equations.structures.solve_sigma(f=\"...\", a=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_AXIAL_STRESS_SIGMA(\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_AXIAL_STRESS_SIGMA(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.beam_bending_stress.I",
+      "entity": "equation",
+      "source": "structures.beam_bending_stress",
+      "python_module": "equations.structures",
+      "python_name": "solve_i",
+      "excel_name": "ENG_STRUCTURES_BEAM_BENDING_STRESS_I",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.beam_bending_stress",
+        "target": "I"
+      },
+      "args": [
+        {
+          "name": "sigma_b",
+          "description": "Bending stress"
+        },
+        {
+          "name": "M",
+          "description": "Bending moment"
+        },
+        {
+          "name": "c",
+          "description": "Distance to outer fiber"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Beam Bending Stress for I",
+      "rust_example": "eq.solve(equations::structures::beam_bending_stress::equation()).for_target(\"I\").value()?",
+      "python_example": "engpy.equations.structures.solve_i(sigma_b=\"...\", m=\"...\", c=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_BEAM_BENDING_STRESS_I(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_BEAM_BENDING_STRESS_I(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.beam_bending_stress.M",
+      "entity": "equation",
+      "source": "structures.beam_bending_stress",
+      "python_module": "equations.structures",
+      "python_name": "solve_m",
+      "excel_name": "ENG_STRUCTURES_BEAM_BENDING_STRESS_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.beam_bending_stress",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "sigma_b",
+          "description": "Bending stress"
+        },
+        {
+          "name": "c",
+          "description": "Distance to outer fiber"
+        },
+        {
+          "name": "I",
+          "description": "Area moment of inertia"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Beam Bending Stress for M",
+      "rust_example": "eq.solve(equations::structures::beam_bending_stress::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.structures.solve_m(sigma_b=\"...\", c=\"...\", i=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_BEAM_BENDING_STRESS_M(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_BEAM_BENDING_STRESS_M(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.beam_bending_stress.c",
+      "entity": "equation",
+      "source": "structures.beam_bending_stress",
+      "python_module": "equations.structures",
+      "python_name": "solve_c",
+      "excel_name": "ENG_STRUCTURES_BEAM_BENDING_STRESS_C",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.beam_bending_stress",
+        "target": "c"
+      },
+      "args": [
+        {
+          "name": "sigma_b",
+          "description": "Bending stress"
+        },
+        {
+          "name": "M",
+          "description": "Bending moment"
+        },
+        {
+          "name": "I",
+          "description": "Area moment of inertia"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Beam Bending Stress for c",
+      "rust_example": "eq.solve(equations::structures::beam_bending_stress::equation()).for_target(\"c\").value()?",
+      "python_example": "engpy.equations.structures.solve_c(sigma_b=\"...\", m=\"...\", i=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_BEAM_BENDING_STRESS_C(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_BEAM_BENDING_STRESS_C(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.beam_bending_stress.sigma_b",
+      "entity": "equation",
+      "source": "structures.beam_bending_stress",
+      "python_module": "equations.structures",
+      "python_name": "solve_sigma_b",
+      "excel_name": "ENG_STRUCTURES_BEAM_BENDING_STRESS_SIGMA_B",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.beam_bending_stress",
+        "target": "sigma_b"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Bending moment"
+        },
+        {
+          "name": "c",
+          "description": "Distance to outer fiber"
+        },
+        {
+          "name": "I",
+          "description": "Area moment of inertia"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Beam Bending Stress for sigma_b",
+      "rust_example": "eq.solve(equations::structures::beam_bending_stress::equation()).for_target(\"sigma_b\").value()?",
+      "python_example": "engpy.equations.structures.solve_sigma_b(m=\"...\", c=\"...\", i=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_BEAM_BENDING_STRESS_SIGMA_B(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_BEAM_BENDING_STRESS_SIGMA_B(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.euler_buckling_load.E",
+      "entity": "equation",
+      "source": "structures.euler_buckling_load",
+      "python_module": "equations.structures",
+      "python_name": "solve_e",
+      "excel_name": "ENG_STRUCTURES_EULER_BUCKLING_LOAD_E",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.euler_buckling_load",
+        "target": "E"
+      },
+      "args": [
+        {
+          "name": "P_cr",
+          "description": "Critical buckling load"
+        },
+        {
+          "name": "I",
+          "description": "Area moment of inertia"
+        },
+        {
+          "name": "K",
+          "description": "Effective length factor"
+        },
+        {
+          "name": "L",
+          "description": "Unbraced length"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Euler Buckling Critical Load for E",
+      "rust_example": "eq.solve(equations::structures::euler_buckling_load::equation()).for_target(\"E\").value()?",
+      "python_example": "engpy.equations.structures.solve_e(p_cr=\"...\", i=\"...\", k=\"...\", l=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_E(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_E(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.euler_buckling_load.I",
+      "entity": "equation",
+      "source": "structures.euler_buckling_load",
+      "python_module": "equations.structures",
+      "python_name": "solve_i",
+      "excel_name": "ENG_STRUCTURES_EULER_BUCKLING_LOAD_I",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.euler_buckling_load",
+        "target": "I"
+      },
+      "args": [
+        {
+          "name": "P_cr",
+          "description": "Critical buckling load"
+        },
+        {
+          "name": "E",
+          "description": "Elastic modulus"
+        },
+        {
+          "name": "K",
+          "description": "Effective length factor"
+        },
+        {
+          "name": "L",
+          "description": "Unbraced length"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Euler Buckling Critical Load for I",
+      "rust_example": "eq.solve(equations::structures::euler_buckling_load::equation()).for_target(\"I\").value()?",
+      "python_example": "engpy.equations.structures.solve_i(p_cr=\"...\", e=\"...\", k=\"...\", l=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_I(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_I(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.euler_buckling_load.K",
+      "entity": "equation",
+      "source": "structures.euler_buckling_load",
+      "python_module": "equations.structures",
+      "python_name": "solve_k",
+      "excel_name": "ENG_STRUCTURES_EULER_BUCKLING_LOAD_K",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.euler_buckling_load",
+        "target": "K"
+      },
+      "args": [
+        {
+          "name": "P_cr",
+          "description": "Critical buckling load"
+        },
+        {
+          "name": "E",
+          "description": "Elastic modulus"
+        },
+        {
+          "name": "I",
+          "description": "Area moment of inertia"
+        },
+        {
+          "name": "L",
+          "description": "Unbraced length"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Euler Buckling Critical Load for K",
+      "rust_example": "eq.solve(equations::structures::euler_buckling_load::equation()).for_target(\"K\").value()?",
+      "python_example": "engpy.equations.structures.solve_k(p_cr=\"...\", e=\"...\", i=\"...\", l=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_K(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_K(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.euler_buckling_load.L",
+      "entity": "equation",
+      "source": "structures.euler_buckling_load",
+      "python_module": "equations.structures",
+      "python_name": "solve_l",
+      "excel_name": "ENG_STRUCTURES_EULER_BUCKLING_LOAD_L",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.euler_buckling_load",
+        "target": "L"
+      },
+      "args": [
+        {
+          "name": "P_cr",
+          "description": "Critical buckling load"
+        },
+        {
+          "name": "E",
+          "description": "Elastic modulus"
+        },
+        {
+          "name": "I",
+          "description": "Area moment of inertia"
+        },
+        {
+          "name": "K",
+          "description": "Effective length factor"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Euler Buckling Critical Load for L",
+      "rust_example": "eq.solve(equations::structures::euler_buckling_load::equation()).for_target(\"L\").value()?",
+      "python_example": "engpy.equations.structures.solve_l(p_cr=\"...\", e=\"...\", i=\"...\", k=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_L(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_L(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.euler_buckling_load.P_cr",
+      "entity": "equation",
+      "source": "structures.euler_buckling_load",
+      "python_module": "equations.structures",
+      "python_name": "solve_p_cr",
+      "excel_name": "ENG_STRUCTURES_EULER_BUCKLING_LOAD_P_CR",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.euler_buckling_load",
+        "target": "P_cr"
+      },
+      "args": [
+        {
+          "name": "E",
+          "description": "Elastic modulus"
+        },
+        {
+          "name": "I",
+          "description": "Area moment of inertia"
+        },
+        {
+          "name": "K",
+          "description": "Effective length factor"
+        },
+        {
+          "name": "L",
+          "description": "Unbraced length"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Euler Buckling Critical Load for P_cr",
+      "rust_example": "eq.solve(equations::structures::euler_buckling_load::equation()).for_target(\"P_cr\").value()?",
+      "python_example": "engpy.equations.structures.solve_p_cr(e=\"...\", i=\"...\", k=\"...\", l=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_P_CR(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_EULER_BUCKLING_LOAD_P_CR(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.hoop_stress.P",
+      "entity": "equation",
+      "source": "structures.hoop_stress",
+      "python_module": "equations.structures",
+      "python_name": "solve_p",
+      "excel_name": "ENG_STRUCTURES_HOOP_STRESS_P",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.hoop_stress",
+        "target": "P"
+      },
+      "args": [
+        {
+          "name": "sigma_h",
+          "description": "Hoop stress"
+        },
+        {
+          "name": "r",
+          "description": "Mean radius"
+        },
+        {
+          "name": "t",
+          "description": "Wall thickness"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Thin-Wall Hoop Stress for P",
+      "rust_example": "eq.solve(equations::structures::hoop_stress::equation()).for_target(\"P\").value()?",
+      "python_example": "engpy.equations.structures.solve_p(sigma_h=\"...\", r=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_HOOP_STRESS_P(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_HOOP_STRESS_P(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.hoop_stress.r",
+      "entity": "equation",
+      "source": "structures.hoop_stress",
+      "python_module": "equations.structures",
+      "python_name": "solve_r",
+      "excel_name": "ENG_STRUCTURES_HOOP_STRESS_R",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.hoop_stress",
+        "target": "r"
+      },
+      "args": [
+        {
+          "name": "sigma_h",
+          "description": "Hoop stress"
+        },
+        {
+          "name": "P",
+          "description": "Internal pressure"
+        },
+        {
+          "name": "t",
+          "description": "Wall thickness"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Thin-Wall Hoop Stress for r",
+      "rust_example": "eq.solve(equations::structures::hoop_stress::equation()).for_target(\"r\").value()?",
+      "python_example": "engpy.equations.structures.solve_r(sigma_h=\"...\", p=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_HOOP_STRESS_R(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_HOOP_STRESS_R(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.hoop_stress.sigma_h",
+      "entity": "equation",
+      "source": "structures.hoop_stress",
+      "python_module": "equations.structures",
+      "python_name": "solve_sigma_h",
+      "excel_name": "ENG_STRUCTURES_HOOP_STRESS_SIGMA_H",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.hoop_stress",
+        "target": "sigma_h"
+      },
+      "args": [
+        {
+          "name": "P",
+          "description": "Internal pressure"
+        },
+        {
+          "name": "r",
+          "description": "Mean radius"
+        },
+        {
+          "name": "t",
+          "description": "Wall thickness"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Thin-Wall Hoop Stress for sigma_h",
+      "rust_example": "eq.solve(equations::structures::hoop_stress::equation()).for_target(\"sigma_h\").value()?",
+      "python_example": "engpy.equations.structures.solve_sigma_h(p=\"...\", r=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_HOOP_STRESS_SIGMA_H(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_HOOP_STRESS_SIGMA_H(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.hoop_stress.t",
+      "entity": "equation",
+      "source": "structures.hoop_stress",
+      "python_module": "equations.structures",
+      "python_name": "solve_t",
+      "excel_name": "ENG_STRUCTURES_HOOP_STRESS_T",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.hoop_stress",
+        "target": "t"
+      },
+      "args": [
+        {
+          "name": "sigma_h",
+          "description": "Hoop stress"
+        },
+        {
+          "name": "P",
+          "description": "Internal pressure"
+        },
+        {
+          "name": "r",
+          "description": "Mean radius"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Thin-Wall Hoop Stress for t",
+      "rust_example": "eq.solve(equations::structures::hoop_stress::equation()).for_target(\"t\").value()?",
+      "python_example": "engpy.equations.structures.solve_t(sigma_h=\"...\", p=\"...\", r=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_HOOP_STRESS_T(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_HOOP_STRESS_T(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.longitudinal_stress_thin_wall.P",
+      "entity": "equation",
+      "source": "structures.longitudinal_stress_thin_wall",
+      "python_module": "equations.structures",
+      "python_name": "solve_p",
+      "excel_name": "ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_P",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.longitudinal_stress_thin_wall",
+        "target": "P"
+      },
+      "args": [
+        {
+          "name": "sigma_l",
+          "description": "Longitudinal stress"
+        },
+        {
+          "name": "r",
+          "description": "Mean radius"
+        },
+        {
+          "name": "t",
+          "description": "Wall thickness"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Thin-Wall Longitudinal Stress for P",
+      "rust_example": "eq.solve(equations::structures::longitudinal_stress_thin_wall::equation()).for_target(\"P\").value()?",
+      "python_example": "engpy.equations.structures.solve_p(sigma_l=\"...\", r=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_P(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_P(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.longitudinal_stress_thin_wall.r",
+      "entity": "equation",
+      "source": "structures.longitudinal_stress_thin_wall",
+      "python_module": "equations.structures",
+      "python_name": "solve_r",
+      "excel_name": "ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_R",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.longitudinal_stress_thin_wall",
+        "target": "r"
+      },
+      "args": [
+        {
+          "name": "sigma_l",
+          "description": "Longitudinal stress"
+        },
+        {
+          "name": "P",
+          "description": "Internal pressure"
+        },
+        {
+          "name": "t",
+          "description": "Wall thickness"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Thin-Wall Longitudinal Stress for r",
+      "rust_example": "eq.solve(equations::structures::longitudinal_stress_thin_wall::equation()).for_target(\"r\").value()?",
+      "python_example": "engpy.equations.structures.solve_r(sigma_l=\"...\", p=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_R(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_R(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.longitudinal_stress_thin_wall.sigma_l",
+      "entity": "equation",
+      "source": "structures.longitudinal_stress_thin_wall",
+      "python_module": "equations.structures",
+      "python_name": "solve_sigma_l",
+      "excel_name": "ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_SIGMA_L",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.longitudinal_stress_thin_wall",
+        "target": "sigma_l"
+      },
+      "args": [
+        {
+          "name": "P",
+          "description": "Internal pressure"
+        },
+        {
+          "name": "r",
+          "description": "Mean radius"
+        },
+        {
+          "name": "t",
+          "description": "Wall thickness"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Thin-Wall Longitudinal Stress for sigma_l",
+      "rust_example": "eq.solve(equations::structures::longitudinal_stress_thin_wall::equation()).for_target(\"sigma_l\").value()?",
+      "python_example": "engpy.equations.structures.solve_sigma_l(p=\"...\", r=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_SIGMA_L(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_SIGMA_L(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.longitudinal_stress_thin_wall.t",
+      "entity": "equation",
+      "source": "structures.longitudinal_stress_thin_wall",
+      "python_module": "equations.structures",
+      "python_name": "solve_t",
+      "excel_name": "ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_T",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.longitudinal_stress_thin_wall",
+        "target": "t"
+      },
+      "args": [
+        {
+          "name": "sigma_l",
+          "description": "Longitudinal stress"
+        },
+        {
+          "name": "P",
+          "description": "Internal pressure"
+        },
+        {
+          "name": "r",
+          "description": "Mean radius"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Thin-Wall Longitudinal Stress for t",
+      "rust_example": "eq.solve(equations::structures::longitudinal_stress_thin_wall::equation()).for_target(\"t\").value()?",
+      "python_example": "engpy.equations.structures.solve_t(sigma_l=\"...\", p=\"...\", r=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_T(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_LONGITUDINAL_STRESS_THIN_WALL_T(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.shaft_torsion_stress.J",
+      "entity": "equation",
+      "source": "structures.shaft_torsion_stress",
+      "python_module": "equations.structures",
+      "python_name": "solve_j",
+      "excel_name": "ENG_STRUCTURES_SHAFT_TORSION_STRESS_J",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.shaft_torsion_stress",
+        "target": "J"
+      },
+      "args": [
+        {
+          "name": "tau",
+          "description": "Shear stress"
+        },
+        {
+          "name": "T",
+          "description": "Torque"
+        },
+        {
+          "name": "r",
+          "description": "Radius"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Circular Shaft Torsion Stress for J",
+      "rust_example": "eq.solve(equations::structures::shaft_torsion_stress::equation()).for_target(\"J\").value()?",
+      "python_example": "engpy.equations.structures.solve_j(tau=\"...\", t=\"...\", r=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_SHAFT_TORSION_STRESS_J(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_SHAFT_TORSION_STRESS_J(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.shaft_torsion_stress.T",
+      "entity": "equation",
+      "source": "structures.shaft_torsion_stress",
+      "python_module": "equations.structures",
+      "python_name": "solve_t",
+      "excel_name": "ENG_STRUCTURES_SHAFT_TORSION_STRESS_T",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.shaft_torsion_stress",
+        "target": "T"
+      },
+      "args": [
+        {
+          "name": "tau",
+          "description": "Shear stress"
+        },
+        {
+          "name": "r",
+          "description": "Radius"
+        },
+        {
+          "name": "J",
+          "description": "Polar moment of inertia"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Circular Shaft Torsion Stress for T",
+      "rust_example": "eq.solve(equations::structures::shaft_torsion_stress::equation()).for_target(\"T\").value()?",
+      "python_example": "engpy.equations.structures.solve_t(tau=\"...\", r=\"...\", j=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_SHAFT_TORSION_STRESS_T(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_SHAFT_TORSION_STRESS_T(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.shaft_torsion_stress.r",
+      "entity": "equation",
+      "source": "structures.shaft_torsion_stress",
+      "python_module": "equations.structures",
+      "python_name": "solve_r",
+      "excel_name": "ENG_STRUCTURES_SHAFT_TORSION_STRESS_R",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.shaft_torsion_stress",
+        "target": "r"
+      },
+      "args": [
+        {
+          "name": "tau",
+          "description": "Shear stress"
+        },
+        {
+          "name": "T",
+          "description": "Torque"
+        },
+        {
+          "name": "J",
+          "description": "Polar moment of inertia"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Circular Shaft Torsion Stress for r",
+      "rust_example": "eq.solve(equations::structures::shaft_torsion_stress::equation()).for_target(\"r\").value()?",
+      "python_example": "engpy.equations.structures.solve_r(tau=\"...\", t=\"...\", j=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_SHAFT_TORSION_STRESS_R(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_SHAFT_TORSION_STRESS_R(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.structures.shaft_torsion_stress.tau",
+      "entity": "equation",
+      "source": "structures.shaft_torsion_stress",
+      "python_module": "equations.structures",
+      "python_name": "solve_tau",
+      "excel_name": "ENG_STRUCTURES_SHAFT_TORSION_STRESS_TAU",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "structures.shaft_torsion_stress",
+        "target": "tau"
+      },
+      "args": [
+        {
+          "name": "T",
+          "description": "Torque"
+        },
+        {
+          "name": "r",
+          "description": "Radius"
+        },
+        {
+          "name": "J",
+          "description": "Polar moment of inertia"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Circular Shaft Torsion Stress for tau",
+      "rust_example": "eq.solve(equations::structures::shaft_torsion_stress::equation()).for_target(\"tau\").value()?",
+      "python_example": "engpy.equations.structures.solve_tau(t=\"...\", r=\"...\", j=\"...\")",
+      "xloil_example": "=ENG_STRUCTURES_SHAFT_TORSION_STRESS_TAU(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_STRUCTURES_SHAFT_TORSION_STRESS_TAU(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.thermo.ideal_gas.density.P",
+      "entity": "equation",
+      "source": "thermo.ideal_gas.density",
+      "python_module": "equations.thermo",
+      "python_name": "solve_p",
+      "excel_name": "ENG_THERMO_IDEAL_GAS_DENSITY_P",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.density",
+        "target": "P"
+      },
+      "args": [
+        {
+          "name": "rho",
+          "description": "Density"
+        },
+        {
+          "name": "R",
+          "description": "Specific gas constant"
+        },
+        {
+          "name": "T",
+          "description": "Absolute temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law (Density Form) for P",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::density::equation()).for_target(\"P\").value()?",
+      "python_example": "engpy.equations.thermo.solve_p(rho=\"...\", r=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_THERMO_IDEAL_GAS_DENSITY_P(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_THERMO_IDEAL_GAS_DENSITY_P(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.thermo.ideal_gas.density.R",
+      "entity": "equation",
+      "source": "thermo.ideal_gas.density",
+      "python_module": "equations.thermo",
+      "python_name": "solve_r",
+      "excel_name": "ENG_THERMO_IDEAL_GAS_DENSITY_R",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.density",
+        "target": "R"
+      },
+      "args": [
+        {
+          "name": "P",
+          "description": "Absolute pressure"
+        },
+        {
+          "name": "rho",
+          "description": "Density"
+        },
+        {
+          "name": "T",
+          "description": "Absolute temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law (Density Form) for R",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::density::equation()).for_target(\"R\").value()?",
+      "python_example": "engpy.equations.thermo.solve_r(p=\"...\", rho=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_THERMO_IDEAL_GAS_DENSITY_R(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_THERMO_IDEAL_GAS_DENSITY_R(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.thermo.ideal_gas.density.T",
+      "entity": "equation",
+      "source": "thermo.ideal_gas.density",
+      "python_module": "equations.thermo",
+      "python_name": "solve_t",
+      "excel_name": "ENG_THERMO_IDEAL_GAS_DENSITY_T",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.density",
+        "target": "T"
+      },
+      "args": [
+        {
+          "name": "P",
+          "description": "Absolute pressure"
+        },
+        {
+          "name": "rho",
+          "description": "Density"
+        },
+        {
+          "name": "R",
+          "description": "Specific gas constant"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law (Density Form) for T",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::density::equation()).for_target(\"T\").value()?",
+      "python_example": "engpy.equations.thermo.solve_t(p=\"...\", rho=\"...\", r=\"...\")",
+      "xloil_example": "=ENG_THERMO_IDEAL_GAS_DENSITY_T(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_THERMO_IDEAL_GAS_DENSITY_T(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.thermo.ideal_gas.density.rho",
+      "entity": "equation",
+      "source": "thermo.ideal_gas.density",
+      "python_module": "equations.thermo",
+      "python_name": "solve_rho",
+      "excel_name": "ENG_THERMO_IDEAL_GAS_DENSITY_RHO",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.density",
+        "target": "rho"
+      },
+      "args": [
+        {
+          "name": "P",
+          "description": "Absolute pressure"
+        },
+        {
+          "name": "R",
+          "description": "Specific gas constant"
+        },
+        {
+          "name": "T",
+          "description": "Absolute temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law (Density Form) for rho",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::density::equation()).for_target(\"rho\").value()?",
+      "python_example": "engpy.equations.thermo.solve_rho(p=\"...\", r=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_THERMO_IDEAL_GAS_DENSITY_RHO(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_THERMO_IDEAL_GAS_DENSITY_RHO(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.thermo.ideal_gas.mass_volume.P",
+      "entity": "equation",
+      "source": "thermo.ideal_gas.mass_volume",
+      "python_module": "equations.thermo",
+      "python_name": "solve_p",
+      "excel_name": "ENG_THERMO_IDEAL_GAS_MASS_VOLUME_P",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.mass_volume",
+        "target": "P"
+      },
+      "args": [
+        {
+          "name": "V",
+          "description": "Control-volume"
+        },
+        {
+          "name": "m",
+          "description": "Gas mass"
+        },
+        {
+          "name": "R",
+          "description": "Specific gas constant"
+        },
+        {
+          "name": "T",
+          "description": "Absolute temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law (Mass-Volume Form) for P",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"P\").value()?",
+      "python_example": "engpy.equations.thermo.solve_p(v=\"...\", m=\"...\", r=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_P(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_P(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.thermo.ideal_gas.mass_volume.R",
+      "entity": "equation",
+      "source": "thermo.ideal_gas.mass_volume",
+      "python_module": "equations.thermo",
+      "python_name": "solve_r",
+      "excel_name": "ENG_THERMO_IDEAL_GAS_MASS_VOLUME_R",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.mass_volume",
+        "target": "R"
+      },
+      "args": [
+        {
+          "name": "P",
+          "description": "Absolute pressure"
+        },
+        {
+          "name": "V",
+          "description": "Control-volume"
+        },
+        {
+          "name": "m",
+          "description": "Gas mass"
+        },
+        {
+          "name": "T",
+          "description": "Absolute temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law (Mass-Volume Form) for R",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"R\").value()?",
+      "python_example": "engpy.equations.thermo.solve_r(p=\"...\", v=\"...\", m=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_R(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_R(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.thermo.ideal_gas.mass_volume.T",
+      "entity": "equation",
+      "source": "thermo.ideal_gas.mass_volume",
+      "python_module": "equations.thermo",
+      "python_name": "solve_t",
+      "excel_name": "ENG_THERMO_IDEAL_GAS_MASS_VOLUME_T",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.mass_volume",
+        "target": "T"
+      },
+      "args": [
+        {
+          "name": "P",
+          "description": "Absolute pressure"
+        },
+        {
+          "name": "V",
+          "description": "Control-volume"
+        },
+        {
+          "name": "m",
+          "description": "Gas mass"
+        },
+        {
+          "name": "R",
+          "description": "Specific gas constant"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law (Mass-Volume Form) for T",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"T\").value()?",
+      "python_example": "engpy.equations.thermo.solve_t(p=\"...\", v=\"...\", m=\"...\", r=\"...\")",
+      "xloil_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_T(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_T(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.thermo.ideal_gas.mass_volume.V",
+      "entity": "equation",
+      "source": "thermo.ideal_gas.mass_volume",
+      "python_module": "equations.thermo",
+      "python_name": "solve_v",
+      "excel_name": "ENG_THERMO_IDEAL_GAS_MASS_VOLUME_V",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.mass_volume",
+        "target": "V"
+      },
+      "args": [
+        {
+          "name": "P",
+          "description": "Absolute pressure"
+        },
+        {
+          "name": "m",
+          "description": "Gas mass"
+        },
+        {
+          "name": "R",
+          "description": "Specific gas constant"
+        },
+        {
+          "name": "T",
+          "description": "Absolute temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law (Mass-Volume Form) for V",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"V\").value()?",
+      "python_example": "engpy.equations.thermo.solve_v(p=\"...\", m=\"...\", r=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_V(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_V(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.thermo.ideal_gas.mass_volume.m",
+      "entity": "equation",
+      "source": "thermo.ideal_gas.mass_volume",
+      "python_module": "equations.thermo",
+      "python_name": "solve_m",
+      "excel_name": "ENG_THERMO_IDEAL_GAS_MASS_VOLUME_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.mass_volume",
+        "target": "m"
+      },
+      "args": [
+        {
+          "name": "P",
+          "description": "Absolute pressure"
+        },
+        {
+          "name": "V",
+          "description": "Control-volume"
+        },
+        {
+          "name": "R",
+          "description": "Specific gas constant"
+        },
+        {
+          "name": "T",
+          "description": "Absolute temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law (Mass-Volume Form) for m",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"m\").value()?",
+      "python_example": "engpy.equations.thermo.solve_m(p=\"...\", v=\"...\", r=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_M(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_M(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "family.ideal_gas.density.P",
+      "entity": "family_variant",
+      "source": "ideal_gas.density",
+      "python_module": "equations.families.ideal_gas",
+      "python_name": "density_solve_p",
+      "excel_name": "ENG_FAMILY_IDEAL_GAS_DENSITY_P",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.density",
+        "target": "P"
+      },
+      "args": [
+        {
+          "name": "rho",
+          "description": "Density"
+        },
+        {
+          "name": "R",
+          "description": "Specific gas constant"
+        },
+        {
+          "name": "T",
+          "description": "Absolute temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law variant Density Form for P",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::density::equation()).for_target(\"P\").value()?",
+      "python_example": "engpy.equations.families.ideal_gas.density_solve_p(rho=\"...\", r=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_FAMILY_IDEAL_GAS_DENSITY_P(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_DENSITY_P(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "family.ideal_gas.density.R",
+      "entity": "family_variant",
+      "source": "ideal_gas.density",
+      "python_module": "equations.families.ideal_gas",
+      "python_name": "density_solve_r",
+      "excel_name": "ENG_FAMILY_IDEAL_GAS_DENSITY_R",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.density",
+        "target": "R"
+      },
+      "args": [
+        {
+          "name": "P",
+          "description": "Absolute pressure"
+        },
+        {
+          "name": "rho",
+          "description": "Density"
+        },
+        {
+          "name": "T",
+          "description": "Absolute temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law variant Density Form for R",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::density::equation()).for_target(\"R\").value()?",
+      "python_example": "engpy.equations.families.ideal_gas.density_solve_r(p=\"...\", rho=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_FAMILY_IDEAL_GAS_DENSITY_R(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_DENSITY_R(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "family.ideal_gas.density.T",
+      "entity": "family_variant",
+      "source": "ideal_gas.density",
+      "python_module": "equations.families.ideal_gas",
+      "python_name": "density_solve_t",
+      "excel_name": "ENG_FAMILY_IDEAL_GAS_DENSITY_T",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.density",
+        "target": "T"
+      },
+      "args": [
+        {
+          "name": "P",
+          "description": "Absolute pressure"
+        },
+        {
+          "name": "rho",
+          "description": "Density"
+        },
+        {
+          "name": "R",
+          "description": "Specific gas constant"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law variant Density Form for T",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::density::equation()).for_target(\"T\").value()?",
+      "python_example": "engpy.equations.families.ideal_gas.density_solve_t(p=\"...\", rho=\"...\", r=\"...\")",
+      "xloil_example": "=ENG_FAMILY_IDEAL_GAS_DENSITY_T(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_DENSITY_T(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "family.ideal_gas.density.rho",
+      "entity": "family_variant",
+      "source": "ideal_gas.density",
+      "python_module": "equations.families.ideal_gas",
+      "python_name": "density_solve_rho",
+      "excel_name": "ENG_FAMILY_IDEAL_GAS_DENSITY_RHO",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.density",
+        "target": "rho"
+      },
+      "args": [
+        {
+          "name": "P",
+          "description": "Absolute pressure"
+        },
+        {
+          "name": "R",
+          "description": "Specific gas constant"
+        },
+        {
+          "name": "T",
+          "description": "Absolute temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law variant Density Form for rho",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::density::equation()).for_target(\"rho\").value()?",
+      "python_example": "engpy.equations.families.ideal_gas.density_solve_rho(p=\"...\", r=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_FAMILY_IDEAL_GAS_DENSITY_RHO(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_DENSITY_RHO(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "family.ideal_gas.mass_volume.P",
+      "entity": "family_variant",
+      "source": "ideal_gas.mass_volume",
+      "python_module": "equations.families.ideal_gas",
+      "python_name": "mass_volume_solve_p",
+      "excel_name": "ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_P",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.mass_volume",
+        "target": "P"
+      },
+      "args": [
+        {
+          "name": "V",
+          "description": "Control-volume"
+        },
+        {
+          "name": "m",
+          "description": "Gas mass"
+        },
+        {
+          "name": "R",
+          "description": "Specific gas constant"
+        },
+        {
+          "name": "T",
+          "description": "Absolute temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law variant Mass-Volume Form for P",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"P\").value()?",
+      "python_example": "engpy.equations.families.ideal_gas.mass_volume_solve_p(v=\"...\", m=\"...\", r=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_P(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_P(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "family.ideal_gas.mass_volume.R",
+      "entity": "family_variant",
+      "source": "ideal_gas.mass_volume",
+      "python_module": "equations.families.ideal_gas",
+      "python_name": "mass_volume_solve_r",
+      "excel_name": "ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_R",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.mass_volume",
+        "target": "R"
+      },
+      "args": [
+        {
+          "name": "P",
+          "description": "Absolute pressure"
+        },
+        {
+          "name": "V",
+          "description": "Control-volume"
+        },
+        {
+          "name": "m",
+          "description": "Gas mass"
+        },
+        {
+          "name": "T",
+          "description": "Absolute temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law variant Mass-Volume Form for R",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"R\").value()?",
+      "python_example": "engpy.equations.families.ideal_gas.mass_volume_solve_r(p=\"...\", v=\"...\", m=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_R(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_R(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "family.ideal_gas.mass_volume.T",
+      "entity": "family_variant",
+      "source": "ideal_gas.mass_volume",
+      "python_module": "equations.families.ideal_gas",
+      "python_name": "mass_volume_solve_t",
+      "excel_name": "ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_T",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.mass_volume",
+        "target": "T"
+      },
+      "args": [
+        {
+          "name": "P",
+          "description": "Absolute pressure"
+        },
+        {
+          "name": "V",
+          "description": "Control-volume"
+        },
+        {
+          "name": "m",
+          "description": "Gas mass"
+        },
+        {
+          "name": "R",
+          "description": "Specific gas constant"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law variant Mass-Volume Form for T",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"T\").value()?",
+      "python_example": "engpy.equations.families.ideal_gas.mass_volume_solve_t(p=\"...\", v=\"...\", m=\"...\", r=\"...\")",
+      "xloil_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_T(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_T(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "family.ideal_gas.mass_volume.V",
+      "entity": "family_variant",
+      "source": "ideal_gas.mass_volume",
+      "python_module": "equations.families.ideal_gas",
+      "python_name": "mass_volume_solve_v",
+      "excel_name": "ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_V",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.mass_volume",
+        "target": "V"
+      },
+      "args": [
+        {
+          "name": "P",
+          "description": "Absolute pressure"
+        },
+        {
+          "name": "m",
+          "description": "Gas mass"
+        },
+        {
+          "name": "R",
+          "description": "Specific gas constant"
+        },
+        {
+          "name": "T",
+          "description": "Absolute temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law variant Mass-Volume Form for V",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"V\").value()?",
+      "python_example": "engpy.equations.families.ideal_gas.mass_volume_solve_v(p=\"...\", m=\"...\", r=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_V(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_V(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "family.ideal_gas.mass_volume.m",
+      "entity": "family_variant",
+      "source": "ideal_gas.mass_volume",
+      "python_module": "equations.families.ideal_gas",
+      "python_name": "mass_volume_solve_m",
+      "excel_name": "ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "thermo.ideal_gas.mass_volume",
+        "target": "m"
+      },
+      "args": [
+        {
+          "name": "P",
+          "description": "Absolute pressure"
+        },
+        {
+          "name": "V",
+          "description": "Control-volume"
+        },
+        {
+          "name": "R",
+          "description": "Specific gas constant"
+        },
+        {
+          "name": "T",
+          "description": "Absolute temperature"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Ideal Gas Law variant Mass-Volume Form for m",
+      "rust_example": "eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target(\"m\").value()?",
+      "python_example": "engpy.equations.families.ideal_gas.mass_volume_solve_m(p=\"...\", v=\"...\", r=\"...\", t=\"...\")",
+      "xloil_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_M(\"...\",\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_FAMILY_IDEAL_GAS_MASS_VOLUME_M(\"...\",\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "fluid.prop",
+      "entity": "fluid",
+      "source": "fluids",
+      "python_module": "fluids",
+      "python_name": "fluid_prop",
+      "excel_name": "ENG_FLUID_PROP",
+      "op": "fluid.prop",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "fluid",
+          "description": "Fluid key/name"
+        },
+        {
+          "name": "in1_key",
+          "description": "State input key 1"
+        },
+        {
+          "name": "in1_value",
+          "description": "State input value 1"
+        },
+        {
+          "name": "in2_key",
+          "description": "State input key 2"
+        },
+        {
+          "name": "in2_value",
+          "description": "State input value 2"
+        },
+        {
+          "name": "out_prop",
+          "description": "Output property key"
+        }
+      ],
+      "returns": "f64",
+      "help": "Binding-friendly fluid property lookup",
+      "rust_example": "fluids::water().state_tp(\"300 K\", \"1 bar\")?.rho()?",
+      "python_example": "engpy.fluids.fluid_prop(\"H2O\", \"T\", \"300 K\", \"P\", \"1 bar\", \"rho\")",
+      "xloil_example": "=ENG_FLUID_PROP(\"H2O\",\"T\",\"300 K\",\"P\",\"1 bar\",\"rho\")",
+      "pyxll_example": "=ENG_FLUID_PROP(\"H2O\",\"T\",\"300 K\",\"P\",\"1 bar\",\"rho\")"
+    },
+    {
+      "id": "material.prop",
+      "entity": "material",
+      "source": "materials",
+      "python_module": "materials",
+      "python_name": "mat_prop",
+      "excel_name": "ENG_MAT_PROP",
+      "op": "material.prop",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "material",
+          "description": "Material key/name"
+        },
+        {
+          "name": "property",
+          "description": "Property key"
+        },
+        {
+          "name": "temperature",
+          "description": "Temperature input"
+        }
+      ],
+      "returns": "f64",
+      "help": "Binding-friendly material property lookup",
+      "rust_example": "materials::stainless_304().temperature(\"350 K\")?.property(\"elastic_modulus\")?",
+      "python_example": "engpy.materials.mat_prop(\"stainless_304\", \"elastic_modulus\", \"350 K\")",
+      "xloil_example": "=ENG_MAT_PROP(\"stainless_304\",\"elastic_modulus\",\"350 K\")",
+      "pyxll_example": "=ENG_MAT_PROP(\"stainless_304\",\"elastic_modulus\",\"350 K\")"
+    }
+  ]
+}

@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfb3c088.js"></script>
+        <script src="../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,51 +177,35 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="convection-thermal-resistance"><a class="header" href="#convection-thermal-resistance">Convection Thermal Resistance</a></h1>
-<p><strong>Path:</strong> <code>heat_transfer.thermal_resistance_convection</code><br><strong>Category:</strong> <code>heat_transfer</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>heat_transfer.thermal_resistance_convection</code></p>
+<p>[
 R_{th} = \frac{1}{h A}
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>R_th = 1 / (h · A)</code></li>
 <li>ASCII: <code>R_th = 1 / (h * A)</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>R_th</code></td><td>Thermal resistance</td><td>\(R_th\)</td><td><code>thermal_resistance</code></td><td><code>K/W</code></td></tr>
+
+<tr><td><code>h</code></td><td>Convective heat transfer coefficient</td><td>\(h\)</td><td><code>heat_transfer_coefficient</code></td><td><code>W/(m2*K)</code></td></tr>
+
+<tr><td><code>A</code></td><td>Surface area</td><td>\(A\)</td><td><code>area</code></td><td><code>m2</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>Uniform convection coefficient over the area.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>R_th</code></td><td>Thermal resistance</td><td><span class="math inline">\(R_{th}\)</span></td><td><code>thermal_resistance</code></td><td><code>K/W</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>h</code></td><td>Convective heat transfer coefficient</td><td><span class="math inline">\(h\)</span></td><td><code>heat_transfer_coefficient</code></td><td><code>W/(m2*K)</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>A</code></td><td>Surface area</td><td><span class="math inline">\(A\)</span></td><td><code>area</code></td><td><code>m2</code></td><td><code>-</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>A</code>: explicit</li>
-<li><code>R_th</code>: explicit</li>
-<li><code>h</code>: explicit</li>
-</ul>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -231,7 +215,7 @@ $$</p>
     .given_a(3.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-units-aware"><a class="header" href="#typed-builder-units-aware">Typed Builder (Units-Aware)</a></h3>
+<h3 id="typed_builder_units"><a class="header" href="#typed_builder_units">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -241,38 +225,7 @@ $$</p>
     .given_a("3 m2")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="available-convenience-functions"><a class="header" href="#available-convenience-functions">Available Convenience Functions</a></h3>
-<p>Direct solve helpers are available for these targets.</p>
-<table>
-  
-<thead>
-    
-<tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>R_th</code></td><td><code>solve_r_th(h, A)</code></td><td><code>h</code>, <code>A</code></td></tr>
-
-    
-<tr><td><code>h</code></td><td><code>solve_h(R_th, A)</code></td><td><code>R_th</code>, <code>A</code></td></tr>
-
-    
-<tr><td><code>A</code></td><td><code>solve_a(R_th, h)</code></td><td><code>R_th</code>, <code>h</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h3 id="solve-r_th"><a class="header" href="#solve-r_th">Solve <code>R_th</code></a></h3>
-<p><strong>Function signature</strong></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>equations::heat_transfer::thermal_resistance_convection::solve_r_th(h, A) -&gt; Result&lt;f64, _&gt;
-<span class="boring">}</span></code></pre>
-<p><strong>Example</strong></p>
+<h3 id="convenience_r_th"><a class="header" href="#convenience_r_th">convenience_r_th</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::heat_transfer::thermal_resistance_convection::solve_r_th(
@@ -280,13 +233,38 @@ $$</p>
     "3 m2",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="notes"><a class="header" href="#notes">Notes</a></h3>
+<h3 id="convenience_h"><a class="header" href="#convenience_h">convenience_h</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::heat_transfer::thermal_resistance_convection::solve_h(
+    "0.0095238095238 K/W",
+    "3 m2",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_a"><a class="header" href="#convenience_a">convenience_a</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::heat_transfer::thermal_resistance_convection::solve_a(
+    "0.0095238095238 K/W",
+    "35 W/(m2*K)",
+)?;
+<span class="boring">}</span></code></pre>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::heat_transfer::thermal_resistance_convection::equation()).for_target("A").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.heat_transfer.solve_a(r_th="...", h="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_A("...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Returns SI by default; use <code>.value_in("&lt;unit&gt;")</code> for display units.</li>
-</ul>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
-<ul>
-<li>Incropera et al., Fundamentals of Heat and Mass Transfer</li>
+<li><code>r_th</code>: Thermal resistance</li>
+<li><code>h</code>: Convective heat transfer coefficient</li>
 </ul>
 
                     </main>

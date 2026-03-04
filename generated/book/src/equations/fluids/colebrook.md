@@ -1,42 +1,30 @@
 # Colebrook-White Friction Factor
 
-**Path:** `fluids.colebrook`  
-**Category:** `fluids`
+**Path ID:** `fluids.colebrook`
 
-## Equation
-
-$$
+\[
 \frac{1}{\sqrt{f}} + 2\log_{10}\left(\frac{\varepsilon_D}{3.7} + \frac{2.51}{Re\sqrt{f}}\right) = 0
-$$
+\]
 
 - Unicode: `1/sqrt(f) + 2 log10(eps_D/3.7 + 2.51/(Re sqrt(f))) = 0`
 - ASCII: `1/sqrt(f) + 2*log10((eps_D/3.7) + (2.51/(Re*sqrt(f)))) = 0`
+
+## Variables
+
+<table><thead><tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr></thead><tbody>
+<tr><td><code>f</code></td><td>Darcy friction factor</td><td>\(f\)</td><td><code>friction_factor</code></td><td><code>1</code></td></tr>
+<tr><td><code>eps_D</code></td><td>Relative roughness</td><td>\(\epsilon_D\)</td><td><code>ratio</code></td><td><code>1</code></td></tr>
+<tr><td><code>Re</code></td><td>Reynolds number</td><td>\(Re\)</td><td><code>dimensionless</code></td><td><code>1</code></td></tr>
+</tbody></table>
 
 ## Assumptions
 
 - Fully developed turbulent internal flow.
 - Incompressible flow behavior.
 
-## Variables
-
-<table>
-  <thead>
-    <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>f</code></td><td>Darcy friction factor</td><td><span class="math inline">\(f\)</span></td><td><code>friction_factor</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-    <tr><td><code>eps_D</code></td><td>Relative roughness</td><td><span class="math inline">\(\epsilon_D\)</span></td><td><code>ratio</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-    <tr><td><code>Re</code></td><td>Reynolds number</td><td><span class="math inline">\(Re\)</span></td><td><code>dimensionless</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-  </tbody>
-</table>
-
-## Solve Targets
-
-- `f`: numerical
-
 ## Examples
 
-### Typed Builder (SI Numeric)
+### typed_builder_si
 
 ```rust
 let value = eq
@@ -47,11 +35,25 @@ let value = eq
     .value()?;
 ```
 
-## Source
 
-- Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics
+## Bindings
 
-## References
+### Rust
+```rust
+let value = eq.solve(equations::fluids::colebrook::equation()).for_target("f").value()?;
+```
 
-- Colebrook, C. F. (1939) — Turbulent flow in pipes with rough walls.
+### Python
+```python
+engpy.equations.fluids.solve_f(eps_d="...", re="...")
+```
+
+### Excel
+```excel
+=ENG_FLUIDS_COLEBROOK_F("...","...")
+```
+
+**Excel arguments**
+- `eps_d`: Relative roughness
+- `re`: Reynolds number
 

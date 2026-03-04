@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfb3c088.js"></script>
+        <script src="../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,67 +177,41 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="plane-wall-conduction-heat-rate"><a class="header" href="#plane-wall-conduction-heat-rate">Plane-Wall Conduction Heat Rate</a></h1>
-<p><strong>Path:</strong> <code>heat_transfer.conduction_plane_wall_heat_rate</code><br><strong>Category:</strong> <code>heat_transfer</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>heat_transfer.conduction_plane_wall_heat_rate</code></p>
+<p>[
 \dot{Q} = k A \frac{T_h - T_c}{L}
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>Q_dot = k · A · (T_h - T_c) / L</code></li>
 <li>ASCII: <code>Q_dot = k * A * (T_h - T_c) / L</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Q_dot</code></td><td>Heat transfer rate</td><td>\(Q_dot\)</td><td><code>heat_rate</code></td><td><code>W</code></td></tr>
+
+<tr><td><code>k</code></td><td>Thermal conductivity</td><td>\(k\)</td><td><code>thermal_conductivity</code></td><td><code>W/(m*K)</code></td></tr>
+
+<tr><td><code>A</code></td><td>Area normal to heat flow</td><td>\(A\)</td><td><code>area</code></td><td><code>m2</code></td></tr>
+
+<tr><td><code>T_h</code></td><td>Hot-side temperature</td><td>\(T_h\)</td><td><code>temperature</code></td><td><code>K</code></td></tr>
+
+<tr><td><code>T_c</code></td><td>Cold-side temperature</td><td>\(T_c\)</td><td><code>temperature</code></td><td><code>K</code></td></tr>
+
+<tr><td><code>L</code></td><td>Wall thickness</td><td>\(L\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>One-dimensional steady conduction through a homogeneous plane wall.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>Q_dot</code></td><td>Heat transfer rate</td><td><span class="math inline">\(Q_{dot}\)</span></td><td><code>heat_rate</code></td><td><code>W</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>k</code></td><td>Thermal conductivity</td><td><span class="math inline">\(k\)</span></td><td><code>thermal_conductivity</code></td><td><code>W/(m*K)</code></td><td><code>material_property:thermal_conductivity</code> from <code>material</code></td></tr>
-
-    
-<tr><td><code>A</code></td><td>Area normal to heat flow</td><td><span class="math inline">\(A\)</span></td><td><code>area</code></td><td><code>m2</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>T_h</code></td><td>Hot-side temperature</td><td><span class="math inline">\(T_{h}\)</span></td><td><code>temperature</code></td><td><code>K</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>T_c</code></td><td>Cold-side temperature</td><td><span class="math inline">\(T_{c}\)</span></td><td><code>temperature</code></td><td><code>K</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>L</code></td><td>Wall thickness</td><td><span class="math inline">\(L\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="resolvable-from-contexts"><a class="header" href="#resolvable-from-contexts">Resolvable from Contexts</a></h2>
-<ul>
-<li><code>k</code> from context <code>material</code> via <code>material_property</code>:<code>thermal_conductivity</code></li>
-</ul>
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>A</code>: explicit</li>
-<li><code>L</code>: explicit</li>
-<li><code>Q_dot</code>: explicit</li>
-<li><code>T_c</code>: explicit</li>
-<li><code>T_h</code>: explicit</li>
-<li><code>k</code>: explicit</li>
-</ul>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -249,7 +223,7 @@ $$</p>
     .given_l(1.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-units-aware"><a class="header" href="#typed-builder-units-aware">Typed Builder (Units-Aware)</a></h3>
+<h3 id="typed_builder_units"><a class="header" href="#typed_builder_units">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -261,7 +235,7 @@ $$</p>
     .given_l("1 m")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-context-assisted"><a class="header" href="#typed-builder-context-assisted">Typed Builder (Context-Assisted)</a></h3>
+<h3 id="typed_builder_context"><a class="header" href="#typed_builder_context">typed_builder_context</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -274,47 +248,7 @@ $$</p>
     .given_l("1 m")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="available-convenience-functions"><a class="header" href="#available-convenience-functions">Available Convenience Functions</a></h3>
-<p>Direct solve helpers are available for these targets.</p>
-<table>
-  
-<thead>
-    
-<tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>Q_dot</code></td><td><code>solve_q_dot(A, T_h, T_c, L)</code></td><td><code>A</code>, <code>T_h</code>, <code>T_c</code>, <code>L</code></td></tr>
-
-    
-<tr><td><code>k</code></td><td><code>solve_k(Q_dot, A, T_h, T_c, L)</code></td><td><code>Q_dot</code>, <code>A</code>, <code>T_h</code>, <code>T_c</code>, <code>L</code></td></tr>
-
-    
-<tr><td><code>A</code></td><td><code>solve_a(Q_dot, T_h, T_c, L)</code></td><td><code>Q_dot</code>, <code>T_h</code>, <code>T_c</code>, <code>L</code></td></tr>
-
-    
-<tr><td><code>T_h</code></td><td><code>solve_t_h(Q_dot, A, T_c, L)</code></td><td><code>Q_dot</code>, <code>A</code>, <code>T_c</code>, <code>L</code></td></tr>
-
-    
-<tr><td><code>T_c</code></td><td><code>solve_t_c(Q_dot, A, T_h, L)</code></td><td><code>Q_dot</code>, <code>A</code>, <code>T_h</code>, <code>L</code></td></tr>
-
-    
-<tr><td><code>L</code></td><td><code>solve_l(Q_dot, A, T_h, T_c)</code></td><td><code>Q_dot</code>, <code>A</code>, <code>T_h</code>, <code>T_c</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h3 id="solve-q_dot"><a class="header" href="#solve-q_dot">Solve <code>Q_dot</code></a></h3>
-<p><strong>Function signature</strong></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>equations::heat_transfer::conduction_plane_wall_heat_rate::solve_q_dot(A, T_h, T_c, L) -&gt; Result&lt;f64, _&gt;
-<span class="boring">}</span></code></pre>
-<p><strong>Example</strong></p>
+<h3 id="convenience_q_dot"><a class="header" href="#convenience_q_dot">convenience_q_dot</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_q_dot(
@@ -324,13 +258,76 @@ $$</p>
     "1 m",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="notes"><a class="header" href="#notes">Notes</a></h3>
+<h3 id="convenience_k"><a class="header" href="#convenience_k">convenience_k</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_k(
+    "1600 W",
+    "2 m2",
+    "330 K",
+    "280 K",
+    "1 m",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_a"><a class="header" href="#convenience_a">convenience_a</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_a(
+    "1600 W",
+    "330 K",
+    "280 K",
+    "1 m",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_t_h"><a class="header" href="#convenience_t_h">convenience_t_h</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_t_h(
+    "1600 W",
+    "2 m2",
+    "280 K",
+    "1 m",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_t_c"><a class="header" href="#convenience_t_c">convenience_t_c</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_t_c(
+    "1600 W",
+    "2 m2",
+    "330 K",
+    "1 m",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_l"><a class="header" href="#convenience_l">convenience_l</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::heat_transfer::conduction_plane_wall_heat_rate::solve_l(
+    "1600 W",
+    "2 m2",
+    "330 K",
+    "280 K",
+)?;
+<span class="boring">}</span></code></pre>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::heat_transfer::conduction_plane_wall_heat_rate::equation()).for_target("A").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.heat_transfer.solve_a(q_dot="...", k="...", t_h="...", t_c="...", l="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_HEAT_TRANSFER_CONDUCTION_PLANE_WALL_HEAT_RATE_A("...","...","...","...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Returns SI by default; use <code>.value_in("&lt;unit&gt;")</code> for display units.</li>
-</ul>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
-<ul>
-<li>Incropera et al., Fundamentals of Heat and Mass Transfer</li>
+<li><code>q_dot</code>: Heat transfer rate</li>
+<li><code>k</code>: Thermal conductivity</li>
+<li><code>t_h</code>: Hot-side temperature</li>
+<li><code>t_c</code>: Cold-side temperature</li>
+<li><code>l</code>: Wall thickness</li>
 </ul>
 
                     </main>

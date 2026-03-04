@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-dfb3c088.js"></script>
+        <script src="../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,35 +177,35 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="fluids-guide"><a class="header" href="#fluids-guide">Fluids Guide</a></h1>
-<p>The fluids layer provides typed wrappers, explicit state constructors, a flexible generic state API, direct property accessors, quality support, saturation helpers, and structured state metadata/errors.</p>
-<h2 id="recommended-usage-paths"><a class="header" href="#recommended-usage-paths">Recommended Usage Paths</a></h2>
+<p>Fluids are first-class engineering objects with typed wrappers, explicit state constructors, a flexible generic state path, direct property accessors, and context integration with equations.</p>
+<h2 id="recommended-usage-path"><a class="header" href="#recommended-usage-path">Recommended Usage Path</a></h2>
 <ul>
-<li><strong>Preferred fast path:</strong> explicit constructors such as <code>state_tp</code>, <code>state_ph</code>, <code>state_ps</code>, <code>state_rho_h</code>, <code>state_pq</code>, and <code>state_tq</code>.</li>
-<li><strong>Flexible path:</strong> generic <code>state("T", ..., "P", ...)</code> with explicit property identity.</li>
-<li>Generic path does not infer property identity from units; you must provide property keys.</li>
+<li><strong>Preferred fast path</strong>: explicit constructors like <code>state_tp</code>, <code>state_ph</code>, <code>state_ps</code>, <code>state_rho_h</code>, <code>state_pq</code>, <code>state_tq</code>.</li>
+<li><strong>Flexible path</strong>: generic <code>state("T", value, "P", value)</code> where property identity is explicit.</li>
+<li>Use direct accessor methods (<code>rho()</code>, <code>mu()</code>, <code>cp()</code>, <code>gamma()</code>, …) instead of generic string property reads when writing Rust code.</li>
 </ul>
-<h2 id="state-constructor-patterns"><a class="header" href="#state-constructor-patterns">State Constructor Patterns</a></h2>
+<h2 id="constructor-capability-matrix"><a class="header" href="#constructor-capability-matrix">Constructor Capability Matrix</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Constructor</th><th>Inputs</th><th>Typical use</th></tr>
+<tr><th>Constructor</th><th>Meaning</th><th>Typical Use</th></tr>
 </thead>
 <tbody>
-<tr><td><code>state_tp(T, P)</code></td><td>temperature, pressure</td><td>standard single-phase setup</td></tr>
-<tr><td><code>state_ph(P, h)</code></td><td>pressure, specific enthalpy</td><td>inversion from energy state</td></tr>
-<tr><td><code>state_ps(P, s)</code></td><td>pressure, specific entropy</td><td>entropy-based state setup</td></tr>
-<tr><td><code>state_rho_h(rho, h)</code></td><td>density, specific enthalpy</td><td>density/energy-defined state</td></tr>
-<tr><td><code>state_pq(P, Q)</code></td><td>pressure, quality</td><td>saturation/two-phase state at pressure</td></tr>
-<tr><td><code>state_tq(T, Q)</code></td><td>temperature, quality</td><td>saturation/two-phase state at temperature</td></tr>
-<tr><td><code>state("T", v1, "P", v2)</code></td><td>explicit property keys + values</td><td>flexible pair-input construction</td></tr>
+<tr><td><code>state_tp(T, P)</code></td><td>Temperature + pressure</td><td>Most common fast path</td></tr>
+<tr><td><code>state_ph(P, h)</code></td><td>Pressure + specific enthalpy</td><td>Thermodynamic inversion workflows</td></tr>
+<tr><td><code>state_ps(P, s)</code></td><td>Pressure + specific entropy</td><td>Isentropic/entropy constrained workflows</td></tr>
+<tr><td><code>state_rho_h(rho, h)</code></td><td>Density + specific enthalpy</td><td>Density-driven model integration</td></tr>
+<tr><td><code>state_pq(P, Q)</code></td><td>Pressure + quality</td><td>Two-phase saturation states</td></tr>
+<tr><td><code>state_tq(T, Q)</code></td><td>Temperature + quality</td><td>Two-phase saturation states</td></tr>
+<tr><td><code>state("T", v1, "P", v2)</code></td><td>Explicit property-name pair</td><td>Flexible bindings/CLI/file paths</td></tr>
 </tbody>
 </table>
 </div>
-<h2 id="generic-property-key-aliases"><a class="header" href="#generic-property-key-aliases">Generic Property Key Aliases</a></h2>
+<h2 id="generic-property-alias-map"><a class="header" href="#generic-property-alias-map">Generic Property Alias Map</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Canonical</th><th>Aliases</th></tr>
+<tr><th>Canonical</th><th>Accepted aliases</th></tr>
 </thead>
 <tbody>
 <tr><td>Temperature</td><td><code>T</code>, <code>temperature</code></td></tr>
@@ -217,29 +217,8 @@
 </tbody>
 </table>
 </div>
-<h2 id="direct-property-accessors"><a class="header" href="#direct-property-accessors">Direct Property Accessors</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Property</th><th>Accessors</th></tr>
-</thead>
-<tbody>
-<tr><td>Pressure</td><td><code>pressure()</code>, <code>p()</code></td></tr>
-<tr><td>Temperature</td><td><code>temperature()</code>, <code>t()</code></td></tr>
-<tr><td>Density</td><td><code>density()</code>, <code>rho()</code></td></tr>
-<tr><td>Dynamic viscosity</td><td><code>dynamic_viscosity()</code>, <code>mu()</code></td></tr>
-<tr><td>Thermal conductivity</td><td><code>thermal_conductivity()</code>, <code>k()</code></td></tr>
-<tr><td>Specific heat (cp)</td><td><code>specific_heat_capacity()</code>, <code>cp()</code></td></tr>
-<tr><td>Specific heat (cv)</td><td><code>specific_heat_capacity_cv()</code>, <code>cv()</code></td></tr>
-<tr><td>Speed of sound</td><td><code>speed_of_sound()</code>, <code>a()</code></td></tr>
-<tr><td>Specific enthalpy</td><td><code>specific_enthalpy()</code>, <code>h()</code></td></tr>
-<tr><td>Specific entropy</td><td><code>specific_entropy()</code>, <code>s()</code></td></tr>
-<tr><td>Heat capacity ratio</td><td><code>gamma()</code></td></tr>
-<tr><td>Quality</td><td><code>quality()</code></td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="verified-constructor--generic-state-examples"><a class="header" href="#verified-constructor--generic-state-examples">Verified Constructor + Generic State Examples</a></h2>
+<p>Property identity is required in the generic path; there is no unit-only inference. This avoids ambiguity (for example <code>h</code> vs <code>u</code>).</p>
+<h2 id="verified-state-construction-examples"><a class="header" href="#verified-state-construction-examples">Verified State Construction Examples</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>{
@@ -266,7 +245,28 @@
     )?;
 }
 <span class="boring">}</span></code></pre>
-<h2 id="verified-direct-property-access-example"><a class="header" href="#verified-direct-property-access-example">Verified Direct Property Access Example</a></h2>
+<h2 id="direct-property-accessors"><a class="header" href="#direct-property-accessors">Direct Property Accessors</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Accessor</th><th>Meaning</th></tr>
+</thead>
+<tbody>
+<tr><td><code>pressure()</code> / <code>p()</code></td><td>Pressure (Pa)</td></tr>
+<tr><td><code>temperature()</code> / <code>t()</code></td><td>Temperature (K)</td></tr>
+<tr><td><code>density()</code> / <code>rho()</code></td><td>Density (kg/m^3)</td></tr>
+<tr><td><code>dynamic_viscosity()</code> / <code>mu()</code></td><td>Dynamic viscosity (Pa*s)</td></tr>
+<tr><td><code>thermal_conductivity()</code> / <code>k()</code></td><td>Thermal conductivity (W/(m*K))</td></tr>
+<tr><td><code>specific_heat_capacity()</code> / <code>cp()</code></td><td>Cp (J/(kg*K))</td></tr>
+<tr><td><code>specific_heat_capacity_cv()</code> / <code>cv()</code></td><td>Cv (J/(kg*K))</td></tr>
+<tr><td><code>gamma()</code></td><td>Heat capacity ratio</td></tr>
+<tr><td><code>speed_of_sound()</code> / <code>a()</code></td><td>Speed of sound (m/s)</td></tr>
+<tr><td><code>specific_enthalpy()</code> / <code>h()</code></td><td>Specific enthalpy (J/kg)</td></tr>
+<tr><td><code>specific_entropy()</code> / <code>s()</code></td><td>Specific entropy (J/(kg*K))</td></tr>
+<tr><td><code>quality()</code></td><td>Quality in <code>[0,1]</code> for Q-based states</td></tr>
+</tbody>
+</table>
+</div>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use eng::fluids;
@@ -280,7 +280,12 @@ let cp = state.cp()?;
 let state_generic = fluids::air().state("T", "300 K", "P", "1 bar")?;
 let gamma = state_generic.gamma()?;
 <span class="boring">}</span></code></pre>
-<h2 id="verified-saturation--metadata-example"><a class="header" href="#verified-saturation--metadata-example">Verified Saturation + Metadata Example</a></h2>
+<h2 id="quality-saturation-and-state-metadata"><a class="header" href="#quality-saturation-and-state-metadata">Quality, Saturation, and State Metadata</a></h2>
+<ul>
+<li><code>saturation_at_pressure(P)</code> returns <code>{ liquid, vapor }</code></li>
+<li><code>saturation_at_temperature(T)</code> returns <code>{ liquid, vapor }</code></li>
+<li>State metadata includes <code>fluid_key()</code>, <code>fluid_name()</code>, <code>input_pair()</code>, <code>input_pair_label()</code>, <code>normalized_inputs()</code>, <code>quality()</code>, and <code>phase()</code></li>
+</ul>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>{
@@ -297,23 +302,9 @@ let gamma = state_generic.gamma()?;
     assert_eq!(pair, "P,Q");
 }
 <span class="boring">}</span></code></pre>
-<h2 id="state-metadata"><a class="header" href="#state-metadata">State Metadata</a></h2>
-<ul>
-<li><code>fluid_key()</code> and <code>fluid_name()</code> identify the wrapper/backend fluid.</li>
-<li><code>input_pair()</code> and <code>input_pair_label()</code> show which pair initialized the state.</li>
-<li><code>normalized_inputs()</code> reports normalized SI inputs used for backend calls.</li>
-<li><code>quality()</code> and <code>phase()</code> expose two-phase context where available.</li>
-</ul>
-<h2 id="error-behavior"><a class="header" href="#error-behavior">Error Behavior</a></h2>
-<ul>
-<li>Unsupported state pairs return an explicit supported-pairs list.</li>
-<li>Unknown generic property keys return actionable key errors.</li>
-<li>Duplicate keys in generic <code>state(...)</code> are rejected.</li>
-<li><code>u</code>/internal-energy keys are intentionally rejected to avoid ambiguity with enthalpy.</li>
-<li>Backend failures remain recoverable and include fluid/pair/property context.</li>
-</ul>
-<h2 id="equation-integration"><a class="header" href="#equation-integration">Equation Integration</a></h2>
-<p>Use direct fluid property lookups for ad hoc calculations. Use equation context solving (<code>solve_with_context(...).fluid(...)</code>) when equations declare resolver metadata and you want automatic property resolution.</p>
+<h2 id="equation-context-integration"><a class="header" href="#equation-context-integration">Equation Context Integration</a></h2>
+<p>Use direct property lookup when you need one-off values. Use <code>solve_with_context(...).fluid(state)</code> when an equation should auto-resolve fluid-dependent variables.</p>
+<p>Use fluid states directly in context solves:</p>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use eng::{eq, equations, fluids};
@@ -326,17 +317,27 @@ let re = eq
     .given("D", "0.1 m")
     .value()?;
 <span class="boring">}</span></code></pre>
-<p>See the <a href="./index.html">Fluids Catalog</a> for per-fluid reference pages.</p>
+<h2 id="common-errors-and-gotchas"><a class="header" href="#common-errors-and-gotchas">Common Errors and Gotchas</a></h2>
+<ul>
+<li>Unknown/invalid generic property keys are rejected with explicit supported-key guidance.</li>
+<li>Unsupported input pairs (for example <code>rho,T</code>) return clear pair diagnostics listing supported pairs.</li>
+<li><code>u</code>/internal-energy identifiers are intentionally rejected in the generic state-input path to avoid confusion with enthalpy <code>h</code>.</li>
+<li>Parse and backend failures are recoverable and include fluid/pair/property context.</li>
+</ul>
+<h2 id="catalog"><a class="header" href="#catalog">Catalog</a></h2>
+<ul>
+<li><a href="./index.html">Fluids Catalog</a></li>
+</ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../fluids/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../constants/universal_gas_constant.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../fluids/air.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../fluids/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -346,11 +347,11 @@ let re = eq
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../fluids/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../constants/universal_gas_constant.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../fluids/air.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../fluids/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

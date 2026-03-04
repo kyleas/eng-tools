@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-dfb3c088.js"></script>
+        <script src="../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,59 +177,15 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="units--quantities"><a class="header" href="#units--quantities">Units &amp; Quantities</a></h1>
-<p>The engineering unit system is <strong>dimension-based</strong>, not hardcoded permutation-based. Unit expressions are parsed, reduced with dimensional algebra, and validated against expected variable dimensions.</p>
-<h2 id="system-model"><a class="header" href="#system-model">System Model</a></h2>
+<p>The unit engine is dimension-based. Equivalent expressions reduce to canonical SI using dimensional algebra.</p>
+<p>Supported expression operators: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, parentheses.</p>
 <ul>
-<li>Atomic unit registry defines aliases, canonical symbols, scale factors, and dimension signatures.</li>
-<li>Parser handles unit expressions and quantity arithmetic.</li>
-<li>Reducer computes canonical SI value + final dimension signature.</li>
-<li>Validator checks the final dimension against the variable’s expected dimension.</li>
+<li>Addition/subtraction require same dimensions.</li>
+<li>Multiplication/division combine dimensions algebraically.</li>
+<li>Bare numbers are dimensionless.</li>
+<li>Input is validated against each variable’s expected dimension.</li>
 </ul>
-<h2 id="what-is-supported"><a class="header" href="#what-is-supported">What Is Supported</a></h2>
-<ul>
-<li>Atomic units + strict aliases (<code>m</code>, <code>ft</code>, <code>Pa</code>, <code>psi</code>, <code>L</code>, <code>gal</code>, <code>s</code>, <code>min</code>, …).</li>
-<li>Compound units (<code>kg/(m*s)</code>, <code>Pa*s</code>, <code>N*s/m^2</code>, <code>W/(m*K)</code>, <code>J/(kg*K)</code>).</li>
-<li>Quantity expressions with <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, and parentheses.</li>
-<li>Equivalent expressions normalized to the same canonical dimensions.</li>
-</ul>
-<h2 id="what-gets-checked"><a class="header" href="#what-gets-checked">What Gets Checked</a></h2>
-<ul>
-<li>Parse syntax validity.</li>
-<li>Unit token/alias validity.</li>
-<li>Dimensional operator rules:
-<ul>
-<li><code>+</code> / <code>-</code> require same dimensions.</li>
-<li><code>*</code> / <code>/</code> combine exponents algebraically.</li>
-</ul>
-</li>
-<li>Final expression dimension matches expected variable dimension.</li>
-</ul>
-<h2 id="advanced-conversion-behavior"><a class="header" href="#advanced-conversion-behavior">Advanced Conversion Behavior</a></h2>
-<ul>
-<li>Dynamic viscosity equivalence: <code>Pa*s</code> == <code>kg/(m*s)</code> == <code>N*s/m^2</code>.</li>
-<li>Volumetric flow conversions across time/volume units (<code>gal/min</code>, <code>L/s</code>, <code>m^3/hr</code>).</li>
-<li>Thermal/transport forms normalize by dimension even when syntactically different.</li>
-</ul>
-<h2 id="what-is-intentionally-restricted"><a class="header" href="#what-is-intentionally-restricted">What Is Intentionally Restricted</a></h2>
-<ul>
-<li>Mixed-dimension addition/subtraction is rejected.</li>
-<li>Unknown or ambiguous unit tokens are rejected, not guessed.</li>
-<li>Affine temperature pitfalls are guarded; prefer canonical absolute temperature (<code>K</code>) unless a dedicated path says otherwise.</li>
-</ul>
-<h2 id="input-paths-and-tradeoffs"><a class="header" href="#input-paths-and-tradeoffs">Input Paths and Tradeoffs</a></h2>
-<ul>
-<li><code>f64</code>: fastest if already SI.</li>
-<li>Typed constructors: explicit units with low overhead.</li>
-<li><code>qty!(...)</code>: preferred fixed-expression Rust path.</li>
-<li>Runtime strings: boundary-input convenience path.</li>
-</ul>
-<h2 id="example-validation-outcomes"><a class="header" href="#example-validation-outcomes">Example Validation Outcomes</a></h2>
-<ul>
-<li>Valid: <code>5 MPa + 12 psi</code> (same pressure dimension).</li>
-<li>Valid: <code>3 ft + 2 in</code> (same length dimension).</li>
-<li>Invalid: <code>5 MPa + 3 m</code> (pressure + length).</li>
-<li>Invalid: unknown unit token (<code>blarg</code>) or malformed expression.</li>
-</ul>
+<p>Temperature note: affine temperature pitfalls are intentionally guarded; use canonical absolute temperature where required.</p>
 
                     </main>
 

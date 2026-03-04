@@ -33,7 +33,16 @@ pub fn select_branch<'a>(
     }
     for branch in &equation.branches {
         let parsed = parse_expression(&branch.condition)?;
-        let cond = evaluate_expression(&branch.condition, &parsed, knowns)?;
+        let cond = match evaluate_expression(&branch.condition, &parsed, knowns) {
+            Ok(v) => v,
+            // Branch conditions often include the solve target (for example `1 - M`).
+            // If target is not known yet, defer to preferred-branch fallback.
+            Err(EquationError::UnknownSymbol { .. })
+            | Err(EquationError::ExpressionEval { .. }) => {
+                continue;
+            }
+            Err(e) => return Err(e),
+        };
         if cond != 0.0 && branch.preferred {
             return Ok(Some(branch));
         }

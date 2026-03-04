@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-dfb3c088.js"></script>
+        <script src="../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,60 +177,13 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="stefan-boltzmann-constant"><a class="header" href="#stefan-boltzmann-constant">Stefan-Boltzmann Constant</a></h1>
-<table>
-  
-<thead>
-    
-<tr><th>Field</th><th>Value</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td>Key</td><td><code>stefan_boltzmann</code></td></tr>
-
-    
-<tr><td>Symbol</td><td><span class="math inline">\(\sigma\)</span></td></tr>
-
-    
-<tr><td>Dimension</td><td><code>stefan_boltzmann_constant</code></td></tr>
-
-    
-<tr><td>Value</td><td>5.670374419000e-8 <code>W/(m2*K4)</code></td></tr>
-
-    
-<tr><td>Trust</td><td>Conventional / reference</td></tr>
-
-    
-<tr><td>Source</td><td>CODATA 2018</td></tr>
-
-    
-<tr><td>Note</td><td>Derived from exact constants; finite reported decimal precision.</td></tr>
-
-    
-<tr><td>Aliases</td><td><code>sigma_sb</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<p>Stefan-Boltzmann radiation constant.</p>
-<h2 id="rust-usage"><a class="header" href="#rust-usage">Rust Usage</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use eng::{constants};
-use equations::get_constant;
-
-let c = constants::stefan_boltzmann();
-assert_eq!(c.key, "stefan_boltzmann");
-println!("stefan_boltzmann = σ {}", c.value, c.unit);
-
-let by_id = get_constant("stefan_boltzmann").expect("constant lookup");
-assert_eq!(by_id.key, "stefan_boltzmann");
-let by_alias = get_constant("sigma_sb").expect("alias lookup");
-assert_eq!(by_alias.key, "stefan_boltzmann");
-<span class="boring">}</span></code></pre>
+<ul>
+<li>Key: <code>stefan_boltzmann</code></li>
+<li>Symbol: (\sigma)</li>
+<li>Value: <code>0.00000005670374419</code> <code>W/(m2*K4)</code></li>
+<li>Source: CODATA 2018</li>
+</ul>
+<p>Derived from exact constants; finite reported decimal precision.</p>
 
                     </main>
 

@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfb3c088.js"></script>
+        <script src="../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,50 +177,36 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="colebrook-white-friction-factor"><a class="header" href="#colebrook-white-friction-factor">Colebrook-White Friction Factor</a></h1>
-<p><strong>Path:</strong> <code>fluids.colebrook</code><br><strong>Category:</strong> <code>fluids</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>fluids.colebrook</code></p>
+<p>[
 \frac{1}{\sqrt{f}} + 2\log_{10}\left(\frac{\varepsilon_D}{3.7} + \frac{2.51}{Re\sqrt{f}}\right) = 0
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>1/sqrt(f) + 2 log10(eps_D/3.7 + 2.51/(Re sqrt(f))) = 0</code></li>
 <li>ASCII: <code>1/sqrt(f) + 2*log10((eps_D/3.7) + (2.51/(Re*sqrt(f)))) = 0</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>f</code></td><td>Darcy friction factor</td><td>\(f\)</td><td><code>friction_factor</code></td><td><code>1</code></td></tr>
+
+<tr><td><code>eps_D</code></td><td>Relative roughness</td><td>\(\epsilon_D\)</td><td><code>ratio</code></td><td><code>1</code></td></tr>
+
+<tr><td><code>Re</code></td><td>Reynolds number</td><td>\(Re\)</td><td><code>dimensionless</code></td><td><code>1</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>Fully developed turbulent internal flow.</li>
 <li>Incompressible flow behavior.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>f</code></td><td>Darcy friction factor</td><td><span class="math inline">\(f\)</span></td><td><code>friction_factor</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>eps_D</code></td><td>Relative roughness</td><td><span class="math inline">\(\epsilon_D\)</span></td><td><code>ratio</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>Re</code></td><td>Reynolds number</td><td><span class="math inline">\(Re\)</span></td><td><code>dimensionless</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>f</code>: numerical</li>
-</ul>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -230,13 +216,22 @@ $$</p>
     .given_re(1e5)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::fluids::colebrook::equation()).for_target("f").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.fluids.solve_f(eps_d="...", re="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_FLUIDS_COLEBROOK_F("...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics</li>
-</ul>
-<h2 id="references"><a class="header" href="#references">References</a></h2>
-<ul>
-<li>Colebrook, C. F. (1939) — Turbulent flow in pipes with rough walls.</li>
+<li><code>eps_d</code>: Relative roughness</li>
+<li><code>re</code>: Reynolds number</li>
 </ul>
 
                     </main>

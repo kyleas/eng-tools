@@ -1,108 +1,223 @@
 {
   "schema_version": "1",
-  "model_version": "2026-03-02",
+  "model_version": "2026-03-03",
   "artifact_type": "architecture_spec",
   "items": {
-    "layers": [
-      {
-        "key": "atomic_equation",
-        "definition": "one physical relation with scalar-first solve behavior"
-      },
-      {
-        "key": "equation_family",
-        "definition": "canonical law with multiple documented/discoverable variants"
-      },
-      {
-        "key": "component_model",
-        "definition": "multi-equation iterative engineering model"
-      },
-      {
-        "key": "solve_graph",
-        "definition": "node/edge chaining across equations/components/sources"
-      },
-      {
-        "key": "external_binding",
-        "definition": "generated Python/Excel surfaces over Rust-owned logic"
-      }
-    ],
     "ownership": [
       {
-        "layer": "atomic_equation",
-        "owner": "equations",
+        "layer": "AtomicEquation",
+        "owner": "Equations",
         "owns": [
-          "equation registry + validation",
-          "scalar solve behavior",
-          "equation docs fragments"
+          "equation registry + normalization + validation",
+          "scalar solve behavior + diagnostics",
+          "equation-level docs/examples/export fragments"
         ],
         "does_not_own": [
-          "component orchestration",
+          "multi-step component orchestration",
+          "top-level graph execution engine",
+          "excel/python runtime implementations"
+        ]
+      },
+      {
+        "layer": "EquationFamily",
+        "owner": "Equations",
+        "owns": [
+          "canonical law identity + variant metadata",
+          "variant discovery/docs/search surfaces",
+          "family-to-atomic mapping"
+        ],
+        "does_not_own": [
+          "component iterative strategies",
           "graph scheduling",
+          "external binding runtimes"
+        ]
+      },
+      {
+        "layer": "ComponentModel",
+        "owner": "Eng",
+        "owns": [
+          "multi-equation orchestration",
+          "iteration policy and convergence strategy",
+          "context-aware model IO surfaces"
+        ],
+        "does_not_own": [
+          "single-relation canonical equations",
+          "global graph scheduling",
+          "backend-native fluid/material implementations"
+        ]
+      },
+      {
+        "layer": "SolveGraph",
+        "owner": "Eng",
+        "owns": [
+          "node/edge orchestration across equations/components",
+          "dependency ordering and graph solve execution",
+          "cross-domain chained workflows"
+        ],
+        "does_not_own": [
+          "atomic equation definitions",
+          "fluid/material property backends",
           "binding runtime logic"
         ]
       },
       {
-        "layer": "equation_family",
-        "owner": "equations",
+        "layer": "ExternalBinding",
+        "owner": "Eng",
         "owns": [
-          "family identity + variant metadata",
-          "family discoverability/docs"
+          "python/excel surface generation spec",
+          "binding package metadata + naming rules",
+          "catalog-driven API exposure policy"
         ],
         "does_not_own": [
-          "component iteration",
-          "graph orchestration"
-        ]
-      },
-      {
-        "layer": "component_model",
-        "owner": "eng",
-        "owns": [
-          "multi-equation orchestration",
-          "iterative convergence policy",
-          "context-aware high-level IO"
-        ],
-        "does_not_own": [
-          "atomic law definitions",
-          "graph scheduling"
-        ]
-      },
-      {
-        "layer": "solve_graph",
-        "owner": "eng",
-        "owns": [
-          "dependency ordering",
-          "node/edge solve execution",
-          "chained workflow diagnostics"
-        ],
-        "does_not_own": [
-          "atomic law definitions",
-          "component constitutive details"
-        ]
-      },
-      {
-        "layer": "external_binding",
-        "owner": "eng",
-        "owns": [
-          "binding generation spec",
-          "naming/signature adaptation",
-          "catalog-driven surface generation"
-        ],
-        "does_not_own": [
-          "solver/unit reimplementation"
+          "core numeric implementations",
+          "domain registry truth",
+          "independent duplicate logic"
         ]
       }
     ],
-    "prototypes": [
+    "boundaries": [
       {
-        "key": "ideal_gas_family",
-        "layer": "equation_family",
-        "description": "P*V=m*R*T canonical identity with pressure-volume and density variants"
+        "layer": "AtomicEquation",
+        "belongs_here": [
+          "single physical law with scalar variables",
+          "explicit and/or numerical solve paths for that one law",
+          "baseline full-state test cases"
+        ],
+        "does_not_belong_here": [
+          "workflow orchestration spanning many laws",
+          "component-level iteration/control loops",
+          "cross-step graph sequencing"
+        ]
       },
       {
-        "key": "two_orifice_component",
-        "layer": "component_model",
-        "description": "iterative pressure split model using orifice + continuity equations"
+        "layer": "EquationFamily",
+        "belongs_here": [
+          "multiple common views of one canonical law",
+          "variant docs/search aliases",
+          "shared assumptions across forms"
+        ],
+        "does_not_belong_here": [
+          "duplicate full atomic equations for each algebraic view",
+          "component orchestration logic",
+          "graph node scheduling"
+        ]
+      },
+      {
+        "layer": "ComponentModel",
+        "belongs_here": [
+          "multi-equation iterative model behavior",
+          "high-level engineering input/output interfaces",
+          "context resolution across fluid/material states"
+        ],
+        "does_not_belong_here": [
+          "new atomic law definitions",
+          "general graph planner",
+          "binding-generation policy"
+        ]
+      },
+      {
+        "layer": "SolveGraph",
+        "belongs_here": [
+          "equation/component/property/constant node chaining",
+          "edge-based dataflow + dependency execution",
+          "multi-node workflow diagnostics"
+        ],
+        "does_not_belong_here": [
+          "atomic equation authoring",
+          "component-specific constitutive details",
+          "domain backend implementations"
+        ]
+      },
+      {
+        "layer": "ExternalBinding",
+        "belongs_here": [
+          "generated thin wrappers for rust-owned behavior",
+          "stable naming/signature projection",
+          "binding docs/examples from unified catalog"
+        ],
+        "does_not_belong_here": [
+          "business logic reimplementation",
+          "separate unit engine",
+          "untracked API behavior divergence"
+        ]
       }
     ],
+    "family_prototype": {
+      "key": "ideal_gas",
+      "name": "Ideal Gas Law Family",
+      "canonical_relation": "P * V = m * R * T",
+      "canonical_equation_path": "thermo.ideal_gas",
+      "variants": [
+        {
+          "key": "pv_equals_mrt",
+          "display_name": "Pressure-Volume Form",
+          "target": "P",
+          "intended_usage": "closed-control-volume mass/temperature/volume calculations"
+        },
+        {
+          "key": "p_equals_rho_rt",
+          "display_name": "Density Form",
+          "target": "P",
+          "intended_usage": "flow-property form using density instead of total volume/mass"
+        }
+      ]
+    },
+    "component_prototype": {
+      "key": "two_orifice",
+      "name": "Two-Orifice Pressure Splitter (Prototype)",
+      "required_contexts": [
+        "fluid"
+      ],
+      "equation_dependencies": [
+        "fluids.orifice_mass_flow_incompressible",
+        "fluids.continuity_mass_flow"
+      ],
+      "notes": [
+        "component owns iterative pressure split; equations stay atomic",
+        "inputs/outputs are engineering-level (inlet pressure, outlet pressures, total flow)",
+        "designed as a future component-layer package target"
+      ]
+    },
+    "graph_prototype": {
+      "node_kinds": [
+        "atomic_equation",
+        "equation_family_variant",
+        "component_model",
+        "fluid_property_source",
+        "material_property_source",
+        "constant_source"
+      ],
+      "edge_semantics": [
+        "edge carries resolved scalar value (SI canonical)",
+        "target ports consume upstream node outputs",
+        "graph solve performs dependency order + cycle diagnostics"
+      ],
+      "notes": [
+        "graph layer composes equations/components but does not redefine their internals",
+        "cycles require explicit policy (fixed-point/newton) and remain out-of-scope for this pass"
+      ]
+    },
+    "binding_plan": {
+      "targets": [
+        "python",
+        "excel"
+      ],
+      "authoritative_runtime": "rust (eng + domain crates)",
+      "generated_from": [
+        "unified catalog.json",
+        "equation pages/examples metadata",
+        "family/component binding manifest entries"
+      ],
+      "naming_rules": [
+        "python: snake_case modules/functions",
+        "excel: SCREAMING_SNAKE_CASE function names + simple scalar signatures",
+        "bindings expose plain-SI and unit-string convenience overloads"
+      ],
+      "notes": [
+        "bindings are thin adapters; no duplicated solver/unit logic",
+        "docs/examples in bindings are generated from unified handbook metadata"
+      ]
+    },
     "catalog_plan": {
       "new_sections": [
         "equation_families",

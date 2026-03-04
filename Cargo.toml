@@ -21,6 +21,7 @@ members = [
   "crates/eng",
   "crates/eng-fluids",
   "crates/eng-materials",
+  "crates/eng-pyext",
   "apps/tf-cli",
   "apps/tf-ui",
 ]
@@ -76,3 +77,4 @@ eng-qty-macros = { path = "crates/eng-qty-macros" }
 eng = { path = "crates/eng" }
 eng-fluids = { path = "crates/eng-fluids" }
 eng-materials = { path = "crates/eng-materials" }
+

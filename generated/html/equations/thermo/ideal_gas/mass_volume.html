@@ -37,10 +37,10 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-dfb3c088.js"></script>
+        <script src="../../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,15 +177,33 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="ideal-gas-law-mass-volume-form"><a class="header" href="#ideal-gas-law-mass-volume-form">Ideal Gas Law (Mass-Volume Form)</a></h1>
-<p><strong>Path:</strong> <code>thermo.ideal_gas.mass_volume</code><br><strong>Category:</strong> <code>thermo</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>thermo.ideal_gas.mass_volume</code></p>
+<p>[
 P V = m R T
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>P = m · R · T / V</code></li>
 <li>ASCII: <code>P = m * R * T / V</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>P</code></td><td>Absolute pressure</td><td>\(P\)</td><td><code>pressure</code></td><td><code>Pa</code></td></tr>
+
+<tr><td><code>V</code></td><td>Control-volume</td><td>\(V\)</td><td><code>volume</code></td><td><code>m3</code></td></tr>
+
+<tr><td><code>m</code></td><td>Gas mass</td><td>\(m\)</td><td><code>mass</code></td><td><code>kg</code></td></tr>
+
+<tr><td><code>R</code></td><td>Specific gas constant</td><td>\(R\)</td><td><code>gas_constant</code></td><td><code>J/(kg*K)</code></td></tr>
+
+<tr><td><code>T</code></td><td>Absolute temperature</td><td>\(T\)</td><td><code>temperature</code></td><td><code>K</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>Thermally and calorically ideal gas behavior.</li>
@@ -197,46 +215,8 @@ $$</p>
 <li>Variant: <code>Mass-Volume Form</code> (<code>mass_volume</code>)</li>
 <li>Use when: Use when total mass and control-volume size are primary knowns.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>P</code></td><td>Absolute pressure</td><td><span class="math inline">\(P\)</span></td><td><code>pressure</code></td><td><code>Pa</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>V</code></td><td>Control-volume</td><td><span class="math inline">\(V\)</span></td><td><code>volume</code></td><td><code>m3</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>m</code></td><td>Gas mass</td><td><span class="math inline">\(m\)</span></td><td><code>mass</code></td><td><code>kg</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>R</code></td><td>Specific gas constant</td><td><span class="math inline">\(R\)</span></td><td><code>gas_constant</code></td><td><code>J/(kg*K)</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>T</code></td><td>Absolute temperature</td><td><span class="math inline">\(T\)</span></td><td><code>temperature</code></td><td><code>K</code></td><td><code>-</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>P</code>: explicit, numerical</li>
-<li><code>R</code>: explicit, numerical</li>
-<li><code>T</code>: explicit, numerical</li>
-<li><code>V</code>: explicit, numerical</li>
-<li><code>m</code>: explicit, numerical</li>
-</ul>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -248,7 +228,7 @@ $$</p>
     .given_t(300.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-units-aware"><a class="header" href="#typed-builder-units-aware">Typed Builder (Units-Aware)</a></h3>
+<h3 id="typed_builder_units"><a class="header" href="#typed_builder_units">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -260,44 +240,7 @@ $$</p>
     .given_t("300 K")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="available-convenience-functions"><a class="header" href="#available-convenience-functions">Available Convenience Functions</a></h3>
-<p>Direct solve helpers are available for these targets.</p>
-<table>
-  
-<thead>
-    
-<tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>P</code></td><td><code>solve_p(V, m, R, T)</code></td><td><code>V</code>, <code>m</code>, <code>R</code>, <code>T</code></td></tr>
-
-    
-<tr><td><code>V</code></td><td><code>solve_v(P, m, R, T)</code></td><td><code>P</code>, <code>m</code>, <code>R</code>, <code>T</code></td></tr>
-
-    
-<tr><td><code>m</code></td><td><code>solve_m(P, V, R, T)</code></td><td><code>P</code>, <code>V</code>, <code>R</code>, <code>T</code></td></tr>
-
-    
-<tr><td><code>R</code></td><td><code>solve_r(P, V, m, T)</code></td><td><code>P</code>, <code>V</code>, <code>m</code>, <code>T</code></td></tr>
-
-    
-<tr><td><code>T</code></td><td><code>solve_t(P, V, m, R)</code></td><td><code>P</code>, <code>V</code>, <code>m</code>, <code>R</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h3 id="solve-p"><a class="header" href="#solve-p">Solve <code>P</code></a></h3>
-<p><strong>Function signature</strong></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>equations::thermo::mass_volume::solve_p(V, m, R, T) -&gt; Result&lt;f64, _&gt;
-<span class="boring">}</span></code></pre>
-<p><strong>Example</strong></p>
+<h3 id="convenience_p"><a class="header" href="#convenience_p">convenience_p</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::thermo::mass_volume::solve_p(
@@ -307,13 +250,64 @@ $$</p>
     "300 K",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="notes"><a class="header" href="#notes">Notes</a></h3>
+<h3 id="convenience_v"><a class="header" href="#convenience_v">convenience_v</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::thermo::mass_volume::solve_v(
+    "101325 Pa",
+    "0.1176829268292683 kg",
+    "287 J/(kg*K)",
+    "300 K",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_m"><a class="header" href="#convenience_m">convenience_m</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::thermo::mass_volume::solve_m(
+    "101325 Pa",
+    "0.1 m3",
+    "287 J/(kg*K)",
+    "300 K",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_r"><a class="header" href="#convenience_r">convenience_r</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::thermo::mass_volume::solve_r(
+    "101325 Pa",
+    "0.1 m3",
+    "0.1176829268292683 kg",
+    "300 K",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_t"><a class="header" href="#convenience_t">convenience_t</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::thermo::mass_volume::solve_t(
+    "101325 Pa",
+    "0.1 m3",
+    "0.1176829268292683 kg",
+    "287 J/(kg*K)",
+)?;
+<span class="boring">}</span></code></pre>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::thermo::ideal_gas::mass_volume::equation()).for_target("P").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.thermo.solve_p(v="...", m="...", r="...", t="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_THERMO_IDEAL_GAS_MASS_VOLUME_P("...","...","...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Returns SI by default; use <code>.value_in("&lt;unit&gt;")</code> for display units.</li>
-</ul>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
-<ul>
-<li>Moran et al., Fundamentals of Engineering Thermodynamics</li>
+<li><code>v</code>: Control-volume</li>
+<li><code>m</code>: Gas mass</li>
+<li><code>r</code>: Specific gas constant</li>
+<li><code>t</code>: Absolute temperature</li>
 </ul>
 
                     </main>

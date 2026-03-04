@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfb3c088.js"></script>
+        <script src="../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,59 +177,39 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="convection-heat-transfer-rate"><a class="header" href="#convection-heat-transfer-rate">Convection Heat Transfer Rate</a></h1>
-<p><strong>Path:</strong> <code>heat_transfer.convection_heat_rate</code><br><strong>Category:</strong> <code>heat_transfer</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>heat_transfer.convection_heat_rate</code></p>
+<p>[
 \dot{Q} = h A (T_s - T_\infty)
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>Q_dot = h · A · (T_s - T_\infty)</code></li>
 <li>ASCII: <code>Q_dot = h * A * (T_s - T_inf)</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Q_dot</code></td><td>Heat transfer rate</td><td>\(Q_dot\)</td><td><code>heat_rate</code></td><td><code>W</code></td></tr>
+
+<tr><td><code>h</code></td><td>Convective heat transfer coefficient</td><td>\(h\)</td><td><code>heat_transfer_coefficient</code></td><td><code>W/(m2*K)</code></td></tr>
+
+<tr><td><code>A</code></td><td>Surface area</td><td>\(A\)</td><td><code>area</code></td><td><code>m2</code></td></tr>
+
+<tr><td><code>T_s</code></td><td>Surface temperature</td><td>\(T_s\)</td><td><code>temperature</code></td><td><code>K</code></td></tr>
+
+<tr><td><code>T_inf</code></td><td>Free-stream temperature</td><td>\(T_\infty\)</td><td><code>temperature</code></td><td><code>K</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>Newton’s law of cooling with uniform h and area.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>Q_dot</code></td><td>Heat transfer rate</td><td><span class="math inline">\(Q_{dot}\)</span></td><td><code>heat_rate</code></td><td><code>W</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>h</code></td><td>Convective heat transfer coefficient</td><td><span class="math inline">\(h\)</span></td><td><code>heat_transfer_coefficient</code></td><td><code>W/(m2*K)</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>A</code></td><td>Surface area</td><td><span class="math inline">\(A\)</span></td><td><code>area</code></td><td><code>m2</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>T_s</code></td><td>Surface temperature</td><td><span class="math inline">\(T_{s}\)</span></td><td><code>temperature</code></td><td><code>K</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>T_inf</code></td><td>Free-stream temperature</td><td><span class="math inline">\(T_\infty\)</span></td><td><code>temperature</code></td><td><code>K</code></td><td><code>-</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>A</code>: explicit</li>
-<li><code>Q_dot</code>: explicit</li>
-<li><code>T_inf</code>: explicit</li>
-<li><code>T_s</code>: explicit</li>
-<li><code>h</code>: explicit</li>
-</ul>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -241,7 +221,7 @@ $$</p>
     .given_t_inf(300.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-units-aware"><a class="header" href="#typed-builder-units-aware">Typed Builder (Units-Aware)</a></h3>
+<h3 id="typed_builder_units"><a class="header" href="#typed_builder_units">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -253,44 +233,7 @@ $$</p>
     .given_t_inf("300 K")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="available-convenience-functions"><a class="header" href="#available-convenience-functions">Available Convenience Functions</a></h3>
-<p>Direct solve helpers are available for these targets.</p>
-<table>
-  
-<thead>
-    
-<tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>Q_dot</code></td><td><code>solve_q_dot(h, A, T_s, T_inf)</code></td><td><code>h</code>, <code>A</code>, <code>T_s</code>, <code>T_inf</code></td></tr>
-
-    
-<tr><td><code>h</code></td><td><code>solve_h(Q_dot, A, T_s, T_inf)</code></td><td><code>Q_dot</code>, <code>A</code>, <code>T_s</code>, <code>T_inf</code></td></tr>
-
-    
-<tr><td><code>A</code></td><td><code>solve_a(Q_dot, h, T_s, T_inf)</code></td><td><code>Q_dot</code>, <code>h</code>, <code>T_s</code>, <code>T_inf</code></td></tr>
-
-    
-<tr><td><code>T_s</code></td><td><code>solve_t_s(Q_dot, h, A, T_inf)</code></td><td><code>Q_dot</code>, <code>h</code>, <code>A</code>, <code>T_inf</code></td></tr>
-
-    
-<tr><td><code>T_inf</code></td><td><code>solve_t_inf(Q_dot, h, A, T_s)</code></td><td><code>Q_dot</code>, <code>h</code>, <code>A</code>, <code>T_s</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h3 id="solve-q_dot"><a class="header" href="#solve-q_dot">Solve <code>Q_dot</code></a></h3>
-<p><strong>Function signature</strong></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>equations::heat_transfer::convection_heat_rate::solve_q_dot(h, A, T_s, T_inf) -&gt; Result&lt;f64, _&gt;
-<span class="boring">}</span></code></pre>
-<p><strong>Example</strong></p>
+<h3 id="convenience_q_dot"><a class="header" href="#convenience_q_dot">convenience_q_dot</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::heat_transfer::convection_heat_rate::solve_q_dot(
@@ -300,13 +243,64 @@ $$</p>
     "300 K",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="notes"><a class="header" href="#notes">Notes</a></h3>
+<h3 id="convenience_h"><a class="header" href="#convenience_h">convenience_h</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::heat_transfer::convection_heat_rate::solve_h(
+    "10500 W",
+    "3 m2",
+    "400 K",
+    "300 K",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_a"><a class="header" href="#convenience_a">convenience_a</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::heat_transfer::convection_heat_rate::solve_a(
+    "10500 W",
+    "35 W/(m2*K)",
+    "400 K",
+    "300 K",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_t_s"><a class="header" href="#convenience_t_s">convenience_t_s</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::heat_transfer::convection_heat_rate::solve_t_s(
+    "10500 W",
+    "35 W/(m2*K)",
+    "3 m2",
+    "300 K",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_t_inf"><a class="header" href="#convenience_t_inf">convenience_t_inf</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::heat_transfer::convection_heat_rate::solve_t_inf(
+    "10500 W",
+    "35 W/(m2*K)",
+    "3 m2",
+    "400 K",
+)?;
+<span class="boring">}</span></code></pre>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::heat_transfer::convection_heat_rate::equation()).for_target("A").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.heat_transfer.solve_a(q_dot="...", h="...", t_s="...", t_inf="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_HEAT_TRANSFER_CONVECTION_HEAT_RATE_A("...","...","...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Returns SI by default; use <code>.value_in("&lt;unit&gt;")</code> for display units.</li>
-</ul>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
-<ul>
-<li>Incropera et al., Fundamentals of Heat and Mass Transfer</li>
+<li><code>q_dot</code>: Heat transfer rate</li>
+<li><code>h</code>: Convective heat transfer coefficient</li>
+<li><code>t_s</code>: Surface temperature</li>
+<li><code>t_inf</code>: Free-stream temperature</li>
 </ul>
 
                     </main>

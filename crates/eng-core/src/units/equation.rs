@@ -155,10 +155,7 @@ fn expected_signature_for_dimension(
             DimensionSignature::new(0, 2, -2, 0, 0),
             "specific enthalpy/internal energy",
         ),
-        "specific_entropy" => (
-            DimensionSignature::new(0, 2, -2, -1, 0),
-            "specific entropy",
-        ),
+        "specific_entropy" => (DimensionSignature::new(0, 2, -2, -1, 0), "specific entropy"),
         "quality" => (DimensionSignature::dimless(), "quality"),
         "universal_gas_constant" => (
             DimensionSignature::new(1, 2, -2, -1, -1),

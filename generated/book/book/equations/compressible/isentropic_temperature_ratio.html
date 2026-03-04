@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfb3c088.js"></script>
+        <script src="../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,50 +177,35 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="isentropic-temperature-ratio"><a class="header" href="#isentropic-temperature-ratio">Isentropic Temperature Ratio</a></h1>
-<p><strong>Path:</strong> <code>compressible.isentropic_temperature_ratio</code><br><strong>Category:</strong> <code>compressible</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>compressible.isentropic_temperature_ratio</code></p>
+<p>[
 \frac{T}{T_0} = \left(1+\frac{\gamma-1}{2}M^2\right)^{-1}
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>T_T0 = 1 / (1 + ((γ - 1) / 2) · M²)</code></li>
 <li>ASCII: <code>T_T0 = 1 / (1 + ((gamma - 1) / 2) * M^2)</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>T_T0</code></td><td>Static-to-stagnation temperature ratio</td><td>\(T_T0\)</td><td><code>ratio</code></td><td><code>1</code></td></tr>
+
+<tr><td><code>M</code></td><td>Mach number</td><td>\(M\)</td><td><code>mach</code></td><td><code>1</code></td></tr>
+
+<tr><td><code>gamma</code></td><td>Specific heat ratio</td><td>\(\gamma\)</td><td><code>dimensionless</code></td><td><code>1</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>Isentropic perfect-gas flow with constant gamma.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>T_T0</code></td><td>Static-to-stagnation temperature ratio</td><td><span class="math inline">\(\frac{T}{T_{0}}\)</span></td><td><code>ratio</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>M</code></td><td>Mach number</td><td><span class="math inline">\(M\)</span></td><td><code>mach</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>gamma</code></td><td>Specific heat ratio</td><td><span class="math inline">\(\gamma\)</span></td><td><code>dimensionless</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>M</code>: numerical</li>
-<li><code>T_T0</code>: explicit, numerical</li>
-</ul>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -230,32 +215,7 @@ $$</p>
     .given_gamma(1.4)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="available-convenience-functions"><a class="header" href="#available-convenience-functions">Available Convenience Functions</a></h3>
-<p>Direct solve helpers are available for these targets.</p>
-<table>
-  
-<thead>
-    
-<tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>T_T0</code></td><td><code>solve_t_t0(M, gamma)</code></td><td><code>M</code>, <code>gamma</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h3 id="solve-t_t0"><a class="header" href="#solve-t_t0">Solve <code>T_T0</code></a></h3>
-<p><strong>Function signature</strong></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>equations::compressible::isentropic_temperature_ratio::solve_t_t0(M, gamma) -&gt; Result&lt;f64, _&gt;
-<span class="boring">}</span></code></pre>
-<p><strong>Example</strong></p>
+<h3 id="convenience_t_t0"><a class="header" href="#convenience_t_t0">convenience_t_t0</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::compressible::isentropic_temperature_ratio::solve_t_t0(
@@ -263,9 +223,22 @@ $$</p>
     1.4,
 )?;
 <span class="boring">}</span></code></pre>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::compressible::isentropic_temperature_ratio::equation()).for_target("M").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.compressible.solve_m(t_t0="...", gamma="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_COMPRESSIBLE_ISENTROPIC_TEMPERATURE_RATIO_M("...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Anderson, Modern Compressible Flow: With Historical Perspective</li>
+<li><code>t_t0</code>: Static-to-stagnation temperature ratio</li>
+<li><code>gamma</code>: Specific heat ratio</li>
 </ul>
 
                     </main>

@@ -1,7 +1,7 @@
 //! Unified top-level engineering facade.
 //!
 //! Preferred import surface:
-//! `use eng::{eq, equations, fluids, materials, constants, docs, qty};`
+//! `use eng::{eq, equations, devices, fluids, materials, constants, docs, qty};`
 //!
 //! ```no_run
 //! use eng::{docs, eq, equations, fluids, materials};
@@ -32,7 +32,10 @@
 //! ```
 
 pub mod architecture;
+pub mod bindings;
+pub mod devices;
 pub mod docs;
+pub mod invoke;
 
 pub use eng_core as core;
 pub use eng_fluids as fluids;
@@ -47,6 +50,7 @@ pub mod units {
 
 pub mod prelude {
     pub use crate::constants;
+    pub use crate::devices;
     pub use crate::docs;
     pub use crate::eq;
     pub use crate::equations;

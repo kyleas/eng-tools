@@ -6,9 +6,9 @@ cargo test -p equations
 
 cargo run -p equations --bin equations -- generate-schema
 cargo run -p equations --bin equations -- validate --with-tests
-cargo run -p equations --bin equations -- export-docs
-cargo run -p equations --bin equations -- export-mdbook
-cargo run -p equations --bin equations -- export-html
+cargo run -p eng --bin eng -- export-docs
+cargo run -p eng --bin eng -- export-mdbook
+cargo run -p eng --bin eng -- export-html
 
 $required = @(
   "generated/catalog.json",
@@ -18,6 +18,12 @@ $required = @(
   "generated/examples_index.json",
   "generated/constants.json",
   "generated/families.json",
+  "generated/devices.json",
+  "generated/bindings/binding_spec.json",
+  "generated/bindings/invoke_protocol.json",
+  "generated/bindings/python/engpy/__init__.py",
+  "generated/bindings/excel/eng_xloil.py",
+  "generated/bindings/excel/eng_pyxll.py",
   "generated/architecture_spec.json",
   "generated/book/book.toml",
   "generated/book/src/SUMMARY.md",
@@ -39,6 +45,7 @@ git diff --exit-code -- `
   generated/examples_index.json `
   generated/constants.json `
   generated/families.json `
+  generated/devices.json `
   generated/architecture_spec.json
 
 Write-Host "Equations CI checks passed."

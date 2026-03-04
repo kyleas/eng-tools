@@ -1,57 +1,35 @@
 # Euler Buckling Critical Load
 
-**Path:** `structures.euler_buckling_load`  
-**Category:** `structures`
+**Path ID:** `structures.euler_buckling_load`
 
-## Equation
-
-$$
+\[
 P_{cr} = \frac{\pi^2 E I}{(K L)^2}
-$$
+\]
 
 - Unicode: `P_cr = (π² · E · I) / ((K · L)²)`
 - ASCII: `P_cr = (pi^2 * E * I) / ((K * L)^2)`
+
+## Variables
+
+<table><thead><tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr></thead><tbody>
+<tr><td><code>P_cr</code></td><td>Critical buckling load</td><td>\(P_cr\)</td><td><code>force</code></td><td><code>N</code></td></tr>
+<tr><td><code>E</code></td><td>Elastic modulus</td><td>\(E\)</td><td><code>pressure</code></td><td><code>Pa</code></td></tr>
+<tr><td><code>I</code></td><td>Area moment of inertia</td><td>\(I\)</td><td><code>area_moment_of_inertia</code></td><td><code>m4</code></td></tr>
+<tr><td><code>K</code></td><td>Effective length factor</td><td>\(K\)</td><td><code>ratio</code></td><td><code>1</code></td></tr>
+<tr><td><code>L</code></td><td>Unbraced length</td><td>\(L\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+</tbody></table>
 
 ## Assumptions
 
 - Ideal slender column with elastic buckling.
 
-## Variables
-
-<table>
-  <thead>
-    <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>P_cr</code></td><td>Critical buckling load</td><td><span class="math inline">\(P_{cr}\)</span></td><td><code>force</code></td><td><code>N</code></td><td><code>-</code></td></tr>
-    <tr><td><code>E</code></td><td>Elastic modulus</td><td><span class="math inline">\(E\)</span></td><td><code>pressure</code></td><td><code>Pa</code></td><td><code>material_property:elastic_modulus</code> from <code>material</code></td></tr>
-    <tr><td><code>I</code></td><td>Area moment of inertia</td><td><span class="math inline">\(I\)</span></td><td><code>area_moment_of_inertia</code></td><td><code>m4</code></td><td><code>-</code></td></tr>
-    <tr><td><code>K</code></td><td>Effective length factor</td><td><span class="math inline">\(K\)</span></td><td><code>ratio</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-    <tr><td><code>L</code></td><td>Unbraced length</td><td><span class="math inline">\(L\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-  </tbody>
-</table>
-
-## Resolvable from Contexts
-
-- `E` from context `material` via `material_property`:`elastic_modulus`
-
-## Solve Targets
-
-- `E`: explicit
-- `I`: explicit
-- `K`: explicit
-- `L`: explicit
-- `P_cr`: explicit
-
 ## Constants Used
 
-<ul>
-  <li><a href="../../constants/pi.md"><code>pi</code></a>: Archimedes Constant - <span class="math inline">\(\pi\)</span></li>
-</ul>
+- [`pi`](../../constants/pi.md) (Archimedes Constant) \(\pi\)
 
 ## Examples
 
-### Typed Builder (SI Numeric)
+### typed_builder_si
 
 ```rust
 let value = eq
@@ -63,7 +41,7 @@ let value = eq
     .value()?;
 ```
 
-### Typed Builder (Units-Aware)
+### typed_builder_units
 
 ```rust
 let value = eq
@@ -75,7 +53,7 @@ let value = eq
     .value()?;
 ```
 
-### Typed Builder (Context-Assisted)
+### typed_builder_context
 
 ```rust
 let value = eq
@@ -88,32 +66,7 @@ let value = eq
     .value()?;
 ```
 
-### Available Convenience Functions
-
-Direct solve helpers are available for these targets.
-
-<table>
-  <thead>
-    <tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>P_cr</code></td><td><code>solve_p_cr(I, K, L)</code></td><td><code>I</code>, <code>K</code>, <code>L</code></td></tr>
-    <tr><td><code>E</code></td><td><code>solve_e(P_cr, I, K, L)</code></td><td><code>P_cr</code>, <code>I</code>, <code>K</code>, <code>L</code></td></tr>
-    <tr><td><code>I</code></td><td><code>solve_i(P_cr, K, L)</code></td><td><code>P_cr</code>, <code>K</code>, <code>L</code></td></tr>
-    <tr><td><code>K</code></td><td><code>solve_k(P_cr, I, L)</code></td><td><code>P_cr</code>, <code>I</code>, <code>L</code></td></tr>
-    <tr><td><code>L</code></td><td><code>solve_l(P_cr, I, K)</code></td><td><code>P_cr</code>, <code>I</code>, <code>K</code></td></tr>
-  </tbody>
-</table>
-
-### Solve `P_cr`
-
-**Function signature**
-
-```rust
-equations::structures::euler_buckling_load::solve_p_cr(I, K, L) -> Result<f64, _>
-```
-
-**Example**
+### convenience_p_cr
 
 ```rust
 let value = equations::structures::euler_buckling_load::solve_p_cr(
@@ -123,11 +76,68 @@ let value = equations::structures::euler_buckling_load::solve_p_cr(
 )?;
 ```
 
-### Notes
+### convenience_e
 
-- Returns SI by default; use `.value_in("<unit>")` for display units.
+```rust
+let value = equations::structures::euler_buckling_load::solve_e(
+    "3947841.760435743 N",
+    "8e-6 m4",
+    1.0,
+    "2 m",
+)?;
+```
 
-## Source
+### convenience_i
 
-- Roark's Formulas for Stress and Strain
+```rust
+let value = equations::structures::euler_buckling_load::solve_i(
+    "3947841.760435743 N",
+    1.0,
+    "2 m",
+)?;
+```
+
+### convenience_k
+
+```rust
+let value = equations::structures::euler_buckling_load::solve_k(
+    "3947841.760435743 N",
+    "8e-6 m4",
+    "2 m",
+)?;
+```
+
+### convenience_l
+
+```rust
+let value = equations::structures::euler_buckling_load::solve_l(
+    "3947841.760435743 N",
+    "8e-6 m4",
+    1.0,
+)?;
+```
+
+
+## Bindings
+
+### Rust
+```rust
+let value = eq.solve(equations::structures::euler_buckling_load::equation()).for_target("E").value()?;
+```
+
+### Python
+```python
+engpy.equations.structures.solve_e(p_cr="...", i="...", k="...", l="...")
+```
+
+### Excel
+```excel
+=ENG_STRUCTURES_EULER_BUCKLING_LOAD_E("...","...","...","...")
+```
+
+**Excel arguments**
+- `p_cr`: Critical buckling load
+- `i`: Area moment of inertia
+- `k`: Effective length factor
+- `l`: Unbraced length
 

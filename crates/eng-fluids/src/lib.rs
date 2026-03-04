@@ -1,4 +1,4 @@
-﻿use std::str::FromStr;
+use std::str::FromStr;
 
 use eng_core::units::typed::{ExprInput, QuantityKind, UnitInput};
 use eng_core::units::{
@@ -904,50 +904,55 @@ impl FluidState {
                         message: e.to_string(),
                     })?;
                 match property {
-                    FluidProperty::Density => model
-                        .rho(&state)
-                        .map(|x| x.value)
-                        .map_err(|e| FluidError::BackendProperty {
+                    FluidProperty::Density => model.rho(&state).map(|x| x.value).map_err(|e| {
+                        FluidError::BackendProperty {
                             fluid: self.fluid.key.to_string(),
                             property: "density".to_string(),
                             message: e.to_string(),
-                        }),
-                    FluidProperty::SpecificHeatCapacity => model
-                        .cp(&state)
-                        .map_err(|e| FluidError::BackendProperty {
+                        }
+                    }),
+                    FluidProperty::SpecificHeatCapacity => {
+                        model.cp(&state).map_err(|e| FluidError::BackendProperty {
                             fluid: self.fluid.key.to_string(),
                             property: "specific_heat_capacity".to_string(),
                             message: e.to_string(),
-                        }),
-                    FluidProperty::SpecificHeatCapacityCv => model
-                        .cv(&state)
-                        .map_err(|e| FluidError::BackendProperty {
+                        })
+                    }
+                    FluidProperty::SpecificHeatCapacityCv => {
+                        model.cv(&state).map_err(|e| FluidError::BackendProperty {
                             fluid: self.fluid.key.to_string(),
                             property: "specific_heat_capacity_cv".to_string(),
                             message: e.to_string(),
-                        }),
-                    FluidProperty::Gamma => model
-                        .gamma(&state)
-                        .map_err(|e| FluidError::BackendProperty {
-                            fluid: self.fluid.key.to_string(),
-                            property: "gamma".to_string(),
-                            message: e.to_string(),
-                        }),
-                    FluidProperty::SpeedOfSound => model
-                        .a(&state)
-                        .map(|x| x.value)
-                        .map_err(|e| FluidError::BackendProperty {
-                            fluid: self.fluid.key.to_string(),
-                            property: "speed_of_sound".to_string(),
-                            message: e.to_string(),
-                        }),
-                    FluidProperty::DynamicViscosity => model
-                        .dynamic_viscosity(&state)
-                        .map_err(|e| FluidError::BackendProperty {
-                            fluid: self.fluid.key.to_string(),
-                            property: "dynamic_viscosity".to_string(),
-                            message: e.to_string(),
-                        }),
+                        })
+                    }
+                    FluidProperty::Gamma => {
+                        model
+                            .gamma(&state)
+                            .map_err(|e| FluidError::BackendProperty {
+                                fluid: self.fluid.key.to_string(),
+                                property: "gamma".to_string(),
+                                message: e.to_string(),
+                            })
+                    }
+                    FluidProperty::SpeedOfSound => {
+                        model
+                            .a(&state)
+                            .map(|x| x.value)
+                            .map_err(|e| FluidError::BackendProperty {
+                                fluid: self.fluid.key.to_string(),
+                                property: "speed_of_sound".to_string(),
+                                message: e.to_string(),
+                            })
+                    }
+                    FluidProperty::DynamicViscosity => {
+                        model
+                            .dynamic_viscosity(&state)
+                            .map_err(|e| FluidError::BackendProperty {
+                                fluid: self.fluid.key.to_string(),
+                                property: "dynamic_viscosity".to_string(),
+                                message: e.to_string(),
+                            })
+                    }
                     FluidProperty::ThermalConductivity => model
                         .thermal_conductivity(&state)
                         .map_err(|e| FluidError::BackendProperty {
@@ -955,19 +960,23 @@ impl FluidState {
                             property: "thermal_conductivity".to_string(),
                             message: e.to_string(),
                         }),
-                    FluidProperty::SpecificEnthalpy =>
+                    FluidProperty::SpecificEnthalpy => {
                         model.h(&state).map_err(|e| FluidError::BackendProperty {
                             fluid: self.fluid.key.to_string(),
                             property: "specific_enthalpy".to_string(),
                             message: e.to_string(),
-                        }),
-                    FluidProperty::SpecificEntropy =>
+                        })
+                    }
+                    FluidProperty::SpecificEntropy => {
                         model.s(&state).map_err(|e| FluidError::BackendProperty {
                             fluid: self.fluid.key.to_string(),
                             property: "specific_entropy".to_string(),
                             message: e.to_string(),
-                        }),
-                    FluidProperty::Temperature | FluidProperty::Pressure | FluidProperty::Quality => unreachable!(),
+                        })
+                    }
+                    FluidProperty::Temperature
+                    | FluidProperty::Pressure
+                    | FluidProperty::Quality => unreachable!(),
                 }
             }
         }
@@ -1010,10 +1019,7 @@ fn build_state_input(
         get(FluidStateInputProperty::Density),
         get(FluidStateInputProperty::SpecificEnthalpy),
     ) {
-        return Ok((
-            FluidInputPair::RhoH,
-            StateInput::RhoH { rho_kg_m3: rho, h },
-        ));
+        return Ok((FluidInputPair::RhoH, StateInput::RhoH { rho_kg_m3: rho, h }));
     }
     if let (Some(p), Some(q)) = (
         get(FluidStateInputProperty::Pressure),
@@ -1078,17 +1084,20 @@ fn parse_input_for_property(
             )?;
             Ok(v.value_si)
         }
-        FluidInputValue::WithUnit(text) => parse_text_input(property, &text).map_err(|e| {
-            FluidError::InputParse {
+        FluidInputValue::WithUnit(text) => {
+            parse_text_input(property, &text).map_err(|e| FluidError::InputParse {
                 property: property.name().to_string(),
                 input: text,
                 message: e,
-            }
-        }),
+            })
+        }
     }
 }
 
-fn parse_text_input(property: FluidStateInputProperty, text: &str) -> std::result::Result<f64, String> {
+fn parse_text_input(
+    property: FluidStateInputProperty,
+    text: &str,
+) -> std::result::Result<f64, String> {
     if property == FluidStateInputProperty::Temperature {
         if let Ok(v) = parse_equation_quantity_to_si("temperature", text) {
             return Ok(v);

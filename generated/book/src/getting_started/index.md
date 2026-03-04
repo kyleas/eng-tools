@@ -1,6 +1,6 @@
 # Getting Started
 
-Use the top-level `eng` facade for unified workflows.
+The top-level crate is `eng`. It re-exports equations, fluids, materials, constants, units, and docs export APIs.
 
 ## Dependencies
 
@@ -18,16 +18,20 @@ For local workspace use from the generated handbook root (`generated/book`):
 eng = { path = "../../crates/eng" }
 ```
 
-You can also run directly from this repo:
+Run locally from this repo:
 
 ```bash
 cargo run -p eng --example unified_usage
 cargo test -p eng core_handbook_workflows_execute
 ```
 
+## Primary Imports
+
 ```rust
-use eng::{constants, eq, equations, fluids, materials, qty};
+use eng::{constants, devices, eq, equations, fluids, materials, qty};
 ```
+
+## First Successful Solve
 
 ```rust
 use eng::{eq, equations};
@@ -40,3 +44,5 @@ let sigma_h_pa = eq
     .given_t(0.008)
     .value()?;
 ```
+
+Next: [Input Styles](../input_styles/index.md), [Equations Guide](../equations/guide.md), and [Examples & Workflows](../workflows/index.md).

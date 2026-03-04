@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "model_version": "2026-03-02",
+  "model_version": "2026-03-03",
   "artifact_type": "materials",
   "items": [
     {
@@ -10,6 +10,7 @@
         "al6061_t6",
         "6061_t6"
       ],
+      "description": "Heat-treated aluminum alloy with dense temperature-property series.",
       "source": "Representative handbook values for interpolation demonstrations.",
       "properties": [
         "elastic_modulus",
@@ -24,6 +25,7 @@
         "ss304",
         "aisi304"
       ],
+      "description": "Austenitic stainless steel with temperature-dependent mechanical and thermal properties.",
       "source": "Representative handbook values for interpolation demonstrations.",
       "properties": [
         "elastic_modulus",

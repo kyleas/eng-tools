@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfb3c088.js"></script>
+        <script src="../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,58 +177,39 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="ideal-specific-impulse"><a class="header" href="#ideal-specific-impulse">Ideal Specific Impulse</a></h1>
-<p><strong>Path:</strong> <code>rockets.specific_impulse_ideal</code><br><strong>Category:</strong> <code>rockets</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>rockets.specific_impulse_ideal</code></p>
+<p>[
 I_{sp} = \frac{C_f c^*}{g_0}
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>I_sp = C_f · c_star / g₀</code></li>
 <li>ASCII: <code>I_sp = C_f * c_star / g0</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>I_sp</code></td><td>Specific impulse</td><td>\(I_sp\)</td><td><code>specific_impulse</code></td><td><code>s</code></td></tr>
+
+<tr><td><code>C_f</code></td><td>Thrust coefficient</td><td>\(C_f\)</td><td><code>ratio</code></td><td><code>1</code></td></tr>
+
+<tr><td><code>c_star</code></td><td>Characteristic velocity</td><td>\(c_star\)</td><td><code>velocity</code></td><td><code>m/s</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>Vacuum-equivalent ideal performance relation.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>I_sp</code></td><td>Specific impulse</td><td><span class="math inline">\(I_{sp}\)</span></td><td><code>specific_impulse</code></td><td><code>s</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>C_f</code></td><td>Thrust coefficient</td><td><span class="math inline">\(C_{f}\)</span></td><td><code>ratio</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>c_star</code></td><td>Characteristic velocity</td><td><span class="math inline">\(c^*\)</span></td><td><code>velocity</code></td><td><code>m/s</code></td><td><code>-</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>C_f</code>: explicit</li>
-<li><code>I_sp</code>: explicit</li>
-<li><code>c_star</code>: explicit</li>
-</ul>
 <h2 id="constants-used"><a class="header" href="#constants-used">Constants Used</a></h2>
 <ul>
-  
-<li><a href="../../constants/g0.html"><code>g0</code></a>: Standard Gravity - <span class="math inline">\(g_{0}\)</span></li>
-
+<li><a href="../../constants/g0.html"><code>g0</code></a> (Standard Gravity) (g_0)</li>
 </ul>
-
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -238,7 +219,7 @@ $$</p>
     .given_c_star(1718.7683350153)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-units-aware"><a class="header" href="#typed-builder-units-aware">Typed Builder (Units-Aware)</a></h3>
+<h3 id="typed_builder_units"><a class="header" href="#typed_builder_units">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -248,38 +229,7 @@ $$</p>
     .given_c_star("1718.7683350153386 m/s")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="available-convenience-functions"><a class="header" href="#available-convenience-functions">Available Convenience Functions</a></h3>
-<p>Direct solve helpers are available for these targets.</p>
-<table>
-  
-<thead>
-    
-<tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>I_sp</code></td><td><code>solve_i_sp(C_f, c_star)</code></td><td><code>C_f</code>, <code>c_star</code></td></tr>
-
-    
-<tr><td><code>C_f</code></td><td><code>solve_c_f(I_sp, c_star)</code></td><td><code>I_sp</code>, <code>c_star</code></td></tr>
-
-    
-<tr><td><code>c_star</code></td><td><code>solve_c_star(I_sp, C_f)</code></td><td><code>I_sp</code>, <code>C_f</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h3 id="solve-i_sp"><a class="header" href="#solve-i_sp">Solve <code>I_sp</code></a></h3>
-<p><strong>Function signature</strong></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>equations::rockets::specific_impulse_ideal::solve_i_sp(C_f, c_star) -&gt; Result&lt;f64, _&gt;
-<span class="boring">}</span></code></pre>
-<p><strong>Example</strong></p>
+<h3 id="convenience_i_sp"><a class="header" href="#convenience_i_sp">convenience_i_sp</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::rockets::specific_impulse_ideal::solve_i_sp(
@@ -287,13 +237,38 @@ $$</p>
     "1718.7683350153386 m/s",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="notes"><a class="header" href="#notes">Notes</a></h3>
+<h3 id="convenience_c_f"><a class="header" href="#convenience_c_f">convenience_c_f</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::rockets::specific_impulse_ideal::solve_c_f(
+    "309.94684010132147 s",
+    "1718.7683350153386 m/s",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_c_star"><a class="header" href="#convenience_c_star">convenience_c_star</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::rockets::specific_impulse_ideal::solve_c_star(
+    "309.94684010132147 s",
+    1.7684408757,
+)?;
+<span class="boring">}</span></code></pre>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::rockets::specific_impulse_ideal::equation()).for_target("C_f").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.rockets.solve_c_f(i_sp="...", c_star="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_ROCKETS_SPECIFIC_IMPULSE_IDEAL_C_F("...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Returns SI by default; use <code>.value_in("&lt;unit&gt;")</code> for display units.</li>
-</ul>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
-<ul>
-<li>Sutton and Biblarz, Rocket Propulsion Elements</li>
+<li><code>i_sp</code>: Specific impulse</li>
+<li><code>c_star</code>: Characteristic velocity</li>
 </ul>
 
                     </main>

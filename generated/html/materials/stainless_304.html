@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Stainless 304 - Engineering Handbook</title>
+        <title>Stainless Steel 304 - Engineering Handbook</title>
 
 
         <!-- Custom HTML head -->
@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-dfb3c088.js"></script>
+        <script src="../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,63 +177,25 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="stainless-steel-304"><a class="header" href="#stainless-steel-304">Stainless Steel 304</a></h1>
-<table>
-  
-<thead>
-<tr><th>Field</th><th>Value</th></tr>
-</thead>
-
-  
-<tbody>
-    
-<tr><td>Key</td><td><code>stainless_304</code></td></tr>
-
-    
-<tr><td>Aliases</td><td><code>ss304</code>, <code>aisi304</code></td></tr>
-
-    
-<tr><td>Source</td><td>Representative handbook values for interpolation demonstrations.</td></tr>
-
-  </tbody>
-
-</table>
-
-<p>Austenitic stainless steel with temperature-dependent mechanical and thermal properties.</p>
-<h2 id="properties"><a class="header" href="#properties">Properties</a></h2>
-<table>
-  
-<thead>
-<tr><th>Property</th><th>Dimension</th><th>Unit</th><th>Points</th><th>Interpolation</th></tr>
-</thead>
-
-  
-<tbody>
-    
-<tr><td><code>elastic_modulus</code></td><td><code>pressure</code></td><td><code>Pa</code></td><td>7</td><td><code>linear</code></td></tr>
-
-    
-<tr><td><code>thermal_conductivity</code></td><td><code>thermal_conductivity</code></td><td><code>W/(m*K)</code></td><td>7</td><td><code>linear</code></td></tr>
-
-    
-<tr><td><code>yield_strength</code></td><td><code>pressure</code></td><td><code>Pa</code></td><td>7</td><td><code>linear</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="example"><a class="header" href="#example">Example</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use eng_materials as materials;
-
-let wall = materials::stainless_304().temperature("350 K")?;
-let value = wall.property("elastic_modulus")?;
-println!("property = {value}");
-<span class="boring">}</span></code></pre>
-<h2 id="example-equations-using-material-context"><a class="header" href="#example-equations-using-material-context">Example Equations Using Material Context</a></h2>
 <ul>
-<li><a href="../equations/structures/euler_buckling_load.html">Euler Buckling Critical Load</a></li>
-<li><a href="../equations/heat_transfer/conduction_plane_wall_heat_rate.html">Plane-Wall Conduction Heat Rate</a></li>
+<li>Key: <code>stainless_304</code></li>
+<li>Aliases: ss304, aisi304</li>
+<li>Source: Representative handbook values for interpolation demonstrations.</li>
+<li>Properties: elastic_modulus, thermal_conductivity, yield_strength</li>
+</ul>
+<p>Austenitic stainless steel with temperature-dependent mechanical and thermal properties.</p>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.materials.mat_prop("stainless_304", "elastic_modulus", "350 K")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_MAT_PROP("stainless_304","elastic_modulus","350 K")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
+<ul>
+<li><code>material</code>: material key or alias</li>
+<li><code>property_key</code>: material property key (for example <code>elastic_modulus</code>)</li>
+<li><code>temperature</code>: evaluation temperature (recommended with explicit units)</li>
 </ul>
 
                     </main>

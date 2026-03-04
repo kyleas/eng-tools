@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-dfb3c088.js"></script>
+        <script src="toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,86 +177,64 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="engineering-handbook"><a class="header" href="#engineering-handbook">Engineering Handbook</a></h1>
-<p>This handbook is generated from the unified engineering catalog (equations, constants, fluids, materials).</p>
+<p>Docs are the primary user interface for this library. Every core workflow example shown here is backed by compile-checked and/or executed test coverage.</p>
 <h2 id="start-here"><a class="header" href="#start-here">Start Here</a></h2>
 <ul>
-<li><a href="getting_started/index.html">Getting Started</a></li>
-<li><a href="input_styles/index.html">Input Styles</a></li>
-<li><a href="units_quantities/index.html">Units &amp; Quantities</a></li>
-<li><a href="workflows/index.html">Examples &amp; Workflows</a></li>
+<li>
+<p><a href="getting_started/index.html">Getting Started</a></p>
+</li>
+<li>
+<p><a href="input_styles/index.html">Input Styles</a></p>
+</li>
+<li>
+<p><a href="units_quantities/index.html">Units &amp; Quantities</a></p>
+</li>
+<li>
+<p><a href="workflows/index.html">Examples &amp; Workflows</a></p>
+</li>
+<li>
+<p><a href="bindings/index.html">Bindings (Python/Excel)</a></p>
+</li>
 </ul>
 <h2 id="domain-guides"><a class="header" href="#domain-guides">Domain Guides</a></h2>
 <ul>
-<li><a href="equations/guide.html">Equations Guide</a></li>
+<li>
+<p><a href="equations/guide.html">Equations Guide</a></p>
+</li>
+<li>
+<p><a href="devices/guide.html">Devices Guide</a></p>
+</li>
+<li>
+<p><a href="fluids/guide.html">Fluids Guide</a></p>
+</li>
+<li>
+<p><a href="materials/guide.html">Materials Guide</a></p>
+</li>
+<li>
+<p><a href="constants/index.html">Constants</a></p>
+</li>
+<li>
+<p><a href="yaml_authoring/index.html">YAML Authoring</a></p>
+</li>
+<li>
+<p><a href="validation_trust/index.html">Validation / Trust</a></p>
+</li>
+<li>
+<p><a href="architecture/index.html">Architecture Overview</a></p>
+</li>
+<li>
+<p><a href="bindings/index.html">Bindings (Python/Excel)</a></p>
+</li>
+</ul>
+<h2 id="catalog"><a class="header" href="#catalog">Catalog</a></h2>
+<ul>
+<li><a href="equations/index.html">Equations</a></li>
 <li><a href="equations/families/index.html">Equation Families</a></li>
-<li><a href="fluids/index.html">Fluids Catalog</a></li>
-<li><a href="materials/index.html">Materials Catalog</a></li>
-<li><a href="constants/index.html">Constants Reference</a></li>
-<li><a href="yaml_authoring/index.html">YAML Authoring</a></li>
-<li><a href="validation_trust/index.html">Validation / Trust</a></li>
-<li><a href="architecture/index.html">Architecture Layers</a></li>
-<li><a href="equations/index.html">Equation Catalog</a></li>
+<li><a href="devices/index.html">Devices</a></li>
+<li><a href="fluids/index.html">Fluids</a></li>
+<li><a href="materials/index.html">Materials</a></li>
 </ul>
-<p><strong>Library size:</strong> 28 equations, 5 constants.</p>
-<h2 id="browse-by-category"><a class="header" href="#browse-by-category">Browse by Category</a></h2>
-<ul>
-<li><a href="equations/compressible/index.html">Compressible</a>
-<ul>
-<li><a href="equations/compressible/area_mach.html">Isentropic Area-Mach Relation</a></li>
-<li><a href="equations/compressible/choked_mass_flux.html">Choked Mass Flux</a></li>
-<li><a href="equations/compressible/isentropic_density_ratio.html">Isentropic Density Ratio</a></li>
-<li><a href="equations/compressible/isentropic_pressure_ratio.html">Isentropic Pressure Ratio</a></li>
-<li><a href="equations/compressible/isentropic_temperature_ratio.html">Isentropic Temperature Ratio</a></li>
-</ul>
-</li>
-<li><a href="equations/fluids/index.html">Fluids</a>
-<ul>
-<li><a href="equations/fluids/circular_pipe_area.html">Circular Pipe Flow Area</a></li>
-<li><a href="equations/fluids/colebrook.html">Colebrook-White Friction Factor</a></li>
-<li><a href="equations/fluids/continuity_mass_flow.html">Continuity Mass Flow</a></li>
-<li><a href="equations/fluids/darcy_weisbach_pressure_drop.html">Darcy-Weisbach Pressure Drop</a></li>
-<li><a href="equations/fluids/orifice_mass_flow_incompressible.html">Incompressible Orifice Mass Flow</a></li>
-<li><a href="equations/fluids/reynolds_number.html">Reynolds Number</a></li>
-</ul>
-</li>
-<li><a href="equations/heat_transfer/index.html">Heat Transfer</a>
-<ul>
-<li><a href="equations/heat_transfer/conduction_plane_wall_heat_rate.html">Plane-Wall Conduction Heat Rate</a></li>
-<li><a href="equations/heat_transfer/convection_heat_rate.html">Convection Heat Transfer Rate</a></li>
-<li><a href="equations/heat_transfer/log_mean_temperature_difference.html">Log-Mean Temperature Difference</a></li>
-<li><a href="equations/heat_transfer/thermal_resistance_conduction.html">Conduction Thermal Resistance</a></li>
-<li><a href="equations/heat_transfer/thermal_resistance_convection.html">Convection Thermal Resistance</a></li>
-</ul>
-</li>
-<li><a href="equations/rockets/index.html">Rockets</a>
-<ul>
-<li><a href="equations/rockets/cstar_ideal.html">Ideal Characteristic Velocity</a></li>
-<li><a href="equations/rockets/specific_impulse_ideal.html">Ideal Specific Impulse</a></li>
-<li><a href="equations/rockets/thrust_coefficient_ideal.html">Ideal Thrust Coefficient</a></li>
-<li><a href="equations/rockets/thrust_from_mass_flow.html">Thrust From Mass Flow and Effective Exhaust Velocity</a></li>
-</ul>
-</li>
-<li><a href="equations/structures/index.html">Structures</a>
-<ul>
-<li><a href="equations/structures/axial_stress.html">Axial Normal Stress</a></li>
-<li><a href="equations/structures/beam_bending_stress.html">Beam Bending Stress</a></li>
-<li><a href="equations/structures/euler_buckling_load.html">Euler Buckling Critical Load</a></li>
-<li><a href="equations/structures/hoop_stress.html">Thin-Wall Hoop Stress</a></li>
-<li><a href="equations/structures/longitudinal_stress_thin_wall.html">Thin-Wall Longitudinal Stress</a></li>
-<li><a href="equations/structures/shaft_torsion_stress.html">Circular Shaft Torsion Stress</a></li>
-</ul>
-</li>
-<li><a href="equations/thermo/index.html">Thermo</a>
-<ul>
-<li><a href="equations/thermo/ideal_gas/index.html">Ideal Gas</a>
-<ul>
-<li><a href="equations/thermo/ideal_gas/density.html">Ideal Gas Law (Density Form)</a></li>
-<li><a href="equations/thermo/ideal_gas/mass_volume.html">Ideal Gas Law (Mass-Volume Form)</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+<p><strong>Library size:</strong> 28 equations, 5 constants, 1 devices, 31 fluids, 2 materials.</p>
 
                     </main>
 

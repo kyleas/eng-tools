@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfb3c088.js"></script>
+        <script src="../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,56 +177,36 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="isentropic-area-mach-relation"><a class="header" href="#isentropic-area-mach-relation">Isentropic Area-Mach Relation</a></h1>
-<p><strong>Path:</strong> <code>compressible.area_mach</code><br><strong>Category:</strong> <code>compressible</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>compressible.area_mach</code></p>
+<p>[
 \frac{A}{A^*} = \frac{1}{M}\left(\frac{2}{\gamma+1}\left(1+\frac{\gamma-1}{2}M^2\right)\right)^{\frac{\gamma+1}{2(\gamma-1)}}
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>A/A* = (1/M) * ((2/(gamma+1))*(1+((gamma-1)/2)M^2))^((gamma+1)/(2(gamma-1)))</code></li>
 <li>ASCII: <code>area_ratio = (1/M) * ((2/(gamma+1))*(1+((gamma-1)/2)*M^2))^((gamma+1)/(2*(gamma-1)))</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>area_ratio</code></td><td>Area ratio</td><td>\(\frac{A}{A^*}\)</td><td><code>ratio</code></td><td><code>1</code></td></tr>
+
+<tr><td><code>M</code></td><td>Mach number</td><td>\(M\)</td><td><code>mach</code></td><td><code>1</code></td></tr>
+
+<tr><td><code>gamma</code></td><td>Specific heat ratio</td><td>\(\gamma\)</td><td><code>dimensionless</code></td><td><code>1</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>Quasi-one-dimensional isentropic flow.</li>
 <li>Calorically perfect gas with constant gamma.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>area_ratio</code></td><td>Area ratio</td><td><span class="math inline">\(\frac{A}{A^*}\)</span></td><td><code>ratio</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>M</code></td><td>Mach number</td><td><span class="math inline">\(M\)</span></td><td><code>mach</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>gamma</code></td><td>Specific heat ratio</td><td><span class="math inline">\(\gamma\)</span></td><td><code>dimensionless</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>M</code>: numerical</li>
-<li><code>area_ratio</code>: explicit, numerical</li>
-</ul>
-<h2 id="branches"><a class="header" href="#branches">Branches</a></h2>
-<ul>
-<li><code>subsonic</code> (<code>1 - M</code>)</li>
-<li><code>supersonic</code> (<code>M - 1</code>) preferred</li>
-</ul>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -237,7 +217,15 @@ $$</p>
     .given_gamma(1.4)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-branch-example"><a class="header" href="#typed-builder-branch-example">Typed Builder (Branch Example)</a></h3>
+<h3 id="convenience_area_ratio"><a class="header" href="#convenience_area_ratio">convenience_area_ratio</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::compressible::area_mach::solve_area_ratio(
+    0.3,
+    1.4,
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="typed_builder_branch"><a class="header" href="#typed_builder_branch">typed_builder_branch</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -248,53 +236,23 @@ $$</p>
     .given_gamma(1.4)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="available-convenience-functions"><a class="header" href="#available-convenience-functions">Available Convenience Functions</a></h3>
-<p>Direct solve helpers are available for these targets.</p>
-<table>
-  
-<thead>
-    
-<tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>area_ratio</code></td><td><code>solve_area_ratio(M, gamma)</code></td><td><code>M</code>, <code>gamma</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h3 id="solve-area_ratio"><a class="header" href="#solve-area_ratio">Solve <code>area_ratio</code></a></h3>
-<p><strong>Function signature</strong></p>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>equations::compressible::area_mach::solve_area_ratio(M, gamma) -&gt; Result&lt;f64, _&gt;
+</span>let value = eq.solve(equations::compressible::area_mach::equation()).for_target("M").value()?;
 <span class="boring">}</span></code></pre>
-<p><strong>Example</strong></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let value = equations::compressible::area_mach::solve_area_ratio(
-    0.3,
-    1.4,
-)?;
-<span class="boring">}</span></code></pre>
-<h3 id="notes"><a class="header" href="#notes">Notes</a></h3>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.compressible.solve_m(area_ratio="...", gamma="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_COMPRESSIBLE_AREA_MACH_M("...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Branch selection may be required for inverse solves when multiple roots are possible.</li>
+<li><code>area_ratio</code>: Area ratio</li>
+<li><code>gamma</code>: Specific heat ratio</li>
 </ul>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
-<ul>
-<li>Anderson, Modern Compressible Flow: With Historical Perspective</li>
-</ul>
-<h2 id="references"><a class="header" href="#references">References</a></h2>
-<ul>
-<li>Anderson, Modern Compressible Flow — Isentropic flow function tables.</li>
-</ul>
-<h2 id="aliases"><a class="header" href="#aliases">Aliases</a></h2>
-<p><code>isentropic_area_mach</code></p>
 
                     </main>
 

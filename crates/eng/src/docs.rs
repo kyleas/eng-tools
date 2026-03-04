@@ -1,11 +1,12 @@
 use std::{
-    collections::BTreeSet,
+    collections::{BTreeMap, BTreeSet},
     fs,
     path::{Path, PathBuf},
     process::Command,
 };
 
 use crate::architecture::architecture_spec;
+use crate::bindings::{INVOKE_PROTOCOL_VERSION, invoke_protocol_spec};
 use equations::{
     Registry,
     constants::EngineeringConstant,
@@ -34,9 +35,43 @@ struct UnifiedCatalog {
     equations: Vec<UnifiedEquationEntry>,
     families: Vec<FamilyCatalogItem>,
     constants: Vec<EngineeringConstant>,
+    devices: Vec<DeviceCatalogItem>,
     fluids: Vec<FluidCatalogItem>,
     materials: Vec<MaterialCatalogItem>,
     links: Vec<CatalogLink>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct BindingManifest {
+    schema_version: &'static str,
+    generated_from: &'static str,
+    python_package: String,
+    functions: Vec<BindingFunction>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct BindingFunction {
+    id: String,
+    entity: String,
+    source: String,
+    python_module: String,
+    python_name: String,
+    excel_name: String,
+    op: String,
+    fixed_args: BTreeMap<String, String>,
+    args: Vec<BindingArg>,
+    returns: String,
+    help: String,
+    rust_example: String,
+    python_example: String,
+    xloil_example: String,
+    pyxll_example: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct BindingArg {
+    name: String,
+    description: String,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -78,6 +113,16 @@ struct MaterialCatalogItem {
 }
 
 #[derive(Debug, Clone, Serialize)]
+struct DeviceCatalogItem {
+    key: String,
+    name: String,
+    summary: String,
+    supported_modes: Vec<String>,
+    outputs: Vec<String>,
+    route: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
 struct FamilyCatalogItem {
     key: String,
     name: String,
@@ -103,6 +148,7 @@ struct FamilyVariantCatalogItem {
 struct UnifiedDocsContribution {
     equations: EquationDocsContribution,
     families: Vec<equations::equation_families::EquationFamilyDef>,
+    devices: Vec<crate::devices::DeviceDocsEntry>,
     fluids: Vec<eng_fluids::FluidDocsEntry>,
     materials: Vec<eng_materials::MaterialDocsEntry>,
 }
@@ -127,6 +173,12 @@ const SNIPPET_MATERIAL_PROPERTY_LOOKUP: &str =
 const SNIPPET_CONTEXT_SOLVE: &str = include_str!("../docs_snippets/context_solve.rs");
 const SNIPPET_FAMILY_VARIANT_ACCESS: &str =
     include_str!("../docs_snippets/family_variant_access.rs");
+const SNIPPET_DEVICE_PIPE_LOSS_FIXED: &str =
+    include_str!("../docs_snippets/device_pipe_loss_fixed.rs");
+const SNIPPET_DEVICE_PIPE_LOSS_COLEBROOK_DIRECT: &str =
+    include_str!("../docs_snippets/device_pipe_loss_colebrook_direct.rs");
+const SNIPPET_DEVICE_PIPE_LOSS_COLEBROOK_FLUID: &str =
+    include_str!("../docs_snippets/device_pipe_loss_colebrook_fluid.rs");
 
 #[derive(Debug, Clone)]
 pub struct MdBookPaths {
@@ -266,12 +318,14 @@ pub fn export_unified_catalog() -> Result<PathBuf> {
 
 fn gather_contribution(registry: Registry) -> Result<UnifiedDocsContribution> {
     let equations = build_equation_docs_contribution(registry.equations());
+    let devices = crate::devices::docs_entries();
     let fluids = eng_fluids::docs_entries();
     let materials =
         eng_materials::docs_entries().map_err(|e| EquationError::Validation(e.to_string()))?;
     Ok(UnifiedDocsContribution {
         equations,
         families: equations::equation_families::load_default_validated(registry.equations())?,
+        devices,
         fluids,
         materials,
     })
@@ -338,6 +392,26 @@ fn write_unified_json_artifacts(c: &UnifiedDocsContribution, out_dir: &Path) -> 
         },
     )?;
     write_json(
+        out_dir.join("devices.json"),
+        &ArtifactEnvelope {
+            schema_version: EXPORT_SCHEMA_VERSION,
+            model_version: EXPORT_MODEL_VERSION,
+            artifact_type: "devices",
+            items: c
+                .devices
+                .iter()
+                .map(|d| DeviceCatalogItem {
+                    key: d.key.clone(),
+                    name: d.name.clone(),
+                    summary: d.summary.clone(),
+                    supported_modes: d.supported_modes.clone(),
+                    outputs: d.outputs.clone(),
+                    route: d.route.clone(),
+                })
+                .collect::<Vec<_>>(),
+        },
+    )?;
+    write_json(
         out_dir.join("fluids.json"),
         &ArtifactEnvelope {
             schema_version: EXPORT_SCHEMA_VERSION,
@@ -394,6 +468,7 @@ fn write_unified_json_artifacts(c: &UnifiedDocsContribution, out_dir: &Path) -> 
             items: architecture_spec(),
         },
     )?;
+    write_generated_bindings(c, out_dir)?;
     Ok(())
 }
 
@@ -445,6 +520,15 @@ fn build_unified_catalog(c: &UnifiedDocsContribution) -> UnifiedCatalog {
             });
         }
     }
+    for d in &c.devices {
+        for equation_id in device_equation_dependencies(&d.key) {
+            links.push(CatalogLink {
+                relation: "device_uses_equation".to_string(),
+                from: d.key.clone(),
+                to: equation_id.to_string(),
+            });
+        }
+    }
     links.sort_by(|a, b| (&a.relation, &a.from, &a.to).cmp(&(&b.relation, &b.from, &b.to)));
 
     UnifiedCatalog {
@@ -475,6 +559,18 @@ fn build_unified_catalog(c: &UnifiedDocsContribution) -> UnifiedCatalog {
             })
             .collect(),
         constants: c.equations.constants.clone(),
+        devices: c
+            .devices
+            .iter()
+            .map(|d| DeviceCatalogItem {
+                key: d.key.clone(),
+                name: d.name.clone(),
+                summary: d.summary.clone(),
+                supported_modes: d.supported_modes.clone(),
+                outputs: d.outputs.clone(),
+                route: d.route.clone(),
+            })
+            .collect(),
         fluids: c
             .fluids
             .iter()
@@ -510,6 +606,1097 @@ fn collect_resolver_contexts(page: &EquationPageModel) -> Vec<String> {
         .collect();
     s.retain(|x| !x.trim().is_empty());
     s.into_iter().collect()
+}
+
+fn write_generated_bindings(c: &UnifiedDocsContribution, out_dir: &Path) -> Result<()> {
+    let bindings_root = out_dir.join("bindings");
+    let python_root = bindings_root.join("python");
+    let engpy_root = python_root.join("engpy");
+    let excel_root = bindings_root.join("excel");
+    let xloil_path = excel_root.join("eng_xloil.py");
+    let pyxll_path = excel_root.join("eng_pyxll.py");
+
+    let manifest = build_binding_manifest(c);
+    write_json(bindings_root.join("binding_spec.json"), &manifest)?;
+    write_json(
+        bindings_root.join("invoke_protocol.json"),
+        &invoke_protocol_spec(),
+    )?;
+    write_text(
+        bindings_root.join("README.md"),
+        "# Generated Bindings\n\nThis directory is generated by `eng::docs` from the unified catalog.\n\n- `binding_spec.json`: transport-agnostic public binding surface.\n- `invoke_protocol.json`: invoke request/response protocol contract shared by CLI, worker, and native Python runtime.\n",
+    )?;
+    write_text(
+        python_root.join("pyproject.toml"),
+        &render_python_binding_pyproject(),
+    )?;
+    write_text(
+        python_root.join("README.md"),
+        &render_python_binding_readme(),
+    )?;
+
+    write_text(
+        engpy_root.join("__init__.py"),
+        &render_python_package_init(&manifest),
+    )?;
+    write_text(engpy_root.join("_runtime.py"), &render_python_runtime())?;
+    write_text(
+        engpy_root.join("constants.py"),
+        &render_python_constants_module(&manifest),
+    )?;
+    write_text(
+        engpy_root.join("devices.py"),
+        &render_python_devices_module(&manifest),
+    )?;
+    write_text(
+        engpy_root.join("fluids.py"),
+        &render_python_fluids_module(&manifest),
+    )?;
+    write_text(
+        engpy_root.join("materials.py"),
+        &render_python_materials_module(&manifest),
+    )?;
+    write_text(
+        engpy_root.join("equations").join("__init__.py"),
+        &render_python_equations_init(&manifest),
+    )?;
+    write_python_equation_modules(&manifest, &engpy_root.join("equations"))?;
+    write_text(xloil_path, &render_xloil_module(&manifest))?;
+    write_text(pyxll_path, &render_pyxll_module(&manifest))?;
+    Ok(())
+}
+
+fn render_python_binding_pyproject() -> String {
+    r#"[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "engpy-native"
+version = "0.1.0"
+description = "Native in-process Python bindings for the eng Rust library"
+readme = "README.md"
+requires-python = ">=3.9"
+
+[tool.maturin]
+manifest-path = "../../../crates/eng-pyext/Cargo.toml"
+module-name = "engpy_native"
+"#
+    .to_string()
+}
+
+fn render_python_binding_readme() -> String {
+    r#"# Generated Python Bindings
+
+This directory is generated by `eng::docs`.
+
+## Native Runtime (Preferred)
+
+1. Create/activate a Python virtual environment.
+2. Install build tooling: `pip install maturin`.
+3. Run `maturin develop --manifest-path ../../../crates/eng-pyext/Cargo.toml`.
+4. Verify:
+   - `import engpy_native`
+   - `import engpy._runtime as rt; rt.runtime_mode()` returns `"native"`.
+
+Helper scripts:
+- `scripts/setup-native-bindings.ps1`
+- `scripts/setup-native-bindings.sh`
+- `scripts/verify-native-bindings.ps1`
+- `scripts/verify-native-bindings.sh`
+
+## Fallback Runtime
+
+If `engpy_native` is not importable, runtime falls back to `eng worker`.
+Use `ENGPY_RUNTIME=native|worker` to force runtime selection.
+"#
+    .to_string()
+}
+
+fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
+    let mut functions = Vec::new();
+    let page_by_path: BTreeMap<&str, &EquationPageModel> = c
+        .equations
+        .page_models
+        .iter()
+        .map(|p| (p.path_id.as_str(), p))
+        .collect();
+
+    for page in &c.equations.page_models {
+        for target in &page.solve_targets {
+            let target_snake = snake_case(&target.target);
+            let fn_name = format!("solve_{}", target_snake);
+            let args = equation_args_for_target(page, &target.target);
+            let module = format!("equations.{}", snake_case(&page.category));
+            let excel_name = format!(
+                "ENG_{}_{}",
+                page.path_id
+                    .replace('.', "_")
+                    .replace('-', "_")
+                    .to_ascii_uppercase(),
+                target.target.replace('.', "_").to_ascii_uppercase()
+            );
+            let mut fixed_args = BTreeMap::new();
+            fixed_args.insert("path_id".to_string(), page.path_id.clone());
+            fixed_args.insert("target".to_string(), target.target.clone());
+            functions.push(BindingFunction {
+                id: format!("equation.{}.{}", page.path_id, target.target),
+                entity: "equation".to_string(),
+                source: page.path_id.clone(),
+                python_module: module.clone(),
+                python_name: fn_name.clone(),
+                excel_name: excel_name.clone(),
+                op: "equation.solve".to_string(),
+                fixed_args,
+                args: args.clone(),
+                returns: "f64".to_string(),
+                help: format!("Solve {} for {}", page.name, target.target),
+                rust_example: format!(
+                    "eq.solve(equations::{}::equation()).for_target(\"{}\").value()?",
+                    page.path_id.replace('.', "::"),
+                    target.target
+                ),
+                python_example: format!(
+                    "engpy.{}.{}({})",
+                    module,
+                    fn_name,
+                    render_python_example_args(&args)
+                ),
+                xloil_example: format!("={}({})", excel_name, render_excel_example_args(&args)),
+                pyxll_example: format!("={}({})", excel_name, render_excel_example_args(&args)),
+            });
+        }
+    }
+
+    for family in &c.families {
+        for variant in &family.variants {
+            if let Some(page) = page_by_path.get(variant.equation_id.as_str()) {
+                for target in &page.solve_targets {
+                    let target_snake = snake_case(&target.target);
+                    let args = equation_args_for_target(page, &target.target);
+                    let mut fixed_args = BTreeMap::new();
+                    fixed_args.insert("path_id".to_string(), page.path_id.clone());
+                    fixed_args.insert("target".to_string(), target.target.clone());
+                    let py_mod = format!("equations.families.{}", snake_case(&family.key));
+                    let py_name = format!("{}_solve_{}", snake_case(&variant.key), target_snake);
+                    let excel_name = format!(
+                        "ENG_FAMILY_{}_{}_{}",
+                        snake_case(&family.key).to_ascii_uppercase(),
+                        snake_case(&variant.key).to_ascii_uppercase(),
+                        target.target.to_ascii_uppercase()
+                    );
+                    functions.push(BindingFunction {
+                        id: format!("family.{}.{}.{}", family.key, variant.key, target.target),
+                        entity: "family_variant".to_string(),
+                        source: format!("{}.{}", family.key, variant.key),
+                        python_module: py_mod.clone(),
+                        python_name: py_name.clone(),
+                        excel_name: excel_name.clone(),
+                        op: "equation.solve".to_string(),
+                        fixed_args,
+                        args: args.clone(),
+                        returns: "f64".to_string(),
+                        help: format!(
+                            "Solve {} variant {} for {}",
+                            family.name, variant.name, target.target
+                        ),
+                        rust_example: format!(
+                            "eq.solve(equations::{}::equation()).for_target(\"{}\").value()?",
+                            page.path_id.replace('.', "::"),
+                            target.target
+                        ),
+                        python_example: format!(
+                            "engpy.{}.{}({})",
+                            py_mod,
+                            py_name,
+                            render_python_example_args(&args)
+                        ),
+                        xloil_example: format!(
+                            "={}({})",
+                            excel_name,
+                            render_excel_example_args(&args)
+                        ),
+                        pyxll_example: format!(
+                            "={}({})",
+                            excel_name,
+                            render_excel_example_args(&args)
+                        ),
+                    });
+                }
+            }
+        }
+    }
+
+    functions.push(BindingFunction {
+        id: "equation.meta".to_string(),
+        entity: "equation_meta".to_string(),
+        source: "equations".to_string(),
+        python_module: "equations.meta".to_string(),
+        python_name: "equation_meta".to_string(),
+        excel_name: "ENG_EQUATION_META".to_string(),
+        op: "equation.meta".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "path_id".to_string(),
+            description: "Equation path id (for example `fluids.reynolds_number`)".to_string(),
+        }],
+        returns: "dict".to_string(),
+        help: "Read equation metadata (display forms, variables, dimensions, units, targets)"
+            .to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example: "engpy.equations.meta.equation_meta(\"fluids.reynolds_number\")"
+            .to_string(),
+        xloil_example: "=ENG_EQUATION_META(\"fluids.reynolds_number\")".to_string(),
+        pyxll_example: "=ENG_EQUATION_META(\"fluids.reynolds_number\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "equation.ascii".to_string(),
+        entity: "equation_meta".to_string(),
+        source: "equations".to_string(),
+        python_module: "equations.meta".to_string(),
+        python_name: "equation_ascii".to_string(),
+        excel_name: "ENG_EQUATION_ASCII".to_string(),
+        op: "equation.ascii".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "path_id".to_string(),
+            description: "Equation path id".to_string(),
+        }],
+        returns: "str".to_string(),
+        help: "Read ASCII display form for an equation".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example: "engpy.equations.meta.equation_ascii(\"fluids.reynolds_number\")"
+            .to_string(),
+        xloil_example: "=ENG_EQUATION_ASCII(\"fluids.reynolds_number\")".to_string(),
+        pyxll_example: "=ENG_EQUATION_ASCII(\"fluids.reynolds_number\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "equation.default_unit".to_string(),
+        entity: "equation_meta".to_string(),
+        source: "equations".to_string(),
+        python_module: "equations.meta".to_string(),
+        python_name: "equation_default_unit".to_string(),
+        excel_name: "ENG_EQUATION_DEFAULT_UNIT".to_string(),
+        op: "equation.default_unit".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![
+            BindingArg {
+                name: "path_id".to_string(),
+                description: "Equation path id".to_string(),
+            },
+            BindingArg {
+                name: "variable".to_string(),
+                description: "Variable key (case-insensitive)".to_string(),
+            },
+        ],
+        returns: "str".to_string(),
+        help: "Read canonical default unit for one equation variable".to_string(),
+        rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+        python_example:
+            "engpy.equations.meta.equation_default_unit(\"fluids.reynolds_number\", \"mu\")"
+                .to_string(),
+        xloil_example: "=ENG_EQUATION_DEFAULT_UNIT(\"fluids.reynolds_number\",\"mu\")".to_string(),
+        pyxll_example: "=ENG_EQUATION_DEFAULT_UNIT(\"fluids.reynolds_number\",\"mu\")".to_string(),
+    });
+
+    for device in &c.devices {
+        if device.key == "pipe_loss" {
+            let args = vec![
+                BindingArg {
+                    name: "friction_model".to_string(),
+                    description: "Colebrook or Fixed".to_string(),
+                },
+                BindingArg {
+                    name: "fixed_f".to_string(),
+                    description: "Required when friction_model=Fixed".to_string(),
+                },
+                BindingArg {
+                    name: "rho".to_string(),
+                    description: "Density input (optional with fluid context)".to_string(),
+                },
+                BindingArg {
+                    name: "mu".to_string(),
+                    description: "Viscosity input (required for Colebrook without fluid context)"
+                        .to_string(),
+                },
+                BindingArg {
+                    name: "v".to_string(),
+                    description: "Velocity".to_string(),
+                },
+                BindingArg {
+                    name: "d".to_string(),
+                    description: "Diameter".to_string(),
+                },
+                BindingArg {
+                    name: "l".to_string(),
+                    description: "Length".to_string(),
+                },
+                BindingArg {
+                    name: "eps".to_string(),
+                    description: "Roughness (Colebrook)".to_string(),
+                },
+                BindingArg {
+                    name: "fluid".to_string(),
+                    description: "Optional fluid key (e.g. H2O)".to_string(),
+                },
+                BindingArg {
+                    name: "in1_key".to_string(),
+                    description: "Fluid state input key 1".to_string(),
+                },
+                BindingArg {
+                    name: "in1_value".to_string(),
+                    description: "Fluid state input value 1".to_string(),
+                },
+                BindingArg {
+                    name: "in2_key".to_string(),
+                    description: "Fluid state input key 2".to_string(),
+                },
+                BindingArg {
+                    name: "in2_value".to_string(),
+                    description: "Fluid state input value 2".to_string(),
+                },
+            ];
+            functions.push(BindingFunction {
+                id: "device.pipe_loss.solve_delta_p".to_string(),
+                entity: "device".to_string(),
+                source: "pipe_loss".to_string(),
+                python_module: "devices".to_string(),
+                python_name: "pipe_loss_solve_delta_p".to_string(),
+                excel_name: "ENG_PIPE_LOSS_DELTA_P".to_string(),
+                op: "device.pipe_loss.solve_delta_p".to_string(),
+                fixed_args: BTreeMap::new(),
+                args: args.clone(),
+                returns: "f64".to_string(),
+                help: "Solve pipe pressure drop using Fixed/Colebrook friction model".to_string(),
+                rust_example: "eng::devices::pipe_loss().solve_delta_p()?".to_string(),
+                python_example: "engpy.devices.pipe_loss_solve_delta_p(...)".to_string(),
+                xloil_example: "=ENG_PIPE_LOSS_DELTA_P(...)".to_string(),
+                pyxll_example: "=ENG_PIPE_LOSS_DELTA_P(...)".to_string(),
+            });
+        }
+    }
+
+    functions.push(BindingFunction {
+        id: "fluid.prop".to_string(),
+        entity: "fluid".to_string(),
+        source: "fluids".to_string(),
+        python_module: "fluids".to_string(),
+        python_name: "fluid_prop".to_string(),
+        excel_name: "ENG_FLUID_PROP".to_string(),
+        op: "fluid.prop".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![
+            BindingArg {
+                name: "fluid".to_string(),
+                description: "Fluid key/name".to_string(),
+            },
+            BindingArg {
+                name: "in1_key".to_string(),
+                description: "State input key 1".to_string(),
+            },
+            BindingArg {
+                name: "in1_value".to_string(),
+                description: "State input value 1".to_string(),
+            },
+            BindingArg {
+                name: "in2_key".to_string(),
+                description: "State input key 2".to_string(),
+            },
+            BindingArg {
+                name: "in2_value".to_string(),
+                description: "State input value 2".to_string(),
+            },
+            BindingArg {
+                name: "out_prop".to_string(),
+                description: "Output property key".to_string(),
+            },
+        ],
+        returns: "f64".to_string(),
+        help: "Binding-friendly fluid property lookup".to_string(),
+        rust_example: "fluids::water().state_tp(\"300 K\", \"1 bar\")?.rho()?".to_string(),
+        python_example:
+            "engpy.fluids.fluid_prop(\"H2O\", \"T\", \"300 K\", \"P\", \"1 bar\", \"rho\")"
+                .to_string(),
+        xloil_example: "=ENG_FLUID_PROP(\"H2O\",\"T\",\"300 K\",\"P\",\"1 bar\",\"rho\")"
+            .to_string(),
+        pyxll_example: "=ENG_FLUID_PROP(\"H2O\",\"T\",\"300 K\",\"P\",\"1 bar\",\"rho\")"
+            .to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "material.prop".to_string(),
+        entity: "material".to_string(),
+        source: "materials".to_string(),
+        python_module: "materials".to_string(),
+        python_name: "mat_prop".to_string(),
+        excel_name: "ENG_MAT_PROP".to_string(),
+        op: "material.prop".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![
+            BindingArg {
+                name: "material".to_string(),
+                description: "Material key/name".to_string(),
+            },
+            BindingArg {
+                name: "property".to_string(),
+                description: "Property key".to_string(),
+            },
+            BindingArg {
+                name: "temperature".to_string(),
+                description: "Temperature input".to_string(),
+            },
+        ],
+        returns: "f64".to_string(),
+        help: "Binding-friendly material property lookup".to_string(),
+        rust_example:
+            "materials::stainless_304().temperature(\"350 K\")?.property(\"elastic_modulus\")?"
+                .to_string(),
+        python_example:
+            "engpy.materials.mat_prop(\"stainless_304\", \"elastic_modulus\", \"350 K\")"
+                .to_string(),
+        xloil_example: "=ENG_MAT_PROP(\"stainless_304\",\"elastic_modulus\",\"350 K\")".to_string(),
+        pyxll_example: "=ENG_MAT_PROP(\"stainless_304\",\"elastic_modulus\",\"350 K\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "constant.get".to_string(),
+        entity: "constant".to_string(),
+        source: "constants".to_string(),
+        python_module: "constants".to_string(),
+        python_name: "get_constant".to_string(),
+        excel_name: "ENG_CONST".to_string(),
+        op: "constant.get".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![BindingArg {
+            name: "key".to_string(),
+            description: "Constant key".to_string(),
+        }],
+        returns: "f64".to_string(),
+        help: "Get constant value from registry".to_string(),
+        rust_example: "equations::get_constant(\"g0\")?.value".to_string(),
+        python_example: "engpy.constants.get_constant(\"g0\")".to_string(),
+        xloil_example: "=ENG_CONST(\"g0\")".to_string(),
+        pyxll_example: "=ENG_CONST(\"g0\")".to_string(),
+    });
+
+    functions.sort_by(|a, b| a.id.cmp(&b.id));
+    BindingManifest {
+        schema_version: EXPORT_SCHEMA_VERSION,
+        generated_from: "generated/catalog.json",
+        python_package: "engpy".to_string(),
+        functions,
+    }
+}
+
+fn equation_args_for_target(page: &EquationPageModel, target: &str) -> Vec<BindingArg> {
+    page.variables
+        .iter()
+        .filter(|v| v.key != target)
+        .map(|v| BindingArg {
+            name: v.key.clone(),
+            description: if v.description.trim().is_empty() {
+                v.name.clone()
+            } else {
+                v.description.clone()
+            },
+        })
+        .collect()
+}
+
+fn render_python_example_args(args: &[BindingArg]) -> String {
+    args.iter()
+        .map(|a| format!("{}=\"...\"", snake_case(&a.name)))
+        .collect::<Vec<_>>()
+        .join(", ")
+}
+
+fn render_excel_example_args(args: &[BindingArg]) -> String {
+    args.iter()
+        .map(|_| "\"...\"".to_string())
+        .collect::<Vec<_>>()
+        .join(",")
+}
+
+fn render_python_runtime() -> String {
+    r#"import json
+import os
+import subprocess
+import threading
+import uuid
+import atexit
+import builtins
+
+PROTOCOL_VERSION = "__PROTOCOL_VERSION__"
+
+
+class EngBindingError(RuntimeError):
+    def __init__(self, code, message, op=None, field=None, request_id=None, detail=None):
+        super().__init__(f"[{code}] {message}")
+        self.code = code
+        self.message = message
+        self.op = op
+        self.field = field
+        self.request_id = request_id
+        self.detail = detail
+
+
+def _load_native_runtime():
+    try:
+        import engpy_native  # type: ignore
+        return engpy_native
+    except Exception:
+        return None
+
+
+_NATIVE_RUNTIME = _load_native_runtime()
+
+
+class _NativeClient:
+    def __init__(self, native_mod):
+        self._native = native_mod
+        self._request_count = 0
+        self._last_failure = None
+        self._last_request_id = None
+
+    def _stop(self):
+        # No-op for in-process runtime.
+        return None
+
+    def worker_pid(self):
+        return None
+
+    def stats(self):
+        return {
+            "runtime_mode": "native",
+            "worker_pid": None,
+            "startup_count": 0,
+            "restart_count": 0,
+            "request_count": self._request_count,
+            "last_reused": True,
+            "last_request_id": self._last_request_id,
+            "last_failure": self._last_failure,
+        }
+
+    def invoke(self, op: str, args: dict, request_id=None):
+        req_id = request_id or str(uuid.uuid4())
+        req = {"protocol_version": PROTOCOL_VERSION, "op": op, "request_id": req_id, "args": args}
+        self._request_count += 1
+        self._last_request_id = req_id
+        try:
+            raw = self._native.invoke_json(json.dumps(req))
+            data = json.loads(raw)
+            self._last_failure = None
+            return _validate_response(op, req_id, data)
+        except EngBindingError:
+            raise
+        except Exception as exc:
+            self._last_failure = str(exc)
+            raise EngBindingError(
+                "invoke_native_failed",
+                f"native invoke failed: {exc}",
+                op=op,
+                request_id=req_id,
+            )
+
+
+class _WorkerClient:
+    def __init__(self):
+        self._lock = threading.RLock()
+        self._process = None
+        self._startup_count = 0
+        self._restart_count = 0
+        self._request_count = 0
+        self._last_failure = None
+        self._last_reused = False
+        self._last_request_id = None
+
+    def _resolve_worker_bin(self):
+        return os.environ.get("ENG_WORKER_BIN") or os.environ.get("ENG_BIN") or "eng"
+
+    def _popen_kwargs(self):
+        kwargs = {
+            "stdin": subprocess.PIPE,
+            "stdout": subprocess.PIPE,
+            # keep stderr drained to avoid blocking on pipe saturation
+            "stderr": subprocess.DEVNULL,
+            "text": True,
+            "bufsize": 1,
+            "encoding": "utf-8",
+            "errors": "replace",
+        }
+        if os.name == "nt":
+            # Prevent flashing/visible command windows in Excel/xlOil usage.
+            creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+            kwargs["creationflags"] = creationflags
+            si = subprocess.STARTUPINFO()
+            si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            kwargs["startupinfo"] = si
+        return kwargs
+
+    def _spawn(self):
+        worker_bin = self._resolve_worker_bin()
+        self._process = subprocess.Popen(
+            [worker_bin, "worker"],
+            **self._popen_kwargs(),
+        )
+        self._startup_count += 1
+
+    def _ensure_running(self, count_restart=False):
+        if self._process is None:
+            self._spawn()
+            return False
+        if self._process.poll() is not None:
+            if count_restart:
+                self._restart_count += 1
+            self._spawn()
+            return False
+        return True
+
+    def _stop(self):
+        with self._lock:
+            if self._process is None:
+                return
+            try:
+                if self._process.stdin:
+                    self._process.stdin.close()
+            except Exception:
+                pass
+            try:
+                self._process.terminate()
+            except Exception:
+                pass
+            self._process = None
+
+    def stats(self):
+        with self._lock:
+            return {
+                "worker_pid": self.worker_pid(),
+                "startup_count": self._startup_count,
+                "restart_count": self._restart_count,
+                "request_count": self._request_count,
+                "last_reused": self._last_reused,
+                "last_request_id": self._last_request_id,
+                "last_failure": self._last_failure,
+            }
+
+    def worker_pid(self):
+        with self._lock:
+            if self._process is None or self._process.poll() is not None:
+                return None
+            return self._process.pid
+
+    def invoke(self, op: str, args: dict, request_id=None):
+        with self._lock:
+            req_id = request_id or str(uuid.uuid4())
+            req = {"protocol_version": PROTOCOL_VERSION, "op": op, "request_id": req_id, "args": args}
+            self._request_count += 1
+            self._last_request_id = req_id
+
+            last_exc = None
+            for attempt in range(2):
+                reused = self._ensure_running(count_restart=(attempt > 0))
+                self._last_reused = reused
+                try:
+                    if self._process.stdin is None or self._process.stdout is None:
+                        raise RuntimeError("worker stdio not available")
+                    self._process.stdin.write(json.dumps(req) + "\n")
+                    self._process.stdin.flush()
+                    raw = self._process.stdout.readline()
+                    if not raw:
+                        raise RuntimeError("worker returned no response")
+                    data = json.loads(raw)
+                    self._last_failure = None
+                    return _validate_response(op, req_id, data)
+                except Exception as exc:
+                    last_exc = exc
+                    self._last_failure = str(exc)
+                    self._stop()
+            raise EngBindingError(
+                "invoke_worker_failed",
+                f"worker invocation failed after restart: {last_exc}",
+                op=op,
+                request_id=req_id,
+            )
+
+
+def _validate_response(op: str, request_id: str, data: dict):
+    if data.get("protocol_version") != PROTOCOL_VERSION:
+        raise EngBindingError(
+            "protocol_version_mismatch",
+            f"response protocol version '{data.get('protocol_version')}' does not match '{PROTOCOL_VERSION}'",
+            op=op,
+            request_id=data.get("request_id"),
+        )
+    if data.get("op") != op:
+        raise EngBindingError(
+            "operation_mismatch",
+            f"response op '{data.get('op')}' does not match request op '{op}'",
+            op=op,
+            request_id=data.get("request_id"),
+        )
+    if data.get("request_id") and data.get("request_id") != request_id:
+        raise EngBindingError(
+            "request_id_mismatch",
+            f"response request_id '{data.get('request_id')}' does not match '{request_id}'",
+            op=op,
+            request_id=data.get("request_id"),
+        )
+    if bool(data.get("ok", False)):
+        return data.get("value")
+    err = data.get("error") or {}
+    raise EngBindingError(
+        err.get("code", "invoke_error"),
+        err.get("message", "unknown invoke error"),
+        op=data.get("op", op),
+        field=err.get("field"),
+        request_id=data.get("request_id"),
+        detail=err.get("detail"),
+    )
+
+
+def _select_client():
+    runtime_pref = os.environ.get("ENGPY_RUNTIME", "").strip().lower()
+    if runtime_pref not in {"", "native", "worker"}:
+        raise EngBindingError(
+            "invalid_runtime_preference",
+            f"ENGPY_RUNTIME must be 'native' or 'worker', got '{runtime_pref}'",
+        )
+    if runtime_pref != "worker" and _NATIVE_RUNTIME is not None:
+        return _NativeClient(_NATIVE_RUNTIME), "native"
+    if runtime_pref == "native":
+        raise EngBindingError(
+            "native_runtime_unavailable",
+            "ENGPY_RUNTIME=native requested but engpy_native could not be imported",
+        )
+    return _WorkerClient(), "worker"
+
+
+if hasattr(builtins, "_ENGPY_CLIENT"):
+    _CLIENT = builtins._ENGPY_CLIENT
+    _RUNTIME_MODE = getattr(builtins, "_ENGPY_CLIENT_MODE", "worker")
+else:
+    _CLIENT, _RUNTIME_MODE = _select_client()
+    builtins._ENGPY_CLIENT = _CLIENT
+    builtins._ENGPY_CLIENT_MODE = _RUNTIME_MODE
+atexit.register(_CLIENT._stop)
+
+
+def runtime_mode():
+    return _RUNTIME_MODE
+
+
+def worker_pid():
+    return _CLIENT.worker_pid()
+
+
+def worker_stats():
+    stats = _CLIENT.stats()
+    stats["runtime_mode"] = _RUNTIME_MODE
+    return stats
+
+
+def stop_worker():
+    _CLIENT._stop()
+
+
+def invoke(op: str, args: dict, request_id=None):
+    return _CLIENT.invoke(op, args, request_id=request_id)
+"#
+    .replace("__PROTOCOL_VERSION__", INVOKE_PROTOCOL_VERSION)
+}
+
+fn render_python_package_init(manifest: &BindingManifest) -> String {
+    format!(
+        "from . import constants, devices, fluids, materials\nfrom .equations import *\n\n__all__ = [\"constants\", \"devices\", \"fluids\", \"materials\", \"equations\"]\n# Generated from {}\n",
+        manifest.generated_from
+    )
+}
+
+fn render_python_docstring(f: &BindingFunction) -> String {
+    let mut s = String::new();
+    s.push_str(&f.help);
+    s.push_str("\n\nArgs:\n");
+    if f.args.is_empty() {
+        s.push_str("  (none)\n");
+    } else {
+        for a in &f.args {
+            s.push_str(&format!("  {}: {}\n", snake_case(&a.name), a.description));
+        }
+    }
+    s.push_str(&format!("Returns:\n  {}\n", f.returns));
+    s.replace("\"\"\"", "'''")
+}
+
+fn render_excel_help_block(f: &BindingFunction) -> String {
+    let mut lines = Vec::new();
+    lines.push(f.help.clone());
+    if !f.args.is_empty() {
+        lines.push("Arguments:".to_string());
+        for a in &f.args {
+            lines.push(format!(
+                "- {}: {}",
+                excel_param_name(f, a),
+                a.description.trim()
+            ));
+        }
+    }
+    lines.push(format!("Returns: {}", f.returns));
+    lines.push(format!(
+        "Example: {}",
+        if f.xloil_example.is_empty() {
+            f.pyxll_example.as_str()
+        } else {
+            f.xloil_example.as_str()
+        }
+    ));
+    lines.join(" | ")
+}
+
+fn excel_param_name(f: &BindingFunction, a: &BindingArg) -> String {
+    excel_param_name_for_op(f.op.as_str(), &a.name)
+}
+
+fn excel_param_name_for_op(op: &str, arg_name: &str) -> String {
+    match (op, arg_name) {
+        ("device.pipe_loss.solve_delta_p", "rho") => "density".to_string(),
+        ("device.pipe_loss.solve_delta_p", "mu") => "viscosity".to_string(),
+        ("device.pipe_loss.solve_delta_p", "v") => "velocity".to_string(),
+        ("device.pipe_loss.solve_delta_p", "d") => "diameter".to_string(),
+        ("device.pipe_loss.solve_delta_p", "l") => "length".to_string(),
+        ("device.pipe_loss.solve_delta_p", "eps") => "roughness".to_string(),
+        ("fluid.prop", "in1_key") => "state_prop_1".to_string(),
+        ("fluid.prop", "in1_value") => "state_value_1".to_string(),
+        ("fluid.prop", "in2_key") => "state_prop_2".to_string(),
+        ("fluid.prop", "in2_value") => "state_value_2".to_string(),
+        ("material.prop", "property") => "property_key".to_string(),
+        _ => snake_case(arg_name),
+    }
+}
+
+fn render_python_constants_module(manifest: &BindingManifest) -> String {
+    let mut out = String::new();
+    out.push_str("from ._runtime import invoke\n\n");
+    for f in manifest
+        .functions
+        .iter()
+        .filter(|f| f.python_module == "constants")
+    {
+        out.push_str(&format!(
+            "def {}(key):\n    \"\"\"{}\"\"\"\n    return invoke(\"{}\", {{\"key\": key}})\n\n",
+            f.python_name,
+            render_python_docstring(f),
+            f.op
+        ));
+    }
+    out
+}
+
+fn render_python_devices_module(manifest: &BindingManifest) -> String {
+    let mut out = String::new();
+    out.push_str("from ._runtime import invoke\n\n");
+    for f in manifest
+        .functions
+        .iter()
+        .filter(|f| f.python_module == "devices")
+    {
+        out.push_str(
+            "def pipe_loss_solve_delta_p(friction_model=\"Colebrook\", fixed_f=None, rho=None, mu=None, v=None, d=None, l=None, eps=None, fluid=None, in1_key=None, in1_value=None, in2_key=None, in2_value=None):\n",
+        );
+        out.push_str(
+            "    \"\"\"Solve pipe pressure drop using composed Reynolds/Colebrook/Darcy behavior.\n\nArgs:\n  friction_model: 'Colebrook' or 'Fixed'\n  fixed_f: fixed Darcy friction factor (required when friction_model='Fixed')\n  rho, mu, v, d, l, eps: direct inputs\n  fluid, in1_key, in1_value, in2_key, in2_value: optional fluid-state context inputs\nReturns:\n  dict with delta_p, friction_factor, reynolds_number\n\"\"\"\n",
+        );
+        out.push_str("    args = {\n");
+        out.push_str("        \"friction_model\": friction_model,\n        \"fixed_f\": fixed_f,\n        \"rho\": rho,\n        \"mu\": mu,\n        \"v\": v,\n        \"d\": d,\n        \"l\": l,\n        \"eps\": eps,\n        \"fluid\": fluid,\n        \"in1_key\": in1_key,\n        \"in1_value\": in1_value,\n        \"in2_key\": in2_key,\n        \"in2_value\": in2_value,\n    }\n");
+        out.push_str("    return invoke(\"");
+        out.push_str(&f.op);
+        out.push_str("\", {k: v for k, v in args.items() if v is not None})\n\n");
+    }
+    out
+}
+
+fn render_python_fluids_module(manifest: &BindingManifest) -> String {
+    let mut out = String::new();
+    out.push_str("from ._runtime import invoke\n\n");
+    for f in manifest
+        .functions
+        .iter()
+        .filter(|f| f.python_module == "fluids")
+    {
+        out.push_str(&format!(
+            "def {}(fluid, in1_key, in1_value, in2_key, in2_value, out_prop):\n",
+            f.python_name
+        ));
+        out.push_str(&format!(
+            "    \"\"\"{}\"\"\"\n    return invoke(\"{}\", {{\"fluid\": fluid, \"in1_key\": in1_key, \"in1_value\": in1_value, \"in2_key\": in2_key, \"in2_value\": in2_value, \"out_prop\": out_prop}})\n\n",
+            render_python_docstring(f), f.op
+        ));
+    }
+    out
+}
+
+fn render_python_materials_module(manifest: &BindingManifest) -> String {
+    let mut out = String::new();
+    out.push_str("from ._runtime import invoke\n\n");
+    for f in manifest
+        .functions
+        .iter()
+        .filter(|f| f.python_module == "materials")
+    {
+        out.push_str(&format!(
+            "def {}(material, property, temperature):\n",
+            f.python_name
+        ));
+        out.push_str(&format!(
+            "    \"\"\"{}\"\"\"\n    return invoke(\"{}\", {{\"material\": material, \"property\": property, \"temperature\": temperature}})\n\n",
+            render_python_docstring(f), f.op
+        ));
+    }
+    out
+}
+
+fn render_python_equations_init(manifest: &BindingManifest) -> String {
+    let mut categories = BTreeSet::new();
+    let mut families = BTreeSet::new();
+    for f in &manifest.functions {
+        if let Some(rest) = f.python_module.strip_prefix("equations.") {
+            if let Some(fam) = rest.strip_prefix("families.") {
+                families.insert(snake_case(fam));
+            } else {
+                categories.insert(snake_case(rest));
+            }
+        }
+    }
+    let mut out = String::new();
+    for cat in categories {
+        out.push_str(&format!("from . import {}\n", cat));
+    }
+    out.push_str("from . import families\n");
+    for fam in families {
+        out.push_str(&format!("from .families import {}\n", fam));
+    }
+    out
+}
+
+fn write_python_equation_modules(manifest: &BindingManifest, equations_root: &Path) -> Result<()> {
+    let families_root = equations_root.join("families");
+    write_text(families_root.join("__init__.py"), "")?;
+
+    let mut by_module: BTreeMap<String, Vec<&BindingFunction>> = BTreeMap::new();
+    for f in &manifest.functions {
+        if f.python_module.starts_with("equations.") {
+            by_module
+                .entry(f.python_module.clone())
+                .or_default()
+                .push(f);
+        }
+    }
+    for (module, funcs) in by_module {
+        let rel = module.trim_start_matches("equations.");
+        let parts: Vec<&str> = rel.split('.').collect();
+        let mut path = equations_root.to_path_buf();
+        for p in &parts[..parts.len() - 1] {
+            path = path.join(snake_case(p));
+        }
+        let file = path.join(format!("{}.py", snake_case(parts[parts.len() - 1])));
+        let mut out = String::new();
+        out.push_str("from engpy._runtime import invoke\n\n");
+        for f in funcs {
+            let mut params = Vec::new();
+            let mut args_map = Vec::new();
+            for a in &f.args {
+                let p = snake_case(&a.name);
+                params.push(p.clone());
+                args_map.push(format!("\"{}\": {}", a.name, p));
+            }
+            let mut payload_parts = Vec::new();
+            payload_parts.extend(
+                f.fixed_args
+                    .iter()
+                    .map(|(k, v)| format!("\"{}\": \"{}\"", k, v)),
+            );
+            payload_parts.extend(args_map);
+            out.push_str(&format!(
+                "def {}({}):\n    \"\"\"{}\"\"\"\n    return invoke(\"{}\", {{{}}})\n\n",
+                f.python_name,
+                params.join(", "),
+                render_python_docstring(f).replace('\"', "'"),
+                f.op,
+                payload_parts.join(", ")
+            ));
+        }
+        write_text(file, &out)?;
+    }
+    Ok(())
+}
+
+fn render_xloil_module(manifest: &BindingManifest) -> String {
+    let mut out = String::new();
+    out.push_str(
+        "try:\n    import xloil\nexcept Exception:\n    class _X:\n        @staticmethod\n        def func(*args, **kwargs):\n            def _d(f):\n                return f\n            return _d\n    xloil = _X()\n\n",
+    );
+    out.push_str("from engpy._runtime import invoke\n\n");
+    for f in &manifest.functions {
+        let params: Vec<String> = f.args.iter().map(|a| excel_param_name(f, a)).collect();
+        let kwargs = params
+            .iter()
+            .zip(f.args.iter())
+            .map(|(p, a)| format!("\"{}\": {}", a.name, p))
+            .collect::<Vec<_>>()
+            .join(", ");
+        let mut payload_parts = f
+            .fixed_args
+            .iter()
+            .map(|(k, v)| format!("\"{}\": \"{}\"", k, v))
+            .collect::<Vec<_>>();
+        if !kwargs.is_empty() {
+            payload_parts.push(kwargs.clone());
+        }
+        out.push_str(&format!(
+            "@xloil.func(name=\"{}\", help=\"{}\")\ndef {}({}):\n    \"\"\"{}\"\"\"\n    return invoke(\"{}\", {{{}}})\n\n",
+            f.excel_name,
+            render_excel_help_block(f).replace('\"', "'"),
+            snake_case(&f.excel_name),
+            params.join(", "),
+            render_excel_help_block(f).replace('\"', "'"),
+            f.op,
+            payload_parts.join(", ")
+        ));
+    }
+    out
+}
+
+fn render_pyxll_module(manifest: &BindingManifest) -> String {
+    let mut out = String::new();
+    out.push_str(
+        "try:\n    from pyxll import xl_func\nexcept Exception:\n    def xl_func(*args, **kwargs):\n        def _d(f):\n            return f\n        return _d\n\n",
+    );
+    out.push_str("from engpy._runtime import invoke\n\n");
+    for f in &manifest.functions {
+        let params: Vec<String> = f.args.iter().map(|a| excel_param_name(f, a)).collect();
+        let kwargs = params
+            .iter()
+            .zip(f.args.iter())
+            .map(|(p, a)| format!("\"{}\": {}", a.name, p))
+            .collect::<Vec<_>>()
+            .join(", ");
+        let mut payload_parts = f
+            .fixed_args
+            .iter()
+            .map(|(k, v)| format!("\"{}\": \"{}\"", k, v))
+            .collect::<Vec<_>>();
+        if !kwargs.is_empty() {
+            payload_parts.push(kwargs.clone());
+        }
+        out.push_str(&format!(
+            "@xl_func(name=\"{}\", doc=\"{}\")\ndef {}({}):\n    \"\"\"{}\"\"\"\n    return invoke(\"{}\", {{{}}})\n\n",
+            f.excel_name,
+            render_excel_help_block(f).replace('\"', "'"),
+            snake_case(&f.excel_name),
+            params.join(", "),
+            render_excel_help_block(f).replace('\"', "'"),
+            f.op,
+            payload_parts.join(", ")
+        ));
+    }
+    out
 }
 
 fn generate_mdbook_source(c: &UnifiedDocsContribution, book_root: &Path) -> Result<()> {
@@ -553,10 +1740,13 @@ mathjax-support = true
         &render_architecture_page(),
     )?;
     write_text(src.join("workflows/index.md"), &render_workflows())?;
+    write_text(src.join("bindings/index.md"), &render_bindings_guide())?;
     write_text(
         src.join("yaml_authoring/index.md"),
         &render_yaml_authoring(),
     )?;
+    write_text(src.join("devices/guide.md"), &render_devices_guide())?;
+    write_text(src.join("devices/index.md"), &render_devices_index(c))?;
     write_text(
         src.join("validation_trust/index.md"),
         &render_validation_trust(),
@@ -585,6 +1775,13 @@ mathjax-support = true
                 .join("families")
                 .join(format!("{}.md", snake_case(&fam.key))),
             &render_family_page(fam),
+        )?;
+    }
+    for d in &c.devices {
+        write_text(
+            src.join("devices")
+                .join(format!("{}.md", snake_case(&d.key))),
+            &render_device_page(d),
         )?;
     }
     for f in &c.fluids {
@@ -652,23 +1849,28 @@ fn render_home(c: &UnifiedDocsContribution) -> String {
     md.push_str("- [Input Styles](input_styles/index.md)\n");
     md.push_str("- [Units & Quantities](units_quantities/index.md)\n");
     md.push_str("- [Examples & Workflows](workflows/index.md)\n\n");
+    md.push_str("- [Bindings (Python/Excel)](bindings/index.md)\n\n");
     md.push_str("## Domain Guides\n\n");
     md.push_str("- [Equations Guide](equations/guide.md)\n");
+    md.push_str("- [Devices Guide](devices/guide.md)\n");
     md.push_str("- [Fluids Guide](fluids/guide.md)\n");
     md.push_str("- [Materials Guide](materials/guide.md)\n");
     md.push_str("- [Constants](constants/index.md)\n");
     md.push_str("- [YAML Authoring](yaml_authoring/index.md)\n");
     md.push_str("- [Validation / Trust](validation_trust/index.md)\n");
     md.push_str("- [Architecture Overview](architecture/index.md)\n\n");
+    md.push_str("- [Bindings (Python/Excel)](bindings/index.md)\n\n");
     md.push_str("## Catalog\n\n");
     md.push_str("- [Equations](equations/index.md)\n");
     md.push_str("- [Equation Families](equations/families/index.md)\n");
+    md.push_str("- [Devices](devices/index.md)\n");
     md.push_str("- [Fluids](fluids/index.md)\n");
     md.push_str("- [Materials](materials/index.md)\n");
     md.push_str(&format!(
-        "\n**Library size:** {} equations, {} constants, {} fluids, {} materials.\n",
+        "\n**Library size:** {} equations, {} constants, {} devices, {} fluids, {} materials.\n",
         c.equations.page_models.len(),
         c.equations.constants.len(),
+        c.devices.len(),
         c.fluids.len(),
         c.materials.len()
     ));
@@ -767,7 +1969,9 @@ fn render_fluids_guide() -> String {
     md.push_str("| Constructor | Meaning | Typical Use |\n");
     md.push_str("| --- | --- | --- |\n");
     md.push_str("| `state_tp(T, P)` | Temperature + pressure | Most common fast path |\n");
-    md.push_str("| `state_ph(P, h)` | Pressure + specific enthalpy | Thermodynamic inversion workflows |\n");
+    md.push_str(
+        "| `state_ph(P, h)` | Pressure + specific enthalpy | Thermodynamic inversion workflows |\n",
+    );
     md.push_str("| `state_ps(P, s)` | Pressure + specific entropy | Isentropic/entropy constrained workflows |\n");
     md.push_str("| `state_rho_h(rho, h)` | Density + specific enthalpy | Density-driven model integration |\n");
     md.push_str("| `state_pq(P, Q)` | Pressure + quality | Two-phase saturation states |\n");
@@ -820,7 +2024,9 @@ fn render_fluids_guide() -> String {
     md.push_str("- Unknown/invalid generic property keys are rejected with explicit supported-key guidance.\n");
     md.push_str("- Unsupported input pairs (for example `rho,T`) return clear pair diagnostics listing supported pairs.\n");
     md.push_str("- `u`/internal-energy identifiers are intentionally rejected in the generic state-input path to avoid confusion with enthalpy `h`.\n");
-    md.push_str("- Parse and backend failures are recoverable and include fluid/pair/property context.\n\n");
+    md.push_str(
+        "- Parse and backend failures are recoverable and include fluid/pair/property context.\n\n",
+    );
     md.push_str("## Catalog\n\n- [Fluids Catalog](./index.md)\n");
     md
 }
@@ -1035,6 +2241,20 @@ fn render_workflows() -> String {
     md.push_str(SNIPPET_FLUID_PROPERTY_LOOKUP.trim());
     md.push_str("\n```\n\n```rust\n");
     md.push_str(SNIPPET_MATERIAL_PROPERTY_LOOKUP.trim());
+    md.push_str("\n```\n\n");
+
+    md.push_str("## 8. Device Workflow: Pipe Pressure Drop (Fixed f)\n\n```rust\n");
+    md.push_str(SNIPPET_DEVICE_PIPE_LOSS_FIXED.trim());
+    md.push_str("\n```\n\n");
+
+    md.push_str("## 9. Device Workflow: Pipe Pressure Drop (Colebrook Direct Inputs)\n\n```rust\n");
+    md.push_str(SNIPPET_DEVICE_PIPE_LOSS_COLEBROOK_DIRECT.trim());
+    md.push_str("\n```\n\n");
+
+    md.push_str(
+        "## 10. Device Workflow: Pipe Pressure Drop (Colebrook + Fluid Context)\n\n```rust\n",
+    );
+    md.push_str(SNIPPET_DEVICE_PIPE_LOSS_COLEBROOK_FLUID.trim());
     md.push_str("\n```\n");
     md
 }
@@ -1057,6 +2277,180 @@ fn render_families_index(c: &UnifiedDocsContribution) -> String {
         ));
     }
     md
+}
+
+fn render_bindings_guide() -> String {
+    let mut md = String::new();
+    md.push_str("# Bindings (Python and Excel)\n\n");
+    md.push_str("Rust remains the authoritative implementation. Generated Python and Excel bindings are thin adapters over the same public binding model.\n\n");
+    md.push_str("## Generated Outputs\n\n");
+    md.push_str("- `generated/bindings/binding_spec.json`\n");
+    md.push_str("- `generated/bindings/invoke_protocol.json`\n");
+    md.push_str("- `generated/bindings/python/engpy/...`\n");
+    md.push_str(
+        "- `generated/bindings/python/pyproject.toml` (maturin build config for `engpy_native`)\n",
+    );
+    md.push_str("- `generated/bindings/excel/eng_xloil.py`\n");
+    md.push_str("- `generated/bindings/excel/eng_pyxll.py`\n\n");
+    md.push_str("`binding_spec.json` is transport-agnostic (function names, args, returns, help, examples). `invoke_protocol.json` documents the current runtime transport contract.\n\n");
+    md.push_str("## Naming Rules\n\n");
+    md.push_str("- Python: namespaced modules (`engpy.equations.<category>.*`, `engpy.devices.*`, `engpy.fluids.*`, `engpy.materials.*`, `engpy.constants.*`).\n");
+    md.push_str("- Excel: flat worksheet-friendly functions (`ENG_*`).\n");
+    md.push_str("- Families are exposed under `engpy.equations.families.<family>`.\n\n");
+    md.push_str("## Metadata and Diagnostics Functions\n\n");
+    md.push_str("- Python:\n");
+    md.push_str("  - `engpy.equations.meta.equation_meta(path_id)`\n");
+    md.push_str("  - `engpy.equations.meta.equation_ascii(path_id)`\n");
+    md.push_str("  - `engpy.equations.meta.equation_default_unit(path_id, variable)`\n");
+    md.push_str("- Excel:\n");
+    md.push_str("  - `ENG_EQUATION_META(path_id)`\n");
+    md.push_str("  - `ENG_EQUATION_ASCII(path_id)`\n");
+    md.push_str("  - `ENG_EQUATION_DEFAULT_UNIT(path_id, variable)`\n\n");
+    md.push_str("Use these to pull equation forms and canonical units directly into Python/Excel workflows.\n\n");
+    md.push_str("Native in-process runtime supports Python usage on Linux and Windows without requiring a platform-specific executable per call.\n\n");
+    md.push_str("## Build / Install (Native Python Runtime)\n\n");
+    md.push_str("- From `generated/bindings/python`, build/install the extension with maturin (for example `maturin develop` in an active Python environment).\n");
+    md.push_str("- Generated `engpy` wrappers call `engpy_native` in-process by default.\n");
+    md.push_str(
+        "- If the extension is unavailable, wrappers automatically fall back to worker mode.\n\n",
+    );
+    md.push_str("### One-command Setup Helpers\n\n");
+    md.push_str("- Windows: `scripts/setup-native-bindings.ps1`\n");
+    md.push_str("- Linux: `scripts/setup-native-bindings.sh`\n");
+    md.push_str("- Runtime verification: `scripts/verify-native-bindings.ps1` or `scripts/verify-native-bindings.sh`\n\n");
+    md.push_str("These scripts create/use a virtual environment, install `maturin`, install `engpy_native`, then verify runtime mode.\n\n");
+    md.push_str("## Excel Function Help and Intellisense\n\n");
+    md.push_str("- Generated xlOil/PyXLL functions now include richer help text: summary, per-argument guidance, return info, and a formula example.\n");
+    md.push_str("- Argument names are optimized for Excel readability on binding-friendly functions (for example pipe-loss uses `density`, `viscosity`, `roughness` instead of terse symbols).\n");
+    md.push_str(
+        "- Function Wizard help is the primary native Excel help surface for custom functions.\n",
+    );
+    md.push_str("- Excel custom function inline IntelliSense popups can be limited natively; when richer inline tooltip behavior is needed, use an IntelliSense add-in path (for example Excel-DNA IntelliSense with compatible workflows).\n");
+    md.push_str("- Shortcut: `Ctrl+Shift+A` inserts function arguments into a worksheet formula to make argument order explicit.\n\n");
+    md.push_str("## Runtime Protocol and Transport\n\n");
+    md.push_str(
+        "- Default runtime is in-process via native Rust/Python extension module (`engpy_native`).\n",
+    );
+    md.push_str(
+        "- Compatibility fallback runtime is persistent `eng worker` over stdio JSON-lines.\n",
+    );
+    md.push_str("- The per-call envelope is unchanged: `protocol_version`, `op`, optional `request_id`, `args`.\n");
+    md.push_str("- Generated Python runtime prefers native in-process mode, and only uses worker when native is unavailable or `ENGPY_RUNTIME=worker` is set.\n");
+    md.push_str("- On Windows worker fallback startup is hidden (`CREATE_NO_WINDOW`) to avoid console popup windows during Excel recalculation.\n");
+    md.push_str("- Worker fallback executable resolution: `ENG_WORKER_BIN` (fallback: `ENG_BIN`, then `eng`).\n");
+    md.push_str("- Runtime preference override: `ENGPY_RUNTIME=native|worker`.\n");
+    md.push_str("- Success response: `ok=true`, `value`, plus echoed `protocol_version`/`op`/`request_id`.\n");
+    md.push_str("- Error response: `ok=false`, `error.code`, `error.message`, optional `error.field` and `error.detail`.\n");
+    md.push_str("- Excel docs show one formula surface because xlOil and PyXLL are generated identically.\n");
+    md.push_str("- No engineering physics logic is implemented in generated Python modules.\n");
+    md.push_str("- Equation/device/fluid/material/constant behavior remains in Rust.\n\n");
+    md.push_str("## Error Model (Bindings)\n\n");
+    md.push_str("- Stable error `code` values are intended for wrapper logic and automation.\n");
+    md.push_str(
+        "- Human-facing `message` remains suitable for worksheet/Python troubleshooting.\n",
+    );
+    md.push_str("- `field` and `detail` provide argument-level and operation context.\n");
+    md.push_str("\n## Runtime Troubleshooting\n\n");
+    md.push_str(
+        "- Use `engpy._runtime.runtime_mode()` to confirm active runtime (`native` or `worker`).\n",
+    );
+    md.push_str("- Use `engpy._runtime.worker_stats()` to inspect runtime request counters, last failure, and worker PID when fallback is active.\n");
+    md.push_str(
+        "- Use `engpy._runtime.worker_pid()` for quick worker PID checks in fallback mode.\n",
+    );
+    md.push_str("- If needed, call `engpy._runtime.stop_worker()` to force a clean worker restart on next request (no-op in native mode).\n");
+    md.push_str("- If mode is unexpectedly `worker`, verify `engpy_native` imports in the same Python environment used by xlOil/PyXLL.\n");
+    md.push_str("- Runtime preference override: `ENGPY_RUNTIME=native|worker`.\n");
+    md.push_str("- Worker fallback executable overrides: `ENG_WORKER_BIN` and `ENG_BIN`.\n");
+    md.push_str("\nVerification snippet:\n\n```python\nimport engpy_native\nimport engpy._runtime as rt\nprint(rt.runtime_mode())\nprint(engpy_native.runtime_info())\n```\n");
+    md.push_str("\n## CI vs Local Verification\n\n");
+    md.push_str("- CI/repo checks validate generated binding artifacts, protocol/schema, docs generation, and runtime diagnostics surfaces.\n");
+    md.push_str("- Native environment activation (`maturin develop` + import in target interpreter) is machine/environment-specific and should be validated with the setup/verify scripts on each dev machine.\n");
+    md
+}
+
+fn render_binding_examples_for_equation(p: &EquationPageModel) -> String {
+    let target = p
+        .default_target
+        .clone()
+        .or_else(|| p.solve_targets.first().map(|t| t.target.clone()))
+        .unwrap_or_else(|| "value".to_string());
+    let args = equation_args_for_target(p, &target);
+    let python_module = format!(
+        "engpy.equations.{}",
+        snake_case(&p.category).replace('-', "_")
+    );
+    let python_fn = format!("solve_{}", snake_case(&target));
+    let excel_fn = format!(
+        "ENG_{}_{}",
+        p.path_id.replace('.', "_").to_ascii_uppercase(),
+        target.to_ascii_uppercase()
+    );
+    format!(
+        "## Bindings\n\n### Rust\n```rust\nlet value = eq.solve(equations::{}::equation()).for_target(\"{}\").value()?;\n```\n\n### Python\n```python\n{}.{}({})\n```\n\n### Excel\n```excel\n={}({})\n```\n\n**Excel arguments**\n{}\n",
+        p.path_id.replace('.', "::"),
+        target,
+        python_module,
+        python_fn,
+        render_python_example_args(&args),
+        excel_fn,
+        render_excel_example_args(&args),
+        render_binding_arg_bullets_for_excel_signature(&args, "equation.solve")
+    )
+}
+
+fn render_binding_examples_for_family(
+    family: &equations::equation_families::EquationFamilyDef,
+) -> String {
+    let mut md = String::new();
+    md.push_str("## Bindings\n\n");
+    md.push_str("### Python\n\n");
+    md.push_str("```python\n");
+    md.push_str(&format!(
+        "import engpy.equations.families.{} as family\n",
+        snake_case(&family.key)
+    ));
+    if let Some(v) = family.variants.first() {
+        md.push_str(&format!(
+            "family.{}_solve_{}(...)\n",
+            snake_case(&v.key),
+            "..."
+        ));
+    }
+    md.push_str("```\n\n");
+    md.push_str("### Excel\n\n");
+    md.push_str("```excel\n=ENG_FAMILY_<FAMILY>_<VARIANT>_<TARGET>(...)\n```\n");
+    md
+}
+
+fn render_binding_examples_for_device(device_key: &str) -> String {
+    match device_key {
+        "pipe_loss" => "## Bindings\n\n### Python\n```python\nengpy.devices.pipe_loss_solve_delta_p(friction_model=\"Colebrook\", v=\"3 m/s\", d=\"0.1 m\", l=\"10 m\", eps=\"0.00015 in\", fluid=\"H2O\", in1_key=\"T\", in1_value=\"300 K\", in2_key=\"P\", in2_value=\"1 atm\")\n```\n\n### Excel\n```excel\n=ENG_PIPE_LOSS_DELTA_P(\"Colebrook\",,\"\",,\"3 m/s\",\"0.1 m\",\"10 m\",\"0.00015 in\",\"H2O\",\"T\",\"300 K\",\"P\",\"1 atm\")\n```\n\n**Excel arguments**\n- `friction_model`: `Colebrook` or `Fixed`\n- `fixed_f`: fixed Darcy friction factor when model is `Fixed`\n- `density` / `viscosity` / `velocity` / `diameter` / `length` / `roughness`: direct engineering inputs\n- `fluid`, `in1_key`, `in1_value`, `in2_key`, `in2_value`: optional fluid-state context pair\n".to_string(),
+        _ => String::new(),
+    }
+}
+
+fn render_binding_examples_for_fluid() -> String {
+    "## Bindings\n\n### Python\n```python\nengpy.fluids.fluid_prop(\"H2O\", \"T\", \"300 K\", \"P\", \"1 bar\", \"rho\")\n```\n\n### Excel\n```excel\n=ENG_FLUID_PROP(\"H2O\",\"T\",\"300 K\",\"P\",\"1 bar\",\"rho\")\n```\n\n**Excel arguments**\n- `fluid`: fluid key or alias\n- `state_prop_1`, `state_value_1`: first state-defining property and value\n- `state_prop_2`, `state_value_2`: second state-defining property and value\n- `out_prop`: property to return (for example `rho`, `mu`, `cp`)\n".to_string()
+}
+
+fn render_binding_examples_for_material() -> String {
+    "## Bindings\n\n### Python\n```python\nengpy.materials.mat_prop(\"stainless_304\", \"elastic_modulus\", \"350 K\")\n```\n\n### Excel\n```excel\n=ENG_MAT_PROP(\"stainless_304\",\"elastic_modulus\",\"350 K\")\n```\n\n**Excel arguments**\n- `material`: material key or alias\n- `property_key`: material property key (for example `elastic_modulus`)\n- `temperature`: evaluation temperature (recommended with explicit units)\n".to_string()
+}
+
+fn render_binding_arg_bullets_for_excel_signature(args: &[BindingArg], op: &str) -> String {
+    if args.is_empty() {
+        return "- `(no args)`\n".to_string();
+    }
+    let mut out = String::new();
+    for a in args {
+        out.push_str(&format!(
+            "- `{}`: {}\n",
+            excel_param_name_for_op(op, &a.name),
+            a.description.trim()
+        ));
+    }
+    out
 }
 
 fn render_family_page(f: &equations::equation_families::EquationFamilyDef) -> String {
@@ -1116,6 +2510,8 @@ fn render_family_page(f: &equations::equation_families::EquationFamilyDef) -> St
             }
         ));
     }
+    md.push('\n');
+    md.push_str(&render_binding_examples_for_family(f));
     md
 }
 
@@ -1299,10 +2695,16 @@ fn render_fluid_page(f: &eng_fluids::FluidDocsEntry, c: &UnifiedDocsContribution
         md.push_str("- No current equation pages declare `fluid` resolver context.\n");
     }
     md.push_str("\n## Error Behavior\n\n");
-    md.push_str("- Unsupported input pairs return explicit pair diagnostics with a supported-pairs list.\n");
+    md.push_str(
+        "- Unsupported input pairs return explicit pair diagnostics with a supported-pairs list.\n",
+    );
     md.push_str("- Unknown/invalid generic property keys return actionable key guidance.\n");
-    md.push_str("- `u`/internal-energy keys are rejected intentionally to prevent ambiguity with `h`.\n");
+    md.push_str(
+        "- `u`/internal-energy keys are rejected intentionally to prevent ambiguity with `h`.\n",
+    );
     md.push_str("- Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.\n");
+    md.push('\n');
+    md.push_str(&render_binding_examples_for_fluid());
     md
 }
 
@@ -1312,7 +2714,7 @@ fn render_material_page(m: &eng_materials::MaterialDocsEntry) -> String {
     } else {
         m.aliases.join(", ")
     };
-    format!(
+    let mut md = format!(
         "# {}\n\n- Key: `{}`\n- Aliases: {}\n- Source: {}\n- Properties: {}\n\n{}\n",
         m.name,
         m.key,
@@ -1320,7 +2722,10 @@ fn render_material_page(m: &eng_materials::MaterialDocsEntry) -> String {
         m.source,
         m.properties.join(", "),
         m.description
-    )
+    );
+    md.push('\n');
+    md.push_str(&render_binding_examples_for_material());
+    md
 }
 
 fn render_category_index(cat: &CategoryPresentation) -> String {
@@ -1420,6 +2825,8 @@ fn render_equation_page(
             ));
         }
     }
+    md.push('\n');
+    md.push_str(&render_binding_examples_for_equation(p));
     md
 }
 
@@ -1431,6 +2838,8 @@ fn render_summary(c: &UnifiedDocsContribution) -> String {
     s.push_str("- [Input Styles](input_styles/index.md)\n");
     s.push_str("- [Units & Quantities](units_quantities/index.md)\n");
     s.push_str("- [Examples & Workflows](workflows/index.md)\n");
+    s.push_str("- [Bindings (Python/Excel)](bindings/index.md)\n");
+    s.push_str("- [Devices Guide](devices/guide.md)\n");
     s.push_str("- [YAML Authoring](yaml_authoring/index.md)\n");
     s.push_str("- [Validation / Trust](validation_trust/index.md)\n");
     s.push_str("- [Architecture Layers](architecture/index.md)\n");
@@ -1472,6 +2881,14 @@ fn render_summary(c: &UnifiedDocsContribution) -> String {
             snake_case(&family.key)
         ));
     }
+    s.push_str("- [Devices](devices/index.md)\n");
+    for d in &c.devices {
+        s.push_str(&format!(
+            "  - [{}](devices/{}.md)\n",
+            d.name,
+            snake_case(&d.key)
+        ));
+    }
     s.push_str("- [Constants](constants/index.md)\n");
     for cst in &c.equations.constants {
         s.push_str(&format!("  - [{}](constants/{}.md)\n", cst.name, cst.key));
@@ -1495,6 +2912,102 @@ fn render_summary(c: &UnifiedDocsContribution) -> String {
         ));
     }
     s
+}
+
+fn render_devices_guide() -> String {
+    let mut md = String::new();
+    md.push_str("# Devices Guide\n\n");
+    md.push_str("Devices/components compose multiple atomic equations into a higher-level engineering solve workflow. Users provide engineering inputs once; the device orchestrates intermediate solves internally.\n\n");
+    md.push_str("## First Production Device: Pipe Pressure Drop\n\n");
+    md.push_str("- API entrypoint: `eng::devices::pipe_loss()`\n");
+    md.push_str("- Supported friction models: `Fixed(f)`, `Colebrook`\n");
+    md.push_str(
+        "- Internal composed equations: Reynolds + Colebrook (when selected) + Darcy-Weisbach\n",
+    );
+    md.push_str("- Outputs: `delta_p`, plus intermediate `friction_factor` and `reynolds_number` when available\n\n");
+
+    md.push_str("## Fixed-f Mode\n\n```rust\n");
+    md.push_str(SNIPPET_DEVICE_PIPE_LOSS_FIXED.trim());
+    md.push_str("\n```\n\n");
+
+    md.push_str("## Colebrook Mode (direct properties)\n\n```rust\n");
+    md.push_str(SNIPPET_DEVICE_PIPE_LOSS_COLEBROOK_DIRECT.trim());
+    md.push_str("\n```\n\n");
+
+    md.push_str("## Colebrook Mode (fluid context)\n\n```rust\n");
+    md.push_str(SNIPPET_DEVICE_PIPE_LOSS_COLEBROOK_FLUID.trim());
+    md.push_str("\n```\n\n");
+
+    md.push_str("See [Devices Index](./index.md) and [Pipe Pressure Drop](./pipe_loss.md).\n");
+    md
+}
+
+fn render_devices_index(c: &UnifiedDocsContribution) -> String {
+    let mut md = String::new();
+    md.push_str("# Devices\n\n");
+    md.push_str("- [Devices Guide](./guide.md)\n\n");
+    md.push_str("| Device | Key | Summary | Modes |\n");
+    md.push_str("| --- | --- | --- | --- |\n");
+    for d in &c.devices {
+        md.push_str(&format!(
+            "| [{}](./{}.md) | `{}` | {} | {} |\n",
+            d.name,
+            snake_case(&d.key),
+            d.key,
+            d.summary,
+            d.supported_modes.join(", ")
+        ));
+    }
+    md
+}
+
+fn render_device_page(d: &crate::devices::DeviceDocsEntry) -> String {
+    let mut md = String::new();
+    md.push_str(&format!("# {}\n\n", d.name));
+    md.push_str(&format!("**Key:** `{}`\n\n", d.key));
+    md.push_str(&format!("{}\n\n", d.summary));
+    md.push_str("## Friction Models\n\n");
+    for m in &d.supported_modes {
+        md.push_str(&format!("- {}\n", m));
+    }
+    md.push_str("\n## Outputs\n\n");
+    for out in &d.outputs {
+        md.push_str(&format!("- {}\n", out));
+    }
+
+    md.push_str("\n## Fixed-f Example\n\n```rust\n");
+    md.push_str(SNIPPET_DEVICE_PIPE_LOSS_FIXED.trim());
+    md.push_str("\n```\n\n");
+
+    md.push_str("## Colebrook Example (direct properties)\n\n```rust\n");
+    md.push_str(SNIPPET_DEVICE_PIPE_LOSS_COLEBROOK_DIRECT.trim());
+    md.push_str("\n```\n\n");
+
+    md.push_str("## Colebrook Example (fluid context)\n\n```rust\n");
+    md.push_str(SNIPPET_DEVICE_PIPE_LOSS_COLEBROOK_FLUID.trim());
+    md.push_str("\n```\n\n");
+
+    md.push_str("## Internal Composition\n\n");
+    md.push_str("- Reynolds number: [Reynolds Number](../equations/fluids/reynolds_number.md)\n");
+    md.push_str(
+        "- Friction factor: [Colebrook-White Friction Factor](../equations/fluids/colebrook.md)\n",
+    );
+    md.push_str("- Pressure drop: [Darcy-Weisbach Pressure Drop](../equations/fluids/darcy_weisbach_pressure_drop.md)\n");
+    md.push_str("- Fluid state/context: [Fluids Guide](../fluids/guide.md)\n");
+    md.push('\n');
+    md.push_str(&render_binding_examples_for_device(&d.key));
+    md
+}
+
+fn device_equation_dependencies(device_key: &str) -> &'static [&'static str] {
+    match device_key {
+        "pipe_loss" => &[
+            "fluids.reynolds_number",
+            "fluids.colebrook",
+            "fluids.darcy_weisbach_pressure_drop",
+        ],
+        _ => &[],
+    }
 }
 
 fn render_mdbook_readme() -> String {

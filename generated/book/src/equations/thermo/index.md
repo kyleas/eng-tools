@@ -1,6 +1,3 @@
 # Thermo
 
-## Subcategories
-
-- [Ideal Gas](ideal_gas/index.md)
-
+- [Ideal Gas](./ideal_gas/index.md)

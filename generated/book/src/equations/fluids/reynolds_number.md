@@ -1,52 +1,31 @@
 # Reynolds Number
 
-**Path:** `fluids.reynolds_number`  
-**Category:** `fluids`
+**Path ID:** `fluids.reynolds_number`
 
-## Equation
-
-$$
+\[
 Re = \frac{\rho V D}{\mu}
-$$
+\]
 
 - Unicode: `Re = ρ · V · D / μ`
 - ASCII: `Re = rho * V * D / mu`
+
+## Variables
+
+<table><thead><tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr></thead><tbody>
+<tr><td><code>Re</code></td><td>Reynolds number</td><td>\(Re\)</td><td><code>ratio</code></td><td><code>1</code></td></tr>
+<tr><td><code>rho</code></td><td>Fluid density</td><td>\(\rho\)</td><td><code>density</code></td><td><code>kg/m3</code></td></tr>
+<tr><td><code>V</code></td><td>Mean velocity</td><td>\(V\)</td><td><code>velocity</code></td><td><code>m/s</code></td></tr>
+<tr><td><code>D</code></td><td>Hydraulic diameter</td><td>\(D\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+<tr><td><code>mu</code></td><td>Dynamic viscosity</td><td>\(\mu\)</td><td><code>viscosity</code></td><td><code>Pa*s</code></td></tr>
+</tbody></table>
 
 ## Assumptions
 
 - Internal-flow characteristic length is represented by hydraulic diameter.
 
-## Variables
-
-<table>
-  <thead>
-    <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Re</code></td><td>Reynolds number</td><td><span class="math inline">\(Re\)</span></td><td><code>ratio</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-    <tr><td><code>rho</code></td><td>Fluid density</td><td><span class="math inline">\(\rho\)</span></td><td><code>density</code></td><td><code>kg/m3</code></td><td><code>fluid_property:density</code> from <code>fluid</code></td></tr>
-    <tr><td><code>V</code></td><td>Mean velocity</td><td><span class="math inline">\(V\)</span></td><td><code>velocity</code></td><td><code>m/s</code></td><td><code>-</code></td></tr>
-    <tr><td><code>D</code></td><td>Hydraulic diameter</td><td><span class="math inline">\(D\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-    <tr><td><code>mu</code></td><td>Dynamic viscosity</td><td><span class="math inline">\(\mu\)</span></td><td><code>viscosity</code></td><td><code>Pa*s</code></td><td><code>fluid_property:dynamic_viscosity</code> from <code>fluid</code></td></tr>
-  </tbody>
-</table>
-
-## Resolvable from Contexts
-
-- `rho` from context `fluid` via `fluid_property`:`density`
-- `mu` from context `fluid` via `fluid_property`:`dynamic_viscosity`
-
-## Solve Targets
-
-- `D`: explicit
-- `Re`: explicit
-- `V`: explicit
-- `mu`: explicit
-- `rho`: explicit
-
 ## Examples
 
-### Typed Builder (SI Numeric)
+### typed_builder_si
 
 ```rust
 let value = eq
@@ -57,7 +36,7 @@ let value = eq
     .value()?;
 ```
 
-### Typed Builder (Units-Aware)
+### typed_builder_units
 
 ```rust
 let value = eq
@@ -68,7 +47,7 @@ let value = eq
     .value()?;
 ```
 
-### Typed Builder (Context-Assisted)
+### typed_builder_context
 
 ```rust
 let value = eq
@@ -80,32 +59,7 @@ let value = eq
     .value()?;
 ```
 
-### Available Convenience Functions
-
-Direct solve helpers are available for these targets.
-
-<table>
-  <thead>
-    <tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>Re</code></td><td><code>solve_re(V, D)</code></td><td><code>V</code>, <code>D</code></td></tr>
-    <tr><td><code>rho</code></td><td><code>solve_rho(Re, V, D)</code></td><td><code>Re</code>, <code>V</code>, <code>D</code></td></tr>
-    <tr><td><code>V</code></td><td><code>solve_v(Re, D)</code></td><td><code>Re</code>, <code>D</code></td></tr>
-    <tr><td><code>D</code></td><td><code>solve_d(Re, V)</code></td><td><code>Re</code>, <code>V</code></td></tr>
-    <tr><td><code>mu</code></td><td><code>solve_mu(Re, V, D)</code></td><td><code>Re</code>, <code>V</code>, <code>D</code></td></tr>
-  </tbody>
-</table>
-
-### Solve `Re`
-
-**Function signature**
-
-```rust
-equations::fluids::reynolds_number::solve_re(V, D) -> Result<f64, _>
-```
-
-**Example**
+### convenience_re
 
 ```rust
 let value = equations::fluids::reynolds_number::solve_re(
@@ -114,11 +68,65 @@ let value = equations::fluids::reynolds_number::solve_re(
 )?;
 ```
 
-### Notes
+### convenience_rho
 
-- Returns SI by default; use `.value_in("<unit>")` for display units.
+```rust
+let value = equations::fluids::reynolds_number::solve_rho(
+    2.495e5,
+    "2.5 m/s",
+    "0.1 m",
+)?;
+```
 
-## Source
+### convenience_v
 
-- [Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics](https://www.wiley.com/en-us/Introduction+to+Fluid+Mechanics%2C+9th+Edition-p-9781119721025)
+```rust
+let value = equations::fluids::reynolds_number::solve_v(
+    2.495e5,
+    "0.1 m",
+)?;
+```
+
+### convenience_d
+
+```rust
+let value = equations::fluids::reynolds_number::solve_d(
+    2.495e5,
+    "2.5 m/s",
+)?;
+```
+
+### convenience_mu
+
+```rust
+let value = equations::fluids::reynolds_number::solve_mu(
+    2.495e5,
+    "2.5 m/s",
+    "0.1 m",
+)?;
+```
+
+
+## Bindings
+
+### Rust
+```rust
+let value = eq.solve(equations::fluids::reynolds_number::equation()).for_target("D").value()?;
+```
+
+### Python
+```python
+engpy.equations.fluids.solve_d(re="...", rho="...", v="...", mu="...")
+```
+
+### Excel
+```excel
+=ENG_FLUIDS_REYNOLDS_NUMBER_D("...","...","...","...")
+```
+
+**Excel arguments**
+- `re`: Reynolds number
+- `rho`: Fluid density
+- `v`: Mean velocity
+- `mu`: Dynamic viscosity
 

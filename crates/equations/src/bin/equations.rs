@@ -1,13 +1,6 @@
-use std::{env, fs, path::PathBuf, process};
+use std::{env, path::PathBuf, process};
 
-use equations::{
-    Registry,
-    docs::{
-        HtmlBuildStatus, export_docs_artifacts, export_html_docs, export_mdbook_source,
-        export_pdf_handbook, serve_mdbook,
-    },
-    generate_schema_to_path, run_registry_tests,
-};
+use equations::{Registry, generate_schema_to_path, run_registry_tests};
 
 fn main() {
     if let Err(e) = run() {
@@ -31,104 +24,9 @@ fn run() -> Result<(), String> {
             println!("wrote schema: {}", schema_out.display());
             Ok(())
         }
-        "export-docs" => {
-            let registry_dir =
-                parse_flag_path(&args, "--registry-dir").unwrap_or_else(default_registry_path);
-            let out_dir =
-                parse_flag_path(&args, "--out-dir").unwrap_or_else(default_generated_path);
-            let registry = Registry::load_from_dir(&registry_dir).map_err(|e| e.to_string())?;
-            registry.validate().map_err(|e| e.to_string())?;
-            export_docs_artifacts(registry.equations(), &out_dir).map_err(|e| e.to_string())?;
-            println!(
-                "wrote unified docs/catalog artifacts: {}",
-                out_dir.display()
-            );
-            println!("catalog: {}", out_dir.join("catalog.json").display());
-            Ok(())
-        }
-        "export-mdbook" => {
-            let registry_dir =
-                parse_flag_path(&args, "--registry-dir").unwrap_or_else(default_registry_path);
-            let out_dir = parse_flag_path(&args, "--out-dir")
-                .unwrap_or_else(|| default_generated_path().join("book"));
-            let registry = Registry::load_from_dir(&registry_dir).map_err(|e| e.to_string())?;
-            registry.validate().map_err(|e| e.to_string())?;
-            let paths =
-                export_mdbook_source(registry.equations(), &out_dir).map_err(|e| e.to_string())?;
-            println!("unified mdBook source generated.");
-            print_mdbook_paths(&paths);
-            println!(
-                "Preview locally: run `mdbook serve --open` in {}",
-                paths.source_dir.display()
-            );
-            println!(
-                "Build static HTML: run `mdbook build` in {}",
-                paths.source_dir.display()
-            );
-            Ok(())
-        }
-        "export-html" => {
-            let registry_dir =
-                parse_flag_path(&args, "--registry-dir").unwrap_or_else(default_registry_path);
-            let out_dir = parse_flag_path(&args, "--out-dir")
-                .unwrap_or_else(|| default_generated_path().join("book"));
-            let registry = Registry::load_from_dir(&registry_dir).map_err(|e| e.to_string())?;
-            registry.validate().map_err(|e| e.to_string())?;
-            let report =
-                export_html_docs(registry.equations(), &out_dir).map_err(|e| e.to_string())?;
-            println!("unified mdBook source generated.");
-            print_mdbook_paths(&report.paths);
-            match report.status {
-                HtmlBuildStatus::Built => {
-                    let compat_html_dir = default_generated_path().join("html");
-                    mirror_directory(&report.paths.html_dir, &compat_html_dir)?;
-                    println!("HTML build completed via `mdbook build`.");
-                    println!("Unified HTML output: {}", compat_html_dir.display());
-                    println!("Open: {}", compat_html_dir.join("index.html").display());
-                }
-                HtmlBuildStatus::MdBookNotInstalled { message } => {
-                    println!("HTML build skipped: mdbook not found in PATH.");
-                    println!();
-                    println!("{message}");
-                    println!("Install: cargo install mdbook");
-                    println!(
-                        "Then run in {}: mdbook build  (or mdbook serve --open)",
-                        report.paths.source_dir.display()
-                    );
-                }
-            }
-            Ok(())
-        }
-        "serve-book" => {
-            let registry_dir =
-                parse_flag_path(&args, "--registry-dir").unwrap_or_else(default_registry_path);
-            let out_dir = parse_flag_path(&args, "--out-dir")
-                .unwrap_or_else(|| default_generated_path().join("book"));
-            let no_open = args.iter().any(|a| a == "--no-open");
-            let registry = Registry::load_from_dir(&registry_dir).map_err(|e| e.to_string())?;
-            registry.validate().map_err(|e| e.to_string())?;
-            let paths =
-                export_mdbook_source(registry.equations(), &out_dir).map_err(|e| e.to_string())?;
-            println!("unified mdBook source generated.");
-            print_mdbook_paths(&paths);
-            println!(
-                "Starting `mdbook serve{}` from {}",
-                if no_open { "" } else { " --open" },
-                paths.source_dir.display()
-            );
-            serve_mdbook(&paths.source_dir, !no_open).map_err(|e| e.to_string())
-        }
-        "export-pdf" => {
-            let registry_dir =
-                parse_flag_path(&args, "--registry-dir").unwrap_or_else(default_registry_path);
-            let out_file = parse_flag_path(&args, "--out-file")
-                .unwrap_or_else(|| default_generated_path().join("engineering_handbook.pdf"));
-            let registry = Registry::load_from_dir(&registry_dir).map_err(|e| e.to_string())?;
-            registry.validate().map_err(|e| e.to_string())?;
-            export_pdf_handbook(registry.equations(), &out_file).map_err(|e| e.to_string())?;
-            println!("wrote unified pdf handbook: {}", out_file.display());
-            Ok(())
-        }
+        "export-docs" | "export-mdbook" | "export-html" | "serve-book" | "export-pdf" => Err(
+            "Unified export commands are owned by the top-level `eng` CLI.\nRun: cargo run -p eng --bin eng -- <export-docs|export-mdbook|export-html|serve-book|export-pdf>".to_string(),
+        ),
         "validate" => {
             let registry_dir =
                 parse_flag_path(&args, "--registry-dir").unwrap_or_else(default_registry_path);
@@ -187,45 +85,6 @@ fn run() -> Result<(), String> {
         }
         _ => Err(usage()),
     }
-}
-
-fn mirror_directory(source: &PathBuf, target: &PathBuf) -> Result<(), String> {
-    if !source.exists() {
-        return Err(format!(
-            "html source directory does not exist: {}",
-            source.display()
-        ));
-    }
-    if target.exists() {
-        fs::remove_dir_all(target)
-            .map_err(|e| format!("failed to clear {}: {e}", target.display()))?;
-    }
-    copy_dir_recursive(source, target)
-}
-
-fn copy_dir_recursive(source: &PathBuf, target: &PathBuf) -> Result<(), String> {
-    fs::create_dir_all(target)
-        .map_err(|e| format!("failed to create {}: {e}", target.display()))?;
-    for entry in
-        fs::read_dir(source).map_err(|e| format!("failed to read {}: {e}", source.display()))?
-    {
-        let entry = entry.map_err(|e| e.to_string())?;
-        let src_path = entry.path();
-        let dst_path = target.join(entry.file_name());
-        let file_type = entry.file_type().map_err(|e| e.to_string())?;
-        if file_type.is_dir() {
-            copy_dir_recursive(&src_path, &dst_path)?;
-        } else {
-            fs::copy(&src_path, &dst_path).map_err(|e| {
-                format!(
-                    "failed to copy {} -> {}: {e}",
-                    src_path.display(),
-                    dst_path.display()
-                )
-            })?;
-        }
-    }
-    Ok(())
 }
 
 fn scaffold_equation(
@@ -319,14 +178,6 @@ fn crate_root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
 }
 
-fn workspace_root() -> PathBuf {
-    crate_root()
-        .parent()
-        .and_then(|p| p.parent())
-        .map(PathBuf::from)
-        .unwrap_or_else(crate_root)
-}
-
 fn default_registry_path() -> PathBuf {
     crate_root().join("registry")
 }
@@ -335,27 +186,19 @@ fn default_schema_path() -> PathBuf {
     crate_root().join("schemas").join("equation.schema.json")
 }
 
-fn default_generated_path() -> PathBuf {
-    workspace_root().join("generated")
-}
-
 fn usage() -> String {
     "usage:
   equations generate-schema [--schema-out PATH]
-  equations export-docs [--registry-dir PATH] [--out-dir PATH]
-  equations export-mdbook [--registry-dir PATH] [--out-dir PATH]
-  equations export-html [--registry-dir PATH] [--out-dir PATH]
-  equations serve-book [--registry-dir PATH] [--out-dir PATH] [--no-open]
-  equations export-pdf [--registry-dir PATH] [--out-file PATH]
   equations validate [--registry-dir PATH] [--with-tests]
   equations test-registry [--registry-dir PATH]
   equations lint [--registry-dir PATH] [--strict]
-  equations scaffold --key KEY --category CATEGORY [--name NAME] [--out PATH] [--force]"
-        .to_string()
-}
+  equations scaffold --key KEY --category CATEGORY [--name NAME] [--out PATH] [--force]
 
-fn print_mdbook_paths(paths: &equations::docs::MdBookPaths) {
-    println!("Unified mdBook source: {}", paths.source_dir.display());
-    println!("Unified HTML output: {}", paths.html_dir.display());
-    println!("Open: {}", paths.html_index.display());
+Unified docs/export commands moved to:
+  cargo run -p eng --bin eng -- export-docs [--out-dir PATH]
+  cargo run -p eng --bin eng -- export-mdbook [--out-dir PATH]
+  cargo run -p eng --bin eng -- export-html [--out-dir PATH]
+  cargo run -p eng --bin eng -- serve-book [--out-dir PATH] [--no-open]
+  cargo run -p eng --bin eng -- export-pdf [--out-file PATH]"
+        .to_string()
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "model_version": "2026-03-02",
+  "model_version": "2026-03-03",
   "artifact_type": "catalog",
   "items": {
     "equations": [
@@ -11,7 +11,6 @@
         "category": "compressible",
         "subcategories": [],
         "default_target": null,
-        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -22,7 +21,6 @@
         "category": "compressible",
         "subcategories": [],
         "default_target": null,
-        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -33,7 +31,6 @@
         "category": "compressible",
         "subcategories": [],
         "default_target": null,
-        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -44,7 +41,6 @@
         "category": "compressible",
         "subcategories": [],
         "default_target": null,
-        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -55,7 +51,6 @@
         "category": "compressible",
         "subcategories": [],
         "default_target": null,
-        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -66,7 +61,6 @@
         "category": "fluids",
         "subcategories": [],
         "default_target": null,
-        "source": "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics",
         "uses_constants": [
           "pi"
         ],
@@ -79,7 +73,6 @@
         "category": "fluids",
         "subcategories": [],
         "default_target": null,
-        "source": "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -90,7 +83,6 @@
         "category": "fluids",
         "subcategories": [],
         "default_target": null,
-        "source": "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -101,7 +93,6 @@
         "category": "fluids",
         "subcategories": [],
         "default_target": null,
-        "source": "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -112,7 +103,6 @@
         "category": "fluids",
         "subcategories": [],
         "default_target": null,
-        "source": "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -123,7 +113,6 @@
         "category": "fluids",
         "subcategories": [],
         "default_target": null,
-        "source": "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics",
         "uses_constants": [],
         "resolver_contexts": [
           "fluid"
@@ -136,7 +125,6 @@
         "category": "heat_transfer",
         "subcategories": [],
         "default_target": null,
-        "source": "Incropera et al., Fundamentals of Heat and Mass Transfer",
         "uses_constants": [],
         "resolver_contexts": [
           "material"
@@ -149,7 +137,6 @@
         "category": "heat_transfer",
         "subcategories": [],
         "default_target": null,
-        "source": "Incropera et al., Fundamentals of Heat and Mass Transfer",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -160,7 +147,6 @@
         "category": "heat_transfer",
         "subcategories": [],
         "default_target": null,
-        "source": "Incropera et al., Fundamentals of Heat and Mass Transfer",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -171,7 +157,6 @@
         "category": "heat_transfer",
         "subcategories": [],
         "default_target": null,
-        "source": "Incropera et al., Fundamentals of Heat and Mass Transfer",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -182,7 +167,6 @@
         "category": "heat_transfer",
         "subcategories": [],
         "default_target": null,
-        "source": "Incropera et al., Fundamentals of Heat and Mass Transfer",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -193,7 +177,6 @@
         "category": "rockets",
         "subcategories": [],
         "default_target": null,
-        "source": "Sutton and Biblarz, Rocket Propulsion Elements",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -204,7 +187,6 @@
         "category": "rockets",
         "subcategories": [],
         "default_target": null,
-        "source": "Sutton and Biblarz, Rocket Propulsion Elements",
         "uses_constants": [
           "g0"
         ],
@@ -217,7 +199,6 @@
         "category": "rockets",
         "subcategories": [],
         "default_target": null,
-        "source": "Sutton and Biblarz, Rocket Propulsion Elements",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -228,7 +209,6 @@
         "category": "rockets",
         "subcategories": [],
         "default_target": null,
-        "source": "Sutton and Biblarz, Rocket Propulsion Elements",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -239,7 +219,6 @@
         "category": "structures",
         "subcategories": [],
         "default_target": null,
-        "source": "Roark's Formulas for Stress and Strain",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -250,7 +229,6 @@
         "category": "structures",
         "subcategories": [],
         "default_target": null,
-        "source": "Roark's Formulas for Stress and Strain",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -261,7 +239,6 @@
         "category": "structures",
         "subcategories": [],
         "default_target": null,
-        "source": "Roark's Formulas for Stress and Strain",
         "uses_constants": [
           "pi"
         ],
@@ -276,7 +253,6 @@
         "category": "structures",
         "subcategories": [],
         "default_target": null,
-        "source": "Roark's Formulas for Stress and Strain",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -287,7 +263,6 @@
         "category": "structures",
         "subcategories": [],
         "default_target": null,
-        "source": "Roark's Formulas for Stress and Strain",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -298,7 +273,6 @@
         "category": "structures",
         "subcategories": [],
         "default_target": null,
-        "source": "Roark's Formulas for Stress and Strain",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -311,7 +285,6 @@
           "ideal_gas"
         ],
         "default_target": null,
-        "source": "Moran et al., Fundamentals of Engineering Thermodynamics",
         "uses_constants": [],
         "resolver_contexts": []
       },
@@ -324,7 +297,6 @@
           "ideal_gas"
         ],
         "default_target": null,
-        "source": "Moran et al., Fundamentals of Engineering Thermodynamics",
         "uses_constants": [],
         "resolver_contexts": []
       }
@@ -336,33 +308,25 @@
         "description": "Common engineering forms of the ideal-gas law under one canonical family.",
         "canonical_law": "P * V = m * R * T",
         "canonical_equation": "thermo.ideal_gas.mass_volume",
-        "assumptions": [
-          "Thermally and calorically ideal gas behavior.",
-          "Constant gas constant R in the operating range."
-        ],
-        "references": [
-          "Fundamentals of Thermodynamics (ideal-gas state relation)"
-        ],
+        "route": "equations/families/ideal_gas.md",
         "variants": [
           {
             "key": "mass_volume",
             "name": "Mass-Volume Form",
             "equation_id": "thermo.ideal_gas.mass_volume",
             "display_latex": "P V = m R T",
-            "description": "",
             "when_to_use": "Use when total mass and control-volume size are primary knowns.",
-            "assumptions": [],
-            "references": []
+            "route": "ideal_gas.mass_volume",
+            "equation_route": "equations/thermo/ideal_gas/mass_volume.md"
           },
           {
             "key": "density",
             "name": "Density Form",
             "equation_id": "thermo.ideal_gas.density",
             "display_latex": "P = \\rho R T",
-            "description": "",
             "when_to_use": "Use when density-based flow/property calculations are primary.",
-            "assumptions": [],
-            "references": []
+            "route": "ideal_gas.density",
+            "equation_route": "equations/thermo/ideal_gas/density.md"
           }
         ]
       }
@@ -452,12 +416,37 @@
         ]
       }
     ],
+    "devices": [
+      {
+        "key": "pipe_loss",
+        "name": "Pipe Pressure Drop",
+        "summary": "Composes Reynolds + friction model + Darcy-Weisbach for pipe pressure loss.",
+        "supported_modes": [
+          "Fixed friction factor",
+          "Colebrook"
+        ],
+        "outputs": [
+          "delta_p (Pa)",
+          "friction_factor",
+          "reynolds_number"
+        ],
+        "route": "devices/pipe_loss.md"
+      }
+    ],
     "fluids": [
       {
         "key": "Air",
         "name": "Air",
         "aliases": [
           "atmosphere"
+        ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
         ],
         "supported_properties": [
           "density",
@@ -480,6 +469,14 @@
         "aliases": [
           "argon"
         ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -500,6 +497,14 @@
         "name": "Methane",
         "aliases": [
           "methane"
+        ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
         ],
         "supported_properties": [
           "density",
@@ -522,6 +527,14 @@
         "aliases": [
           "carbon monoxide"
         ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -542,6 +555,14 @@
         "name": "Carbon Dioxide",
         "aliases": [
           "carbon dioxide"
+        ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
         ],
         "supported_properties": [
           "density",
@@ -564,6 +585,14 @@
         "aliases": [
           "c2h6"
         ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -584,6 +613,14 @@
         "name": "Ethylene",
         "aliases": [
           "c2h4"
+        ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
         ],
         "supported_properties": [
           "density",
@@ -606,6 +643,14 @@
         "aliases": [
           "hydrogen"
         ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -626,6 +671,14 @@
         "name": "Water",
         "aliases": [
           "water"
+        ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
         ],
         "supported_properties": [
           "density",
@@ -648,6 +701,14 @@
         "aliases": [
           "helium"
         ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -668,6 +729,14 @@
         "name": "Isobutane",
         "aliases": [
           "i-butane"
+        ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
         ],
         "supported_properties": [
           "density",
@@ -690,6 +759,14 @@
         "aliases": [
           "i-pentane"
         ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -710,6 +787,14 @@
         "name": "Krypton",
         "aliases": [
           "krypton"
+        ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
         ],
         "supported_properties": [
           "density",
@@ -732,6 +817,14 @@
         "aliases": [
           "nitrogen"
         ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -752,6 +845,14 @@
         "name": "Nitrous Oxide",
         "aliases": [
           "nitrous oxide"
+        ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
         ],
         "supported_properties": [
           "density",
@@ -774,6 +875,14 @@
         "aliases": [
           "ammonia"
         ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -795,6 +904,14 @@
         "aliases": [
           "neon"
         ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -815,6 +932,14 @@
         "name": "Oxygen",
         "aliases": [
           "oxygen"
+        ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
         ],
         "supported_properties": [
           "density",
@@ -838,6 +963,14 @@
           "c3h8",
           "n-propane"
         ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -859,6 +992,14 @@
         "aliases": [
           "c3h6"
         ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -878,6 +1019,14 @@
         "key": "R1234yf",
         "name": "R1234yf",
         "aliases": [],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -897,6 +1046,14 @@
         "key": "R125",
         "name": "R125",
         "aliases": [],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -916,6 +1073,14 @@
         "key": "R134a",
         "name": "R134a",
         "aliases": [],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -935,6 +1100,14 @@
         "key": "R152a",
         "name": "R152a",
         "aliases": [],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -954,6 +1127,14 @@
         "key": "R245fa",
         "name": "R245fa",
         "aliases": [],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -973,6 +1154,14 @@
         "key": "R32",
         "name": "R32",
         "aliases": [],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -994,6 +1183,14 @@
         "aliases": [
           "sulfur dioxide"
         ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -1014,6 +1211,14 @@
         "name": "Xenon",
         "aliases": [
           "xenon"
+        ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
         ],
         "supported_properties": [
           "density",
@@ -1037,6 +1242,14 @@
           "butane",
           "n-butane"
         ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -1059,6 +1272,14 @@
           "hexane",
           "n-hexane"
         ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
+        ],
         "supported_properties": [
           "density",
           "specific_heat_capacity",
@@ -1080,6 +1301,14 @@
         "aliases": [
           "pentane",
           "n-pentane"
+        ],
+        "supported_state_inputs": [
+          "T,P",
+          "P,h",
+          "P,s",
+          "rho,h",
+          "P,Q",
+          "T,Q"
         ],
         "supported_properties": [
           "density",
@@ -1105,6 +1334,8 @@
           "al6061_t6",
           "6061_t6"
         ],
+        "description": "Heat-treated aluminum alloy with dense temperature-property series.",
+        "source": "Representative handbook values for interpolation demonstrations.",
         "properties": [
           "elastic_modulus",
           "thermal_conductivity",
@@ -1118,6 +1349,8 @@
           "ss304",
           "aisi304"
         ],
+        "description": "Austenitic stainless steel with temperature-dependent mechanical and thermal properties.",
+        "source": "Representative handbook values for interpolation demonstrations.",
         "properties": [
           "elastic_modulus",
           "thermal_conductivity",
@@ -1126,6 +1359,21 @@
       }
     ],
     "links": [
+      {
+        "relation": "device_uses_equation",
+        "from": "pipe_loss",
+        "to": "fluids.colebrook"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "pipe_loss",
+        "to": "fluids.darcy_weisbach_pressure_drop"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "pipe_loss",
+        "to": "fluids.reynolds_number"
+      },
       {
         "relation": "equation_uses_constant",
         "from": "fluids.circular_pipe_area",

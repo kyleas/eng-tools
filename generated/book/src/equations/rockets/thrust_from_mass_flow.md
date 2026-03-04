@@ -1,43 +1,29 @@
 # Thrust From Mass Flow and Effective Exhaust Velocity
 
-**Path:** `rockets.thrust_from_mass_flow`  
-**Category:** `rockets`
+**Path ID:** `rockets.thrust_from_mass_flow`
 
-## Equation
-
-$$
+\[
 F = \dot{m} c_{eff}
-$$
+\]
 
 - Unicode: `F = m_dot · c_eff`
 - ASCII: `F = m_dot * c_eff`
+
+## Variables
+
+<table><thead><tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr></thead><tbody>
+<tr><td><code>F</code></td><td>Thrust</td><td>\(F\)</td><td><code>force</code></td><td><code>N</code></td></tr>
+<tr><td><code>m_dot</code></td><td>Mass flow rate</td><td>\(m_dot\)</td><td><code>mass_flow_rate</code></td><td><code>kg/s</code></td></tr>
+<tr><td><code>c_eff</code></td><td>Effective exhaust velocity</td><td>\(c_eff\)</td><td><code>velocity</code></td><td><code>m/s</code></td></tr>
+</tbody></table>
 
 ## Assumptions
 
 - Pressure-thrust contribution is embedded in effective exhaust velocity.
 
-## Variables
-
-<table>
-  <thead>
-    <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>F</code></td><td>Thrust</td><td><span class="math inline">\(F\)</span></td><td><code>force</code></td><td><code>N</code></td><td><code>-</code></td></tr>
-    <tr><td><code>m_dot</code></td><td>Mass flow rate</td><td><span class="math inline">\(m_{dot}\)</span></td><td><code>mass_flow_rate</code></td><td><code>kg/s</code></td><td><code>-</code></td></tr>
-    <tr><td><code>c_eff</code></td><td>Effective exhaust velocity</td><td><span class="math inline">\(c_{eff}\)</span></td><td><code>velocity</code></td><td><code>m/s</code></td><td><code>-</code></td></tr>
-  </tbody>
-</table>
-
-## Solve Targets
-
-- `F`: explicit
-- `c_eff`: explicit
-- `m_dot`: explicit
-
 ## Examples
 
-### Typed Builder (SI Numeric)
+### typed_builder_si
 
 ```rust
 let value = eq
@@ -48,7 +34,7 @@ let value = eq
     .value()?;
 ```
 
-### Typed Builder (Units-Aware)
+### typed_builder_units
 
 ```rust
 let value = eq
@@ -59,30 +45,7 @@ let value = eq
     .value()?;
 ```
 
-### Available Convenience Functions
-
-Direct solve helpers are available for these targets.
-
-<table>
-  <thead>
-    <tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>F</code></td><td><code>solve_f(m_dot, c_eff)</code></td><td><code>m_dot</code>, <code>c_eff</code></td></tr>
-    <tr><td><code>m_dot</code></td><td><code>solve_m_dot(F, c_eff)</code></td><td><code>F</code>, <code>c_eff</code></td></tr>
-    <tr><td><code>c_eff</code></td><td><code>solve_c_eff(F, m_dot)</code></td><td><code>F</code>, <code>m_dot</code></td></tr>
-  </tbody>
-</table>
-
-### Solve `F`
-
-**Function signature**
-
-```rust
-equations::rockets::thrust_from_mass_flow::solve_f(m_dot, c_eff) -> Result<f64, _>
-```
-
-**Example**
+### convenience_f
 
 ```rust
 let value = equations::rockets::thrust_from_mass_flow::solve_f(
@@ -91,11 +54,43 @@ let value = equations::rockets::thrust_from_mass_flow::solve_f(
 )?;
 ```
 
-### Notes
+### convenience_m_dot
 
-- Returns SI by default; use `.value_in("<unit>")` for display units.
+```rust
+let value = equations::rockets::thrust_from_mass_flow::solve_m_dot(
+    "500000 N",
+    "2000 m/s",
+)?;
+```
 
-## Source
+### convenience_c_eff
 
-- Sutton and Biblarz, Rocket Propulsion Elements
+```rust
+let value = equations::rockets::thrust_from_mass_flow::solve_c_eff(
+    "500000 N",
+    "250 kg/s",
+)?;
+```
+
+
+## Bindings
+
+### Rust
+```rust
+let value = eq.solve(equations::rockets::thrust_from_mass_flow::equation()).for_target("F").value()?;
+```
+
+### Python
+```python
+engpy.equations.rockets.solve_f(m_dot="...", c_eff="...")
+```
+
+### Excel
+```excel
+=ENG_ROCKETS_THRUST_FROM_MASS_FLOW_F("...","...")
+```
+
+**Excel arguments**
+- `m_dot`: Mass flow rate
+- `c_eff`: Effective exhaust velocity
 

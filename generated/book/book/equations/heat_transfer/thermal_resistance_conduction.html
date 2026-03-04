@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfb3c088.js"></script>
+        <script src="../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,55 +177,37 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="conduction-thermal-resistance"><a class="header" href="#conduction-thermal-resistance">Conduction Thermal Resistance</a></h1>
-<p><strong>Path:</strong> <code>heat_transfer.thermal_resistance_conduction</code><br><strong>Category:</strong> <code>heat_transfer</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>heat_transfer.thermal_resistance_conduction</code></p>
+<p>[
 R_{th} = \frac{L}{k A}
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>R_th = L / (k · A)</code></li>
 <li>ASCII: <code>R_th = L / (k * A)</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>R_th</code></td><td>Thermal resistance</td><td>\(R_th\)</td><td><code>thermal_resistance</code></td><td><code>K/W</code></td></tr>
+
+<tr><td><code>L</code></td><td>Wall thickness</td><td>\(L\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+
+<tr><td><code>k</code></td><td>Thermal conductivity</td><td>\(k\)</td><td><code>thermal_conductivity</code></td><td><code>W/(m*K)</code></td></tr>
+
+<tr><td><code>A</code></td><td>Area</td><td>\(A\)</td><td><code>area</code></td><td><code>m2</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>One-dimensional steady conduction with constant properties.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>R_th</code></td><td>Thermal resistance</td><td><span class="math inline">\(R_{th}\)</span></td><td><code>thermal_resistance</code></td><td><code>K/W</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>L</code></td><td>Wall thickness</td><td><span class="math inline">\(L\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>k</code></td><td>Thermal conductivity</td><td><span class="math inline">\(k\)</span></td><td><code>thermal_conductivity</code></td><td><code>W/(m*K)</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>A</code></td><td>Area</td><td><span class="math inline">\(A\)</span></td><td><code>area</code></td><td><code>m2</code></td><td><code>-</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>A</code>: explicit</li>
-<li><code>L</code>: explicit</li>
-<li><code>R_th</code>: explicit</li>
-<li><code>k</code>: explicit</li>
-</ul>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -236,7 +218,7 @@ $$</p>
     .given_a(0.2)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-units-aware"><a class="header" href="#typed-builder-units-aware">Typed Builder (Units-Aware)</a></h3>
+<h3 id="typed_builder_units"><a class="header" href="#typed_builder_units">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -247,41 +229,7 @@ $$</p>
     .given_a("0.2 m2")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="available-convenience-functions"><a class="header" href="#available-convenience-functions">Available Convenience Functions</a></h3>
-<p>Direct solve helpers are available for these targets.</p>
-<table>
-  
-<thead>
-    
-<tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>R_th</code></td><td><code>solve_r_th(L, k, A)</code></td><td><code>L</code>, <code>k</code>, <code>A</code></td></tr>
-
-    
-<tr><td><code>L</code></td><td><code>solve_l(R_th, k, A)</code></td><td><code>R_th</code>, <code>k</code>, <code>A</code></td></tr>
-
-    
-<tr><td><code>k</code></td><td><code>solve_k(R_th, L, A)</code></td><td><code>R_th</code>, <code>L</code>, <code>A</code></td></tr>
-
-    
-<tr><td><code>A</code></td><td><code>solve_a(R_th, L, k)</code></td><td><code>R_th</code>, <code>L</code>, <code>k</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h3 id="solve-r_th"><a class="header" href="#solve-r_th">Solve <code>R_th</code></a></h3>
-<p><strong>Function signature</strong></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>equations::heat_transfer::thermal_resistance_conduction::solve_r_th(L, k, A) -&gt; Result&lt;f64, _&gt;
-<span class="boring">}</span></code></pre>
-<p><strong>Example</strong></p>
+<h3 id="convenience_r_th"><a class="header" href="#convenience_r_th">convenience_r_th</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::heat_transfer::thermal_resistance_conduction::solve_r_th(
@@ -290,13 +238,50 @@ $$</p>
     "0.2 m2",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="notes"><a class="header" href="#notes">Notes</a></h3>
+<h3 id="convenience_l"><a class="header" href="#convenience_l">convenience_l</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::heat_transfer::thermal_resistance_conduction::solve_l(
+    "0.05 K/W",
+    "10 W/(m*K)",
+    "0.2 m2",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_k"><a class="header" href="#convenience_k">convenience_k</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::heat_transfer::thermal_resistance_conduction::solve_k(
+    "0.05 K/W",
+    "0.1 m",
+    "0.2 m2",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_a"><a class="header" href="#convenience_a">convenience_a</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::heat_transfer::thermal_resistance_conduction::solve_a(
+    "0.05 K/W",
+    "0.1 m",
+    "10 W/(m*K)",
+)?;
+<span class="boring">}</span></code></pre>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::heat_transfer::thermal_resistance_conduction::equation()).for_target("A").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.heat_transfer.solve_a(r_th="...", l="...", k="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONDUCTION_A("...","...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Returns SI by default; use <code>.value_in("&lt;unit&gt;")</code> for display units.</li>
-</ul>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
-<ul>
-<li>Incropera et al., Fundamentals of Heat and Mass Transfer</li>
+<li><code>r_th</code>: Thermal resistance</li>
+<li><code>l</code>: Wall thickness</li>
+<li><code>k</code>: Thermal conductivity</li>
 </ul>
 
                     </main>

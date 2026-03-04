@@ -1,43 +1,29 @@
 # Convection Thermal Resistance
 
-**Path:** `heat_transfer.thermal_resistance_convection`  
-**Category:** `heat_transfer`
+**Path ID:** `heat_transfer.thermal_resistance_convection`
 
-## Equation
-
-$$
+\[
 R_{th} = \frac{1}{h A}
-$$
+\]
 
 - Unicode: `R_th = 1 / (h · A)`
 - ASCII: `R_th = 1 / (h * A)`
+
+## Variables
+
+<table><thead><tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr></thead><tbody>
+<tr><td><code>R_th</code></td><td>Thermal resistance</td><td>\(R_th\)</td><td><code>thermal_resistance</code></td><td><code>K/W</code></td></tr>
+<tr><td><code>h</code></td><td>Convective heat transfer coefficient</td><td>\(h\)</td><td><code>heat_transfer_coefficient</code></td><td><code>W/(m2*K)</code></td></tr>
+<tr><td><code>A</code></td><td>Surface area</td><td>\(A\)</td><td><code>area</code></td><td><code>m2</code></td></tr>
+</tbody></table>
 
 ## Assumptions
 
 - Uniform convection coefficient over the area.
 
-## Variables
-
-<table>
-  <thead>
-    <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>R_th</code></td><td>Thermal resistance</td><td><span class="math inline">\(R_{th}\)</span></td><td><code>thermal_resistance</code></td><td><code>K/W</code></td><td><code>-</code></td></tr>
-    <tr><td><code>h</code></td><td>Convective heat transfer coefficient</td><td><span class="math inline">\(h\)</span></td><td><code>heat_transfer_coefficient</code></td><td><code>W/(m2*K)</code></td><td><code>-</code></td></tr>
-    <tr><td><code>A</code></td><td>Surface area</td><td><span class="math inline">\(A\)</span></td><td><code>area</code></td><td><code>m2</code></td><td><code>-</code></td></tr>
-  </tbody>
-</table>
-
-## Solve Targets
-
-- `A`: explicit
-- `R_th`: explicit
-- `h`: explicit
-
 ## Examples
 
-### Typed Builder (SI Numeric)
+### typed_builder_si
 
 ```rust
 let value = eq
@@ -48,7 +34,7 @@ let value = eq
     .value()?;
 ```
 
-### Typed Builder (Units-Aware)
+### typed_builder_units
 
 ```rust
 let value = eq
@@ -59,30 +45,7 @@ let value = eq
     .value()?;
 ```
 
-### Available Convenience Functions
-
-Direct solve helpers are available for these targets.
-
-<table>
-  <thead>
-    <tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>R_th</code></td><td><code>solve_r_th(h, A)</code></td><td><code>h</code>, <code>A</code></td></tr>
-    <tr><td><code>h</code></td><td><code>solve_h(R_th, A)</code></td><td><code>R_th</code>, <code>A</code></td></tr>
-    <tr><td><code>A</code></td><td><code>solve_a(R_th, h)</code></td><td><code>R_th</code>, <code>h</code></td></tr>
-  </tbody>
-</table>
-
-### Solve `R_th`
-
-**Function signature**
-
-```rust
-equations::heat_transfer::thermal_resistance_convection::solve_r_th(h, A) -> Result<f64, _>
-```
-
-**Example**
+### convenience_r_th
 
 ```rust
 let value = equations::heat_transfer::thermal_resistance_convection::solve_r_th(
@@ -91,11 +54,43 @@ let value = equations::heat_transfer::thermal_resistance_convection::solve_r_th(
 )?;
 ```
 
-### Notes
+### convenience_h
 
-- Returns SI by default; use `.value_in("<unit>")` for display units.
+```rust
+let value = equations::heat_transfer::thermal_resistance_convection::solve_h(
+    "0.0095238095238 K/W",
+    "3 m2",
+)?;
+```
 
-## Source
+### convenience_a
 
-- Incropera et al., Fundamentals of Heat and Mass Transfer
+```rust
+let value = equations::heat_transfer::thermal_resistance_convection::solve_a(
+    "0.0095238095238 K/W",
+    "35 W/(m2*K)",
+)?;
+```
+
+
+## Bindings
+
+### Rust
+```rust
+let value = eq.solve(equations::heat_transfer::thermal_resistance_convection::equation()).for_target("A").value()?;
+```
+
+### Python
+```python
+engpy.equations.heat_transfer.solve_a(r_th="...", h="...")
+```
+
+### Excel
+```excel
+=ENG_HEAT_TRANSFER_THERMAL_RESISTANCE_CONVECTION_A("...","...")
+```
+
+**Excel arguments**
+- `r_th`: Thermal resistance
+- `h`: Convective heat transfer coefficient
 

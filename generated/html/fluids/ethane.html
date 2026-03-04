@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-dfb3c088.js"></script>
+        <script src="../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,47 +177,36 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="ethane"><a class="header" href="#ethane">Ethane</a></h1>
+<div class="table-wrapper">
 <table>
-  
 <thead>
 <tr><th>Field</th><th>Value</th></tr>
 </thead>
-
-  
 <tbody>
-    
 <tr><td>Key</td><td><code>Ethane</code></td></tr>
-
-    
-<tr><td>Aliases</td><td><code>c2h6</code></td></tr>
-
-    
-<tr><td>Supported state inputs</td><td><code>state_tp(T, P)</code>, <code>state_ph(P, h)</code>, <code>state_ps(P, s)</code>, <code>state_rho_h(rho, h)</code>, <code>state_pq(P, Q)</code>, <code>state_tq(T, Q)</code>, <code>state("T", ..., "P", ...)</code></td></tr>
-
-    
-<tr><td>Supported properties</td><td><code>density</code>, <code>specific_heat_capacity</code>, <code>specific_heat_capacity_cv</code>, <code>gamma</code>, <code>speed_of_sound</code>, <code>dynamic_viscosity</code>, <code>thermal_conductivity</code>, <code>temperature</code>, <code>pressure</code>, <code>specific_enthalpy</code>, <code>specific_entropy</code>, <code>quality</code></td></tr>
-
-  </tbody>
-
+<tr><td>Aliases</td><td>c2h6</td></tr>
+<tr><td>Supported state inputs</td><td><code>T,P, P,h, P,s, rho,h, P,Q, T,Q</code></td></tr>
+<tr><td>Supported properties</td><td>12</td></tr>
+</tbody>
 </table>
-
+</div>
 <h2 id="supported-state-input-pairs"><a class="header" href="#supported-state-input-pairs">Supported State Input Pairs</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Pair</th><th>Explicit constructor</th><th>Notes</th></tr>
+<tr><th>Pair</th><th>Notes</th></tr>
 </thead>
 <tbody>
-<tr><td><code>T,P</code></td><td><code>state_tp</code></td><td>General single-phase path</td></tr>
-<tr><td><code>P,h</code></td><td><code>state_ph</code></td><td>Enthalpy inversion</td></tr>
-<tr><td><code>P,s</code></td><td><code>state_ps</code></td><td>Entropy inversion</td></tr>
-<tr><td><code>rho,h</code></td><td><code>state_rho_h</code></td><td>Density/enthalpy path</td></tr>
-<tr><td><code>P,Q</code></td><td><code>state_pq</code></td><td>Two-phase by pressure</td></tr>
-<tr><td><code>T,Q</code></td><td><code>state_tq</code></td><td>Two-phase by temperature</td></tr>
+<tr><td><code>T,P</code></td><td>General purpose explicit state constructor (<code>state_tp</code>)</td></tr>
+<tr><td><code>P,h</code></td><td>Pressure/enthalpy inversion (<code>state_ph</code>)</td></tr>
+<tr><td><code>P,s</code></td><td>Pressure/entropy inversion (<code>state_ps</code>)</td></tr>
+<tr><td><code>rho,h</code></td><td>Density/enthalpy construction (<code>state_rho_h</code>)</td></tr>
+<tr><td><code>P,Q</code></td><td>Two-phase saturation by pressure (<code>state_pq</code>)</td></tr>
+<tr><td><code>T,Q</code></td><td>Two-phase saturation by temperature (<code>state_tq</code>)</td></tr>
 </tbody>
 </table>
 </div>
-<h2 id="constructor-examples-explicit--generic"><a class="header" href="#constructor-examples-explicit--generic">Constructor Examples (explicit + generic)</a></h2>
+<h2 id="verified-constructor-and-generic-examples"><a class="header" href="#verified-constructor-and-generic-examples">Verified Constructor and Generic Examples</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>{
@@ -242,55 +231,49 @@
         "T",
         eng::units::typed::temperature::k(300.0),
     )?;
-}
-<span class="boring">}</span></code></pre>
-<h2 id="generic-property-name-aliases"><a class="header" href="#generic-property-name-aliases">Generic Property Name Aliases</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Canonical</th><th>Aliases</th></tr>
-</thead>
-<tbody>
-<tr><td>Temperature</td><td><code>T</code>, <code>temperature</code></td></tr>
-<tr><td>Pressure</td><td><code>P</code>, <code>pressure</code></td></tr>
-<tr><td>Density</td><td><code>rho</code>, <code>density</code></td></tr>
-<tr><td>Specific enthalpy</td><td><code>h</code>, <code>enthalpy</code></td></tr>
-<tr><td>Specific entropy</td><td><code>s</code>, <code>entropy</code></td></tr>
-<tr><td>Quality</td><td><code>Q</code>, <code>quality</code>, <code>x</code></td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="property-accessors"><a class="header" href="#property-accessors">Property Accessors</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Property key</th><th>Accessors</th></tr>
-</thead>
-<tbody>
-<tr><td><code>pressure</code></td><td><code>pressure()</code>, <code>p()</code></td></tr>
-<tr><td><code>temperature</code></td><td><code>temperature()</code>, <code>t()</code></td></tr>
-<tr><td><code>density</code></td><td><code>density()</code>, <code>rho()</code></td></tr>
-<tr><td><code>dynamic_viscosity</code></td><td><code>dynamic_viscosity()</code>, <code>mu()</code></td></tr>
-<tr><td><code>thermal_conductivity</code></td><td><code>thermal_conductivity()</code>, <code>k()</code></td></tr>
-<tr><td><code>specific_heat_capacity</code></td><td><code>specific_heat_capacity()</code>, <code>cp()</code></td></tr>
-<tr><td><code>specific_heat_capacity_cv</code></td><td><code>specific_heat_capacity_cv()</code>, <code>cv()</code></td></tr>
-<tr><td><code>speed_of_sound</code></td><td><code>speed_of_sound()</code>, <code>a()</code></td></tr>
-<tr><td><code>specific_enthalpy</code></td><td><code>specific_enthalpy()</code>, <code>h()</code></td></tr>
-<tr><td><code>specific_entropy</code></td><td><code>specific_entropy()</code>, <code>s()</code></td></tr>
-<tr><td><code>gamma</code></td><td><code>gamma()</code></td></tr>
-<tr><td><code>quality</code></td><td><code>quality()</code></td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="direct-property-access-example"><a class="header" href="#direct-property-access-example">Direct Property Access Example</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use eng_fluids as fluids;
+}```
 
-let state = fluids::ethane().state_tp("300 K", "1 bar")?;
-let rho = state.rho();
+# Generic Property Aliases
+
+| Canonical | Aliases |
+| --- | --- |
+| Temperature | `T`, `temperature` |
+| Pressure | `P`, `pressure` |
+| Density | `rho`, `density` |
+| Specific enthalpy | `h`, `enthalpy` |
+| Specific entropy | `s`, `entropy` |
+| Quality | `Q`, `quality`, `x` |
+
+# Supported Property Keys
+
+| Property key | Direct accessor |
+| --- | --- |
+| `density` | `density()`, `rho()` |
+| `specific_heat_capacity` | `specific_heat_capacity()`, `cp()` |
+| `specific_heat_capacity_cv` | `specific_heat_capacity_cv()`, `cv()` |
+| `gamma` | `gamma()` |
+| `speed_of_sound` | `speed_of_sound()`, `a()` |
+| `dynamic_viscosity` | `dynamic_viscosity()`, `mu()` |
+| `thermal_conductivity` | `thermal_conductivity()`, `k()` |
+| `temperature` | `temperature()`, `t()` |
+| `pressure` | `pressure()`, `p()` |
+| `specific_enthalpy` | `specific_enthalpy()`, `h()` |
+| `specific_entropy` | `specific_entropy()`, `s()` |
+| `quality` | `quality()` |
+
+# Direct Property Access Example
+
+```rust
+use eng::fluids;
+use eng::units::typed::{pressure, temperature};
+
+let state = fluids::water().state_tp(temperature::k(300.0), pressure::bar(1.0))?;
+let rho = state.rho()?;
 let mu = state.mu()?;
-println!("rho = {rho} kg/m^3, mu = {mu} Pa*s");
+let cp = state.cp()?;
+
+let state_generic = fluids::air().state("T", "300 K", "P", "1 bar")?;
+let gamma = state_generic.gamma()?;
 <span class="boring">}</span></code></pre>
 <h2 id="saturation-and-metadata-example"><a class="header" href="#saturation-and-metadata-example">Saturation and Metadata Example</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -309,22 +292,7 @@ println!("rho = {rho} kg/m^3, mu = {mu} Pa*s");
     assert_eq!(pair, "P,Q");
 }
 <span class="boring">}</span></code></pre>
-<h2 id="state-metadata"><a class="header" href="#state-metadata">State Metadata</a></h2>
-<ul>
-<li><code>fluid_key()</code> / <code>fluid_name()</code></li>
-<li><code>input_pair_label()</code> / <code>normalized_inputs()</code></li>
-<li><code>quality()</code> and <code>phase()</code> when available</li>
-</ul>
-<h2 id="error-behavior"><a class="header" href="#error-behavior">Error Behavior</a></h2>
-<ul>
-<li>Unsupported pairs include a supported-pairs list.</li>
-<li>Unknown keys in generic <code>state(...)</code> return actionable key diagnostics.</li>
-<li>Duplicate keys in generic <code>state(...)</code> are rejected.</li>
-<li><code>u</code>/internal-energy keys are rejected to avoid ambiguity with <code>h</code>.</li>
-<li>Backend failures remain recoverable and include context.</li>
-</ul>
-<h2 id="example-equations-using-fluid-context"><a class="header" href="#example-equations-using-fluid-context">Example Equations Using Fluid Context</a></h2>
-<p>Use <code>solve_with_context(...).fluid(...)</code> when equations declare fluid resolvers.</p>
+<h2 id="using-this-fluid-with-equations"><a class="header" href="#using-this-fluid-with-equations">Using This Fluid With Equations</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use eng::{eq, equations, fluids};
@@ -337,15 +305,37 @@ let re = eq
     .given("D", "0.1 m")
     .value()?;
 <span class="boring">}</span></code></pre>
+<h3 id="equations-currently-using-fluid-context"><a class="header" href="#equations-currently-using-fluid-context">Equations currently using <code>fluid</code> context</a></h3>
 <ul>
 <li><a href="../equations/fluids/reynolds_number.html">Reynolds Number</a></li>
+</ul>
+<h2 id="error-behavior"><a class="header" href="#error-behavior">Error Behavior</a></h2>
+<ul>
+<li>Unsupported input pairs return explicit pair diagnostics with a supported-pairs list.</li>
+<li>Unknown/invalid generic property keys return actionable key guidance.</li>
+<li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
+<li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
+</ul>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
+<ul>
+<li><code>fluid</code>: fluid key or alias</li>
+<li><code>state_prop_1</code>, <code>state_value_1</code>: first state-defining property and value</li>
+<li><code>state_prop_2</code>, <code>state_value_2</code>: second state-defining property and value</li>
+<li><code>out_prop</code>: property to return (for example <code>rho</code>, <code>mu</code>, <code>cp</code>)</li>
 </ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../fluids/c_h4.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../fluids/c_o2.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
@@ -359,7 +349,7 @@ let re = eq
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../fluids/c_h4.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../fluids/c_o2.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 

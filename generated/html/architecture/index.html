@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-dfb3c088.js"></script>
+        <script src="../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,55 +177,142 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="architecture-layers"><a class="header" href="#architecture-layers">Architecture Layers</a></h1>
-<p>Design-first boundary model for capabilities that come after atomic equations.</p>
+<p>This chapter defines strict ownership boundaries for work after atomic equations.</p>
 <h2 id="layer-definitions"><a class="header" href="#layer-definitions">Layer Definitions</a></h2>
 <ol>
-<li><strong>Atomic Equation</strong>: one physical relation with scalar-first solve behavior.</li>
-<li><strong>Equation Family / Variants</strong>: one canonical law with multiple discoverable forms.</li>
-<li><strong>Component Model</strong>: iterative orchestration over multiple equations and contexts.</li>
-<li><strong>Solve Graph / Chaining</strong>: node/edge execution over equations/components/sources.</li>
-<li><strong>External Bindings</strong>: generated Python/Excel adapters over Rust-owned logic.</li>
+<li><strong>Atomic Equation</strong>: one physical relation with scalar-first solve behavior and equation-level tests/docs.</li>
+<li><strong>Equation Family / Variants</strong>: one canonical law with multiple discoverable forms without duplicating solver logic.</li>
+<li><strong>Component Model</strong>: multi-equation iterative engineering model using contexts (fluid/material) as needed.</li>
+<li><strong>Solve Graph / Chaining</strong>: node/edge orchestration connecting equations, components, constants, and property sources.</li>
+<li><strong>External Bindings</strong>: generated Python/Excel surfaces over Rust-owned implementations.</li>
 </ol>
-<h2 id="belongs-here--not-here"><a class="header" href="#belongs-here--not-here">Belongs Here / Not Here</a></h2>
-<h3 id="atomic-equation"><a class="header" href="#atomic-equation">Atomic Equation</a></h3>
-<ul>
-<li>Belongs: one law, scalar inputs/outputs, equation-local tests.</li>
-<li>Not here: multi-step orchestration or workflow graphs.</li>
-</ul>
-<h3 id="equation-family"><a class="header" href="#equation-family">Equation Family</a></h3>
-<ul>
-<li>Belongs: canonical law identity + variants (e.g., ideal gas forms).</li>
-<li>Not here: duplicate independent solver logic for each form.</li>
-</ul>
-<h3 id="component-model"><a class="header" href="#component-model">Component Model</a></h3>
-<ul>
-<li>Belongs: multi-equation iterative behavior (prototype: two_orifice).</li>
-<li>Not here: source-of-truth atomic law definitions.</li>
-</ul>
-<h3 id="solve-graph"><a class="header" href="#solve-graph">Solve Graph</a></h3>
-<ul>
-<li>Belongs: dependency ordering and chained execution.</li>
-<li>Not here: component constitutive details.</li>
-</ul>
-<h3 id="external-bindings"><a class="header" href="#external-bindings">External Bindings</a></h3>
-<ul>
-<li>Belongs: generated signatures/docs from catalog metadata.</li>
-<li>Not here: reimplementation of core solver/unit logic.</li>
-</ul>
 <h2 id="ownership-map"><a class="header" href="#ownership-map">Ownership Map</a></h2>
+<p>| Layer | Owner | Owns | Does not own |
+| — | — | — | — | — |
+| <code>AtomicEquation</code> | <code>Equations</code> | equation registry + normalization + validation; scalar solve behavior + diagnostics; equation-level docs/examples/export fragments | multi-step component orchestration; top-level graph execution engine; excel/python runtime implementations |
+| <code>EquationFamily</code> | <code>Equations</code> | canonical law identity + variant metadata; variant discovery/docs/search surfaces; family-to-atomic mapping | component iterative strategies; graph scheduling; external binding runtimes |
+| <code>ComponentModel</code> | <code>Eng</code> | multi-equation orchestration; iteration policy and convergence strategy; context-aware model IO surfaces | single-relation canonical equations; global graph scheduling; backend-native fluid/material implementations |
+| <code>SolveGraph</code> | <code>Eng</code> | node/edge orchestration across equations/components; dependency ordering and graph solve execution; cross-domain chained workflows | atomic equation definitions; fluid/material property backends; binding runtime logic |
+| <code>ExternalBinding</code> | <code>Eng</code> | python/excel surface generation spec; binding package metadata + naming rules; catalog-driven API exposure policy | core numeric implementations; domain registry truth; independent duplicate logic |</p>
+<h2 id="belongs-here--not-here-rules"><a class="header" href="#belongs-here--not-here-rules">Belongs Here / Not Here Rules</a></h2>
+<h3 id="atomicequation"><a class="header" href="#atomicequation"><code>AtomicEquation</code></a></h3>
+<p>Belongs here:</p>
 <ul>
-<li><code>equations</code>: atomic equations + family metadata.</li>
-<li><code>eng-fluids</code>: fluid catalog/property backends.</li>
-<li><code>eng-materials</code>: material catalogs/interpolation.</li>
-<li><code>eng</code>: unified orchestration for components, graphs, bindings, docs/catalog assembly.</li>
-<li><code>eng-core</code>: shared units/input semantics.</li>
+<li>single physical law with scalar variables</li>
+<li>explicit and/or numerical solve paths for that one law</li>
+<li>baseline full-state test cases</li>
 </ul>
-<h2 id="prototypes"><a class="header" href="#prototypes">Prototypes</a></h2>
+<p>Does not belong here:</p>
 <ul>
-<li><strong>Ideal Gas Family</strong>: canonical <code>P*V=m*R*T</code> with pressure-volume and density variants.</li>
-<li><strong>Two-Orifice Component</strong>: iterative splitter model using <code>orifice_mass_flow</code> + <code>continuity</code> equations.</li>
+<li>workflow orchestration spanning many laws</li>
+<li>component-level iteration/control loops</li>
+<li>cross-step graph sequencing</li>
 </ul>
-<p>Machine-readable architecture metadata is exported as <code>generated/architecture_spec.json</code>.</p>
+<h3 id="equationfamily"><a class="header" href="#equationfamily"><code>EquationFamily</code></a></h3>
+<p>Belongs here:</p>
+<ul>
+<li>multiple common views of one canonical law</li>
+<li>variant docs/search aliases</li>
+<li>shared assumptions across forms</li>
+</ul>
+<p>Does not belong here:</p>
+<ul>
+<li>duplicate full atomic equations for each algebraic view</li>
+<li>component orchestration logic</li>
+<li>graph node scheduling</li>
+</ul>
+<h3 id="componentmodel"><a class="header" href="#componentmodel"><code>ComponentModel</code></a></h3>
+<p>Belongs here:</p>
+<ul>
+<li>multi-equation iterative model behavior</li>
+<li>high-level engineering input/output interfaces</li>
+<li>context resolution across fluid/material states</li>
+</ul>
+<p>Does not belong here:</p>
+<ul>
+<li>new atomic law definitions</li>
+<li>general graph planner</li>
+<li>binding-generation policy</li>
+</ul>
+<h3 id="solvegraph"><a class="header" href="#solvegraph"><code>SolveGraph</code></a></h3>
+<p>Belongs here:</p>
+<ul>
+<li>equation/component/property/constant node chaining</li>
+<li>edge-based dataflow + dependency execution</li>
+<li>multi-node workflow diagnostics</li>
+</ul>
+<p>Does not belong here:</p>
+<ul>
+<li>atomic equation authoring</li>
+<li>component-specific constitutive details</li>
+<li>domain backend implementations</li>
+</ul>
+<h3 id="externalbinding"><a class="header" href="#externalbinding"><code>ExternalBinding</code></a></h3>
+<p>Belongs here:</p>
+<ul>
+<li>generated thin wrappers for rust-owned behavior</li>
+<li>stable naming/signature projection</li>
+<li>binding docs/examples from unified catalog</li>
+</ul>
+<p>Does not belong here:</p>
+<ul>
+<li>business logic reimplementation</li>
+<li>separate unit engine</li>
+<li>untracked API behavior divergence</li>
+</ul>
+<h2 id="prototype-equation-family-ideal-gas"><a class="header" href="#prototype-equation-family-ideal-gas">Prototype: Equation Family (Ideal Gas)</a></h2>
+<ul>
+<li>Key: <code>ideal_gas</code></li>
+<li>Canonical relation: <code>P * V = m * R * T</code></li>
+<li>Canonical equation path: <code>thermo.ideal_gas</code></li>
+<li>Variants:
+<ul>
+<li><code>pv_equals_mrt</code> (Pressure-Volume Form) target <code>P</code>: closed-control-volume mass/temperature/volume calculations</li>
+<li><code>p_equals_rho_rt</code> (Density Form) target <code>P</code>: flow-property form using density instead of total volume/mass</li>
+</ul>
+</li>
+</ul>
+<h2 id="prototype-component-model-two-orifice"><a class="header" href="#prototype-component-model-two-orifice">Prototype: Component Model (Two Orifice)</a></h2>
+<ul>
+<li>Key: <code>two_orifice</code></li>
+<li>Requires contexts: fluid</li>
+<li>Depends on equations: fluids.orifice_mass_flow_incompressible, fluids.continuity_mass_flow</li>
+<li>component owns iterative pressure split; equations stay atomic</li>
+<li>inputs/outputs are engineering-level (inlet pressure, outlet pressures, total flow)</li>
+<li>designed as a future component-layer package target</li>
+</ul>
+<h2 id="solve-graph-model-planned"><a class="header" href="#solve-graph-model-planned">Solve Graph Model (Planned)</a></h2>
+<ul>
+<li>Node kinds: atomic_equation, equation_family_variant, component_model, fluid_property_source, material_property_source, constant_source</li>
+<li>Edge semantics: edge carries resolved scalar value (SI canonical); target ports consume upstream node outputs; graph solve performs dependency order + cycle diagnostics</li>
+<li>graph layer composes equations/components but does not redefine their internals</li>
+<li>cycles require explicit policy (fixed-point/newton) and remain out-of-scope for this pass</li>
+</ul>
+<h2 id="external-binding-plan-pythonexcel"><a class="header" href="#external-binding-plan-pythonexcel">External Binding Plan (Python/Excel)</a></h2>
+<ul>
+<li>Targets: python, excel</li>
+<li>Authoritative runtime: rust (eng + domain crates)</li>
+<li>Generated from: unified catalog.json; equation pages/examples metadata; family/component binding manifest entries</li>
+<li>Naming rules:
+<ul>
+<li>python: snake_case modules/functions</li>
+<li>excel: SCREAMING_SNAKE_CASE function names + simple scalar signatures</li>
+<li>bindings expose plain-SI and unit-string convenience overloads</li>
+</ul>
+</li>
+<li>Notes:
+<ul>
+<li>bindings are thin adapters; no duplicated solver/unit logic</li>
+<li>docs/examples in bindings are generated from unified handbook metadata</li>
+</ul>
+</li>
+</ul>
+<h2 id="catalog-evolution-plan"><a class="header" href="#catalog-evolution-plan">Catalog Evolution Plan</a></h2>
+<ul>
+<li>New sections: equation_families, components, binding_surfaces</li>
+<li>Required links: family_variant_maps_to_equation, component_uses_equation, component_requires_context, binding_exposes_entity</li>
+</ul>
+<p>The machine-readable form of this chapter is exported as <code>generated/architecture_spec.json</code>.</p>
 
                     </main>
 

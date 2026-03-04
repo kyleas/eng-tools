@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-dfb3c088.js"></script>
+        <script src="../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,12 +177,8 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="examples--workflows"><a class="header" href="#examples--workflows">Examples &amp; Workflows</a></h1>
-<h2 id="unified-top-level-api"><a class="header" href="#unified-top-level-api">Unified Top-Level API</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use eng::{constants, eq, equations, fluids, materials, qty};
-<span class="boring">}</span></code></pre>
-<h2 id="simple-equation-solve"><a class="header" href="#simple-equation-solve">Simple Equation Solve</a></h2>
+<p>These examples are sourced from verified snippets and corresponding tests.</p>
+<h2 id="1-simple-equation-solve"><a class="header" href="#1-simple-equation-solve">1. Simple Equation Solve</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use eng::{eq, equations};
@@ -195,7 +191,7 @@ let sigma_h_pa = eq
     .given_t(0.008)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h2 id="typed-unit-solve"><a class="header" href="#typed-unit-solve">Typed Unit Solve</a></h2>
+<h2 id="2-typed-unit-solve"><a class="header" href="#2-typed-unit-solve">2. Typed Unit Solve</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use eng::{eq, equations};
@@ -209,7 +205,7 @@ let sigma_h_pa = eq
     .given_t(length::mm(8.0))
     .value()?;
 <span class="boring">}</span></code></pre>
-<h2 id="qty-solve"><a class="header" href="#qty-solve"><code>qty!</code> Solve</a></h2>
+<h2 id="3-qty-solve"><a class="header" href="#3-qty-solve">3. <code>qty!</code> Solve</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use eng::{eq, equations, qty};
@@ -222,7 +218,7 @@ let sigma_h_pa = eq
     .given_t(qty!("8 mm"))
     .value()?;
 <span class="boring">}</span></code></pre>
-<h2 id="runtime-string-solve"><a class="header" href="#runtime-string-solve">Runtime String Solve</a></h2>
+<h2 id="4-runtime-string-solve"><a class="header" href="#4-runtime-string-solve">4. Runtime String Solve</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use eng::{eq, equations};
@@ -235,7 +231,7 @@ let sigma_h_pa = eq
     .given_t("8 mm")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h2 id="fluid-assisted-solve"><a class="header" href="#fluid-assisted-solve">Fluid-Assisted Solve</a></h2>
+<h2 id="5-fluid-assisted-solve"><a class="header" href="#5-fluid-assisted-solve">5. Fluid-Assisted Solve</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use eng::{eq, equations, fluids};
@@ -248,7 +244,7 @@ let re = eq
     .given("D", "0.1 m")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h2 id="family-variant-solve"><a class="header" href="#family-variant-solve">Family Variant Solve</a></h2>
+<h2 id="6-family-variant-solve"><a class="header" href="#6-family-variant-solve">6. Family Variant Solve</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use eng::{eq, equations};
@@ -261,7 +257,7 @@ let p_pa = eq
     .given_t("288.15 K")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h2 id="property-lookups"><a class="header" href="#property-lookups">Property Lookups</a></h2>
+<h2 id="7-direct-fluidmaterial-property-lookup"><a class="header" href="#7-direct-fluidmaterial-property-lookup">7. Direct Fluid/Material Property Lookup</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use eng::fluids;
@@ -283,6 +279,51 @@ let state = materials::stainless_304().temperature("350 K")?;
 let e = state.property("elastic_modulus")?;
 let sy = state.property("yield_strength")?;
 <span class="boring">}</span></code></pre>
+<h2 id="8-device-workflow-pipe-pressure-drop-fixed-f"><a class="header" href="#8-device-workflow-pipe-pressure-drop-fixed-f">8. Device Workflow: Pipe Pressure Drop (Fixed f)</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>{
+    let _dp = eng::devices::pipe_loss()
+        .friction_model(eng::devices::PipeFrictionModel::Fixed(0.02))
+        .given_rho("1000 kg/m3")
+        .given_v("3 m/s")
+        .given_d("0.1 m")
+        .given_l("10 m")
+        .solve_delta_p()?;
+}
+<span class="boring">}</span></code></pre>
+<h2 id="9-device-workflow-pipe-pressure-drop-colebrook-direct-inputs"><a class="header" href="#9-device-workflow-pipe-pressure-drop-colebrook-direct-inputs">9. Device Workflow: Pipe Pressure Drop (Colebrook Direct Inputs)</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>{
+    let result = eng::devices::pipe_loss()
+        .friction_model(eng::devices::PipeFrictionModel::Colebrook)
+        .given_rho("1000 kg/m^3")
+        .given_mu("1 cP")
+        .given_v("3 m/s")
+        .given_d("0.1 m")
+        .given_l("10 m")
+        .given_eps("0.00015 in")
+        .solve()?;
+
+    let _dp = result.delta_p();
+    let _re = result.reynolds_number().unwrap_or_default();
+}
+<span class="boring">}</span></code></pre>
+<h2 id="10-device-workflow-pipe-pressure-drop-colebrook--fluid-context"><a class="header" href="#10-device-workflow-pipe-pressure-drop-colebrook--fluid-context">10. Device Workflow: Pipe Pressure Drop (Colebrook + Fluid Context)</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>{
+    let _dp = eng::devices::pipe_loss()
+        .friction_model(eng::devices::PipeFrictionModel::Colebrook)
+        .fluid(eng::fluids::water().state_tp("300 K", "1 atm")?)
+        .given_v("3 m/s")
+        .given_d("0.1 m")
+        .given_l("10 m")
+        .given_eps("0.00015 in")
+        .solve_delta_p()?;
+}
+<span class="boring">}</span></code></pre>
 
                     </main>
 
@@ -292,7 +333,7 @@ let sy = state.property("yield_strength")?;
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../yaml_authoring/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../bindings/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -306,7 +347,7 @@ let sy = state.property("yield_strength")?;
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../yaml_authoring/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../bindings/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

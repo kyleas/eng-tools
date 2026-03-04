@@ -1,6 +1,10 @@
 # Validation / Trust
 
-- Registry validation for equations/families
-- Solver-path tests (SI, typed units, `qty!`, runtime strings)
+Trust is enforced by registry validation, solver tests, generated-link checks, and docs export verification.
+
+- Equation and family schema/consistency validation
+- Core solver/path tests (SI, typed, `qty!`, runtime string)
 - mdBook link integrity tests
-- Unified verification script with docs regeneration
+- Unified export verification script
+
+Docs examples for core workflows are backed by executable tests.

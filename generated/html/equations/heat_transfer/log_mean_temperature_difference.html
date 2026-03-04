@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfb3c088.js"></script>
+        <script src="../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,49 +177,35 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="log-mean-temperature-difference"><a class="header" href="#log-mean-temperature-difference">Log-Mean Temperature Difference</a></h1>
-<p><strong>Path:</strong> <code>heat_transfer.log_mean_temperature_difference</code><br><strong>Category:</strong> <code>heat_transfer</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>heat_transfer.log_mean_temperature_difference</code></p>
+<p>[
 \Delta T_{lm} = \frac{\Delta T_1 - \Delta T_2}{\ln(\Delta T_1 / \Delta T_2)}
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>Δ T_{lm} = (Δ T_1 - Δ T_2) / ln(Δ T_1 / Δ T_2)</code></li>
 <li>ASCII: <code>delta_T_lm = (delta_T_1 - delta_T_2) / ln(delta_T_1 / delta_T_2)</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>delta_T_lm</code></td><td>Log-mean temperature difference</td><td>\(\Delta T_{lm}\)</td><td><code>temperature</code></td><td><code>K</code></td></tr>
+
+<tr><td><code>delta_T_1</code></td><td>End temperature difference 1</td><td>\(\Delta T_1\)</td><td><code>temperature</code></td><td><code>K</code></td></tr>
+
+<tr><td><code>delta_T_2</code></td><td>End temperature difference 2</td><td>\(\Delta T_2\)</td><td><code>temperature</code></td><td><code>K</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>End-point temperature differences remain positive and unequal.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>delta_T_lm</code></td><td>Log-mean temperature difference</td><td><span class="math inline">\(\Delta T_{lm}\)</span></td><td><code>temperature</code></td><td><code>K</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>delta_T_1</code></td><td>End temperature difference 1</td><td><span class="math inline">\(\Delta T_1\)</span></td><td><code>temperature</code></td><td><code>K</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>delta_T_2</code></td><td>End temperature difference 2</td><td><span class="math inline">\(\Delta T_2\)</span></td><td><code>temperature</code></td><td><code>K</code></td><td><code>-</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>delta_T_lm</code>: explicit</li>
-</ul>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -229,7 +215,7 @@ $$</p>
     .given_delta_t_2(20.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-units-aware"><a class="header" href="#typed-builder-units-aware">Typed Builder (Units-Aware)</a></h3>
+<h3 id="typed_builder_units"><a class="header" href="#typed_builder_units">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -239,32 +225,7 @@ $$</p>
     .given_delta_t_2("20 K")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="available-convenience-functions"><a class="header" href="#available-convenience-functions">Available Convenience Functions</a></h3>
-<p>Direct solve helpers are available for these targets.</p>
-<table>
-  
-<thead>
-    
-<tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>delta_T_lm</code></td><td><code>solve_delta_t_lm(delta_T_1, delta_T_2)</code></td><td><code>delta_T_1</code>, <code>delta_T_2</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h3 id="solve-delta_t_lm"><a class="header" href="#solve-delta_t_lm">Solve <code>delta_T_lm</code></a></h3>
-<p><strong>Function signature</strong></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>equations::heat_transfer::log_mean_temperature_difference::solve_delta_t_lm(delta_T_1, delta_T_2) -&gt; Result&lt;f64, _&gt;
-<span class="boring">}</span></code></pre>
-<p><strong>Example</strong></p>
+<h3 id="convenience_delta_t_lm"><a class="header" href="#convenience_delta_t_lm">convenience_delta_t_lm</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::heat_transfer::log_mean_temperature_difference::solve_delta_t_lm(
@@ -272,13 +233,22 @@ $$</p>
     "20 K",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="notes"><a class="header" href="#notes">Notes</a></h3>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::heat_transfer::log_mean_temperature_difference::equation()).for_target("delta_T_lm").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.heat_transfer.solve_delta_t_lm(delta_t_1="...", delta_t_2="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_HEAT_TRANSFER_LOG_MEAN_TEMPERATURE_DIFFERENCE_DELTA_T_LM("...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Returns SI by default; use <code>.value_in("&lt;unit&gt;")</code> for display units.</li>
-</ul>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
-<ul>
-<li>Incropera et al., Fundamentals of Heat and Mass Transfer</li>
+<li><code>delta_t_1</code>: End temperature difference 1</li>
+<li><code>delta_t_2</code>: End temperature difference 2</li>
 </ul>
 
                     </main>

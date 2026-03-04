@@ -1,47 +1,31 @@
 # Incompressible Orifice Mass Flow
 
-**Path:** `fluids.orifice_mass_flow_incompressible`  
-**Category:** `fluids`
+**Path ID:** `fluids.orifice_mass_flow_incompressible`
 
-## Equation
-
-$$
+\[
 \dot{m} = C_d A \sqrt{2 \rho \Delta p}
-$$
+\]
 
 - Unicode: `m_dot = C_d · A · √(2 · ρ · Δ p)`
 - ASCII: `m_dot = C_d * A * sqrt(2 * rho * delta_p)`
+
+## Variables
+
+<table><thead><tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr></thead><tbody>
+<tr><td><code>m_dot</code></td><td>Mass flow rate</td><td>\(m_dot\)</td><td><code>mass_flow_rate</code></td><td><code>kg/s</code></td></tr>
+<tr><td><code>C_d</code></td><td>Discharge coefficient</td><td>\(C_d\)</td><td><code>ratio</code></td><td><code>1</code></td></tr>
+<tr><td><code>A</code></td><td>Orifice area</td><td>\(A\)</td><td><code>area</code></td><td><code>m2</code></td></tr>
+<tr><td><code>rho</code></td><td>Fluid density</td><td>\(\rho\)</td><td><code>density</code></td><td><code>kg/m3</code></td></tr>
+<tr><td><code>delta_p</code></td><td>Pressure drop</td><td>\(\Delta p\)</td><td><code>pressure</code></td><td><code>Pa</code></td></tr>
+</tbody></table>
 
 ## Assumptions
 
 - Incompressible single-phase flow through a sharp-edged restriction.
 
-## Variables
-
-<table>
-  <thead>
-    <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>m_dot</code></td><td>Mass flow rate</td><td><span class="math inline">\(m_{dot}\)</span></td><td><code>mass_flow_rate</code></td><td><code>kg/s</code></td><td><code>-</code></td></tr>
-    <tr><td><code>C_d</code></td><td>Discharge coefficient</td><td><span class="math inline">\(C_{d}\)</span></td><td><code>ratio</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-    <tr><td><code>A</code></td><td>Orifice area</td><td><span class="math inline">\(A\)</span></td><td><code>area</code></td><td><code>m2</code></td><td><code>-</code></td></tr>
-    <tr><td><code>rho</code></td><td>Fluid density</td><td><span class="math inline">\(\rho\)</span></td><td><code>density</code></td><td><code>kg/m3</code></td><td><code>-</code></td></tr>
-    <tr><td><code>delta_p</code></td><td>Pressure drop</td><td><span class="math inline">\(\Delta p\)</span></td><td><code>pressure</code></td><td><code>Pa</code></td><td><code>-</code></td></tr>
-  </tbody>
-</table>
-
-## Solve Targets
-
-- `A`: explicit
-- `C_d`: explicit
-- `delta_p`: explicit
-- `m_dot`: explicit
-- `rho`: explicit
-
 ## Examples
 
-### Typed Builder (SI Numeric)
+### typed_builder_si
 
 ```rust
 let value = eq
@@ -54,7 +38,7 @@ let value = eq
     .value()?;
 ```
 
-### Typed Builder (Units-Aware)
+### typed_builder_units
 
 ```rust
 let value = eq
@@ -67,32 +51,7 @@ let value = eq
     .value()?;
 ```
 
-### Available Convenience Functions
-
-Direct solve helpers are available for these targets.
-
-<table>
-  <thead>
-    <tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>m_dot</code></td><td><code>solve_m_dot(C_d, A, rho, delta_p)</code></td><td><code>C_d</code>, <code>A</code>, <code>rho</code>, <code>delta_p</code></td></tr>
-    <tr><td><code>C_d</code></td><td><code>solve_c_d(m_dot, A, rho, delta_p)</code></td><td><code>m_dot</code>, <code>A</code>, <code>rho</code>, <code>delta_p</code></td></tr>
-    <tr><td><code>A</code></td><td><code>solve_a(m_dot, C_d, rho, delta_p)</code></td><td><code>m_dot</code>, <code>C_d</code>, <code>rho</code>, <code>delta_p</code></td></tr>
-    <tr><td><code>rho</code></td><td><code>solve_rho(m_dot, C_d, A, delta_p)</code></td><td><code>m_dot</code>, <code>C_d</code>, <code>A</code>, <code>delta_p</code></td></tr>
-    <tr><td><code>delta_p</code></td><td><code>solve_delta_p(m_dot, C_d, A, rho)</code></td><td><code>m_dot</code>, <code>C_d</code>, <code>A</code>, <code>rho</code></td></tr>
-  </tbody>
-</table>
-
-### Solve `m_dot`
-
-**Function signature**
-
-```rust
-equations::fluids::orifice_mass_flow_incompressible::solve_m_dot(C_d, A, rho, delta_p) -> Result<f64, _>
-```
-
-**Example**
+### convenience_m_dot
 
 ```rust
 let value = equations::fluids::orifice_mass_flow_incompressible::solve_m_dot(
@@ -103,11 +62,71 @@ let value = equations::fluids::orifice_mass_flow_incompressible::solve_m_dot(
 )?;
 ```
 
-### Notes
+### convenience_c_d
 
-- Returns SI by default; use `.value_in("<unit>")` for display units.
+```rust
+let value = equations::fluids::orifice_mass_flow_incompressible::solve_c_d(
+    "1 kg/s",
+    "1 m2",
+    "1 kg/m3",
+    "0.5 Pa",
+)?;
+```
 
-## Source
+### convenience_a
 
-- Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics
+```rust
+let value = equations::fluids::orifice_mass_flow_incompressible::solve_a(
+    "1 kg/s",
+    1.0,
+    "1 kg/m3",
+    "0.5 Pa",
+)?;
+```
+
+### convenience_rho
+
+```rust
+let value = equations::fluids::orifice_mass_flow_incompressible::solve_rho(
+    "1 kg/s",
+    1.0,
+    "1 m2",
+    "0.5 Pa",
+)?;
+```
+
+### convenience_delta_p
+
+```rust
+let value = equations::fluids::orifice_mass_flow_incompressible::solve_delta_p(
+    "1 kg/s",
+    1.0,
+    "1 m2",
+    "1 kg/m3",
+)?;
+```
+
+
+## Bindings
+
+### Rust
+```rust
+let value = eq.solve(equations::fluids::orifice_mass_flow_incompressible::equation()).for_target("A").value()?;
+```
+
+### Python
+```python
+engpy.equations.fluids.solve_a(m_dot="...", c_d="...", rho="...", delta_p="...")
+```
+
+### Excel
+```excel
+=ENG_FLUIDS_ORIFICE_MASS_FLOW_INCOMPRESSIBLE_A("...","...","...","...")
+```
+
+**Excel arguments**
+- `m_dot`: Mass flow rate
+- `c_d`: Discharge coefficient
+- `rho`: Fluid density
+- `delta_p`: Pressure drop
 

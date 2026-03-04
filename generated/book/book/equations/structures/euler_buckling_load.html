@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfb3c088.js"></script>
+        <script src="../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,70 +177,43 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="euler-buckling-critical-load"><a class="header" href="#euler-buckling-critical-load">Euler Buckling Critical Load</a></h1>
-<p><strong>Path:</strong> <code>structures.euler_buckling_load</code><br><strong>Category:</strong> <code>structures</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>structures.euler_buckling_load</code></p>
+<p>[
 P_{cr} = \frac{\pi^2 E I}{(K L)^2}
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>P_cr = (π² · E · I) / ((K · L)²)</code></li>
 <li>ASCII: <code>P_cr = (pi^2 * E * I) / ((K * L)^2)</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>P_cr</code></td><td>Critical buckling load</td><td>\(P_cr\)</td><td><code>force</code></td><td><code>N</code></td></tr>
+
+<tr><td><code>E</code></td><td>Elastic modulus</td><td>\(E\)</td><td><code>pressure</code></td><td><code>Pa</code></td></tr>
+
+<tr><td><code>I</code></td><td>Area moment of inertia</td><td>\(I\)</td><td><code>area_moment_of_inertia</code></td><td><code>m4</code></td></tr>
+
+<tr><td><code>K</code></td><td>Effective length factor</td><td>\(K\)</td><td><code>ratio</code></td><td><code>1</code></td></tr>
+
+<tr><td><code>L</code></td><td>Unbraced length</td><td>\(L\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>Ideal slender column with elastic buckling.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>P_cr</code></td><td>Critical buckling load</td><td><span class="math inline">\(P_{cr}\)</span></td><td><code>force</code></td><td><code>N</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>E</code></td><td>Elastic modulus</td><td><span class="math inline">\(E\)</span></td><td><code>pressure</code></td><td><code>Pa</code></td><td><code>material_property:elastic_modulus</code> from <code>material</code></td></tr>
-
-    
-<tr><td><code>I</code></td><td>Area moment of inertia</td><td><span class="math inline">\(I\)</span></td><td><code>area_moment_of_inertia</code></td><td><code>m4</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>K</code></td><td>Effective length factor</td><td><span class="math inline">\(K\)</span></td><td><code>ratio</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>L</code></td><td>Unbraced length</td><td><span class="math inline">\(L\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="resolvable-from-contexts"><a class="header" href="#resolvable-from-contexts">Resolvable from Contexts</a></h2>
-<ul>
-<li><code>E</code> from context <code>material</code> via <code>material_property</code>:<code>elastic_modulus</code></li>
-</ul>
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>E</code>: explicit</li>
-<li><code>I</code>: explicit</li>
-<li><code>K</code>: explicit</li>
-<li><code>L</code>: explicit</li>
-<li><code>P_cr</code>: explicit</li>
-</ul>
 <h2 id="constants-used"><a class="header" href="#constants-used">Constants Used</a></h2>
 <ul>
-  
-<li><a href="../../constants/pi.html"><code>pi</code></a>: Archimedes Constant - <span class="math inline">\(\pi\)</span></li>
-
+<li><a href="../../constants/pi.html"><code>pi</code></a> (Archimedes Constant) (\pi)</li>
 </ul>
-
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -251,7 +224,7 @@ $$</p>
     .given_l(2.0)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-units-aware"><a class="header" href="#typed-builder-units-aware">Typed Builder (Units-Aware)</a></h3>
+<h3 id="typed_builder_units"><a class="header" href="#typed_builder_units">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -262,7 +235,7 @@ $$</p>
     .given_l("2 m")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-context-assisted"><a class="header" href="#typed-builder-context-assisted">Typed Builder (Context-Assisted)</a></h3>
+<h3 id="typed_builder_context"><a class="header" href="#typed_builder_context">typed_builder_context</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -274,44 +247,7 @@ $$</p>
     .given_l("2 m")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="available-convenience-functions"><a class="header" href="#available-convenience-functions">Available Convenience Functions</a></h3>
-<p>Direct solve helpers are available for these targets.</p>
-<table>
-  
-<thead>
-    
-<tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>P_cr</code></td><td><code>solve_p_cr(I, K, L)</code></td><td><code>I</code>, <code>K</code>, <code>L</code></td></tr>
-
-    
-<tr><td><code>E</code></td><td><code>solve_e(P_cr, I, K, L)</code></td><td><code>P_cr</code>, <code>I</code>, <code>K</code>, <code>L</code></td></tr>
-
-    
-<tr><td><code>I</code></td><td><code>solve_i(P_cr, K, L)</code></td><td><code>P_cr</code>, <code>K</code>, <code>L</code></td></tr>
-
-    
-<tr><td><code>K</code></td><td><code>solve_k(P_cr, I, L)</code></td><td><code>P_cr</code>, <code>I</code>, <code>L</code></td></tr>
-
-    
-<tr><td><code>L</code></td><td><code>solve_l(P_cr, I, K)</code></td><td><code>P_cr</code>, <code>I</code>, <code>K</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h3 id="solve-p_cr"><a class="header" href="#solve-p_cr">Solve <code>P_cr</code></a></h3>
-<p><strong>Function signature</strong></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>equations::structures::euler_buckling_load::solve_p_cr(I, K, L) -&gt; Result&lt;f64, _&gt;
-<span class="boring">}</span></code></pre>
-<p><strong>Example</strong></p>
+<h3 id="convenience_p_cr"><a class="header" href="#convenience_p_cr">convenience_p_cr</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::structures::euler_buckling_load::solve_p_cr(
@@ -320,13 +256,61 @@ $$</p>
     "2 m",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="notes"><a class="header" href="#notes">Notes</a></h3>
+<h3 id="convenience_e"><a class="header" href="#convenience_e">convenience_e</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::structures::euler_buckling_load::solve_e(
+    "3947841.760435743 N",
+    "8e-6 m4",
+    1.0,
+    "2 m",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_i"><a class="header" href="#convenience_i">convenience_i</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::structures::euler_buckling_load::solve_i(
+    "3947841.760435743 N",
+    1.0,
+    "2 m",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_k"><a class="header" href="#convenience_k">convenience_k</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::structures::euler_buckling_load::solve_k(
+    "3947841.760435743 N",
+    "8e-6 m4",
+    "2 m",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_l"><a class="header" href="#convenience_l">convenience_l</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::structures::euler_buckling_load::solve_l(
+    "3947841.760435743 N",
+    "8e-6 m4",
+    1.0,
+)?;
+<span class="boring">}</span></code></pre>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::structures::euler_buckling_load::equation()).for_target("E").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.structures.solve_e(p_cr="...", i="...", k="...", l="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_STRUCTURES_EULER_BUCKLING_LOAD_E("...","...","...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Returns SI by default; use <code>.value_in("&lt;unit&gt;")</code> for display units.</li>
-</ul>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
-<ul>
-<li>Roark’s Formulas for Stress and Strain</li>
+<li><code>p_cr</code>: Critical buckling load</li>
+<li><code>i</code>: Area moment of inertia</li>
+<li><code>k</code>: Effective length factor</li>
+<li><code>l</code>: Unbraced length</li>
 </ul>
 
                     </main>

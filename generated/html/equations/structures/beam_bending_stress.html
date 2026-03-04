@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfb3c088.js"></script>
+        <script src="../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,55 +177,37 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="beam-bending-stress"><a class="header" href="#beam-bending-stress">Beam Bending Stress</a></h1>
-<p><strong>Path:</strong> <code>structures.beam_bending_stress</code><br><strong>Category:</strong> <code>structures</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>structures.beam_bending_stress</code></p>
+<p>[
 \sigma_b = \frac{M c}{I}
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>σ_b = M · c / I</code></li>
 <li>ASCII: <code>sigma_b = M * c / I</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>sigma_b</code></td><td>Bending stress</td><td>\(\sigma_b\)</td><td><code>stress</code></td><td><code>Pa</code></td></tr>
+
+<tr><td><code>M</code></td><td>Bending moment</td><td>\(M\)</td><td><code>moment</code></td><td><code>N*m</code></td></tr>
+
+<tr><td><code>c</code></td><td>Distance to outer fiber</td><td>\(c\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+
+<tr><td><code>I</code></td><td>Area moment of inertia</td><td>\(I\)</td><td><code>area_moment_of_inertia</code></td><td><code>m4</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>Linear elastic beam bending with small strains.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>sigma_b</code></td><td>Bending stress</td><td><span class="math inline">\(\sigma_b\)</span></td><td><code>stress</code></td><td><code>Pa</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>M</code></td><td>Bending moment</td><td><span class="math inline">\(M\)</span></td><td><code>moment</code></td><td><code>N*m</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>c</code></td><td>Distance to outer fiber</td><td><span class="math inline">\(c\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>I</code></td><td>Area moment of inertia</td><td><span class="math inline">\(I\)</span></td><td><code>area_moment_of_inertia</code></td><td><code>m4</code></td><td><code>-</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>I</code>: explicit</li>
-<li><code>M</code>: explicit</li>
-<li><code>c</code>: explicit</li>
-<li><code>sigma_b</code>: explicit</li>
-</ul>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -236,7 +218,7 @@ $$</p>
     .given_i(5e-6)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-units-aware"><a class="header" href="#typed-builder-units-aware">Typed Builder (Units-Aware)</a></h3>
+<h3 id="typed_builder_units"><a class="header" href="#typed_builder_units">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -247,41 +229,7 @@ $$</p>
     .given_i("5e-6 m4")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="available-convenience-functions"><a class="header" href="#available-convenience-functions">Available Convenience Functions</a></h3>
-<p>Direct solve helpers are available for these targets.</p>
-<table>
-  
-<thead>
-    
-<tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>sigma_b</code></td><td><code>solve_sigma_b(M, c, I)</code></td><td><code>M</code>, <code>c</code>, <code>I</code></td></tr>
-
-    
-<tr><td><code>M</code></td><td><code>solve_m(sigma_b, c, I)</code></td><td><code>sigma_b</code>, <code>c</code>, <code>I</code></td></tr>
-
-    
-<tr><td><code>c</code></td><td><code>solve_c(sigma_b, M, I)</code></td><td><code>sigma_b</code>, <code>M</code>, <code>I</code></td></tr>
-
-    
-<tr><td><code>I</code></td><td><code>solve_i(sigma_b, M, c)</code></td><td><code>sigma_b</code>, <code>M</code>, <code>c</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h3 id="solve-sigma_b"><a class="header" href="#solve-sigma_b">Solve <code>sigma_b</code></a></h3>
-<p><strong>Function signature</strong></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>equations::structures::beam_bending_stress::solve_sigma_b(M, c, I) -&gt; Result&lt;f64, _&gt;
-<span class="boring">}</span></code></pre>
-<p><strong>Example</strong></p>
+<h3 id="convenience_sigma_b"><a class="header" href="#convenience_sigma_b">convenience_sigma_b</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::structures::beam_bending_stress::solve_sigma_b(
@@ -290,13 +238,50 @@ $$</p>
     "5e-6 m4",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="notes"><a class="header" href="#notes">Notes</a></h3>
+<h3 id="convenience_m"><a class="header" href="#convenience_m">convenience_m</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::structures::beam_bending_stress::solve_m(
+    "50 MPa",
+    "0.05 m",
+    "5e-6 m4",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_c"><a class="header" href="#convenience_c">convenience_c</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::structures::beam_bending_stress::solve_c(
+    "50 MPa",
+    "5000 N*m",
+    "5e-6 m4",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_i"><a class="header" href="#convenience_i">convenience_i</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::structures::beam_bending_stress::solve_i(
+    "50 MPa",
+    "5000 N*m",
+    "0.05 m",
+)?;
+<span class="boring">}</span></code></pre>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::structures::beam_bending_stress::equation()).for_target("I").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.structures.solve_i(sigma_b="...", m="...", c="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_STRUCTURES_BEAM_BENDING_STRESS_I("...","...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Returns SI by default; use <code>.value_in("&lt;unit&gt;")</code> for display units.</li>
-</ul>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
-<ul>
-<li>Roark’s Formulas for Stress and Strain</li>
+<li><code>sigma_b</code>: Bending stress</li>
+<li><code>m</code>: Bending moment</li>
+<li><code>c</code>: Distance to outer fiber</li>
 </ul>
 
                     </main>

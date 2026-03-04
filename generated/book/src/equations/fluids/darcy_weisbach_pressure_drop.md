@@ -1,49 +1,32 @@
 # Darcy-Weisbach Pressure Drop
 
-**Path:** `fluids.darcy_weisbach_pressure_drop`  
-**Category:** `fluids`
+**Path ID:** `fluids.darcy_weisbach_pressure_drop`
 
-## Equation
-
-$$
+\[
 \Delta p = f \frac{L}{D} \frac{\rho V^2}{2}
-$$
+\]
 
 - Unicode: `Δ p = f · (L / D) · (ρ · V² / 2)`
 - ASCII: `delta_p = f * (L / D) * (rho * V^2 / 2)`
+
+## Variables
+
+<table><thead><tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr></thead><tbody>
+<tr><td><code>delta_p</code></td><td>Pressure drop</td><td>\(\Delta p\)</td><td><code>pressure</code></td><td><code>Pa</code></td></tr>
+<tr><td><code>f</code></td><td>Darcy friction factor</td><td>\(f\)</td><td><code>friction_factor</code></td><td><code>1</code></td></tr>
+<tr><td><code>L</code></td><td>Pipe length</td><td>\(L\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+<tr><td><code>D</code></td><td>Pipe diameter</td><td>\(D\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+<tr><td><code>rho</code></td><td>Fluid density</td><td>\(\rho\)</td><td><code>density</code></td><td><code>kg/m3</code></td></tr>
+<tr><td><code>V</code></td><td>Mean velocity</td><td>\(V\)</td><td><code>velocity</code></td><td><code>m/s</code></td></tr>
+</tbody></table>
 
 ## Assumptions
 
 - Fully developed internal flow in a constant-diameter conduit.
 
-## Variables
-
-<table>
-  <thead>
-    <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>delta_p</code></td><td>Pressure drop</td><td><span class="math inline">\(\Delta p\)</span></td><td><code>pressure</code></td><td><code>Pa</code></td><td><code>-</code></td></tr>
-    <tr><td><code>f</code></td><td>Darcy friction factor</td><td><span class="math inline">\(f\)</span></td><td><code>friction_factor</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-    <tr><td><code>L</code></td><td>Pipe length</td><td><span class="math inline">\(L\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-    <tr><td><code>D</code></td><td>Pipe diameter</td><td><span class="math inline">\(D\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-    <tr><td><code>rho</code></td><td>Fluid density</td><td><span class="math inline">\(\rho\)</span></td><td><code>density</code></td><td><code>kg/m3</code></td><td><code>-</code></td></tr>
-    <tr><td><code>V</code></td><td>Mean velocity</td><td><span class="math inline">\(V\)</span></td><td><code>velocity</code></td><td><code>m/s</code></td><td><code>-</code></td></tr>
-  </tbody>
-</table>
-
-## Solve Targets
-
-- `D`: explicit
-- `L`: explicit
-- `V`: explicit
-- `delta_p`: explicit
-- `f`: explicit
-- `rho`: explicit
-
 ## Examples
 
-### Typed Builder (SI Numeric)
+### typed_builder_si
 
 ```rust
 let value = eq
@@ -57,7 +40,7 @@ let value = eq
     .value()?;
 ```
 
-### Typed Builder (Units-Aware)
+### typed_builder_units
 
 ```rust
 let value = eq
@@ -71,33 +54,7 @@ let value = eq
     .value()?;
 ```
 
-### Available Convenience Functions
-
-Direct solve helpers are available for these targets.
-
-<table>
-  <thead>
-    <tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>delta_p</code></td><td><code>solve_delta_p(f, L, D, rho, V)</code></td><td><code>f</code>, <code>L</code>, <code>D</code>, <code>rho</code>, <code>V</code></td></tr>
-    <tr><td><code>f</code></td><td><code>solve_f(delta_p, L, D, rho, V)</code></td><td><code>delta_p</code>, <code>L</code>, <code>D</code>, <code>rho</code>, <code>V</code></td></tr>
-    <tr><td><code>L</code></td><td><code>solve_l(delta_p, f, D, rho, V)</code></td><td><code>delta_p</code>, <code>f</code>, <code>D</code>, <code>rho</code>, <code>V</code></td></tr>
-    <tr><td><code>D</code></td><td><code>solve_d(delta_p, f, L, rho, V)</code></td><td><code>delta_p</code>, <code>f</code>, <code>L</code>, <code>rho</code>, <code>V</code></td></tr>
-    <tr><td><code>rho</code></td><td><code>solve_rho(delta_p, f, L, D, V)</code></td><td><code>delta_p</code>, <code>f</code>, <code>L</code>, <code>D</code>, <code>V</code></td></tr>
-    <tr><td><code>V</code></td><td><code>solve_v(delta_p, f, L, D, rho)</code></td><td><code>delta_p</code>, <code>f</code>, <code>L</code>, <code>D</code>, <code>rho</code></td></tr>
-  </tbody>
-</table>
-
-### Solve `delta_p`
-
-**Function signature**
-
-```rust
-equations::fluids::darcy_weisbach_pressure_drop::solve_delta_p(f, L, D, rho, V) -> Result<f64, _>
-```
-
-**Example**
+### convenience_delta_p
 
 ```rust
 let value = equations::fluids::darcy_weisbach_pressure_drop::solve_delta_p(
@@ -109,11 +66,88 @@ let value = equations::fluids::darcy_weisbach_pressure_drop::solve_delta_p(
 )?;
 ```
 
-### Notes
+### convenience_f
 
-- Returns SI by default; use `.value_in("<unit>")` for display units.
+```rust
+let value = equations::fluids::darcy_weisbach_pressure_drop::solve_f(
+    "9000 Pa",
+    "10 m",
+    "0.1 m",
+    "1000 kg/m3",
+    "3 m/s",
+)?;
+```
 
-## Source
+### convenience_l
 
-- Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics
+```rust
+let value = equations::fluids::darcy_weisbach_pressure_drop::solve_l(
+    "9000 Pa",
+    0.02,
+    "0.1 m",
+    "1000 kg/m3",
+    "3 m/s",
+)?;
+```
+
+### convenience_d
+
+```rust
+let value = equations::fluids::darcy_weisbach_pressure_drop::solve_d(
+    "9000 Pa",
+    0.02,
+    "10 m",
+    "1000 kg/m3",
+    "3 m/s",
+)?;
+```
+
+### convenience_rho
+
+```rust
+let value = equations::fluids::darcy_weisbach_pressure_drop::solve_rho(
+    "9000 Pa",
+    0.02,
+    "10 m",
+    "0.1 m",
+    "3 m/s",
+)?;
+```
+
+### convenience_v
+
+```rust
+let value = equations::fluids::darcy_weisbach_pressure_drop::solve_v(
+    "9000 Pa",
+    0.02,
+    "10 m",
+    "0.1 m",
+    "1000 kg/m3",
+)?;
+```
+
+
+## Bindings
+
+### Rust
+```rust
+let value = eq.solve(equations::fluids::darcy_weisbach_pressure_drop::equation()).for_target("D").value()?;
+```
+
+### Python
+```python
+engpy.equations.fluids.solve_d(delta_p="...", f="...", l="...", rho="...", v="...")
+```
+
+### Excel
+```excel
+=ENG_FLUIDS_DARCY_WEISBACH_PRESSURE_DROP_D("...","...","...","...","...")
+```
+
+**Excel arguments**
+- `delta_p`: Pressure drop
+- `f`: Darcy friction factor
+- `l`: Pipe length
+- `rho`: Fluid density
+- `v`: Mean velocity
 

@@ -1,46 +1,31 @@
 # Thin-Wall Hoop Stress
 
-**Path:** `structures.hoop_stress`  
-**Category:** `structures`
+**Path ID:** `structures.hoop_stress`
 
-## Equation
-
-$$
+\[
 \sigma_h = \frac{P r}{t}
-$$
+\]
 
 - Unicode: `σ_h = P · r / t`
 - ASCII: `sigma_h = P * r / t`
+
+## Variables
+
+<table><thead><tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr></thead><tbody>
+<tr><td><code>sigma_h</code></td><td>Hoop stress</td><td>\(\sigma_h\)</td><td><code>stress</code></td><td><code>Pa</code></td></tr>
+<tr><td><code>P</code></td><td>Internal pressure</td><td>\(P\)</td><td><code>pressure</code></td><td><code>Pa</code></td></tr>
+<tr><td><code>r</code></td><td>Mean radius</td><td>\(r\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+<tr><td><code>t</code></td><td>Wall thickness</td><td>\(t\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+</tbody></table>
 
 ## Assumptions
 
 - Thin-wall approximation is valid (t << r).
 - Material behavior remains in the elastic membrane-stress regime.
 
-## Variables
-
-<table>
-  <thead>
-    <tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>sigma_h</code></td><td>Hoop stress</td><td><span class="math inline">\(\sigma_h\)</span></td><td><code>stress</code></td><td><code>Pa</code></td><td><code>-</code></td></tr>
-    <tr><td><code>P</code></td><td>Internal pressure</td><td><span class="math inline">\(P\)</span></td><td><code>pressure</code></td><td><code>Pa</code></td><td><code>-</code></td></tr>
-    <tr><td><code>r</code></td><td>Mean radius</td><td><span class="math inline">\(r\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-    <tr><td><code>t</code></td><td>Wall thickness</td><td><span class="math inline">\(t\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-  </tbody>
-</table>
-
-## Solve Targets
-
-- `P`: explicit, numerical
-- `r`: explicit, numerical
-- `sigma_h`: explicit, numerical
-- `t`: explicit, numerical
-
 ## Examples
 
-### Typed Builder (SI Numeric)
+### typed_builder_si
 
 ```rust
 let value = eq
@@ -52,7 +37,7 @@ let value = eq
     .value()?;
 ```
 
-### Typed Builder (Units-Aware)
+### typed_builder_units
 
 ```rust
 let value = eq
@@ -64,31 +49,7 @@ let value = eq
     .value()?;
 ```
 
-### Available Convenience Functions
-
-Direct solve helpers are available for these targets.
-
-<table>
-  <thead>
-    <tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><code>sigma_h</code></td><td><code>solve_sigma_h(P, r, t)</code></td><td><code>P</code>, <code>r</code>, <code>t</code></td></tr>
-    <tr><td><code>P</code></td><td><code>solve_p(sigma_h, r, t)</code></td><td><code>sigma_h</code>, <code>r</code>, <code>t</code></td></tr>
-    <tr><td><code>r</code></td><td><code>solve_r(sigma_h, P, t)</code></td><td><code>sigma_h</code>, <code>P</code>, <code>t</code></td></tr>
-    <tr><td><code>t</code></td><td><code>solve_t(sigma_h, P, r)</code></td><td><code>sigma_h</code>, <code>P</code>, <code>r</code></td></tr>
-  </tbody>
-</table>
-
-### Solve `sigma_h`
-
-**Function signature**
-
-```rust
-equations::structures::hoop_stress::solve_sigma_h(P, r, t) -> Result<f64, _>
-```
-
-**Example**
+### convenience_sigma_h
 
 ```rust
 let value = equations::structures::hoop_stress::solve_sigma_h(
@@ -98,18 +59,56 @@ let value = equations::structures::hoop_stress::solve_sigma_h(
 )?;
 ```
 
-### Notes
+### convenience_p
 
-- Returns SI by default; use `.value_in("<unit>")` for display units.
+```rust
+let value = equations::structures::hoop_stress::solve_p(
+    "62.5 MPa",
+    "0.2 m",
+    "8 mm",
+)?;
+```
 
-## Source
+### convenience_r
 
-- [Roark's Formulas for Stress and Strain](https://www.mheducation.com/highered/product/roark-s-formulas-stress-strain-young-budynas/M9780071742475.html)
+```rust
+let value = equations::structures::hoop_stress::solve_r(
+    "62.5 MPa",
+    "2.5 MPa",
+    "8 mm",
+)?;
+```
 
-## References
+### convenience_t
 
-- Roark's Formulas for Stress and Strain — Thin-walled cylindrical pressure vessel relations.
+```rust
+let value = equations::structures::hoop_stress::solve_t(
+    "62.5 MPa",
+    "2.5 MPa",
+    "0.2 m",
+)?;
+```
 
-## Aliases
 
-`thin_wall_hoop_stress`
+## Bindings
+
+### Rust
+```rust
+let value = eq.solve(equations::structures::hoop_stress::equation()).for_target("P").value()?;
+```
+
+### Python
+```python
+engpy.equations.structures.solve_p(sigma_h="...", r="...", t="...")
+```
+
+### Excel
+```excel
+=ENG_STRUCTURES_HOOP_STRESS_P("...","...","...")
+```
+
+**Excel arguments**
+- `sigma_h`: Hoop stress
+- `r`: Mean radius
+- `t`: Wall thickness
+

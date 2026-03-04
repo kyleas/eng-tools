@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-dfb3c088.js"></script>
+        <script src="../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,144 +177,51 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="yaml-authoring"><a class="header" href="#yaml-authoring">YAML Authoring</a></h1>
-<p>Equation files: <code>crates/equations/registry/&lt;category&gt;/...yaml</code>
-Family files: <code>crates/equations/registry/families/*.yaml</code></p>
-<p>Default workflow: use <strong>minimal/typical</strong> form. Use verbose overrides only when they add real value.</p>
-<h2 id="file-shape-guidance"><a class="header" href="#file-shape-guidance">File Shape Guidance</a></h2>
-<ol>
-<li><strong>Minimal</strong>: smallest valid equation with baseline test.</li>
-<li><strong>Typical (recommended)</strong>: minimal + assumptions/references + explicit forms where useful.</li>
-<li><strong>Verbose/override</strong>: only when default derivation/rendering behavior needs explicit overrides.</li>
-</ol>
-<h2 id="required-vs-optional-equation"><a class="header" href="#required-vs-optional-equation">Required vs Optional (Equation)</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Field</th><th>Required</th><th>Notes</th></tr>
-</thead>
-<tbody>
-<tr><td><code>key</code></td><td>yes</td><td>Stable equation key.</td></tr>
-<tr><td><code>taxonomy.category</code></td><td>yes</td><td>Top-level grouping.</td></tr>
-<tr><td><code>name</code></td><td>yes</td><td>Human-readable name.</td></tr>
-<tr><td><code>variables</code></td><td>yes</td><td>Variable metadata.</td></tr>
-<tr><td><code>residual.expression</code></td><td>yes</td><td>Source-of-truth relation.</td></tr>
-<tr><td><code>tests.baseline</code></td><td>yes</td><td>Trust/regression baseline.</td></tr>
-<tr><td><code>source</code></td><td>optional (recommended)</td><td>Primary citation for the equation.</td></tr>
-<tr><td><code>display</code></td><td>optional (recommended)</td><td>Latex/unicode/ascii authoring control.</td></tr>
-<tr><td><code>solve.explicit_forms</code></td><td>optional</td><td>Add explicit target forms when available.</td></tr>
-<tr><td><code>assumptions</code>/<code>references</code></td><td>optional (recommended)</td><td>Concise trust metadata.</td></tr>
-<tr><td><code>solve.unsupported_targets</code></td><td>optional (rare)</td><td>Only for truly unsafe/unsupported numerical paths.</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="minimal-equation-example"><a class="header" href="#minimal-equation-example">Minimal Equation Example</a></h2>
+<p>Equation YAML files live under <code>crates/equations/registry/&lt;category&gt;/</code>. Family YAML files live under <code>crates/equations/registry/families/</code>.</p>
+<h2 id="minimal-equation-shape"><a class="header" href="#minimal-equation-shape">Minimal Equation Shape</a></h2>
 <pre><code class="language-yaml">key: hoop_stress
-taxonomy: { category: structures }
+taxonomy:
+  category: structures
 name: Thin-Wall Hoop Stress
-source: "Roark's Formulas for Stress and Strain"
-display: { latex: "\\sigma_h = \\frac{P r}{t}" }
+display:
+  latex: "\\sigma_h = \\frac{P r}{t}"
 variables:
   sigma_h: { dimension: stress, default_unit: Pa }
   P: { dimension: pressure, default_unit: Pa }
   r: { dimension: length, default_unit: m }
   t: { dimension: length, default_unit: m }
-residual: { expression: "sigma_h - P*r/t" }
-tests:
-  baseline: { sigma_h: "62.5 MPa", P: "2.5 MPa", r: "0.2 m", t: "8 mm" }
-</code></pre>
-<h2 id="typical-recommended-equation-example"><a class="header" href="#typical-recommended-equation-example">Typical (Recommended) Equation Example</a></h2>
-<pre><code class="language-yaml">key: reynolds_number
-taxonomy:
-  category: fluids
-name: Reynolds Number
-source:
-  source: Fox, McDonald, and Pritchard - Introduction to Fluid Mechanics
-  note: https://www.wiley.com/en-us/Introduction+to+Fluid+Mechanics%2C+9th+Edition-p-9781119721025
-display:
-  latex: "Re = \\frac{\\rho V D}{\\mu}"
-variables:
-  Re: { name: Reynolds number, dimension: dimensionless, default_unit: "1" }
-  rho: { name: Fluid density, dimension: density, default_unit: kg/m3, resolver: { source: fluid, kind: fluid_property, property: density } }
-  V: { name: Mean velocity, dimension: velocity, default_unit: m/s }
-  D: { name: Pipe diameter, dimension: length, default_unit: m }
-  mu: { name: Dynamic viscosity, dimension: dynamic_viscosity, default_unit: Pa*s, resolver: { source: fluid, kind: fluid_property, property: dynamic_viscosity } }
 residual:
-  expression: "Re - rho*V*D/mu"
-assumptions:
-  - Single-phase continuum flow.
+  expression: "sigma_h - P*r/t"
 tests:
   baseline:
-    Re: 300000
-    rho: "998 kg/m3"
-    V: "3 m/s"
-    D: "0.1 m"
-    mu: "1e-3 Pa*s"
+    sigma_h: "62.5 MPa"
+    P: "2.5 MPa"
+    r: "0.2 m"
+    t: "8 mm"
 </code></pre>
-<h2 id="verbose--override-example"><a class="header" href="#verbose--override-example">Verbose / Override Example</a></h2>
-<pre><code class="language-yaml">key: darcy_weisbach_pressure_drop
-taxonomy:
-  category: fluids
-  subcategory: internal_flow
-name: Darcy-Weisbach Pressure Drop
-source:
-  source: Darcy-Weisbach relation (standard fluid mechanics texts)
-display:
-  latex: "\\Delta p = f \\frac{L}{D} \\frac{\\rho V^2}{2}"
-  unicode: "delta_p = f (L/D) (rho V^2 / 2)"
-  ascii: "delta_p = f*(L/D)*(rho*V^2/2)"
-variables:
-  delta_p: { name: Pressure drop, symbol: "\\Delta p", dimension: pressure, default_unit: Pa }
-  f: { name: Darcy friction factor, symbol: f, dimension: friction_factor, default_unit: "1" }
-  L: { name: Pipe length, symbol: L, dimension: length, default_unit: m }
-  D: { name: Pipe diameter, symbol: D, dimension: length, default_unit: m }
-  rho: { name: Fluid density, symbol: "\\rho", dimension: density, default_unit: kg/m^3 }
-  V: { name: Mean velocity, symbol: V, dimension: velocity, default_unit: m/s }
-residual:
-  expression: "delta_p - f*(L/D)*(rho*V^2/2)"
-solve:
-  explicit_forms:
-    delta_p: "f*(L/D)*(rho*V^2/2)"
-    f: "delta_p/((L/D)*(rho*V^2/2))"
-assumptions:
-  - Steady, incompressible internal flow form.
-references:
-  - source: Standard fluid mechanics texts
-tests:
-  baseline:
-    delta_p: "9000 Pa"
-    f: 0.02
-    L: "10 m"
-    D: "0.1 m"
-    rho: "1000 kg/m^3"
-    V: "3 m/s"
-</code></pre>
-<h2 id="family-yaml-example"><a class="header" href="#family-yaml-example">Family YAML Example</a></h2>
+<h2 id="family-yaml-shape"><a class="header" href="#family-yaml-shape">Family YAML Shape</a></h2>
 <pre><code class="language-yaml">key: ideal_gas
 name: Ideal Gas Law
-description: Common forms of the ideal-gas law under one canonical family.
 canonical_equation: thermo.ideal_gas.mass_volume
-canonical_law: "P * V = m * R * T"
 variants:
   - key: mass_volume
     equation_id: thermo.ideal_gas.mass_volume
-    display_latex: "P V = m R T"
   - key: density
     equation_id: thermo.ideal_gas.density
-    display_latex: "P = \\rho R T"
 </code></pre>
-<h2 id="optional-vs-required-summary"><a class="header" href="#optional-vs-required-summary">Optional vs Required Summary</a></h2>
-<ul>
-<li>Required: <code>key</code>, <code>taxonomy.category</code>, <code>name</code>, <code>variables</code>, <code>residual.expression</code>, <code>tests.baseline</code>.</li>
-<li>Optional but recommended: <code>source</code>, <code>display</code>, <code>assumptions</code>, <code>references</code>, explicit solve forms.</li>
-<li>Rare optional: <code>unsupported_targets</code> (only when numerical solving is genuinely unsafe/misleading).</li>
-<li>Family files require <code>variants</code>; shared assumptions/references are optional but recommended.</li>
-</ul>
+<p>Authoring workflow:</p>
+<ol>
+<li>add/update equation YAML</li>
+<li>add baseline tests in YAML</li>
+<li>run validation/tests</li>
+<li>regenerate docs/catalog/html exports</li>
+</ol>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../workflows/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../devices/guide.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
@@ -328,7 +235,7 @@ variants:
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../workflows/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../devices/guide.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 

@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "model_version": "2026-03-02",
+  "model_version": "2026-03-03",
   "artifact_type": "fluids",
   "items": [
     {
@@ -8,6 +8,28 @@
       "name": "Air",
       "aliases": [
         "atmosphere"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -15,6 +37,28 @@
       "name": "Argon",
       "aliases": [
         "argon"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -22,6 +66,28 @@
       "name": "Methane",
       "aliases": [
         "methane"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -29,6 +95,28 @@
       "name": "Carbon Monoxide",
       "aliases": [
         "carbon monoxide"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -36,6 +124,28 @@
       "name": "Carbon Dioxide",
       "aliases": [
         "carbon dioxide"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -43,6 +153,28 @@
       "name": "Ethane",
       "aliases": [
         "c2h6"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -50,6 +182,28 @@
       "name": "Ethylene",
       "aliases": [
         "c2h4"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -57,6 +211,28 @@
       "name": "Hydrogen",
       "aliases": [
         "hydrogen"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -64,6 +240,28 @@
       "name": "Water",
       "aliases": [
         "water"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -71,6 +269,28 @@
       "name": "Helium",
       "aliases": [
         "helium"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -78,6 +298,28 @@
       "name": "Isobutane",
       "aliases": [
         "i-butane"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -85,6 +327,28 @@
       "name": "Isopentane",
       "aliases": [
         "i-pentane"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -92,6 +356,28 @@
       "name": "Krypton",
       "aliases": [
         "krypton"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -99,6 +385,28 @@
       "name": "Nitrogen",
       "aliases": [
         "nitrogen"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -106,6 +414,28 @@
       "name": "Nitrous Oxide",
       "aliases": [
         "nitrous oxide"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -113,6 +443,28 @@
       "name": "Ammonia",
       "aliases": [
         "ammonia"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -120,6 +472,28 @@
       "name": "Neon",
       "aliases": [
         "neon"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -127,6 +501,28 @@
       "name": "Oxygen",
       "aliases": [
         "oxygen"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -135,6 +531,28 @@
       "aliases": [
         "c3h8",
         "n-propane"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -142,43 +560,219 @@
       "name": "Propylene",
       "aliases": [
         "c3h6"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
       "key": "R1234yf",
       "name": "R1234yf",
-      "aliases": []
+      "aliases": [],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
+      ]
     },
     {
       "key": "R125",
       "name": "R125",
-      "aliases": []
+      "aliases": [],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
+      ]
     },
     {
       "key": "R134a",
       "name": "R134a",
-      "aliases": []
+      "aliases": [],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
+      ]
     },
     {
       "key": "R152a",
       "name": "R152a",
-      "aliases": []
+      "aliases": [],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
+      ]
     },
     {
       "key": "R245fa",
       "name": "R245fa",
-      "aliases": []
+      "aliases": [],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
+      ]
     },
     {
       "key": "R32",
       "name": "R32",
-      "aliases": []
+      "aliases": [],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
+      ]
     },
     {
       "key": "SO2",
       "name": "Sulfur Dioxide",
       "aliases": [
         "sulfur dioxide"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -186,6 +780,28 @@
       "name": "Xenon",
       "aliases": [
         "xenon"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -194,6 +810,28 @@
       "aliases": [
         "butane",
         "n-butane"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -202,6 +840,28 @@
       "aliases": [
         "hexane",
         "n-hexane"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     },
     {
@@ -210,6 +870,28 @@
       "aliases": [
         "pentane",
         "n-pentane"
+      ],
+      "supported_state_inputs": [
+        "T,P",
+        "P,h",
+        "P,s",
+        "rho,h",
+        "P,Q",
+        "T,Q"
+      ],
+      "supported_properties": [
+        "density",
+        "specific_heat_capacity",
+        "specific_heat_capacity_cv",
+        "gamma",
+        "speed_of_sound",
+        "dynamic_viscosity",
+        "thermal_conductivity",
+        "temperature",
+        "pressure",
+        "specific_enthalpy",
+        "specific_entropy",
+        "quality"
       ]
     }
   ]

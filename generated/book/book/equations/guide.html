@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-dfb3c088.js"></script>
+        <script src="../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,24 +177,12 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="equations-guide"><a class="header" href="#equations-guide">Equations Guide</a></h1>
-<p>Atomic equations and equation families are presented as one coherent system.</p>
+<p>Atomic equations are scalar-first relations with strong validation and tests.</p>
 <ul>
 <li><a href="./index.html">Equation Catalog</a></li>
 <li><a href="./families/index.html">Equation Families</a></li>
 </ul>
-<h2 id="family-variant-access-example"><a class="header" href="#family-variant-access-example">Family Variant Access Example</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use eng::{eq, equations};
-
-let p_pa = eq
-    .solve(equations::thermo::ideal_gas::density::equation())
-    .target_p()
-    .given_rho("1.225 kg/m^3")
-    .given_r("287 J/(kg*K)")
-    .given_t("288.15 K")
-    .value()?;
-<span class="boring">}</span></code></pre>
+<p>Family pages and variant pages are equation-scoped and cross-linked from each equation page.</p>
 
                     </main>
 

@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dcdfad48.js";
+            window.path_to_searchindex_js = "../../searchindex-782acd31.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfb3c088.js"></script>
+        <script src="../../toc-e22846d2.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,64 +177,39 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="reynolds-number"><a class="header" href="#reynolds-number">Reynolds Number</a></h1>
-<p><strong>Path:</strong> <code>fluids.reynolds_number</code><br><strong>Category:</strong> <code>fluids</code></p>
-<h2 id="equation"><a class="header" href="#equation">Equation</a></h2>
-<p>$$
+<p><strong>Path ID:</strong> <code>fluids.reynolds_number</code></p>
+<p>[
 Re = \frac{\rho V D}{\mu}
-$$</p>
+]</p>
 <ul>
 <li>Unicode: <code>Re = ρ · V · D / μ</code></li>
 <li>ASCII: <code>Re = rho * V * D / mu</code></li>
 </ul>
+<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
+<table>
+<thead>
+<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Unit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Re</code></td><td>Reynolds number</td><td>\(Re\)</td><td><code>ratio</code></td><td><code>1</code></td></tr>
+
+<tr><td><code>rho</code></td><td>Fluid density</td><td>\(\rho\)</td><td><code>density</code></td><td><code>kg/m3</code></td></tr>
+
+<tr><td><code>V</code></td><td>Mean velocity</td><td>\(V\)</td><td><code>velocity</code></td><td><code>m/s</code></td></tr>
+
+<tr><td><code>D</code></td><td>Hydraulic diameter</td><td>\(D\)</td><td><code>length</code></td><td><code>m</code></td></tr>
+
+<tr><td><code>mu</code></td><td>Dynamic viscosity</td><td>\(\mu\)</td><td><code>viscosity</code></td><td><code>Pa*s</code></td></tr>
+
+</tbody>
+</table>
+
 <h2 id="assumptions"><a class="header" href="#assumptions">Assumptions</a></h2>
 <ul>
 <li>Internal-flow characteristic length is represented by hydraulic diameter.</li>
 </ul>
-<h2 id="variables"><a class="header" href="#variables">Variables</a></h2>
-<table>
-  
-<thead>
-    
-<tr><th>Key</th><th>Name</th><th>Symbol</th><th>Dimension</th><th>Default Unit</th><th>Resolver</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>Re</code></td><td>Reynolds number</td><td><span class="math inline">\(Re\)</span></td><td><code>ratio</code></td><td><code>1</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>rho</code></td><td>Fluid density</td><td><span class="math inline">\(\rho\)</span></td><td><code>density</code></td><td><code>kg/m3</code></td><td><code>fluid_property:density</code> from <code>fluid</code></td></tr>
-
-    
-<tr><td><code>V</code></td><td>Mean velocity</td><td><span class="math inline">\(V\)</span></td><td><code>velocity</code></td><td><code>m/s</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>D</code></td><td>Hydraulic diameter</td><td><span class="math inline">\(D\)</span></td><td><code>length</code></td><td><code>m</code></td><td><code>-</code></td></tr>
-
-    
-<tr><td><code>mu</code></td><td>Dynamic viscosity</td><td><span class="math inline">\(\mu\)</span></td><td><code>viscosity</code></td><td><code>Pa*s</code></td><td><code>fluid_property:dynamic_viscosity</code> from <code>fluid</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h2 id="resolvable-from-contexts"><a class="header" href="#resolvable-from-contexts">Resolvable from Contexts</a></h2>
-<ul>
-<li><code>rho</code> from context <code>fluid</code> via <code>fluid_property</code>:<code>density</code></li>
-<li><code>mu</code> from context <code>fluid</code> via <code>fluid_property</code>:<code>dynamic_viscosity</code></li>
-</ul>
-<h2 id="solve-targets"><a class="header" href="#solve-targets">Solve Targets</a></h2>
-<ul>
-<li><code>D</code>: explicit</li>
-<li><code>Re</code>: explicit</li>
-<li><code>V</code>: explicit</li>
-<li><code>mu</code>: explicit</li>
-<li><code>rho</code>: explicit</li>
-</ul>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<h3 id="typed-builder-si-numeric"><a class="header" href="#typed-builder-si-numeric">Typed Builder (SI Numeric)</a></h3>
+<h3 id="typed_builder_si"><a class="header" href="#typed_builder_si">typed_builder_si</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -244,7 +219,7 @@ $$</p>
     .given_d(0.1)
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-units-aware"><a class="header" href="#typed-builder-units-aware">Typed Builder (Units-Aware)</a></h3>
+<h3 id="typed_builder_units"><a class="header" href="#typed_builder_units">typed_builder_units</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -254,7 +229,7 @@ $$</p>
     .given_d("0.1 m")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="typed-builder-context-assisted"><a class="header" href="#typed-builder-context-assisted">Typed Builder (Context-Assisted)</a></h3>
+<h3 id="typed_builder_context"><a class="header" href="#typed_builder_context">typed_builder_context</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = eq
@@ -265,44 +240,7 @@ $$</p>
     .given_d("0.1 m")
     .value()?;
 <span class="boring">}</span></code></pre>
-<h3 id="available-convenience-functions"><a class="header" href="#available-convenience-functions">Available Convenience Functions</a></h3>
-<p>Direct solve helpers are available for these targets.</p>
-<table>
-  
-<thead>
-    
-<tr><th>Solves for</th><th>Function</th><th>Required inputs</th></tr>
-
-  </thead>
-
-  
-<tbody>
-    
-<tr><td><code>Re</code></td><td><code>solve_re(V, D)</code></td><td><code>V</code>, <code>D</code></td></tr>
-
-    
-<tr><td><code>rho</code></td><td><code>solve_rho(Re, V, D)</code></td><td><code>Re</code>, <code>V</code>, <code>D</code></td></tr>
-
-    
-<tr><td><code>V</code></td><td><code>solve_v(Re, D)</code></td><td><code>Re</code>, <code>D</code></td></tr>
-
-    
-<tr><td><code>D</code></td><td><code>solve_d(Re, V)</code></td><td><code>Re</code>, <code>V</code></td></tr>
-
-    
-<tr><td><code>mu</code></td><td><code>solve_mu(Re, V, D)</code></td><td><code>Re</code>, <code>V</code>, <code>D</code></td></tr>
-
-  </tbody>
-
-</table>
-
-<h3 id="solve-re"><a class="header" href="#solve-re">Solve <code>Re</code></a></h3>
-<p><strong>Function signature</strong></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>equations::fluids::reynolds_number::solve_re(V, D) -&gt; Result&lt;f64, _&gt;
-<span class="boring">}</span></code></pre>
-<p><strong>Example</strong></p>
+<h3 id="convenience_re"><a class="header" href="#convenience_re">convenience_re</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let value = equations::fluids::reynolds_number::solve_re(
@@ -310,13 +248,58 @@ $$</p>
     "0.1 m",
 )?;
 <span class="boring">}</span></code></pre>
-<h3 id="notes"><a class="header" href="#notes">Notes</a></h3>
+<h3 id="convenience_rho"><a class="header" href="#convenience_rho">convenience_rho</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::fluids::reynolds_number::solve_rho(
+    2.495e5,
+    "2.5 m/s",
+    "0.1 m",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_v"><a class="header" href="#convenience_v">convenience_v</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::fluids::reynolds_number::solve_v(
+    2.495e5,
+    "0.1 m",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_d"><a class="header" href="#convenience_d">convenience_d</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::fluids::reynolds_number::solve_d(
+    2.495e5,
+    "2.5 m/s",
+)?;
+<span class="boring">}</span></code></pre>
+<h3 id="convenience_mu"><a class="header" href="#convenience_mu">convenience_mu</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = equations::fluids::reynolds_number::solve_mu(
+    2.495e5,
+    "2.5 m/s",
+    "0.1 m",
+)?;
+<span class="boring">}</span></code></pre>
+<h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let value = eq.solve(equations::fluids::reynolds_number::equation()).for_target("D").value()?;
+<span class="boring">}</span></code></pre>
+<h3 id="python"><a class="header" href="#python">Python</a></h3>
+<pre><code class="language-python">engpy.equations.fluids.solve_d(re="...", rho="...", v="...", mu="...")
+</code></pre>
+<h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
+<pre><code class="language-excel">=ENG_FLUIDS_REYNOLDS_NUMBER_D("...","...","...","...")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
 <ul>
-<li>Returns SI by default; use <code>.value_in("&lt;unit&gt;")</code> for display units.</li>
-</ul>
-<h2 id="source"><a class="header" href="#source">Source</a></h2>
-<ul>
-<li><a href="https://www.wiley.com/en-us/Introduction+to+Fluid+Mechanics%2C+9th+Edition-p-9781119721025">Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics</a></li>
+<li><code>re</code>: Reynolds number</li>
+<li><code>rho</code>: Fluid density</li>
+<li><code>v</code>: Mean velocity</li>
+<li><code>mu</code>: Dynamic viscosity</li>
 </ul>
 
                     </main>
