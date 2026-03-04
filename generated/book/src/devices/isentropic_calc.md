@@ -1,21 +1,23 @@
 # Isentropic Calculator
 
-Calculator-style compressible-flow device that accepts one isentropic input kind and one target kind, resolves a pivot Mach number, then computes the requested output.
+**Key:** `isentropic_calc`
 
-All relation math is delegated to equation-registry atomic equations (no device-local formula authority).
+Calculator-style compressible device: solve any supported isentropic input to any supported output through Mach pivot orchestration.
 
-## Supported Inputs (v1)
+## Overview
 
+A calculator-style compressible device that resolves a pivot Mach number from one supported isentropic input kind and then evaluates the requested target kind.
+
+### Supported input kinds
 - `mach`
-- `mach_angle_deg` (Excel/Python convenience; internally converted to radians)
-- `prandtl_meyer_angle_deg` (Excel/Python convenience; internally converted to radians)
+- `mach_angle_deg` (binding convenience; internally radians)
+- `prandtl_meyer_angle_deg` (binding convenience; internally radians)
 - `pressure_ratio` (`p/p0`)
 - `temperature_ratio` (`T/T0`)
 - `density_ratio` (`rho/rho0`)
 - `area_ratio` (`A/A*`, branch-sensitive)
 
-## Supported Targets (v1)
-
+### Supported target kinds
 - `mach`
 - `mach_angle_deg`
 - `prandtl_meyer_angle_deg`
@@ -24,17 +26,8 @@ All relation math is delegated to equation-registry atomic equations (no device-
 - `density_ratio`
 - `area_ratio`
 
-## Branch Behavior
-
-- `area_ratio -> mach` is double-valued and requires explicit branch (`subsonic` or `supersonic`).
-- If branch-sensitive inversion is requested without branch, the device returns a structured error.
-
-## Domain Notes
-
-- `mach_angle` and `prandtl_meyer_angle` are valid for supersonic flow (`M >= 1`).
-- `prandtl_meyer_angle` input is validated as `0 <= nu < nu_max(gamma)` and reports clear domain errors.
-
-## Examples
+### Branch behavior
+- `area_ratio -> mach` is double-valued and requires `subsonic` or `supersonic`.
 
 ### Rust
 ```rust
@@ -45,36 +38,27 @@ let out = isentropic_calc()
     .target(IsentropicOutputKind::Mach)
     .branch(IsentropicBranch::Supersonic)
     .solve()?;
-println!("M={}, p/p0={}", out.pivot_mach, out.value_si);
+println!("M={}, value={}", out.pivot_mach, out.value_si);
 ```
 
-### Python
-```python
-engpy.devices.isentropic_calc("mach_angle_deg", 30.0, "pressure_ratio", 1.4)
-engpy.devices.isentropic_from_nu_deg_to_m(26.3797608134, 1.4)
-engpy.devices.isentropic_from_m_to_nu_deg(2.0, 1.4)
-engpy.devices.isentropic_pivot_mach("area_ratio", 2.0, "mach", 1.4, "subsonic")
-engpy.devices.isentropic_path_text("area_ratio", 2.0, "mach", 1.4, "supersonic")
-```
+## Modes
 
-### Excel
-```excel
-=ENG_ISENTROPIC("mach_angle_deg",30,"pressure_ratio",1.4,"")
-=ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,"")
-=ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,"")
-=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,"supersonic")
-=ENG_ISENTROPIC_PIVOT_MACH("area_ratio",2.0,"mach",1.4,"subsonic")
-=ENG_ISENTROPIC_PATH_TEXT("mach",2.0,"pressure_ratio",1.4,"")
-```
+- Input kinds: Mach, MachAngle, Prandtl-Meyer angle, p/p0, T/T0, rho/rho0, A/A*
+- Branch-aware inversion for A/A*
 
+## Outputs
+
+- value_si
+- pivot_mach
+- path diagnostics
 ## Internal Composition
 
-- [Mach Angle](../equations/compressible/mach_angle.md)
-- [Prandtl-Meyer Expansion Angle](../equations/compressible/prandtl_meyer.md)
-- [Isentropic Pressure Ratio](../equations/compressible/isentropic_pressure_ratio.md)
-- [Isentropic Temperature Ratio](../equations/compressible/isentropic_temperature_ratio.md)
-- [Isentropic Density Ratio](../equations/compressible/isentropic_density_ratio.md)
-- [Isentropic Area-Mach Relation](../equations/compressible/area_mach.md)
+- [Compressible Area Mach](../equations/compressible/area_mach.md)
+- [Compressible Isentropic Pressure Ratio](../equations/compressible/isentropic_pressure_ratio.md)
+- [Compressible Isentropic Temperature Ratio](../equations/compressible/isentropic_temperature_ratio.md)
+- [Compressible Isentropic Density Ratio](../equations/compressible/isentropic_density_ratio.md)
+- [Compressible Mach Angle](../equations/compressible/mach_angle.md)
+- [Compressible Prandtl Meyer](../equations/compressible/prandtl_meyer.md)
 
 ## Bindings
 

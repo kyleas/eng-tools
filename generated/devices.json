@@ -23,7 +23,8 @@
       "name": "Isentropic Calculator",
       "summary": "Calculator-style compressible device: solve any supported isentropic input to any supported output through Mach pivot orchestration.",
       "supported_modes": [
-        "Input kinds: Mach, Mach angle (deg), Prandtl-Meyer angle (deg), p/p0, T/T0, rho/rho0, A/A*"
+        "Input kinds: Mach, MachAngle, Prandtl-Meyer angle, p/p0, T/T0, rho/rho0, A/A*",
+        "Branch-aware inversion for A/A*"
       ],
       "outputs": [
         "value_si",

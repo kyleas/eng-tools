@@ -18,9 +18,9 @@ def isentropic_from_area_ratio_to_m(input_value, gamma, branch=None):
     """Convenience isentropic path: A/A* -> Mach (branch required)
 
 Args:
-  input_value: Area ratio A/A*
+  input_value: Input value
   gamma: Specific heat ratio
-  branch: Required: subsonic or supersonic
+  branch: Optional branch
 Returns:
   f64
 """
@@ -30,9 +30,9 @@ def isentropic_from_m_to_nu_deg(input_value, gamma, branch=None):
     """Convenience isentropic path: Mach -> nu(deg)
 
 Args:
-  input_value: Mach number
+  input_value: Input value
   gamma: Specific heat ratio
-  branch: Optional branch (unused for this path)
+  branch: Optional branch
 Returns:
   f64
 """
@@ -42,9 +42,9 @@ def isentropic_from_m_to_p_p0(input_value, gamma, branch=None):
     """Convenience isentropic path: Mach -> p/p0
 
 Args:
-  input_value: Mach number
+  input_value: Input value
   gamma: Specific heat ratio
-  branch: Optional branch (unused for this path)
+  branch: Optional branch
 Returns:
   f64
 """
@@ -54,9 +54,9 @@ def isentropic_from_mu_deg_to_p_p0(input_value, gamma, branch=None):
     """Convenience isentropic path: mu(deg) -> p/p0
 
 Args:
-  input_value: Mach angle in degrees
+  input_value: Input value
   gamma: Specific heat ratio
-  branch: Optional branch (unused for this path)
+  branch: Optional branch
 Returns:
   f64
 """
@@ -66,9 +66,9 @@ def isentropic_from_nu_deg_to_m(input_value, gamma, branch=None):
     """Convenience isentropic path: nu(deg) -> Mach
 
 Args:
-  input_value: Prandtl-Meyer angle in degrees
+  input_value: Input value
   gamma: Specific heat ratio
-  branch: Optional branch (unused for this path)
+  branch: Optional branch
 Returns:
   f64
 """

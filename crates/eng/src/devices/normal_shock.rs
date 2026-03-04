@@ -1,6 +1,8 @@
 use equations::{SolveMethod, compressible, eq};
 use thiserror::Error;
 
+use super::{DeviceBindingArgSpec, DeviceBindingFunctionSpec, DeviceGenerationSpec};
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NormalShockInputKind {
     M1,
@@ -19,6 +21,185 @@ pub enum NormalShockOutputKind {
     DensityRatio,
     TemperatureRatio,
     StagnationPressureRatio,
+}
+
+const MAIN_ARGS: &[DeviceBindingArgSpec] = &[
+    DeviceBindingArgSpec {
+        name: "input_kind",
+        description: "Input kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01)",
+    },
+    DeviceBindingArgSpec {
+        name: "input_value",
+        description: "Input value",
+    },
+    DeviceBindingArgSpec {
+        name: "target_kind",
+        description: "Target kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01)",
+    },
+    DeviceBindingArgSpec {
+        name: "gamma",
+        description: "Specific heat ratio",
+    },
+];
+
+const M1_GAMMA_ARGS: &[DeviceBindingArgSpec] = &[
+    DeviceBindingArgSpec {
+        name: "input_value",
+        description: "Upstream Mach number M1",
+    },
+    DeviceBindingArgSpec {
+        name: "gamma",
+        description: "Specific heat ratio",
+    },
+];
+
+const FIXED_M1_TO_M2: &[(&str, &str)] = &[("input_kind", "m1"), ("target_kind", "m2")];
+const FIXED_M1_TO_P2P1: &[(&str, &str)] = &[("input_kind", "m1"), ("target_kind", "p2_p1")];
+const FIXED_M1_TO_RHO2RHO1: &[(&str, &str)] = &[("input_kind", "m1"), ("target_kind", "rho2_rho1")];
+const FIXED_M1_TO_T2T1: &[(&str, &str)] = &[("input_kind", "m1"), ("target_kind", "t2_t1")];
+const FIXED_M1_TO_P02P01: &[(&str, &str)] = &[("input_kind", "m1"), ("target_kind", "p02_p01")];
+
+const BINDING_FUNCTIONS: &[DeviceBindingFunctionSpec] = &[
+    DeviceBindingFunctionSpec {
+        id: "device.normal_shock_calc",
+        python_name: "normal_shock_calc",
+        excel_name: "ENG_NORMAL_SHOCK",
+        op: "device.normal_shock_calc.value",
+        fixed_args: &[],
+        args: MAIN_ARGS,
+        returns: "f64",
+        help: "Normal shock calculator: input kind -> target kind through M1 pivot",
+        rust_example: "eng::devices::normal_shock_calc().solve()?",
+        python_example: "engpy.devices.normal_shock_calc(\"m1\", 2.0, \"p2_p1\", 1.4)",
+        xloil_example: "=ENG_NORMAL_SHOCK(\"m1\",2.0,\"p2_p1\",1.4)",
+        pyxll_example: "=ENG_NORMAL_SHOCK(\"m1\",2.0,\"p2_p1\",1.4)",
+    },
+    DeviceBindingFunctionSpec {
+        id: "device.normal_shock_calc.pivot",
+        python_name: "normal_shock_pivot_m1",
+        excel_name: "ENG_NORMAL_SHOCK_PIVOT_M1",
+        op: "device.normal_shock_calc.pivot_m1",
+        fixed_args: &[],
+        args: MAIN_ARGS,
+        returns: "f64",
+        help: "Normal shock calculator helper: return resolved pivot M1",
+        rust_example: "eng::invoke::process_invoke_json(\"...\")",
+        python_example: "engpy.devices.normal_shock_pivot_m1(\"p2_p1\", 4.5, \"m2\", 1.4)",
+        xloil_example: "=ENG_NORMAL_SHOCK_PIVOT_M1(\"p2_p1\",4.5,\"m2\",1.4)",
+        pyxll_example: "=ENG_NORMAL_SHOCK_PIVOT_M1(\"p2_p1\",4.5,\"m2\",1.4)",
+    },
+    DeviceBindingFunctionSpec {
+        id: "device.normal_shock_calc.path_text",
+        python_name: "normal_shock_path_text",
+        excel_name: "ENG_NORMAL_SHOCK_PATH_TEXT",
+        op: "device.normal_shock_calc.path_text",
+        fixed_args: &[],
+        args: MAIN_ARGS,
+        returns: "str",
+        help: "Normal shock calculator helper: compact step trace text",
+        rust_example: "eng::invoke::process_invoke_json(\"...\")",
+        python_example: "engpy.devices.normal_shock_path_text(\"p02_p01\", 0.72, \"m2\", 1.4)",
+        xloil_example: "=ENG_NORMAL_SHOCK_PATH_TEXT(\"p02_p01\",0.72,\"m2\",1.4)",
+        pyxll_example: "=ENG_NORMAL_SHOCK_PATH_TEXT(\"p02_p01\",0.72,\"m2\",1.4)",
+    },
+    DeviceBindingFunctionSpec {
+        id: "device.normal_shock_calc.from_m1.to_m2",
+        python_name: "normal_shock_from_m1_to_m2",
+        excel_name: "ENG_NORMAL_SHOCK_FROM_M1_TO_M2",
+        op: "device.normal_shock_calc.value",
+        fixed_args: FIXED_M1_TO_M2,
+        args: M1_GAMMA_ARGS,
+        returns: "f64",
+        help: "Convenience normal-shock path: M1 -> M2",
+        rust_example: "eng::invoke::process_invoke_json(\"...\")",
+        python_example: "engpy.devices.normal_shock_from_m1_to_m2(2.0, 1.4)",
+        xloil_example: "=ENG_NORMAL_SHOCK_FROM_M1_TO_M2(2.0,1.4)",
+        pyxll_example: "=ENG_NORMAL_SHOCK_FROM_M1_TO_M2(2.0,1.4)",
+    },
+    DeviceBindingFunctionSpec {
+        id: "device.normal_shock_calc.from_m1.to_p2_p1",
+        python_name: "normal_shock_from_m1_to_p2_p1",
+        excel_name: "ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1",
+        op: "device.normal_shock_calc.value",
+        fixed_args: FIXED_M1_TO_P2P1,
+        args: M1_GAMMA_ARGS,
+        returns: "f64",
+        help: "Convenience normal-shock path: M1 -> p2/p1",
+        rust_example: "eng::invoke::process_invoke_json(\"...\")",
+        python_example: "engpy.devices.normal_shock_from_m1_to_p2_p1(2.0, 1.4)",
+        xloil_example: "=ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1(2.0,1.4)",
+        pyxll_example: "=ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1(2.0,1.4)",
+    },
+    DeviceBindingFunctionSpec {
+        id: "device.normal_shock_calc.from_m1.to_rho2_rho1",
+        python_name: "normal_shock_from_m1_to_rho2_rho1",
+        excel_name: "ENG_NORMAL_SHOCK_FROM_M1_TO_RHO2_RHO1",
+        op: "device.normal_shock_calc.value",
+        fixed_args: FIXED_M1_TO_RHO2RHO1,
+        args: M1_GAMMA_ARGS,
+        returns: "f64",
+        help: "Convenience normal-shock path: M1 -> rho2/rho1",
+        rust_example: "eng::invoke::process_invoke_json(\"...\")",
+        python_example: "engpy.devices.normal_shock_from_m1_to_rho2_rho1(2.0, 1.4)",
+        xloil_example: "=ENG_NORMAL_SHOCK_FROM_M1_TO_RHO2_RHO1(2.0,1.4)",
+        pyxll_example: "=ENG_NORMAL_SHOCK_FROM_M1_TO_RHO2_RHO1(2.0,1.4)",
+    },
+    DeviceBindingFunctionSpec {
+        id: "device.normal_shock_calc.from_m1.to_t2_t1",
+        python_name: "normal_shock_from_m1_to_t2_t1",
+        excel_name: "ENG_NORMAL_SHOCK_FROM_M1_TO_T2_T1",
+        op: "device.normal_shock_calc.value",
+        fixed_args: FIXED_M1_TO_T2T1,
+        args: M1_GAMMA_ARGS,
+        returns: "f64",
+        help: "Convenience normal-shock path: M1 -> T2/T1",
+        rust_example: "eng::invoke::process_invoke_json(\"...\")",
+        python_example: "engpy.devices.normal_shock_from_m1_to_t2_t1(2.0, 1.4)",
+        xloil_example: "=ENG_NORMAL_SHOCK_FROM_M1_TO_T2_T1(2.0,1.4)",
+        pyxll_example: "=ENG_NORMAL_SHOCK_FROM_M1_TO_T2_T1(2.0,1.4)",
+    },
+    DeviceBindingFunctionSpec {
+        id: "device.normal_shock_calc.from_m1.to_p02_p01",
+        python_name: "normal_shock_from_m1_to_p02_p01",
+        excel_name: "ENG_NORMAL_SHOCK_FROM_M1_TO_P02_P01",
+        op: "device.normal_shock_calc.value",
+        fixed_args: FIXED_M1_TO_P02P01,
+        args: M1_GAMMA_ARGS,
+        returns: "f64",
+        help: "Convenience normal-shock path: M1 -> p02/p01",
+        rust_example: "eng::invoke::process_invoke_json(\"...\")",
+        python_example: "engpy.devices.normal_shock_from_m1_to_p02_p01(2.0, 1.4)",
+        xloil_example: "=ENG_NORMAL_SHOCK_FROM_M1_TO_P02_P01(2.0,1.4)",
+        pyxll_example: "=ENG_NORMAL_SHOCK_FROM_M1_TO_P02_P01(2.0,1.4)",
+    },
+];
+
+const BINDINGS_MD: &str = "## Bindings\n\n### Python\n```python\nengpy.devices.normal_shock_calc(\"m1\", 2.0, \"p2_p1\", 1.4)\nengpy.devices.normal_shock_from_m1_to_m2(2.0, 1.4)\nengpy.devices.normal_shock_pivot_m1(\"p2_p1\", 4.5, \"m2\", 1.4)\nengpy.devices.normal_shock_path_text(\"p02_p01\", 0.7208738615, \"m2\", 1.4)\n```\n\n### Excel\n```excel\n=ENG_NORMAL_SHOCK(\"m1\",2.0,\"p2_p1\",1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_M2(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_RHO2_RHO1(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_T2_T1(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_P02_P01(2.0,1.4)\n=ENG_NORMAL_SHOCK_PIVOT_M1(\"p2_p1\",4.5,\"m2\",1.4)\n=ENG_NORMAL_SHOCK_PATH_TEXT(\"p02_p01\",0.7208738615,\"m2\",1.4)\n```\n\n**Excel arguments**\n- `value_kind_in`: `m1`, `m2`, `p2_p1`, `rho2_rho1`, `t2_t1`, `p02_p01`\n- `value_in`: input value\n- `target_kind_out`: same enum family as input kind\n- `gamma`: specific heat ratio\n";
+
+const OVERVIEW_MD: &str = "## Overview\n\nA calculator-style compressible device that resolves upstream Mach (`M1`) from one normal-shock input kind, then computes any supported target kind.\n\n### Supported input kinds\n- `m1`\n- `m2`\n- `p2_p1`\n- `rho2_rho1`\n- `t2_t1`\n- `p02_p01`\n\n### Supported target kinds\n- `m1`\n- `m2`\n- `p2_p1`\n- `rho2_rho1`\n- `t2_t1`\n- `p02_p01`\n\n### Rust\n```rust\nuse eng::devices::{normal_shock_calc, NormalShockInputKind, NormalShockOutputKind};\nlet out = normal_shock_calc()\n    .gamma(1.4)\n    .input(NormalShockInputKind::PressureRatio, 4.5)\n    .target(NormalShockOutputKind::TemperatureRatio)\n    .solve()?;\nprintln!(\"M1={}, T2/T1={}\", out.pivot_m1, out.value_si);\n```\n";
+
+pub fn generation_spec() -> DeviceGenerationSpec {
+    DeviceGenerationSpec {
+        key: "normal_shock_calc",
+        name: "Normal Shock Calculator",
+        summary: "Calculator-style compressible device: solve normal-shock input kinds to target kinds through deterministic M1 pivot orchestration.",
+        supported_modes: &[
+            "Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01",
+            "Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01",
+        ],
+        outputs: &["value_si", "pivot_m1", "path diagnostics"],
+        route: "devices/normal_shock_calc.md",
+        binding_markdown: BINDINGS_MD,
+        overview_markdown: OVERVIEW_MD,
+        equation_dependencies: &[
+            "compressible.normal_shock_m2",
+            "compressible.normal_shock_pressure_ratio",
+            "compressible.normal_shock_density_ratio",
+            "compressible.normal_shock_temperature_ratio",
+            "compressible.normal_shock_stagnation_pressure_ratio",
+        ],
+        binding_functions: BINDING_FUNCTIONS,
+    }
 }
 
 #[derive(Debug, Clone)]

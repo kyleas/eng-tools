@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-6607cd90.js";
+            window.path_to_searchindex_js = "searchindex-cc02cc30.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-11a28804.js"></script>
@@ -700,13 +700,30 @@ print(engpy_native.runtime_info())
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="devices-guide"><a class="header" href="#devices-guide">Devices Guide</a></h1>
-<p>Devices/components compose multiple atomic equations into a higher-level engineering solve workflow. Users provide engineering inputs once; the device orchestrates intermediate solves internally.</p>
-<h2 id="first-production-device-pipe-pressure-drop"><a class="header" href="#first-production-device-pipe-pressure-drop">First Production Device: Pipe Pressure Drop</a></h2>
+<p>Devices/components compose multiple atomic equations into higher-level engineering workflows. Device docs and bindings are generated from typed Rust metadata specs.</p>
+<h2 id="pipe-pressure-drop"><a class="header" href="#pipe-pressure-drop">Pipe Pressure Drop</a></h2>
 <ul>
-<li>API entrypoint: <code>eng::devices::pipe_loss()</code></li>
-<li>Supported friction models: <code>Fixed(f)</code>, <code>Colebrook</code></li>
-<li>Internal composed equations: Reynolds + Colebrook (when selected) + Darcy-Weisbach</li>
-<li>Outputs: <code>delta_p</code>, plus intermediate <code>friction_factor</code> and <code>reynolds_number</code> when available</li>
+<li>Key: <code>pipe_loss</code></li>
+<li>Composes Reynolds + friction model + Darcy-Weisbach for pipe pressure loss.</li>
+<li>Route: <code>devices/pipe_loss.md</code></li>
+<li>Fixed friction factor</li>
+<li>Colebrook</li>
+</ul>
+<h2 id="isentropic-calculator"><a class="header" href="#isentropic-calculator">Isentropic Calculator</a></h2>
+<ul>
+<li>Key: <code>isentropic_calc</code></li>
+<li>Calculator-style compressible device: solve any supported isentropic input to any supported output through Mach pivot orchestration.</li>
+<li>Route: <code>devices/isentropic_calc.md</code></li>
+<li>Input kinds: Mach, MachAngle, Prandtl-Meyer angle, p/p0, T/T0, rho/rho0, A/A*</li>
+<li>Branch-aware inversion for A/A*</li>
+</ul>
+<h2 id="normal-shock-calculator"><a class="header" href="#normal-shock-calculator">Normal Shock Calculator</a></h2>
+<ul>
+<li>Key: <code>normal_shock_calc</code></li>
+<li>Calculator-style compressible device: solve normal-shock input kinds to target kinds through deterministic M1 pivot orchestration.</li>
+<li>Route: <code>devices/normal_shock_calc.md</code></li>
+<li>Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01</li>
+<li>Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01</li>
 </ul>
 <h2 id="fixed-f-mode"><a class="header" href="#fixed-f-mode">Fixed-f Mode</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -753,24 +770,7 @@ print(engpy_native.runtime_info())
         .solve_delta_p()?;
 }
 <span class="boring">}</span></code></pre>
-<h2 id="calculator-device-isentropic"><a class="header" href="#calculator-device-isentropic">Calculator Device: Isentropic</a></h2>
-<ul>
-<li>API entrypoint: <code>eng::devices::isentropic_calc()</code></li>
-<li>Uses deterministic Mach-pivot orchestration (<code>input_kind -&gt; pivot Mach -&gt; target_kind</code>).</li>
-<li>All mathematical relations are resolved through registry-backed atomic equations.</li>
-<li>Branch-sensitive inverse paths (such as <code>area_ratio -&gt; mach</code>) require explicit branch selection.</li>
-<li>Outputs include scalar value, pivot Mach, and step diagnostics/path text.</li>
-</ul>
-<h2 id="calculator-device-normal-shock"><a class="header" href="#calculator-device-normal-shock">Calculator Device: Normal Shock</a></h2>
-<ul>
-<li>API entrypoint: <code>eng::devices::normal_shock_calc()</code></li>
-<li>Uses deterministic M1-pivot orchestration (<code>input_kind -&gt; pivot M1 -&gt; target_kind</code>).</li>
-<li>All mathematical relations are resolved through registry-backed atomic equations.</li>
-<li>Outputs include scalar value, pivot M1, and step diagnostics/path text.</li>
-</ul>
-<p>See <a href="#devices">Devices Index</a> and <a href="#pipe-pressure-drop">Pipe Pressure Drop</a>.
-See also <a href="#isentropic-calculator">Isentropic Calculator</a>.
-See also <a href="#normal-shock-calculator">Normal Shock Calculator</a>.</p>
+<p>See <a href="#devices">Devices Index</a> for full generated device pages.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="yaml-authoring"><a class="header" href="#yaml-authoring">YAML Authoring</a></h1>
 <p>Equation YAML files live under <code>crates/equations/registry/&lt;category&gt;/</code>. Family YAML files live under <code>crates/equations/registry/families/</code>.</p>
@@ -4847,17 +4847,39 @@ ideal_gas.mass_volume.solve_&lt;target&gt;(...)
 <tr><th>Device</th><th>Key</th><th>Summary</th><th>Modes</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="#pipe-pressure-drop">Pipe Pressure Drop</a></td><td><code>pipe_loss</code></td><td>Composes Reynolds + friction model + Darcy-Weisbach for pipe pressure loss.</td><td>Fixed friction factor, Colebrook</td></tr>
-<tr><td><a href="#isentropic-calculator">Isentropic Calculator</a></td><td><code>isentropic_calc</code></td><td>Calculator-style compressible device: solve any supported isentropic input to any supported output through Mach pivot orchestration.</td><td>Input kinds: Mach, Mach angle (deg), Prandtl-Meyer angle (deg), p/p0, T/T0, rho/rho0, A/A*</td></tr>
-<tr><td><a href="#normal-shock-calculator">Normal Shock Calculator</a></td><td><code>normal_shock_calc</code></td><td>Calculator-style compressible device: solve normal-shock input kinds to target kinds through deterministic M1 pivot orchestration.</td><td>Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01, Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01</td></tr>
+<tr><td><a href="#pipe-pressure-drop-1">Pipe Pressure Drop</a></td><td><code>pipe_loss</code></td><td>Composes Reynolds + friction model + Darcy-Weisbach for pipe pressure loss.</td><td>Fixed friction factor, Colebrook</td></tr>
+<tr><td><a href="#isentropic-calculator-1">Isentropic Calculator</a></td><td><code>isentropic_calc</code></td><td>Calculator-style compressible device: solve any supported isentropic input to any supported output through Mach pivot orchestration.</td><td>Input kinds: Mach, MachAngle, Prandtl-Meyer angle, p/p0, T/T0, rho/rho0, A/A*, Branch-aware inversion for A/A*</td></tr>
+<tr><td><a href="#normal-shock-calculator-1">Normal Shock Calculator</a></td><td><code>normal_shock_calc</code></td><td>Calculator-style compressible device: solve normal-shock input kinds to target kinds through deterministic M1 pivot orchestration.</td><td>Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01, Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01</td></tr>
 </tbody>
 </table>
 </div>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="pipe-pressure-drop"><a class="header" href="#pipe-pressure-drop">Pipe Pressure Drop</a></h1>
+<h1 id="pipe-pressure-drop-1"><a class="header" href="#pipe-pressure-drop-1">Pipe Pressure Drop</a></h1>
 <p><strong>Key:</strong> <code>pipe_loss</code></p>
 <p>Composes Reynolds + friction model + Darcy-Weisbach for pipe pressure loss.</p>
-<h2 id="friction-models"><a class="header" href="#friction-models">Friction Models</a></h2>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>Composes Reynolds, friction-factor model, and Darcy-Weisbach pressure drop for a practical pipe-loss solve surface.</p>
+<h3 id="modes"><a class="header" href="#modes">Modes</a></h3>
+<ul>
+<li><code>Fixed</code>: direct friction factor</li>
+<li><code>Colebrook</code>: computes Reynolds + friction factor from roughness and viscosity</li>
+</ul>
+<h3 id="rust-35"><a class="header" href="#rust-35">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use eng::devices::{pipe_loss, PipeFrictionModel};
+let dp = pipe_loss()
+    .friction_model(PipeFrictionModel::Colebrook)
+    .given_rho("1000 kg/m^3")
+    .given_mu("1 cP")
+    .given_v("3 m/s")
+    .given_d("0.1 m")
+    .given_l("10 m")
+    .given_eps("0.00015 in")
+    .solve_delta_p()?;
+println!("delta_p = {dp} Pa");
+<span class="boring">}</span></code></pre>
+<h2 id="modes-1"><a class="header" href="#modes-1">Modes</a></h2>
 <ul>
 <li>Fixed friction factor</li>
 <li>Colebrook</li>
@@ -4868,57 +4890,11 @@ ideal_gas.mass_volume.solve_&lt;target&gt;(...)
 <li>friction_factor</li>
 <li>reynolds_number</li>
 </ul>
-<h2 id="fixed-f-example"><a class="header" href="#fixed-f-example">Fixed-f Example</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>{
-    let _dp = eng::devices::pipe_loss()
-        .friction_model(eng::devices::PipeFrictionModel::Fixed(0.02))
-        .given_rho("1000 kg/m3")
-        .given_v("3 m/s")
-        .given_d("0.1 m")
-        .given_l("10 m")
-        .solve_delta_p()?;
-}
-<span class="boring">}</span></code></pre>
-<h2 id="colebrook-example-direct-properties"><a class="header" href="#colebrook-example-direct-properties">Colebrook Example (direct properties)</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>{
-    let result = eng::devices::pipe_loss()
-        .friction_model(eng::devices::PipeFrictionModel::Colebrook)
-        .given_rho("1000 kg/m^3")
-        .given_mu("1 cP")
-        .given_v("3 m/s")
-        .given_d("0.1 m")
-        .given_l("10 m")
-        .given_eps("0.00015 in")
-        .solve()?;
-
-    let _dp = result.delta_p();
-    let _re = result.reynolds_number().unwrap_or_default();
-}
-<span class="boring">}</span></code></pre>
-<h2 id="colebrook-example-fluid-context"><a class="header" href="#colebrook-example-fluid-context">Colebrook Example (fluid context)</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>{
-    let _dp = eng::devices::pipe_loss()
-        .friction_model(eng::devices::PipeFrictionModel::Colebrook)
-        .fluid(eng::fluids::water().state_tp("300 K", "1 atm")?)
-        .given_v("3 m/s")
-        .given_d("0.1 m")
-        .given_l("10 m")
-        .given_eps("0.00015 in")
-        .solve_delta_p()?;
-}
-<span class="boring">}</span></code></pre>
 <h2 id="internal-composition"><a class="header" href="#internal-composition">Internal Composition</a></h2>
 <ul>
-<li>Reynolds number: <a href="#reynolds-number">Reynolds Number</a></li>
-<li>Friction factor: <a href="#colebrook-white-friction-factor">Colebrook-White Friction Factor</a></li>
-<li>Pressure drop: <a href="#darcy-weisbach-pressure-drop">Darcy-Weisbach Pressure Drop</a></li>
-<li>Fluid state/context: <a href="#fluids-guide">Fluids Guide</a></li>
+<li><a href="#reynolds-number">Fluids Reynolds Number</a></li>
+<li><a href="#colebrook-white-friction-factor">Fluids Colebrook</a></li>
+<li><a href="#darcy-weisbach-pressure-drop">Fluids Darcy Weisbach Pressure Drop</a></li>
 </ul>
 <h2 id="bindings-36"><a class="header" href="#bindings-36">Bindings</a></h2>
 <h3 id="python-36"><a class="header" href="#python-36">Python</a></h3>
@@ -4938,20 +4914,22 @@ engpy.helpers.format_value(dp, "Pa", "psia")
 <li><code>fluid</code>, <code>in1_key</code>, <code>in1_value</code>, <code>in2_key</code>, <code>in2_value</code>: optional fluid-state context pair</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="isentropic-calculator"><a class="header" href="#isentropic-calculator">Isentropic Calculator</a></h1>
-<p>Calculator-style compressible-flow device that accepts one isentropic input kind and one target kind, resolves a pivot Mach number, then computes the requested output.</p>
-<p>All relation math is delegated to equation-registry atomic equations (no device-local formula authority).</p>
-<h2 id="supported-inputs-v1"><a class="header" href="#supported-inputs-v1">Supported Inputs (v1)</a></h2>
+<h1 id="isentropic-calculator-1"><a class="header" href="#isentropic-calculator-1">Isentropic Calculator</a></h1>
+<p><strong>Key:</strong> <code>isentropic_calc</code></p>
+<p>Calculator-style compressible device: solve any supported isentropic input to any supported output through Mach pivot orchestration.</p>
+<h2 id="overview-1"><a class="header" href="#overview-1">Overview</a></h2>
+<p>A calculator-style compressible device that resolves a pivot Mach number from one supported isentropic input kind and then evaluates the requested target kind.</p>
+<h3 id="supported-input-kinds"><a class="header" href="#supported-input-kinds">Supported input kinds</a></h3>
 <ul>
 <li><code>mach</code></li>
-<li><code>mach_angle_deg</code> (Excel/Python convenience; internally converted to radians)</li>
-<li><code>prandtl_meyer_angle_deg</code> (Excel/Python convenience; internally converted to radians)</li>
+<li><code>mach_angle_deg</code> (binding convenience; internally radians)</li>
+<li><code>prandtl_meyer_angle_deg</code> (binding convenience; internally radians)</li>
 <li><code>pressure_ratio</code> (<code>p/p0</code>)</li>
 <li><code>temperature_ratio</code> (<code>T/T0</code>)</li>
 <li><code>density_ratio</code> (<code>rho/rho0</code>)</li>
 <li><code>area_ratio</code> (<code>A/A*</code>, branch-sensitive)</li>
 </ul>
-<h2 id="supported-targets-v1"><a class="header" href="#supported-targets-v1">Supported Targets (v1)</a></h2>
+<h3 id="supported-target-kinds"><a class="header" href="#supported-target-kinds">Supported target kinds</a></h3>
 <ul>
 <li><code>mach</code></li>
 <li><code>mach_angle_deg</code></li>
@@ -4961,18 +4939,11 @@ engpy.helpers.format_value(dp, "Pa", "psia")
 <li><code>density_ratio</code></li>
 <li><code>area_ratio</code></li>
 </ul>
-<h2 id="branch-behavior"><a class="header" href="#branch-behavior">Branch Behavior</a></h2>
+<h3 id="branch-behavior"><a class="header" href="#branch-behavior">Branch behavior</a></h3>
 <ul>
-<li><code>area_ratio -&gt; mach</code> is double-valued and requires explicit branch (<code>subsonic</code> or <code>supersonic</code>).</li>
-<li>If branch-sensitive inversion is requested without branch, the device returns a structured error.</li>
+<li><code>area_ratio -&gt; mach</code> is double-valued and requires <code>subsonic</code> or <code>supersonic</code>.</li>
 </ul>
-<h2 id="domain-notes"><a class="header" href="#domain-notes">Domain Notes</a></h2>
-<ul>
-<li><code>mach_angle</code> and <code>prandtl_meyer_angle</code> are valid for supersonic flow (<code>M &gt;= 1</code>).</li>
-<li><code>prandtl_meyer_angle</code> input is validated as <code>0 &lt;= nu &lt; nu_max(gamma)</code> and reports clear domain errors.</li>
-</ul>
-<h2 id="examples-35"><a class="header" href="#examples-35">Examples</a></h2>
-<h3 id="rust-35"><a class="header" href="#rust-35">Rust</a></h3>
+<h3 id="rust-36"><a class="header" href="#rust-36">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use eng::devices::{isentropic_calc, IsentropicInputKind, IsentropicOutputKind, IsentropicBranch};
@@ -4982,40 +4953,36 @@ let out = isentropic_calc()
     .target(IsentropicOutputKind::Mach)
     .branch(IsentropicBranch::Supersonic)
     .solve()?;
-println!("M={}, p/p0={}", out.pivot_mach, out.value_si);
+println!("M={}, value={}", out.pivot_mach, out.value_si);
 <span class="boring">}</span></code></pre>
-<h3 id="python-37"><a class="header" href="#python-37">Python</a></h3>
-<pre><code class="language-python">engpy.devices.isentropic_calc("mach_angle_deg", 30.0, "pressure_ratio", 1.4)
-engpy.devices.isentropic_from_nu_deg_to_m(26.3797608134, 1.4)
-engpy.devices.isentropic_from_m_to_nu_deg(2.0, 1.4)
-engpy.devices.isentropic_pivot_mach("area_ratio", 2.0, "mach", 1.4, "subsonic")
-engpy.devices.isentropic_path_text("area_ratio", 2.0, "mach", 1.4, "supersonic")
-</code></pre>
-<h3 id="excel-37"><a class="header" href="#excel-37">Excel</a></h3>
-<pre><code class="language-excel">=ENG_ISENTROPIC("mach_angle_deg",30,"pressure_ratio",1.4,"")
-=ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,"")
-=ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,"")
-=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,"supersonic")
-=ENG_ISENTROPIC_PIVOT_MACH("area_ratio",2.0,"mach",1.4,"subsonic")
-=ENG_ISENTROPIC_PATH_TEXT("mach",2.0,"pressure_ratio",1.4,"")
-</code></pre>
+<h2 id="modes-2"><a class="header" href="#modes-2">Modes</a></h2>
+<ul>
+<li>Input kinds: Mach, MachAngle, Prandtl-Meyer angle, p/p0, T/T0, rho/rho0, A/A*</li>
+<li>Branch-aware inversion for A/A*</li>
+</ul>
+<h2 id="outputs-1"><a class="header" href="#outputs-1">Outputs</a></h2>
+<ul>
+<li>value_si</li>
+<li>pivot_mach</li>
+<li>path diagnostics</li>
+</ul>
 <h2 id="internal-composition-1"><a class="header" href="#internal-composition-1">Internal Composition</a></h2>
 <ul>
-<li><a href="#mach-angle">Mach Angle</a></li>
-<li><a href="#prandtl-meyer-expansion-angle">Prandtl-Meyer Expansion Angle</a></li>
-<li><a href="#isentropic-pressure-ratio">Isentropic Pressure Ratio</a></li>
-<li><a href="#isentropic-temperature-ratio">Isentropic Temperature Ratio</a></li>
-<li><a href="#isentropic-density-ratio">Isentropic Density Ratio</a></li>
-<li><a href="#isentropic-area-mach-relation">Isentropic Area-Mach Relation</a></li>
+<li><a href="#isentropic-area-mach-relation">Compressible Area Mach</a></li>
+<li><a href="#isentropic-pressure-ratio">Compressible Isentropic Pressure Ratio</a></li>
+<li><a href="#isentropic-temperature-ratio">Compressible Isentropic Temperature Ratio</a></li>
+<li><a href="#isentropic-density-ratio">Compressible Isentropic Density Ratio</a></li>
+<li><a href="#mach-angle">Compressible Mach Angle</a></li>
+<li><a href="#prandtl-meyer-expansion-angle">Compressible Prandtl Meyer</a></li>
 </ul>
 <h2 id="bindings-37"><a class="header" href="#bindings-37">Bindings</a></h2>
-<h3 id="python-1-1"><a class="header" href="#python-1-1">Python</a></h3>
+<h3 id="python-37"><a class="header" href="#python-37">Python</a></h3>
 <pre><code class="language-python">engpy.devices.isentropic_calc("mach_angle_deg", 30.0, "pressure_ratio", 1.4)
 engpy.devices.isentropic_from_nu_deg_to_m(26.3797608134, 1.4)
 engpy.devices.isentropic_pivot_mach("area_ratio", 2.0, "mach", 1.4, "supersonic")
 engpy.devices.isentropic_path_text("area_ratio", 2.0, "mach", 1.4, "subsonic")
 </code></pre>
-<h3 id="excel-1-1"><a class="header" href="#excel-1-1">Excel</a></h3>
+<h3 id="excel-37"><a class="header" href="#excel-37">Excel</a></h3>
 <pre><code class="language-excel">=ENG_ISENTROPIC("mach_angle_deg",30,"pressure_ratio",1.4,"")
 =ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,"")
 =ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30,1.4,"")
@@ -5034,10 +5001,12 @@ engpy.devices.isentropic_path_text("area_ratio", 2.0, "mach", 1.4, "subsonic")
 <li><code>branch</code>: optional, required for double-valued inverse paths like <code>area_ratio -&gt; mach</code></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="normal-shock-calculator"><a class="header" href="#normal-shock-calculator">Normal Shock Calculator</a></h1>
-<p>Calculator-style compressible-flow device that accepts one normal-shock input kind and one target kind, resolves a pivot upstream Mach number <code>M1</code>, then computes the requested output.</p>
-<p>All relation math is delegated to equation-registry atomic equations (no device-local formula authority).</p>
-<h2 id="supported-inputs-v1-1"><a class="header" href="#supported-inputs-v1-1">Supported Inputs (v1)</a></h2>
+<h1 id="normal-shock-calculator-1"><a class="header" href="#normal-shock-calculator-1">Normal Shock Calculator</a></h1>
+<p><strong>Key:</strong> <code>normal_shock_calc</code></p>
+<p>Calculator-style compressible device: solve normal-shock input kinds to target kinds through deterministic M1 pivot orchestration.</p>
+<h2 id="overview-2"><a class="header" href="#overview-2">Overview</a></h2>
+<p>A calculator-style compressible device that resolves upstream Mach (<code>M1</code>) from one normal-shock input kind, then computes any supported target kind.</p>
+<h3 id="supported-input-kinds-1"><a class="header" href="#supported-input-kinds-1">Supported input kinds</a></h3>
 <ul>
 <li><code>m1</code></li>
 <li><code>m2</code></li>
@@ -5046,7 +5015,7 @@ engpy.devices.isentropic_path_text("area_ratio", 2.0, "mach", 1.4, "subsonic")
 <li><code>t2_t1</code></li>
 <li><code>p02_p01</code></li>
 </ul>
-<h2 id="supported-targets-v1-1"><a class="header" href="#supported-targets-v1-1">Supported Targets (v1)</a></h2>
+<h3 id="supported-target-kinds-1"><a class="header" href="#supported-target-kinds-1">Supported target kinds</a></h3>
 <ul>
 <li><code>m1</code></li>
 <li><code>m2</code></li>
@@ -5055,18 +5024,7 @@ engpy.devices.isentropic_path_text("area_ratio", 2.0, "mach", 1.4, "subsonic")
 <li><code>t2_t1</code></li>
 <li><code>p02_p01</code></li>
 </ul>
-<h2 id="pivot-strategy"><a class="header" href="#pivot-strategy">Pivot Strategy</a></h2>
-<ul>
-<li>Deterministic orchestration always resolves a pivot <code>M1</code> first.</li>
-<li>Then target value is computed from <code>M1</code> through the corresponding normal-shock equation.</li>
-</ul>
-<h2 id="domain-notes-1"><a class="header" href="#domain-notes-1">Domain Notes</a></h2>
-<ul>
-<li><code>M1 &gt;= 1</code> for normal shocks.</li>
-<li>Ratios are checked for physically valid ranges (e.g., <code>p2_p1 &gt;= 1</code>, <code>0 &lt; p02_p01 &lt;= 1</code>).</li>
-</ul>
-<h2 id="examples-36"><a class="header" href="#examples-36">Examples</a></h2>
-<h3 id="rust-36"><a class="header" href="#rust-36">Rust</a></h3>
+<h3 id="rust-37"><a class="header" href="#rust-37">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use eng::devices::{normal_shock_calc, NormalShockInputKind, NormalShockOutputKind};
@@ -5077,35 +5035,33 @@ let out = normal_shock_calc()
     .solve()?;
 println!("M1={}, T2/T1={}", out.pivot_m1, out.value_si);
 <span class="boring">}</span></code></pre>
-<h3 id="python-38"><a class="header" href="#python-38">Python</a></h3>
-<pre><code class="language-python">engpy.devices.normal_shock_calc("m1", 2.0, "p2_p1", 1.4)
-engpy.devices.normal_shock_from_m1_to_m2(2.0, 1.4)
-engpy.devices.normal_shock_pivot_m1("p02_p01", 0.7208738615, "m2", 1.4)
-engpy.devices.normal_shock_path_text("p2_p1", 4.5, "m2", 1.4)
-</code></pre>
-<h3 id="excel-38"><a class="header" href="#excel-38">Excel</a></h3>
-<pre><code class="language-excel">=ENG_NORMAL_SHOCK("m1",2.0,"p2_p1",1.4)
-=ENG_NORMAL_SHOCK_FROM_M1_TO_M2(2.0,1.4)
-=ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1(2.0,1.4)
-=ENG_NORMAL_SHOCK_PIVOT_M1("p2_p1",4.5,"m2",1.4)
-=ENG_NORMAL_SHOCK_PATH_TEXT("p02_p01",0.7208738615,"m2",1.4)
-</code></pre>
+<h2 id="modes-3"><a class="header" href="#modes-3">Modes</a></h2>
+<ul>
+<li>Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01</li>
+<li>Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01</li>
+</ul>
+<h2 id="outputs-2"><a class="header" href="#outputs-2">Outputs</a></h2>
+<ul>
+<li>value_si</li>
+<li>pivot_m1</li>
+<li>path diagnostics</li>
+</ul>
 <h2 id="internal-composition-2"><a class="header" href="#internal-composition-2">Internal Composition</a></h2>
 <ul>
-<li><a href="#normal-shock-downstream-mach-number">Normal Shock Downstream Mach Number</a></li>
-<li><a href="#normal-shock-static-pressure-ratio">Normal Shock Static Pressure Ratio</a></li>
-<li><a href="#normal-shock-density-ratio">Normal Shock Density Ratio</a></li>
-<li><a href="#normal-shock-temperature-ratio">Normal Shock Temperature Ratio</a></li>
-<li><a href="#normal-shock-stagnation-pressure-ratio">Normal Shock Stagnation Pressure Ratio</a></li>
+<li><a href="#normal-shock-downstream-mach-number">Compressible Normal Shock M2</a></li>
+<li><a href="#normal-shock-static-pressure-ratio">Compressible Normal Shock Pressure Ratio</a></li>
+<li><a href="#normal-shock-density-ratio">Compressible Normal Shock Density Ratio</a></li>
+<li><a href="#normal-shock-temperature-ratio">Compressible Normal Shock Temperature Ratio</a></li>
+<li><a href="#normal-shock-stagnation-pressure-ratio">Compressible Normal Shock Stagnation Pressure Ratio</a></li>
 </ul>
 <h2 id="bindings-38"><a class="header" href="#bindings-38">Bindings</a></h2>
-<h3 id="python-1-2"><a class="header" href="#python-1-2">Python</a></h3>
+<h3 id="python-38"><a class="header" href="#python-38">Python</a></h3>
 <pre><code class="language-python">engpy.devices.normal_shock_calc("m1", 2.0, "p2_p1", 1.4)
 engpy.devices.normal_shock_from_m1_to_m2(2.0, 1.4)
 engpy.devices.normal_shock_pivot_m1("p2_p1", 4.5, "m2", 1.4)
 engpy.devices.normal_shock_path_text("p02_p01", 0.7208738615, "m2", 1.4)
 </code></pre>
-<h3 id="excel-1-2"><a class="header" href="#excel-1-2">Excel</a></h3>
+<h3 id="excel-38"><a class="header" href="#excel-38">Excel</a></h3>
 <pre><code class="language-excel">=ENG_NORMAL_SHOCK("m1",2.0,"p2_p1",1.4)
 =ENG_NORMAL_SHOCK_FROM_M1_TO_M2(2.0,1.4)
 =ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1(2.0,1.4)

@@ -314,3 +314,50 @@ fn generated_python_nested_equation_module_spotcheck_executes() {
         .expect("run python nested module spotcheck");
     assert!(status.success(), "python nested module spotcheck failed");
 }
+
+#[test]
+fn all_registered_devices_emit_binding_functions() {
+    let tmp = tempdir().expect("tempdir");
+    export_unified_docs_to(tmp.path()).expect("export unified docs");
+
+    let spec_text = fs::read_to_string(tmp.path().join("bindings").join("binding_spec.json"))
+        .expect("read binding spec");
+    let spec: serde_json::Value = serde_json::from_str(&spec_text).expect("parse binding spec");
+    let funcs = spec["functions"].as_array().expect("functions array");
+
+    let xloil_text = fs::read_to_string(tmp.path().join("bindings/excel/eng_xloil.py"))
+        .expect("read xloil module");
+    let pyxll_text = fs::read_to_string(tmp.path().join("bindings/excel/eng_pyxll.py"))
+        .expect("read pyxll module");
+    let py_devices = fs::read_to_string(tmp.path().join("bindings/python/engpy/devices.py"))
+        .expect("read generated python devices module");
+
+    for device in eng::devices::generation_specs() {
+        for binding_fn in device.binding_functions {
+            let in_manifest = funcs
+                .iter()
+                .any(|f| f["id"] == binding_fn.id && f["op"] == binding_fn.op);
+            assert!(
+                in_manifest,
+                "binding spec missing function id={} op={}",
+                binding_fn.id, binding_fn.op
+            );
+
+            assert!(
+                xloil_text.contains(binding_fn.excel_name),
+                "xloil binding missing {}",
+                binding_fn.excel_name
+            );
+            assert!(
+                pyxll_text.contains(binding_fn.excel_name),
+                "pyxll binding missing {}",
+                binding_fn.excel_name
+            );
+            assert!(
+                py_devices.contains(&format!("def {}(", binding_fn.python_name)),
+                "python devices module missing function {}",
+                binding_fn.python_name
+            );
+        }
+    }
+}

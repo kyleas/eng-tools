@@ -4,7 +4,30 @@
 
 Composes Reynolds + friction model + Darcy-Weisbach for pipe pressure loss.
 
-## Friction Models
+## Overview
+
+Composes Reynolds, friction-factor model, and Darcy-Weisbach pressure drop for a practical pipe-loss solve surface.
+
+### Modes
+- `Fixed`: direct friction factor
+- `Colebrook`: computes Reynolds + friction factor from roughness and viscosity
+
+### Rust
+```rust
+use eng::devices::{pipe_loss, PipeFrictionModel};
+let dp = pipe_loss()
+    .friction_model(PipeFrictionModel::Colebrook)
+    .given_rho("1000 kg/m^3")
+    .given_mu("1 cP")
+    .given_v("3 m/s")
+    .given_d("0.1 m")
+    .given_l("10 m")
+    .given_eps("0.00015 in")
+    .solve_delta_p()?;
+println!("delta_p = {dp} Pa");
+```
+
+## Modes
 
 - Fixed friction factor
 - Colebrook
@@ -14,61 +37,11 @@ Composes Reynolds + friction model + Darcy-Weisbach for pipe pressure loss.
 - delta_p (Pa)
 - friction_factor
 - reynolds_number
-
-## Fixed-f Example
-
-```rust
-{
-    let _dp = eng::devices::pipe_loss()
-        .friction_model(eng::devices::PipeFrictionModel::Fixed(0.02))
-        .given_rho("1000 kg/m3")
-        .given_v("3 m/s")
-        .given_d("0.1 m")
-        .given_l("10 m")
-        .solve_delta_p()?;
-}
-```
-
-## Colebrook Example (direct properties)
-
-```rust
-{
-    let result = eng::devices::pipe_loss()
-        .friction_model(eng::devices::PipeFrictionModel::Colebrook)
-        .given_rho("1000 kg/m^3")
-        .given_mu("1 cP")
-        .given_v("3 m/s")
-        .given_d("0.1 m")
-        .given_l("10 m")
-        .given_eps("0.00015 in")
-        .solve()?;
-
-    let _dp = result.delta_p();
-    let _re = result.reynolds_number().unwrap_or_default();
-}
-```
-
-## Colebrook Example (fluid context)
-
-```rust
-{
-    let _dp = eng::devices::pipe_loss()
-        .friction_model(eng::devices::PipeFrictionModel::Colebrook)
-        .fluid(eng::fluids::water().state_tp("300 K", "1 atm")?)
-        .given_v("3 m/s")
-        .given_d("0.1 m")
-        .given_l("10 m")
-        .given_eps("0.00015 in")
-        .solve_delta_p()?;
-}
-```
-
 ## Internal Composition
 
-- Reynolds number: [Reynolds Number](../equations/fluids/reynolds_number.md)
-- Friction factor: [Colebrook-White Friction Factor](../equations/fluids/colebrook.md)
-- Pressure drop: [Darcy-Weisbach Pressure Drop](../equations/fluids/darcy_weisbach_pressure_drop.md)
-- Fluid state/context: [Fluids Guide](../fluids/guide.md)
+- [Fluids Reynolds Number](../equations/fluids/reynolds_number.md)
+- [Fluids Colebrook](../equations/fluids/colebrook.md)
+- [Fluids Darcy Weisbach Pressure Drop](../equations/fluids/darcy_weisbach_pressure_drop.md)
 
 ## Bindings
 

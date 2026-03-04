@@ -19,6 +19,50 @@ pub use normal_shock::{
 pub use pipe_loss::{PipeFrictionModel, PipeLossDevice, PipeLossError, PipeLossResult, pipe_loss};
 
 #[derive(Debug, Clone)]
+pub struct DeviceBindingArgSpec {
+    pub name: &'static str,
+    pub description: &'static str,
+}
+
+#[derive(Debug, Clone)]
+pub struct DeviceBindingFunctionSpec {
+    pub id: &'static str,
+    pub python_name: &'static str,
+    pub excel_name: &'static str,
+    pub op: &'static str,
+    pub fixed_args: &'static [(&'static str, &'static str)],
+    pub args: &'static [DeviceBindingArgSpec],
+    pub returns: &'static str,
+    pub help: &'static str,
+    pub rust_example: &'static str,
+    pub python_example: &'static str,
+    pub xloil_example: &'static str,
+    pub pyxll_example: &'static str,
+}
+
+#[derive(Debug, Clone)]
+pub struct DeviceGenerationSpec {
+    pub key: &'static str,
+    pub name: &'static str,
+    pub summary: &'static str,
+    pub supported_modes: &'static [&'static str],
+    pub outputs: &'static [&'static str],
+    pub route: &'static str,
+    pub binding_markdown: &'static str,
+    pub overview_markdown: &'static str,
+    pub equation_dependencies: &'static [&'static str],
+    pub binding_functions: &'static [DeviceBindingFunctionSpec],
+}
+
+pub fn generation_specs() -> Vec<DeviceGenerationSpec> {
+    vec![
+        pipe_loss::generation_spec(),
+        isentropic::generation_spec(),
+        normal_shock::generation_spec(),
+    ]
+}
+
+#[derive(Debug, Clone)]
 pub struct DeviceDocsEntry {
     pub key: String,
     pub name: String,
@@ -29,51 +73,15 @@ pub struct DeviceDocsEntry {
 }
 
 pub fn docs_entries() -> Vec<DeviceDocsEntry> {
-    vec![
-        DeviceDocsEntry {
-            key: "pipe_loss".to_string(),
-            name: "Pipe Pressure Drop".to_string(),
-            summary: "Composes Reynolds + friction model + Darcy-Weisbach for pipe pressure loss."
-                .to_string(),
-            supported_modes: vec!["Fixed friction factor".to_string(), "Colebrook".to_string()],
-            outputs: vec![
-                "delta_p (Pa)".to_string(),
-                "friction_factor".to_string(),
-                "reynolds_number".to_string(),
-            ],
-            route: "devices/pipe_loss.md".to_string(),
-        },
-        DeviceDocsEntry {
-            key: "isentropic_calc".to_string(),
-            name: isentropic::DEVICE_SPEC.name.to_string(),
-            summary: isentropic::DEVICE_SPEC.summary.to_string(),
-            supported_modes: vec![format!(
-                "Input kinds: {}",
-                isentropic::supported_input_kinds_text()
-            )],
-            outputs: vec![
-                "value_si".to_string(),
-                "pivot_mach".to_string(),
-                "path diagnostics".to_string(),
-            ],
-            route: isentropic::DEVICE_SPEC.route.to_string(),
-        },
-        DeviceDocsEntry {
-            key: "normal_shock_calc".to_string(),
-            name: "Normal Shock Calculator".to_string(),
-            summary:
-                "Calculator-style compressible device: solve normal-shock input kinds to target kinds through deterministic M1 pivot orchestration."
-                    .to_string(),
-            supported_modes: vec![
-                "Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01".to_string(),
-                "Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01".to_string(),
-            ],
-            outputs: vec![
-                "value_si".to_string(),
-                "pivot_m1".to_string(),
-                "path diagnostics".to_string(),
-            ],
-            route: "devices/normal_shock_calc.md".to_string(),
-        },
-    ]
+    generation_specs()
+        .into_iter()
+        .map(|s| DeviceDocsEntry {
+            key: s.key.to_string(),
+            name: s.name.to_string(),
+            summary: s.summary.to_string(),
+            supported_modes: s.supported_modes.iter().map(|v| v.to_string()).collect(),
+            outputs: s.outputs.iter().map(|v| v.to_string()).collect(),
+            route: s.route.to_string(),
+        })
+        .collect()
 }

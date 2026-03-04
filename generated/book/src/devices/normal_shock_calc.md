@@ -1,11 +1,14 @@
 # Normal Shock Calculator
 
-Calculator-style compressible-flow device that accepts one normal-shock input kind and one target kind, resolves a pivot upstream Mach number `M1`, then computes the requested output.
+**Key:** `normal_shock_calc`
 
-All relation math is delegated to equation-registry atomic equations (no device-local formula authority).
+Calculator-style compressible device: solve normal-shock input kinds to target kinds through deterministic M1 pivot orchestration.
 
-## Supported Inputs (v1)
+## Overview
 
+A calculator-style compressible device that resolves upstream Mach (`M1`) from one normal-shock input kind, then computes any supported target kind.
+
+### Supported input kinds
 - `m1`
 - `m2`
 - `p2_p1`
@@ -13,26 +16,13 @@ All relation math is delegated to equation-registry atomic equations (no device-
 - `t2_t1`
 - `p02_p01`
 
-## Supported Targets (v1)
-
+### Supported target kinds
 - `m1`
 - `m2`
 - `p2_p1`
 - `rho2_rho1`
 - `t2_t1`
 - `p02_p01`
-
-## Pivot Strategy
-
-- Deterministic orchestration always resolves a pivot `M1` first.
-- Then target value is computed from `M1` through the corresponding normal-shock equation.
-
-## Domain Notes
-
-- `M1 >= 1` for normal shocks.
-- Ratios are checked for physically valid ranges (e.g., `p2_p1 >= 1`, `0 < p02_p01 <= 1`).
-
-## Examples
 
 ### Rust
 ```rust
@@ -45,30 +35,23 @@ let out = normal_shock_calc()
 println!("M1={}, T2/T1={}", out.pivot_m1, out.value_si);
 ```
 
-### Python
-```python
-engpy.devices.normal_shock_calc("m1", 2.0, "p2_p1", 1.4)
-engpy.devices.normal_shock_from_m1_to_m2(2.0, 1.4)
-engpy.devices.normal_shock_pivot_m1("p02_p01", 0.7208738615, "m2", 1.4)
-engpy.devices.normal_shock_path_text("p2_p1", 4.5, "m2", 1.4)
-```
+## Modes
 
-### Excel
-```excel
-=ENG_NORMAL_SHOCK("m1",2.0,"p2_p1",1.4)
-=ENG_NORMAL_SHOCK_FROM_M1_TO_M2(2.0,1.4)
-=ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1(2.0,1.4)
-=ENG_NORMAL_SHOCK_PIVOT_M1("p2_p1",4.5,"m2",1.4)
-=ENG_NORMAL_SHOCK_PATH_TEXT("p02_p01",0.7208738615,"m2",1.4)
-```
+- Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01
+- Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01
 
+## Outputs
+
+- value_si
+- pivot_m1
+- path diagnostics
 ## Internal Composition
 
-- [Normal Shock Downstream Mach Number](../equations/compressible/normal_shock_m2.md)
-- [Normal Shock Static Pressure Ratio](../equations/compressible/normal_shock_pressure_ratio.md)
-- [Normal Shock Density Ratio](../equations/compressible/normal_shock_density_ratio.md)
-- [Normal Shock Temperature Ratio](../equations/compressible/normal_shock_temperature_ratio.md)
-- [Normal Shock Stagnation Pressure Ratio](../equations/compressible/normal_shock_stagnation_pressure_ratio.md)
+- [Compressible Normal Shock M2](../equations/compressible/normal_shock_m2.md)
+- [Compressible Normal Shock Pressure Ratio](../equations/compressible/normal_shock_pressure_ratio.md)
+- [Compressible Normal Shock Density Ratio](../equations/compressible/normal_shock_density_ratio.md)
+- [Compressible Normal Shock Temperature Ratio](../equations/compressible/normal_shock_temperature_ratio.md)
+- [Compressible Normal Shock Stagnation Pressure Ratio](../equations/compressible/normal_shock_stagnation_pressure_ratio.md)
 
 ## Bindings
 

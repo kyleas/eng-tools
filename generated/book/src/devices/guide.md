@@ -1,13 +1,30 @@
 # Devices Guide
 
-Devices/components compose multiple atomic equations into a higher-level engineering solve workflow. Users provide engineering inputs once; the device orchestrates intermediate solves internally.
+Devices/components compose multiple atomic equations into higher-level engineering workflows. Device docs and bindings are generated from typed Rust metadata specs.
 
-## First Production Device: Pipe Pressure Drop
+## Pipe Pressure Drop
 
-- API entrypoint: `eng::devices::pipe_loss()`
-- Supported friction models: `Fixed(f)`, `Colebrook`
-- Internal composed equations: Reynolds + Colebrook (when selected) + Darcy-Weisbach
-- Outputs: `delta_p`, plus intermediate `friction_factor` and `reynolds_number` when available
+- Key: `pipe_loss`
+- Composes Reynolds + friction model + Darcy-Weisbach for pipe pressure loss.
+- Route: `devices/pipe_loss.md`
+- Fixed friction factor
+- Colebrook
+
+## Isentropic Calculator
+
+- Key: `isentropic_calc`
+- Calculator-style compressible device: solve any supported isentropic input to any supported output through Mach pivot orchestration.
+- Route: `devices/isentropic_calc.md`
+- Input kinds: Mach, MachAngle, Prandtl-Meyer angle, p/p0, T/T0, rho/rho0, A/A*
+- Branch-aware inversion for A/A*
+
+## Normal Shock Calculator
+
+- Key: `normal_shock_calc`
+- Calculator-style compressible device: solve normal-shock input kinds to target kinds through deterministic M1 pivot orchestration.
+- Route: `devices/normal_shock_calc.md`
+- Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01
+- Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01
 
 ## Fixed-f Mode
 
@@ -57,21 +74,4 @@ Devices/components compose multiple atomic equations into a higher-level enginee
 }
 ```
 
-## Calculator Device: Isentropic
-
-- API entrypoint: `eng::devices::isentropic_calc()`
-- Uses deterministic Mach-pivot orchestration (`input_kind -> pivot Mach -> target_kind`).
-- All mathematical relations are resolved through registry-backed atomic equations.
-- Branch-sensitive inverse paths (such as `area_ratio -> mach`) require explicit branch selection.
-- Outputs include scalar value, pivot Mach, and step diagnostics/path text.
-
-## Calculator Device: Normal Shock
-
-- API entrypoint: `eng::devices::normal_shock_calc()`
-- Uses deterministic M1-pivot orchestration (`input_kind -> pivot M1 -> target_kind`).
-- All mathematical relations are resolved through registry-backed atomic equations.
-- Outputs include scalar value, pivot M1, and step diagnostics/path text.
-
-See [Devices Index](./index.md) and [Pipe Pressure Drop](./pipe_loss.md).
-See also [Isentropic Calculator](./isentropic_calc.md).
-See also [Normal Shock Calculator](./normal_shock_calc.md).
+See [Devices Index](./index.md) for full generated device pages.

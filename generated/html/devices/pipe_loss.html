@@ -37,7 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-6607cd90.js";
+            window.path_to_searchindex_js = "../searchindex-cc02cc30.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-11a28804.js"></script>
@@ -179,7 +179,29 @@
                         <h1 id="pipe-pressure-drop"><a class="header" href="#pipe-pressure-drop">Pipe Pressure Drop</a></h1>
 <p><strong>Key:</strong> <code>pipe_loss</code></p>
 <p>Composes Reynolds + friction model + Darcy-Weisbach for pipe pressure loss.</p>
-<h2 id="friction-models"><a class="header" href="#friction-models">Friction Models</a></h2>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>Composes Reynolds, friction-factor model, and Darcy-Weisbach pressure drop for a practical pipe-loss solve surface.</p>
+<h3 id="modes"><a class="header" href="#modes">Modes</a></h3>
+<ul>
+<li><code>Fixed</code>: direct friction factor</li>
+<li><code>Colebrook</code>: computes Reynolds + friction factor from roughness and viscosity</li>
+</ul>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use eng::devices::{pipe_loss, PipeFrictionModel};
+let dp = pipe_loss()
+    .friction_model(PipeFrictionModel::Colebrook)
+    .given_rho("1000 kg/m^3")
+    .given_mu("1 cP")
+    .given_v("3 m/s")
+    .given_d("0.1 m")
+    .given_l("10 m")
+    .given_eps("0.00015 in")
+    .solve_delta_p()?;
+println!("delta_p = {dp} Pa");
+<span class="boring">}</span></code></pre>
+<h2 id="modes-1"><a class="header" href="#modes-1">Modes</a></h2>
 <ul>
 <li>Fixed friction factor</li>
 <li>Colebrook</li>
@@ -190,57 +212,11 @@
 <li>friction_factor</li>
 <li>reynolds_number</li>
 </ul>
-<h2 id="fixed-f-example"><a class="header" href="#fixed-f-example">Fixed-f Example</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>{
-    let _dp = eng::devices::pipe_loss()
-        .friction_model(eng::devices::PipeFrictionModel::Fixed(0.02))
-        .given_rho("1000 kg/m3")
-        .given_v("3 m/s")
-        .given_d("0.1 m")
-        .given_l("10 m")
-        .solve_delta_p()?;
-}
-<span class="boring">}</span></code></pre>
-<h2 id="colebrook-example-direct-properties"><a class="header" href="#colebrook-example-direct-properties">Colebrook Example (direct properties)</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>{
-    let result = eng::devices::pipe_loss()
-        .friction_model(eng::devices::PipeFrictionModel::Colebrook)
-        .given_rho("1000 kg/m^3")
-        .given_mu("1 cP")
-        .given_v("3 m/s")
-        .given_d("0.1 m")
-        .given_l("10 m")
-        .given_eps("0.00015 in")
-        .solve()?;
-
-    let _dp = result.delta_p();
-    let _re = result.reynolds_number().unwrap_or_default();
-}
-<span class="boring">}</span></code></pre>
-<h2 id="colebrook-example-fluid-context"><a class="header" href="#colebrook-example-fluid-context">Colebrook Example (fluid context)</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>{
-    let _dp = eng::devices::pipe_loss()
-        .friction_model(eng::devices::PipeFrictionModel::Colebrook)
-        .fluid(eng::fluids::water().state_tp("300 K", "1 atm")?)
-        .given_v("3 m/s")
-        .given_d("0.1 m")
-        .given_l("10 m")
-        .given_eps("0.00015 in")
-        .solve_delta_p()?;
-}
-<span class="boring">}</span></code></pre>
 <h2 id="internal-composition"><a class="header" href="#internal-composition">Internal Composition</a></h2>
 <ul>
-<li>Reynolds number: <a href="../equations/fluids/reynolds_number.html">Reynolds Number</a></li>
-<li>Friction factor: <a href="../equations/fluids/colebrook.html">Colebrook-White Friction Factor</a></li>
-<li>Pressure drop: <a href="../equations/fluids/darcy_weisbach_pressure_drop.html">Darcy-Weisbach Pressure Drop</a></li>
-<li>Fluid state/context: <a href="../fluids/guide.html">Fluids Guide</a></li>
+<li><a href="../equations/fluids/reynolds_number.html">Fluids Reynolds Number</a></li>
+<li><a href="../equations/fluids/colebrook.html">Fluids Colebrook</a></li>
+<li><a href="../equations/fluids/darcy_weisbach_pressure_drop.html">Fluids Darcy Weisbach Pressure Drop</a></li>
 </ul>
 <h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
 <h3 id="python"><a class="header" href="#python">Python</a></h3>

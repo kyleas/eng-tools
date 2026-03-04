@@ -37,7 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-6607cd90.js";
+            window.path_to_searchindex_js = "../searchindex-cc02cc30.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-11a28804.js"></script>
@@ -177,13 +177,30 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="devices-guide"><a class="header" href="#devices-guide">Devices Guide</a></h1>
-<p>Devices/components compose multiple atomic equations into a higher-level engineering solve workflow. Users provide engineering inputs once; the device orchestrates intermediate solves internally.</p>
-<h2 id="first-production-device-pipe-pressure-drop"><a class="header" href="#first-production-device-pipe-pressure-drop">First Production Device: Pipe Pressure Drop</a></h2>
+<p>Devices/components compose multiple atomic equations into higher-level engineering workflows. Device docs and bindings are generated from typed Rust metadata specs.</p>
+<h2 id="pipe-pressure-drop"><a class="header" href="#pipe-pressure-drop">Pipe Pressure Drop</a></h2>
 <ul>
-<li>API entrypoint: <code>eng::devices::pipe_loss()</code></li>
-<li>Supported friction models: <code>Fixed(f)</code>, <code>Colebrook</code></li>
-<li>Internal composed equations: Reynolds + Colebrook (when selected) + Darcy-Weisbach</li>
-<li>Outputs: <code>delta_p</code>, plus intermediate <code>friction_factor</code> and <code>reynolds_number</code> when available</li>
+<li>Key: <code>pipe_loss</code></li>
+<li>Composes Reynolds + friction model + Darcy-Weisbach for pipe pressure loss.</li>
+<li>Route: <code>devices/pipe_loss.md</code></li>
+<li>Fixed friction factor</li>
+<li>Colebrook</li>
+</ul>
+<h2 id="isentropic-calculator"><a class="header" href="#isentropic-calculator">Isentropic Calculator</a></h2>
+<ul>
+<li>Key: <code>isentropic_calc</code></li>
+<li>Calculator-style compressible device: solve any supported isentropic input to any supported output through Mach pivot orchestration.</li>
+<li>Route: <code>devices/isentropic_calc.md</code></li>
+<li>Input kinds: Mach, MachAngle, Prandtl-Meyer angle, p/p0, T/T0, rho/rho0, A/A*</li>
+<li>Branch-aware inversion for A/A*</li>
+</ul>
+<h2 id="normal-shock-calculator"><a class="header" href="#normal-shock-calculator">Normal Shock Calculator</a></h2>
+<ul>
+<li>Key: <code>normal_shock_calc</code></li>
+<li>Calculator-style compressible device: solve normal-shock input kinds to target kinds through deterministic M1 pivot orchestration.</li>
+<li>Route: <code>devices/normal_shock_calc.md</code></li>
+<li>Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01</li>
+<li>Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01</li>
 </ul>
 <h2 id="fixed-f-mode"><a class="header" href="#fixed-f-mode">Fixed-f Mode</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -230,24 +247,7 @@
         .solve_delta_p()?;
 }
 <span class="boring">}</span></code></pre>
-<h2 id="calculator-device-isentropic"><a class="header" href="#calculator-device-isentropic">Calculator Device: Isentropic</a></h2>
-<ul>
-<li>API entrypoint: <code>eng::devices::isentropic_calc()</code></li>
-<li>Uses deterministic Mach-pivot orchestration (<code>input_kind -&gt; pivot Mach -&gt; target_kind</code>).</li>
-<li>All mathematical relations are resolved through registry-backed atomic equations.</li>
-<li>Branch-sensitive inverse paths (such as <code>area_ratio -&gt; mach</code>) require explicit branch selection.</li>
-<li>Outputs include scalar value, pivot Mach, and step diagnostics/path text.</li>
-</ul>
-<h2 id="calculator-device-normal-shock"><a class="header" href="#calculator-device-normal-shock">Calculator Device: Normal Shock</a></h2>
-<ul>
-<li>API entrypoint: <code>eng::devices::normal_shock_calc()</code></li>
-<li>Uses deterministic M1-pivot orchestration (<code>input_kind -&gt; pivot M1 -&gt; target_kind</code>).</li>
-<li>All mathematical relations are resolved through registry-backed atomic equations.</li>
-<li>Outputs include scalar value, pivot M1, and step diagnostics/path text.</li>
-</ul>
-<p>See <a href="./index.html">Devices Index</a> and <a href="./pipe_loss.html">Pipe Pressure Drop</a>.
-See also <a href="./isentropic_calc.html">Isentropic Calculator</a>.
-See also <a href="./normal_shock_calc.html">Normal Shock Calculator</a>.</p>
+<p>See <a href="./index.html">Devices Index</a> for full generated device pages.</p>
 
                     </main>
 

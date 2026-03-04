@@ -1,4 +1,5 @@
 use eng::docs;
+use serde_json::Value;
 
 #[test]
 fn unified_docs_export_api_writes_catalog_artifacts() {
@@ -107,4 +108,58 @@ fn unified_mdbook_export_api_writes_book_structure() {
         book_toml.contains("mathjax-support = true"),
         "MathJax support must stay enabled"
     );
+}
+
+#[test]
+fn all_registered_devices_generate_pages_and_catalog_links() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    let out_root = temp.path();
+    docs::export_unified_docs_to(out_root).expect("export unified docs");
+    let book_root = out_root.join("book");
+    docs::export_unified_mdbook_to(&book_root).expect("export unified mdbook");
+
+    let catalog_text =
+        std::fs::read_to_string(out_root.join("catalog.json")).expect("read generated catalog");
+    let catalog: Value = serde_json::from_str(&catalog_text).expect("parse generated catalog");
+    let links = catalog["items"]["links"]
+        .as_array()
+        .expect("catalog links array");
+
+    for spec in eng::devices::generation_specs() {
+        let page_path = book_root
+            .join("src")
+            .join("devices")
+            .join(format!("{}.md", spec.key));
+        assert!(
+            page_path.exists(),
+            "missing generated device page {}",
+            page_path.display()
+        );
+        let page = std::fs::read_to_string(&page_path).expect("read generated device page");
+        assert!(
+            page.contains(spec.name),
+            "device page {} missing heading/name '{}'",
+            page_path.display(),
+            spec.name
+        );
+        assert!(
+            page.contains(spec.summary),
+            "device page {} missing summary '{}'",
+            page_path.display(),
+            spec.summary
+        );
+
+        for dep in spec.equation_dependencies {
+            let has_link = links.iter().any(|link| {
+                link["relation"] == "device_uses_equation"
+                    && link["from"] == spec.key
+                    && link["to"] == *dep
+            });
+            assert!(
+                has_link,
+                "catalog missing device_uses_equation link for {} -> {}",
+                spec.key, dep
+            );
+        }
+    }
 }

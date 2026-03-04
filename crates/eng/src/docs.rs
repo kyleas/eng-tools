@@ -1554,514 +1554,36 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
         pyxll_example: "=ENG_DEVICE_MODE_COUNT(\"pipe_loss\")".to_string(),
     });
 
-    for device in &c.devices {
-        if device.key == "pipe_loss" {
-            let args = vec![
-                BindingArg {
-                    name: "friction_model".to_string(),
-                    description: "Colebrook or Fixed".to_string(),
-                },
-                BindingArg {
-                    name: "fixed_f".to_string(),
-                    description: "Required when friction_model=Fixed".to_string(),
-                },
-                BindingArg {
-                    name: "rho".to_string(),
-                    description: "Density input (optional with fluid context)".to_string(),
-                },
-                BindingArg {
-                    name: "mu".to_string(),
-                    description: "Viscosity input (required for Colebrook without fluid context)"
-                        .to_string(),
-                },
-                BindingArg {
-                    name: "v".to_string(),
-                    description: "Velocity".to_string(),
-                },
-                BindingArg {
-                    name: "d".to_string(),
-                    description: "Diameter".to_string(),
-                },
-                BindingArg {
-                    name: "l".to_string(),
-                    description: "Length".to_string(),
-                },
-                BindingArg {
-                    name: "eps".to_string(),
-                    description: "Roughness (Colebrook)".to_string(),
-                },
-                BindingArg {
-                    name: "fluid".to_string(),
-                    description: "Optional fluid key (e.g. H2O)".to_string(),
-                },
-                BindingArg {
-                    name: "in1_key".to_string(),
-                    description: "Fluid state input key 1".to_string(),
-                },
-                BindingArg {
-                    name: "in1_value".to_string(),
-                    description: "Fluid state input value 1".to_string(),
-                },
-                BindingArg {
-                    name: "in2_key".to_string(),
-                    description: "Fluid state input key 2".to_string(),
-                },
-                BindingArg {
-                    name: "in2_value".to_string(),
-                    description: "Fluid state input value 2".to_string(),
-                },
-            ];
+    for spec in crate::devices::generation_specs() {
+        for bf in spec.binding_functions {
             functions.push(BindingFunction {
-                id: "device.pipe_loss.solve_delta_p".to_string(),
+                id: bf.id.to_string(),
                 entity: "device".to_string(),
-                source: "pipe_loss".to_string(),
+                source: spec.key.to_string(),
                 python_module: "devices".to_string(),
-                python_name: "pipe_loss_solve_delta_p".to_string(),
-                excel_name: "ENG_PIPE_LOSS_DELTA_P".to_string(),
-                op: "device.pipe_loss.solve_delta_p".to_string(),
-                fixed_args: BTreeMap::new(),
-                args: args.clone(),
-                returns: "f64".to_string(),
-                help: "Solve pipe pressure drop using Fixed/Colebrook friction model".to_string(),
-                rust_example: "eng::devices::pipe_loss().solve_delta_p()?".to_string(),
-                python_example: "engpy.devices.pipe_loss_solve_delta_p(...)".to_string(),
-                xloil_example: "=ENG_PIPE_LOSS_DELTA_P(...)".to_string(),
-                pyxll_example: "=ENG_PIPE_LOSS_DELTA_P(...)".to_string(),
+                python_name: bf.python_name.to_string(),
+                excel_name: bf.excel_name.to_string(),
+                op: bf.op.to_string(),
+                fixed_args: bf
+                    .fixed_args
+                    .iter()
+                    .map(|(k, v)| (k.to_string(), v.to_string()))
+                    .collect(),
+                args: bf
+                    .args
+                    .iter()
+                    .map(|a| BindingArg {
+                        name: a.name.to_string(),
+                        description: a.description.to_string(),
+                    })
+                    .collect(),
+                returns: bf.returns.to_string(),
+                help: bf.help.to_string(),
+                rust_example: bf.rust_example.to_string(),
+                python_example: bf.python_example.to_string(),
+                xloil_example: bf.xloil_example.to_string(),
+                pyxll_example: bf.pyxll_example.to_string(),
             });
-        }
-        if device.key == "isentropic_calc" {
-            let isentropic_kind_desc = crate::devices::isentropic::DEVICE_SPEC
-                .input_kinds
-                .iter()
-                .map(|k| k.key)
-                .collect::<Vec<_>>()
-                .join(", ");
-            let args = vec![
-                BindingArg {
-                    name: "input_kind".to_string(),
-                    description: format!("Input kind ({isentropic_kind_desc})"),
-                },
-                BindingArg {
-                    name: "input_value".to_string(),
-                    description: "Input value".to_string(),
-                },
-                BindingArg {
-                    name: "target_kind".to_string(),
-                    description: format!("Target kind ({isentropic_kind_desc})"),
-                },
-                BindingArg {
-                    name: "gamma".to_string(),
-                    description: "Specific heat ratio".to_string(),
-                },
-                BindingArg {
-                    name: "branch".to_string(),
-                    description:
-                        "Optional branch for double-valued inversions (subsonic/supersonic)"
-                            .to_string(),
-                },
-            ];
-            functions.push(BindingFunction {
-                id: "device.isentropic_calc".to_string(),
-                entity: "device".to_string(),
-                source: "isentropic_calc".to_string(),
-                python_module: "devices".to_string(),
-                python_name: "isentropic_calc".to_string(),
-                excel_name: "ENG_ISENTROPIC".to_string(),
-                op: "device.isentropic_calc.value".to_string(),
-                fixed_args: BTreeMap::new(),
-                args: args.clone(),
-                returns: "f64".to_string(),
-                help: "Isentropic calculator: input kind -> target kind through Mach pivot"
-                    .to_string(),
-                rust_example: "eng::devices::isentropic_calc().solve()?".to_string(),
-                python_example:
-                    "engpy.devices.isentropic_calc(\"mach\", 2.0, \"pressure_ratio\", 1.4)"
-                        .to_string(),
-                xloil_example: "=ENG_ISENTROPIC(\"mach\",2.0,\"pressure_ratio\",1.4,\"\")"
-                    .to_string(),
-                pyxll_example: "=ENG_ISENTROPIC(\"mach\",2.0,\"pressure_ratio\",1.4,\"\")"
-                    .to_string(),
-            });
-            functions.push(BindingFunction {
-                id: "device.isentropic_calc.pivot".to_string(),
-                entity: "device".to_string(),
-                source: "isentropic_calc".to_string(),
-                python_module: "devices".to_string(),
-                python_name: "isentropic_pivot_mach".to_string(),
-                excel_name: "ENG_ISENTROPIC_PIVOT_MACH".to_string(),
-                op: "device.isentropic_calc.pivot_mach".to_string(),
-                fixed_args: BTreeMap::new(),
-                args: args.clone(),
-                returns: "f64".to_string(),
-                help: "Isentropic calculator helper: return resolved pivot Mach".to_string(),
-                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-                python_example:
-                    "engpy.devices.isentropic_pivot_mach(\"area_ratio\", 2.0, \"mach\", 1.4, \"subsonic\")"
-                        .to_string(),
-                xloil_example:
-                    "=ENG_ISENTROPIC_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,\"subsonic\")"
-                        .to_string(),
-                pyxll_example:
-                    "=ENG_ISENTROPIC_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,\"subsonic\")"
-                        .to_string(),
-            });
-            functions.push(BindingFunction {
-                id: "device.isentropic_calc.path_text".to_string(),
-                entity: "device".to_string(),
-                source: "isentropic_calc".to_string(),
-                python_module: "devices".to_string(),
-                python_name: "isentropic_path_text".to_string(),
-                excel_name: "ENG_ISENTROPIC_PATH_TEXT".to_string(),
-                op: "device.isentropic_calc.path_text".to_string(),
-                fixed_args: BTreeMap::new(),
-                args: args.clone(),
-                returns: "str".to_string(),
-                help: "Isentropic calculator helper: compact step trace text".to_string(),
-                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-                python_example:
-                    "engpy.devices.isentropic_path_text(\"mach_angle_deg\", 30.0, \"pressure_ratio\", 1.4)"
-                        .to_string(),
-                xloil_example:
-                    "=ENG_ISENTROPIC_PATH_TEXT(\"mach_angle_deg\",30.0,\"pressure_ratio\",1.4,\"\")"
-                        .to_string(),
-                pyxll_example:
-                    "=ENG_ISENTROPIC_PATH_TEXT(\"mach_angle_deg\",30.0,\"pressure_ratio\",1.4,\"\")"
-                        .to_string(),
-            });
-            functions.push(BindingFunction {
-                id: "device.isentropic_calc.from_m.to_p_p0".to_string(),
-                entity: "device".to_string(),
-                source: "isentropic_calc".to_string(),
-                python_module: "devices".to_string(),
-                python_name: "isentropic_from_m_to_p_p0".to_string(),
-                excel_name: "ENG_ISENTROPIC_FROM_M_TO_P_P0".to_string(),
-                op: "device.isentropic_calc.value".to_string(),
-                fixed_args: BTreeMap::from([
-                    ("input_kind".to_string(), "mach".to_string()),
-                    ("target_kind".to_string(), "pressure_ratio".to_string()),
-                ]),
-                args: vec![
-                    BindingArg {
-                        name: "input_value".to_string(),
-                        description: "Mach number".to_string(),
-                    },
-                    BindingArg {
-                        name: "gamma".to_string(),
-                        description: "Specific heat ratio".to_string(),
-                    },
-                    BindingArg {
-                        name: "branch".to_string(),
-                        description: "Optional branch (unused for this path)".to_string(),
-                    },
-                ],
-                returns: "f64".to_string(),
-                help: "Convenience isentropic path: Mach -> p/p0".to_string(),
-                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-                python_example: "engpy.devices.isentropic_from_m_to_p_p0(2.0, 1.4)".to_string(),
-                xloil_example: "=ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,\"\")".to_string(),
-                pyxll_example: "=ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,\"\")".to_string(),
-            });
-            functions.push(BindingFunction {
-                id: "device.isentropic_calc.from_mu_deg.to_p_p0".to_string(),
-                entity: "device".to_string(),
-                source: "isentropic_calc".to_string(),
-                python_module: "devices".to_string(),
-                python_name: "isentropic_from_mu_deg_to_p_p0".to_string(),
-                excel_name: "ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0".to_string(),
-                op: "device.isentropic_calc.value".to_string(),
-                fixed_args: BTreeMap::from([
-                    ("input_kind".to_string(), "mach_angle_deg".to_string()),
-                    ("target_kind".to_string(), "pressure_ratio".to_string()),
-                ]),
-                args: vec![
-                    BindingArg {
-                        name: "input_value".to_string(),
-                        description: "Mach angle in degrees".to_string(),
-                    },
-                    BindingArg {
-                        name: "gamma".to_string(),
-                        description: "Specific heat ratio".to_string(),
-                    },
-                    BindingArg {
-                        name: "branch".to_string(),
-                        description: "Optional branch (unused for this path)".to_string(),
-                    },
-                ],
-                returns: "f64".to_string(),
-                help: "Convenience isentropic path: mu(deg) -> p/p0".to_string(),
-                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-                python_example: "engpy.devices.isentropic_from_mu_deg_to_p_p0(30.0, 1.4)"
-                    .to_string(),
-                xloil_example: "=ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30.0,1.4,\"\")".to_string(),
-                pyxll_example: "=ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30.0,1.4,\"\")".to_string(),
-            });
-            functions.push(BindingFunction {
-                id: "device.isentropic_calc.from_area_ratio.to_m".to_string(),
-                entity: "device".to_string(),
-                source: "isentropic_calc".to_string(),
-                python_module: "devices".to_string(),
-                python_name: "isentropic_from_area_ratio_to_m".to_string(),
-                excel_name: "ENG_ISENTROPIC_FROM_A_ASTAR_TO_M".to_string(),
-                op: "device.isentropic_calc.value".to_string(),
-                fixed_args: BTreeMap::from([
-                    ("input_kind".to_string(), "area_ratio".to_string()),
-                    ("target_kind".to_string(), "mach".to_string()),
-                ]),
-                args: vec![
-                    BindingArg {
-                        name: "input_value".to_string(),
-                        description: "Area ratio A/A*".to_string(),
-                    },
-                    BindingArg {
-                        name: "gamma".to_string(),
-                        description: "Specific heat ratio".to_string(),
-                    },
-                    BindingArg {
-                        name: "branch".to_string(),
-                        description: "Required: subsonic or supersonic".to_string(),
-                    },
-                ],
-                returns: "f64".to_string(),
-                help: "Convenience isentropic path: A/A* -> Mach (branch required)".to_string(),
-                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-                python_example:
-                    "engpy.devices.isentropic_from_area_ratio_to_m(2.0, 1.4, \"supersonic\")"
-                        .to_string(),
-                xloil_example: "=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")"
-                    .to_string(),
-                pyxll_example: "=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")"
-                    .to_string(),
-            });
-            functions.push(BindingFunction {
-                id: "device.isentropic_calc.from_nu_deg.to_m".to_string(),
-                entity: "device".to_string(),
-                source: "isentropic_calc".to_string(),
-                python_module: "devices".to_string(),
-                python_name: "isentropic_from_nu_deg_to_m".to_string(),
-                excel_name: "ENG_ISENTROPIC_FROM_NU_DEG_TO_M".to_string(),
-                op: "device.isentropic_calc.value".to_string(),
-                fixed_args: BTreeMap::from([
-                    (
-                        "input_kind".to_string(),
-                        "prandtl_meyer_angle_deg".to_string(),
-                    ),
-                    ("target_kind".to_string(), "mach".to_string()),
-                ]),
-                args: vec![
-                    BindingArg {
-                        name: "input_value".to_string(),
-                        description: "Prandtl-Meyer angle in degrees".to_string(),
-                    },
-                    BindingArg {
-                        name: "gamma".to_string(),
-                        description: "Specific heat ratio".to_string(),
-                    },
-                    BindingArg {
-                        name: "branch".to_string(),
-                        description: "Optional branch (unused for this path)".to_string(),
-                    },
-                ],
-                returns: "f64".to_string(),
-                help: "Convenience isentropic path: nu(deg) -> Mach".to_string(),
-                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-                python_example: "engpy.devices.isentropic_from_nu_deg_to_m(26.3797608134, 1.4)"
-                    .to_string(),
-                xloil_example: "=ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,\"\")"
-                    .to_string(),
-                pyxll_example: "=ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,\"\")"
-                    .to_string(),
-            });
-            functions.push(BindingFunction {
-                id: "device.isentropic_calc.from_m.to_nu_deg".to_string(),
-                entity: "device".to_string(),
-                source: "isentropic_calc".to_string(),
-                python_module: "devices".to_string(),
-                python_name: "isentropic_from_m_to_nu_deg".to_string(),
-                excel_name: "ENG_ISENTROPIC_FROM_M_TO_NU_DEG".to_string(),
-                op: "device.isentropic_calc.value".to_string(),
-                fixed_args: BTreeMap::from([
-                    ("input_kind".to_string(), "mach".to_string()),
-                    (
-                        "target_kind".to_string(),
-                        "prandtl_meyer_angle_deg".to_string(),
-                    ),
-                ]),
-                args: vec![
-                    BindingArg {
-                        name: "input_value".to_string(),
-                        description: "Mach number".to_string(),
-                    },
-                    BindingArg {
-                        name: "gamma".to_string(),
-                        description: "Specific heat ratio".to_string(),
-                    },
-                    BindingArg {
-                        name: "branch".to_string(),
-                        description: "Optional branch (unused for this path)".to_string(),
-                    },
-                ],
-                returns: "f64".to_string(),
-                help: "Convenience isentropic path: Mach -> nu(deg)".to_string(),
-                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-                python_example: "engpy.devices.isentropic_from_m_to_nu_deg(2.0, 1.4)".to_string(),
-                xloil_example: "=ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,\"\")".to_string(),
-                pyxll_example: "=ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,\"\")".to_string(),
-            });
-        }
-        if device.key == "normal_shock_calc" {
-            let args = vec![
-                BindingArg {
-                    name: "input_kind".to_string(),
-                    description: "Input kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01)"
-                        .to_string(),
-                },
-                BindingArg {
-                    name: "input_value".to_string(),
-                    description: "Input value".to_string(),
-                },
-                BindingArg {
-                    name: "target_kind".to_string(),
-                    description: "Target kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01)"
-                        .to_string(),
-                },
-                BindingArg {
-                    name: "gamma".to_string(),
-                    description: "Specific heat ratio".to_string(),
-                },
-            ];
-            functions.push(BindingFunction {
-                id: "device.normal_shock_calc".to_string(),
-                entity: "device".to_string(),
-                source: "normal_shock_calc".to_string(),
-                python_module: "devices".to_string(),
-                python_name: "normal_shock_calc".to_string(),
-                excel_name: "ENG_NORMAL_SHOCK".to_string(),
-                op: "device.normal_shock_calc.value".to_string(),
-                fixed_args: BTreeMap::new(),
-                args: args.clone(),
-                returns: "f64".to_string(),
-                help: "Normal shock calculator: input kind -> target kind through M1 pivot"
-                    .to_string(),
-                rust_example: "eng::devices::normal_shock_calc().solve()?".to_string(),
-                python_example: "engpy.devices.normal_shock_calc(\"m1\", 2.0, \"p2_p1\", 1.4)"
-                    .to_string(),
-                xloil_example: "=ENG_NORMAL_SHOCK(\"m1\",2.0,\"p2_p1\",1.4)".to_string(),
-                pyxll_example: "=ENG_NORMAL_SHOCK(\"m1\",2.0,\"p2_p1\",1.4)".to_string(),
-            });
-            functions.push(BindingFunction {
-                id: "device.normal_shock_calc.pivot".to_string(),
-                entity: "device".to_string(),
-                source: "normal_shock_calc".to_string(),
-                python_module: "devices".to_string(),
-                python_name: "normal_shock_pivot_m1".to_string(),
-                excel_name: "ENG_NORMAL_SHOCK_PIVOT_M1".to_string(),
-                op: "device.normal_shock_calc.pivot_m1".to_string(),
-                fixed_args: BTreeMap::new(),
-                args: args.clone(),
-                returns: "f64".to_string(),
-                help: "Normal shock calculator helper: return resolved pivot M1".to_string(),
-                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-                python_example: "engpy.devices.normal_shock_pivot_m1(\"p2_p1\", 4.5, \"m2\", 1.4)"
-                    .to_string(),
-                xloil_example: "=ENG_NORMAL_SHOCK_PIVOT_M1(\"p2_p1\",4.5,\"m2\",1.4)".to_string(),
-                pyxll_example: "=ENG_NORMAL_SHOCK_PIVOT_M1(\"p2_p1\",4.5,\"m2\",1.4)".to_string(),
-            });
-            functions.push(BindingFunction {
-                id: "device.normal_shock_calc.path_text".to_string(),
-                entity: "device".to_string(),
-                source: "normal_shock_calc".to_string(),
-                python_module: "devices".to_string(),
-                python_name: "normal_shock_path_text".to_string(),
-                excel_name: "ENG_NORMAL_SHOCK_PATH_TEXT".to_string(),
-                op: "device.normal_shock_calc.path_text".to_string(),
-                fixed_args: BTreeMap::new(),
-                args: args.clone(),
-                returns: "str".to_string(),
-                help: "Normal shock calculator helper: compact step trace text".to_string(),
-                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-                python_example:
-                    "engpy.devices.normal_shock_path_text(\"p02_p01\", 0.72, \"m2\", 1.4)"
-                        .to_string(),
-                xloil_example: "=ENG_NORMAL_SHOCK_PATH_TEXT(\"p02_p01\",0.72,\"m2\",1.4)"
-                    .to_string(),
-                pyxll_example: "=ENG_NORMAL_SHOCK_PATH_TEXT(\"p02_p01\",0.72,\"m2\",1.4)"
-                    .to_string(),
-            });
-
-            let normal_convenience = [
-                (
-                    "device.normal_shock_calc.from_m1.to_m2",
-                    "normal_shock_from_m1_to_m2",
-                    "ENG_NORMAL_SHOCK_FROM_M1_TO_M2",
-                    "m2",
-                    "M2",
-                    "Convenience normal-shock path: M1 -> M2",
-                ),
-                (
-                    "device.normal_shock_calc.from_m1.to_p2_p1",
-                    "normal_shock_from_m1_to_p2_p1",
-                    "ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1",
-                    "p2_p1",
-                    "p2_p1",
-                    "Convenience normal-shock path: M1 -> p2/p1",
-                ),
-                (
-                    "device.normal_shock_calc.from_m1.to_rho2_rho1",
-                    "normal_shock_from_m1_to_rho2_rho1",
-                    "ENG_NORMAL_SHOCK_FROM_M1_TO_RHO2_RHO1",
-                    "rho2_rho1",
-                    "rho2_rho1",
-                    "Convenience normal-shock path: M1 -> rho2/rho1",
-                ),
-                (
-                    "device.normal_shock_calc.from_m1.to_t2_t1",
-                    "normal_shock_from_m1_to_t2_t1",
-                    "ENG_NORMAL_SHOCK_FROM_M1_TO_T2_T1",
-                    "t2_t1",
-                    "T2_T1",
-                    "Convenience normal-shock path: M1 -> T2/T1",
-                ),
-                (
-                    "device.normal_shock_calc.from_m1.to_p02_p01",
-                    "normal_shock_from_m1_to_p02_p01",
-                    "ENG_NORMAL_SHOCK_FROM_M1_TO_P02_P01",
-                    "p02_p01",
-                    "p02_p01",
-                    "Convenience normal-shock path: M1 -> p02/p01",
-                ),
-            ];
-            for (id, py, excel, target_kind, label, help) in normal_convenience {
-                functions.push(BindingFunction {
-                    id: id.to_string(),
-                    entity: "device".to_string(),
-                    source: "normal_shock_calc".to_string(),
-                    python_module: "devices".to_string(),
-                    python_name: py.to_string(),
-                    excel_name: excel.to_string(),
-                    op: "device.normal_shock_calc.value".to_string(),
-                    fixed_args: BTreeMap::from([
-                        ("input_kind".to_string(), "m1".to_string()),
-                        ("target_kind".to_string(), target_kind.to_string()),
-                    ]),
-                    args: vec![
-                        BindingArg {
-                            name: "input_value".to_string(),
-                            description: "Upstream Mach number M1".to_string(),
-                        },
-                        BindingArg {
-                            name: "gamma".to_string(),
-                            description: "Specific heat ratio".to_string(),
-                        },
-                    ],
-                    returns: "f64".to_string(),
-                    help: help.to_string(),
-                    rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-                    python_example: format!("engpy.devices.{py}(2.0, 1.4)"),
-                    xloil_example: format!("={excel}(2.0,1.4)"),
-                    pyxll_example: format!("={excel}(2.0,1.4)"),
-                });
-                let _ = label;
-            }
         }
     }
 
@@ -3865,22 +3387,11 @@ fn render_binding_examples_for_family(
 }
 
 fn render_binding_examples_for_device(device_key: &str) -> String {
-    match device_key {
-        "pipe_loss" => "## Bindings\n\n### Python\n```python\ndp = engpy.devices.pipe_loss_solve_delta_p(friction_model=\"Colebrook\", v=\"3 m/s\", d=\"0.1 m\", l=\"10 m\", eps=\"0.00015 in\", fluid=\"H2O\", in1_key=\"T\", in1_value=\"300 K\", in2_key=\"P\", in2_value=\"1 atm\")\nengpy.helpers.format_value(dp, \"Pa\", \"psia\")\n```\n\n### Excel\n```excel\n=ENG_PIPE_LOSS_DELTA_P(\"Colebrook\",,\"\",,\"3 m/s\",\"0.1 m\",\"10 m\",\"0.00015 in\",\"H2O\",\"T\",\"300 K\",\"P\",\"1 atm\")\n=ENG_FORMAT(ENG_PIPE_LOSS_DELTA_P(\"Colebrook\",,\"\",,\"3 m/s\",\"0.1 m\",\"10 m\",\"0.00015 in\",\"H2O\",\"T\",\"300 K\",\"P\",\"1 atm\"),\"Pa\",\"psia\")\n=ENG_META(\"device\",\"pipe_loss\",\"supported_modes\")\n```\n\n**Excel arguments**\n- `friction_model`: `Colebrook` or `Fixed`\n- `fixed_f`: fixed Darcy friction factor when model is `Fixed`\n- `density` / `viscosity` / `velocity` / `diameter` / `length` / `roughness`: direct engineering inputs\n- `fluid`, `in1_key`, `in1_value`, `in2_key`, `in2_value`: optional fluid-state context pair\n".to_string(),
-        "isentropic_calc" => {
-            let supported = crate::devices::isentropic::DEVICE_SPEC
-                .input_kinds
-                .iter()
-                .map(|k| format!("`{}`", k.key))
-                .collect::<Vec<_>>()
-                .join(", ");
-            format!(
-                "## Bindings\n\n### Python\n```python\nengpy.devices.isentropic_calc(\"mach_angle_deg\", 30.0, \"pressure_ratio\", 1.4)\nengpy.devices.isentropic_from_nu_deg_to_m(26.3797608134, 1.4)\nengpy.devices.isentropic_pivot_mach(\"area_ratio\", 2.0, \"mach\", 1.4, \"supersonic\")\nengpy.devices.isentropic_path_text(\"area_ratio\", 2.0, \"mach\", 1.4, \"subsonic\")\n```\n\n### Excel\n```excel\n=ENG_ISENTROPIC(\"mach_angle_deg\",30,\"pressure_ratio\",1.4,\"\")\n=ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,\"\")\n=ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30,1.4,\"\")\n=ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,\"\")\n=ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,\"\")\n=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")\n=ENG_ISENTROPIC_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,\"subsonic\")\n=ENG_ISENTROPIC_PATH_TEXT(\"mach\",2.0,\"pressure_ratio\",1.4,\"\")\n```\n\n**Excel arguments**\n- `value_kind_in`: {supported}\n- `value_in`: input value\n- `target_kind_out`: same enum family as input kind\n- `gamma`: specific heat ratio\n- `branch`: optional, required for double-valued inverse paths like `area_ratio -> mach`\n"
-            )
-        }
-        "normal_shock_calc" => "## Bindings\n\n### Python\n```python\nengpy.devices.normal_shock_calc(\"m1\", 2.0, \"p2_p1\", 1.4)\nengpy.devices.normal_shock_from_m1_to_m2(2.0, 1.4)\nengpy.devices.normal_shock_pivot_m1(\"p2_p1\", 4.5, \"m2\", 1.4)\nengpy.devices.normal_shock_path_text(\"p02_p01\", 0.7208738615, \"m2\", 1.4)\n```\n\n### Excel\n```excel\n=ENG_NORMAL_SHOCK(\"m1\",2.0,\"p2_p1\",1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_M2(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_RHO2_RHO1(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_T2_T1(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_P02_P01(2.0,1.4)\n=ENG_NORMAL_SHOCK_PIVOT_M1(\"p2_p1\",4.5,\"m2\",1.4)\n=ENG_NORMAL_SHOCK_PATH_TEXT(\"p02_p01\",0.7208738615,\"m2\",1.4)\n```\n\n**Excel arguments**\n- `value_kind_in`: `m1`, `m2`, `p2_p1`, `rho2_rho1`, `t2_t1`, `p02_p01`\n- `value_in`: input value\n- `target_kind_out`: same enum family as input kind\n- `gamma`: specific heat ratio\n".to_string(),
-        _ => String::new(),
-    }
+    crate::devices::generation_specs()
+        .into_iter()
+        .find(|s| s.key == device_key)
+        .map(|s| s.binding_markdown.to_string())
+        .unwrap_or_default()
 }
 
 fn render_binding_examples_for_fluid() -> String {
@@ -4404,14 +3915,17 @@ fn render_summary(c: &UnifiedDocsContribution) -> String {
 fn render_devices_guide() -> String {
     let mut md = String::new();
     md.push_str("# Devices Guide\n\n");
-    md.push_str("Devices/components compose multiple atomic equations into a higher-level engineering solve workflow. Users provide engineering inputs once; the device orchestrates intermediate solves internally.\n\n");
-    md.push_str("## First Production Device: Pipe Pressure Drop\n\n");
-    md.push_str("- API entrypoint: `eng::devices::pipe_loss()`\n");
-    md.push_str("- Supported friction models: `Fixed(f)`, `Colebrook`\n");
-    md.push_str(
-        "- Internal composed equations: Reynolds + Colebrook (when selected) + Darcy-Weisbach\n",
-    );
-    md.push_str("- Outputs: `delta_p`, plus intermediate `friction_factor` and `reynolds_number` when available\n\n");
+    md.push_str("Devices/components compose multiple atomic equations into higher-level engineering workflows. Device docs and bindings are generated from typed Rust metadata specs.\n\n");
+    for spec in crate::devices::generation_specs() {
+        md.push_str(&format!("## {}\n\n", spec.name));
+        md.push_str(&format!("- Key: `{}`\n", spec.key));
+        md.push_str(&format!("- {}\n", spec.summary));
+        md.push_str(&format!("- Route: `{}`\n", spec.route));
+        for mode in spec.supported_modes {
+            md.push_str(&format!("- {}\n", mode));
+        }
+        md.push('\n');
+    }
 
     md.push_str("## Fixed-f Mode\n\n```rust\n");
     md.push_str(SNIPPET_DEVICE_PIPE_LOSS_FIXED.trim());
@@ -4425,28 +3939,7 @@ fn render_devices_guide() -> String {
     md.push_str(SNIPPET_DEVICE_PIPE_LOSS_COLEBROOK_FLUID.trim());
     md.push_str("\n```\n\n");
 
-    md.push_str("## Calculator Device: Isentropic\n\n");
-    md.push_str("- API entrypoint: `eng::devices::isentropic_calc()`\n");
-    md.push_str("- Uses deterministic Mach-pivot orchestration (`input_kind -> pivot Mach -> target_kind`).\n");
-    md.push_str(
-        "- All mathematical relations are resolved through registry-backed atomic equations.\n",
-    );
-    md.push_str("- Branch-sensitive inverse paths (such as `area_ratio -> mach`) require explicit branch selection.\n");
-    md.push_str("- Outputs include scalar value, pivot Mach, and step diagnostics/path text.\n\n");
-
-    md.push_str("## Calculator Device: Normal Shock\n\n");
-    md.push_str("- API entrypoint: `eng::devices::normal_shock_calc()`\n");
-    md.push_str(
-        "- Uses deterministic M1-pivot orchestration (`input_kind -> pivot M1 -> target_kind`).\n",
-    );
-    md.push_str(
-        "- All mathematical relations are resolved through registry-backed atomic equations.\n",
-    );
-    md.push_str("- Outputs include scalar value, pivot M1, and step diagnostics/path text.\n\n");
-
-    md.push_str("See [Devices Index](./index.md) and [Pipe Pressure Drop](./pipe_loss.md).\n");
-    md.push_str("See also [Isentropic Calculator](./isentropic_calc.md).\n");
-    md.push_str("See also [Normal Shock Calculator](./normal_shock_calc.md).\n");
+    md.push_str("See [Devices Index](./index.md) for full generated device pages.\n");
     md
 }
 
@@ -4470,87 +3963,17 @@ fn render_devices_index(c: &UnifiedDocsContribution) -> String {
 }
 
 fn render_device_page(d: &crate::devices::DeviceDocsEntry) -> String {
-    if d.key == "isentropic_calc" {
-        let mut md = String::new();
-        md.push_str("# Isentropic Calculator\n\n");
-        md.push_str("Calculator-style compressible-flow device that accepts one isentropic input kind and one target kind, resolves a pivot Mach number, then computes the requested output.\n\n");
-        md.push_str("All relation math is delegated to equation-registry atomic equations (no device-local formula authority).\n\n");
-        md.push_str("## Supported Inputs (v1)\n\n");
-        md.push_str("- `mach`\n- `mach_angle_deg` (Excel/Python convenience; internally converted to radians)\n- `prandtl_meyer_angle_deg` (Excel/Python convenience; internally converted to radians)\n- `pressure_ratio` (`p/p0`)\n- `temperature_ratio` (`T/T0`)\n- `density_ratio` (`rho/rho0`)\n- `area_ratio` (`A/A*`, branch-sensitive)\n\n");
-        md.push_str("## Supported Targets (v1)\n\n");
-        md.push_str("- `mach`\n- `mach_angle_deg`\n- `prandtl_meyer_angle_deg`\n- `pressure_ratio`\n- `temperature_ratio`\n- `density_ratio`\n- `area_ratio`\n\n");
-        md.push_str("## Branch Behavior\n\n");
-        md.push_str("- `area_ratio -> mach` is double-valued and requires explicit branch (`subsonic` or `supersonic`).\n");
-        md.push_str("- If branch-sensitive inversion is requested without branch, the device returns a structured error.\n\n");
-        md.push_str("## Domain Notes\n\n");
-        md.push_str(
-            "- `mach_angle` and `prandtl_meyer_angle` are valid for supersonic flow (`M >= 1`).\n",
-        );
-        md.push_str("- `prandtl_meyer_angle` input is validated as `0 <= nu < nu_max(gamma)` and reports clear domain errors.\n\n");
-        md.push_str("## Examples\n\n");
-        md.push_str("### Rust\n```rust\nuse eng::devices::{isentropic_calc, IsentropicInputKind, IsentropicOutputKind, IsentropicBranch};\nlet out = isentropic_calc()\n    .gamma(1.4)\n    .input(IsentropicInputKind::AreaRatio, 2.0)\n    .target(IsentropicOutputKind::Mach)\n    .branch(IsentropicBranch::Supersonic)\n    .solve()?;\nprintln!(\"M={}, p/p0={}\", out.pivot_mach, out.value_si);\n```\n\n");
-        md.push_str("### Python\n```python\nengpy.devices.isentropic_calc(\"mach_angle_deg\", 30.0, \"pressure_ratio\", 1.4)\nengpy.devices.isentropic_from_nu_deg_to_m(26.3797608134, 1.4)\nengpy.devices.isentropic_from_m_to_nu_deg(2.0, 1.4)\nengpy.devices.isentropic_pivot_mach(\"area_ratio\", 2.0, \"mach\", 1.4, \"subsonic\")\nengpy.devices.isentropic_path_text(\"area_ratio\", 2.0, \"mach\", 1.4, \"supersonic\")\n```\n\n");
-        md.push_str("### Excel\n```excel\n=ENG_ISENTROPIC(\"mach_angle_deg\",30,\"pressure_ratio\",1.4,\"\")\n=ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,\"\")\n=ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,\"\")\n=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")\n=ENG_ISENTROPIC_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,\"subsonic\")\n=ENG_ISENTROPIC_PATH_TEXT(\"mach\",2.0,\"pressure_ratio\",1.4,\"\")\n```\n\n");
-        md.push_str("## Internal Composition\n\n");
-        md.push_str("- [Mach Angle](../equations/compressible/mach_angle.md)\n");
-        md.push_str(
-            "- [Prandtl-Meyer Expansion Angle](../equations/compressible/prandtl_meyer.md)\n",
-        );
-        md.push_str("- [Isentropic Pressure Ratio](../equations/compressible/isentropic_pressure_ratio.md)\n");
-        md.push_str("- [Isentropic Temperature Ratio](../equations/compressible/isentropic_temperature_ratio.md)\n");
-        md.push_str(
-            "- [Isentropic Density Ratio](../equations/compressible/isentropic_density_ratio.md)\n",
-        );
-        md.push_str(
-            "- [Isentropic Area-Mach Relation](../equations/compressible/area_mach.md)\n\n",
-        );
-        md.push_str(&render_binding_examples_for_device(&d.key));
-        return md;
-    }
-    if d.key == "normal_shock_calc" {
-        let mut md = String::new();
-        md.push_str("# Normal Shock Calculator\n\n");
-        md.push_str("Calculator-style compressible-flow device that accepts one normal-shock input kind and one target kind, resolves a pivot upstream Mach number `M1`, then computes the requested output.\n\n");
-        md.push_str("All relation math is delegated to equation-registry atomic equations (no device-local formula authority).\n\n");
-        md.push_str("## Supported Inputs (v1)\n\n");
-        md.push_str("- `m1`\n- `m2`\n- `p2_p1`\n- `rho2_rho1`\n- `t2_t1`\n- `p02_p01`\n\n");
-        md.push_str("## Supported Targets (v1)\n\n");
-        md.push_str("- `m1`\n- `m2`\n- `p2_p1`\n- `rho2_rho1`\n- `t2_t1`\n- `p02_p01`\n\n");
-        md.push_str("## Pivot Strategy\n\n");
-        md.push_str("- Deterministic orchestration always resolves a pivot `M1` first.\n");
-        md.push_str("- Then target value is computed from `M1` through the corresponding normal-shock equation.\n\n");
-        md.push_str("## Domain Notes\n\n");
-        md.push_str("- `M1 >= 1` for normal shocks.\n");
-        md.push_str("- Ratios are checked for physically valid ranges (e.g., `p2_p1 >= 1`, `0 < p02_p01 <= 1`).\n\n");
-        md.push_str("## Examples\n\n");
-        md.push_str("### Rust\n```rust\nuse eng::devices::{normal_shock_calc, NormalShockInputKind, NormalShockOutputKind};\nlet out = normal_shock_calc()\n    .gamma(1.4)\n    .input(NormalShockInputKind::PressureRatio, 4.5)\n    .target(NormalShockOutputKind::TemperatureRatio)\n    .solve()?;\nprintln!(\"M1={}, T2/T1={}\", out.pivot_m1, out.value_si);\n```\n\n");
-        md.push_str("### Python\n```python\nengpy.devices.normal_shock_calc(\"m1\", 2.0, \"p2_p1\", 1.4)\nengpy.devices.normal_shock_from_m1_to_m2(2.0, 1.4)\nengpy.devices.normal_shock_pivot_m1(\"p02_p01\", 0.7208738615, \"m2\", 1.4)\nengpy.devices.normal_shock_path_text(\"p2_p1\", 4.5, \"m2\", 1.4)\n```\n\n");
-        md.push_str("### Excel\n```excel\n=ENG_NORMAL_SHOCK(\"m1\",2.0,\"p2_p1\",1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_M2(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1(2.0,1.4)\n=ENG_NORMAL_SHOCK_PIVOT_M1(\"p2_p1\",4.5,\"m2\",1.4)\n=ENG_NORMAL_SHOCK_PATH_TEXT(\"p02_p01\",0.7208738615,\"m2\",1.4)\n```\n\n");
-        md.push_str("## Internal Composition\n\n");
-        md.push_str(
-            "- [Normal Shock Downstream Mach Number](../equations/compressible/normal_shock_m2.md)\n",
-        );
-        md.push_str(
-            "- [Normal Shock Static Pressure Ratio](../equations/compressible/normal_shock_pressure_ratio.md)\n",
-        );
-        md.push_str(
-            "- [Normal Shock Density Ratio](../equations/compressible/normal_shock_density_ratio.md)\n",
-        );
-        md.push_str(
-            "- [Normal Shock Temperature Ratio](../equations/compressible/normal_shock_temperature_ratio.md)\n",
-        );
-        md.push_str(
-            "- [Normal Shock Stagnation Pressure Ratio](../equations/compressible/normal_shock_stagnation_pressure_ratio.md)\n\n",
-        );
-        md.push_str(&render_binding_examples_for_device(&d.key));
-        return md;
-    }
-
+    let spec = crate::devices::generation_specs()
+        .into_iter()
+        .find(|s| s.key == d.key)
+        .expect("device docs entry must have generation spec");
     let mut md = String::new();
     md.push_str(&format!("# {}\n\n", d.name));
     md.push_str(&format!("**Key:** `{}`\n\n", d.key));
     md.push_str(&format!("{}\n\n", d.summary));
-    md.push_str("## Friction Models\n\n");
+    md.push_str(spec.overview_markdown);
+    md.push('\n');
+    md.push_str("## Modes\n\n");
     for m in &d.supported_modes {
         md.push_str(&format!("- {}\n", m));
     }
@@ -4558,55 +3981,25 @@ fn render_device_page(d: &crate::devices::DeviceDocsEntry) -> String {
     for out in &d.outputs {
         md.push_str(&format!("- {}\n", out));
     }
-
-    md.push_str("\n## Fixed-f Example\n\n```rust\n");
-    md.push_str(SNIPPET_DEVICE_PIPE_LOSS_FIXED.trim());
-    md.push_str("\n```\n\n");
-
-    md.push_str("## Colebrook Example (direct properties)\n\n```rust\n");
-    md.push_str(SNIPPET_DEVICE_PIPE_LOSS_COLEBROOK_DIRECT.trim());
-    md.push_str("\n```\n\n");
-
-    md.push_str("## Colebrook Example (fluid context)\n\n```rust\n");
-    md.push_str(SNIPPET_DEVICE_PIPE_LOSS_COLEBROOK_FLUID.trim());
-    md.push_str("\n```\n\n");
-
     md.push_str("## Internal Composition\n\n");
-    md.push_str("- Reynolds number: [Reynolds Number](../equations/fluids/reynolds_number.md)\n");
-    md.push_str(
-        "- Friction factor: [Colebrook-White Friction Factor](../equations/fluids/colebrook.md)\n",
-    );
-    md.push_str("- Pressure drop: [Darcy-Weisbach Pressure Drop](../equations/fluids/darcy_weisbach_pressure_drop.md)\n");
-    md.push_str("- Fluid state/context: [Fluids Guide](../fluids/guide.md)\n");
+    for dep in spec.equation_dependencies {
+        md.push_str(&format!(
+            "- [{}](../equations/{}.md)\n",
+            humanize_path_id(dep),
+            dep.replace('.', "/")
+        ));
+    }
     md.push('\n');
     md.push_str(&render_binding_examples_for_device(&d.key));
     md
 }
 
-fn device_equation_dependencies(device_key: &str) -> &'static [&'static str] {
-    match device_key {
-        "pipe_loss" => &[
-            "fluids.reynolds_number",
-            "fluids.colebrook",
-            "fluids.darcy_weisbach_pressure_drop",
-        ],
-        "isentropic_calc" => &[
-            "compressible.mach_angle",
-            "compressible.prandtl_meyer",
-            "compressible.area_mach",
-            "compressible.isentropic_pressure_ratio",
-            "compressible.isentropic_temperature_ratio",
-            "compressible.isentropic_density_ratio",
-        ],
-        "normal_shock_calc" => &[
-            "compressible.normal_shock_m2",
-            "compressible.normal_shock_pressure_ratio",
-            "compressible.normal_shock_density_ratio",
-            "compressible.normal_shock_temperature_ratio",
-            "compressible.normal_shock_stagnation_pressure_ratio",
-        ],
-        _ => &[],
-    }
+fn device_equation_dependencies(device_key: &str) -> Vec<&'static str> {
+    crate::devices::generation_specs()
+        .into_iter()
+        .find(|s| s.key == device_key)
+        .map(|s| s.equation_dependencies.to_vec())
+        .unwrap_or_default()
 }
 
 fn render_mdbook_readme() -> String {
@@ -4776,6 +4169,14 @@ fn title_case(s: &str) -> String {
                 None => String::new(),
             }
         })
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+fn humanize_path_id(path_id: &str) -> String {
+    path_id
+        .split('.')
+        .map(title_case)
         .collect::<Vec<_>>()
         .join(" ")
 }

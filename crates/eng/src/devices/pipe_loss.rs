@@ -4,6 +4,8 @@ use eng_fluids::FluidState;
 use equations::{IntoSolveInput, SolveInputValue, eq, fluids};
 use thiserror::Error;
 
+use super::{DeviceBindingArgSpec, DeviceBindingFunctionSpec, DeviceGenerationSpec};
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum PipeFrictionModel {
     Fixed(f64),
@@ -69,6 +71,99 @@ pub struct PipeLossDevice {
 
 pub fn pipe_loss() -> PipeLossDevice {
     PipeLossDevice::new()
+}
+
+const PIPE_LOSS_ARGS: &[DeviceBindingArgSpec] = &[
+    DeviceBindingArgSpec {
+        name: "friction_model",
+        description: "Colebrook or Fixed",
+    },
+    DeviceBindingArgSpec {
+        name: "fixed_f",
+        description: "Required when friction_model=Fixed",
+    },
+    DeviceBindingArgSpec {
+        name: "rho",
+        description: "Density input (optional with fluid context)",
+    },
+    DeviceBindingArgSpec {
+        name: "mu",
+        description: "Viscosity input (required for Colebrook without fluid context)",
+    },
+    DeviceBindingArgSpec {
+        name: "v",
+        description: "Velocity",
+    },
+    DeviceBindingArgSpec {
+        name: "d",
+        description: "Diameter",
+    },
+    DeviceBindingArgSpec {
+        name: "l",
+        description: "Length",
+    },
+    DeviceBindingArgSpec {
+        name: "eps",
+        description: "Roughness (Colebrook)",
+    },
+    DeviceBindingArgSpec {
+        name: "fluid",
+        description: "Optional fluid key (e.g. H2O)",
+    },
+    DeviceBindingArgSpec {
+        name: "in1_key",
+        description: "Fluid state input key 1",
+    },
+    DeviceBindingArgSpec {
+        name: "in1_value",
+        description: "Fluid state input value 1",
+    },
+    DeviceBindingArgSpec {
+        name: "in2_key",
+        description: "Fluid state input key 2",
+    },
+    DeviceBindingArgSpec {
+        name: "in2_value",
+        description: "Fluid state input value 2",
+    },
+];
+
+const PIPE_LOSS_BINDING_FUNCTIONS: &[DeviceBindingFunctionSpec] = &[DeviceBindingFunctionSpec {
+    id: "device.pipe_loss.solve_delta_p",
+    python_name: "pipe_loss_solve_delta_p",
+    excel_name: "ENG_PIPE_LOSS_DELTA_P",
+    op: "device.pipe_loss.solve_delta_p",
+    fixed_args: &[],
+    args: PIPE_LOSS_ARGS,
+    returns: "f64",
+    help: "Solve pipe pressure drop using Fixed/Colebrook friction model",
+    rust_example: "eng::devices::pipe_loss().solve_delta_p()?",
+    python_example: "engpy.devices.pipe_loss_solve_delta_p(...)",
+    xloil_example: "=ENG_PIPE_LOSS_DELTA_P(...)",
+    pyxll_example: "=ENG_PIPE_LOSS_DELTA_P(...)",
+}];
+
+const BINDINGS_MD: &str = "## Bindings\n\n### Python\n```python\ndp = engpy.devices.pipe_loss_solve_delta_p(friction_model=\"Colebrook\", v=\"3 m/s\", d=\"0.1 m\", l=\"10 m\", eps=\"0.00015 in\", fluid=\"H2O\", in1_key=\"T\", in1_value=\"300 K\", in2_key=\"P\", in2_value=\"1 atm\")\nengpy.helpers.format_value(dp, \"Pa\", \"psia\")\n```\n\n### Excel\n```excel\n=ENG_PIPE_LOSS_DELTA_P(\"Colebrook\",,\"\",,\"3 m/s\",\"0.1 m\",\"10 m\",\"0.00015 in\",\"H2O\",\"T\",\"300 K\",\"P\",\"1 atm\")\n=ENG_FORMAT(ENG_PIPE_LOSS_DELTA_P(\"Colebrook\",,\"\",,\"3 m/s\",\"0.1 m\",\"10 m\",\"0.00015 in\",\"H2O\",\"T\",\"300 K\",\"P\",\"1 atm\"),\"Pa\",\"psia\")\n=ENG_META(\"device\",\"pipe_loss\",\"supported_modes\")\n```\n\n**Excel arguments**\n- `friction_model`: `Colebrook` or `Fixed`\n- `fixed_f`: fixed Darcy friction factor when model is `Fixed`\n- `density` / `viscosity` / `velocity` / `diameter` / `length` / `roughness`: direct engineering inputs\n- `fluid`, `in1_key`, `in1_value`, `in2_key`, `in2_value`: optional fluid-state context pair\n";
+
+const OVERVIEW_MD: &str = "## Overview\n\nComposes Reynolds, friction-factor model, and Darcy-Weisbach pressure drop for a practical pipe-loss solve surface.\n\n### Modes\n- `Fixed`: direct friction factor\n- `Colebrook`: computes Reynolds + friction factor from roughness and viscosity\n\n### Rust\n```rust\nuse eng::devices::{pipe_loss, PipeFrictionModel};\nlet dp = pipe_loss()\n    .friction_model(PipeFrictionModel::Colebrook)\n    .given_rho(\"1000 kg/m^3\")\n    .given_mu(\"1 cP\")\n    .given_v(\"3 m/s\")\n    .given_d(\"0.1 m\")\n    .given_l(\"10 m\")\n    .given_eps(\"0.00015 in\")\n    .solve_delta_p()?;\nprintln!(\"delta_p = {dp} Pa\");\n```\n";
+
+pub fn generation_spec() -> DeviceGenerationSpec {
+    DeviceGenerationSpec {
+        key: "pipe_loss",
+        name: "Pipe Pressure Drop",
+        summary: "Composes Reynolds + friction model + Darcy-Weisbach for pipe pressure loss.",
+        supported_modes: &["Fixed friction factor", "Colebrook"],
+        outputs: &["delta_p (Pa)", "friction_factor", "reynolds_number"],
+        route: "devices/pipe_loss.md",
+        binding_markdown: BINDINGS_MD,
+        overview_markdown: OVERVIEW_MD,
+        equation_dependencies: &[
+            "fluids.reynolds_number",
+            "fluids.colebrook",
+            "fluids.darcy_weisbach_pressure_drop",
+        ],
+        binding_functions: PIPE_LOSS_BINDING_FUNCTIONS,
+    }
 }
 
 impl Default for PipeLossDevice {

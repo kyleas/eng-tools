@@ -78,7 +78,7 @@
       "args": [
         {
           "name": "input_value",
-          "description": "Area ratio A/A*"
+          "description": "Input value"
         },
         {
           "name": "gamma",
@@ -86,7 +86,7 @@
         },
         {
           "name": "branch",
-          "description": "Required: subsonic or supersonic"
+          "description": "Optional branch"
         }
       ],
       "returns": "f64",
@@ -111,7 +111,7 @@
       "args": [
         {
           "name": "input_value",
-          "description": "Mach number"
+          "description": "Input value"
         },
         {
           "name": "gamma",
@@ -119,7 +119,7 @@
         },
         {
           "name": "branch",
-          "description": "Optional branch (unused for this path)"
+          "description": "Optional branch"
         }
       ],
       "returns": "f64",
@@ -144,7 +144,7 @@
       "args": [
         {
           "name": "input_value",
-          "description": "Mach number"
+          "description": "Input value"
         },
         {
           "name": "gamma",
@@ -152,7 +152,7 @@
         },
         {
           "name": "branch",
-          "description": "Optional branch (unused for this path)"
+          "description": "Optional branch"
         }
       ],
       "returns": "f64",
@@ -177,7 +177,7 @@
       "args": [
         {
           "name": "input_value",
-          "description": "Mach angle in degrees"
+          "description": "Input value"
         },
         {
           "name": "gamma",
@@ -185,7 +185,7 @@
         },
         {
           "name": "branch",
-          "description": "Optional branch (unused for this path)"
+          "description": "Optional branch"
         }
       ],
       "returns": "f64",
@@ -210,7 +210,7 @@
       "args": [
         {
           "name": "input_value",
-          "description": "Prandtl-Meyer angle in degrees"
+          "description": "Input value"
         },
         {
           "name": "gamma",
@@ -218,7 +218,7 @@
         },
         {
           "name": "branch",
-          "description": "Optional branch (unused for this path)"
+          "description": "Optional branch"
         }
       ],
       "returns": "f64",
