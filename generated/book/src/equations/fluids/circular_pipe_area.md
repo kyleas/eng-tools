@@ -95,3 +95,7 @@ let value = equations::fluids::circular_pipe_area::solve_a(
 
 - Returns SI by default; use `.value_in("<unit>")` for display units.
 
+## Source
+
+- Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics
+

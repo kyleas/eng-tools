@@ -95,3 +95,7 @@ let value = equations::structures::axial_stress::solve_sigma(
 
 - Returns SI by default; use `.value_in("<unit>")` for display units.
 
+## Source
+
+- Roark's Formulas for Stress and Strain
+

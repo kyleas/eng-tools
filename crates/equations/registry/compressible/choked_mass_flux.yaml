@@ -1,7 +1,8 @@
 key: choked_mass_flux
 taxonomy:
   category: compressible
-name: Choked Mass Flux
+name: Choked Mass Flux
+source: "Anderson, Modern Compressible Flow: With Historical Perspective"
 display:
   latex: 'G^* = \frac{p_0}{\sqrt{T_0}} \sqrt{\frac{\gamma}{R}} \left(\frac{2}{\gamma+1}\right)^{(\gamma+1)/(2(\gamma-1))}'
 variables:

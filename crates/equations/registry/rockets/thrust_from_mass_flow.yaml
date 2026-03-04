@@ -2,6 +2,7 @@ key: thrust_from_mass_flow
 taxonomy:
   category: rockets
 name: Thrust From Mass Flow and Effective Exhaust Velocity
+source: "Sutton and Biblarz, Rocket Propulsion Elements"
 display:
   latex: 'F = \dot{m} c_{eff}'
 variables:

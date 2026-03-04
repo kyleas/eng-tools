@@ -2,6 +2,7 @@ key: euler_buckling_load
 taxonomy:
   category: structures
 name: Euler Buckling Critical Load
+source: "Roark's Formulas for Stress and Strain"
 display:
   latex: 'P_{cr} = \frac{\pi^2 E I}{(K L)^2}'
 variables:

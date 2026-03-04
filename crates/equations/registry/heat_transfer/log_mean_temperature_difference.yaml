@@ -2,6 +2,7 @@ key: log_mean_temperature_difference
 taxonomy:
   category: heat_transfer
 name: Log-Mean Temperature Difference
+source: "Incropera et al., Fundamentals of Heat and Mass Transfer"
 display:
   latex: '\Delta T_{lm} = \frac{\Delta T_1 - \Delta T_2}{\ln(\Delta T_1 / \Delta T_2)}'
 variables:

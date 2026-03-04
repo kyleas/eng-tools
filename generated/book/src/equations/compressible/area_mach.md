@@ -100,9 +100,13 @@ let value = equations::compressible::area_mach::solve_area_ratio(
 
 - Branch selection may be required for inverse solves when multiple roots are possible.
 
+## Source
+
+- Anderson, Modern Compressible Flow: With Historical Perspective
+
 ## References
 
-- Anderson, Modern Compressible Flow Isentropic flow function tables.
+- Anderson, Modern Compressible Flow — Isentropic flow function tables.
 
 ## Aliases
 

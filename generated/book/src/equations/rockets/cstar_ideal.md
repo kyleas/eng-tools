@@ -95,3 +95,7 @@ let value = equations::rockets::cstar_ideal::solve_c_star(
 
 - Returns SI by default; use `.value_in("<unit>")` for display units.
 
+## Source
+
+- Sutton and Biblarz, Rocket Propulsion Elements
+

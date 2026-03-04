@@ -21,6 +21,7 @@ Default workflow: use **minimal/typical** form. Use verbose overrides only when 
 | `variables` | yes | Variable metadata. |
 | `residual.expression` | yes | Source-of-truth relation. |
 | `tests.baseline` | yes | Trust/regression baseline. |
+| `source` | optional (recommended) | Primary citation for the equation. |
 | `display` | optional (recommended) | Latex/unicode/ascii authoring control. |
 | `solve.explicit_forms` | optional | Add explicit target forms when available. |
 | `assumptions`/`references` | optional (recommended) | Concise trust metadata. |
@@ -32,6 +33,7 @@ Default workflow: use **minimal/typical** form. Use verbose overrides only when 
 key: hoop_stress
 taxonomy: { category: structures }
 name: Thin-Wall Hoop Stress
+source: "Roark's Formulas for Stress and Strain"
 display: { latex: "\\sigma_h = \\frac{P r}{t}" }
 variables:
   sigma_h: { dimension: stress, default_unit: Pa }
@@ -50,6 +52,9 @@ key: reynolds_number
 taxonomy:
   category: fluids
 name: Reynolds Number
+source:
+  source: Fox, McDonald, and Pritchard - Introduction to Fluid Mechanics
+  note: https://www.wiley.com/en-us/Introduction+to+Fluid+Mechanics%2C+9th+Edition-p-9781119721025
 display:
   latex: "Re = \\frac{\\rho V D}{\\mu}"
 variables:
@@ -79,6 +84,8 @@ taxonomy:
   category: fluids
   subcategory: internal_flow
 name: Darcy-Weisbach Pressure Drop
+source:
+  source: Darcy-Weisbach relation (standard fluid mechanics texts)
 display:
   latex: "\\Delta p = f \\frac{L}{D} \\frac{\\rho V^2}{2}"
   unicode: "delta_p = f (L/D) (rho V^2 / 2)"
@@ -130,6 +137,6 @@ variants:
 ## Optional vs Required Summary
 
 - Required: `key`, `taxonomy.category`, `name`, `variables`, `residual.expression`, `tests.baseline`.
-- Optional but recommended: `display`, `assumptions`, `references`, explicit solve forms.
+- Optional but recommended: `source`, `display`, `assumptions`, `references`, explicit solve forms.
 - Rare optional: `unsupported_targets` (only when numerical solving is genuinely unsafe/misleading).
 - Family files require `variants`; shared assumptions/references are optional but recommended.

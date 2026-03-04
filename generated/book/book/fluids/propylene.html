@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-4f14994d.js";
+            window.path_to_searchindex_js = "../searchindex-dcdfad48.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-34cb225c.js"></script>
+        <script src="../toc-dfb3c088.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -192,25 +192,151 @@
 <tr><td>Aliases</td><td><code>c3h6</code></td></tr>
 
     
-<tr><td>Supported state inputs</td><td><code>state_tp(T, P)</code></td></tr>
+<tr><td>Supported state inputs</td><td><code>state_tp(T, P)</code>, <code>state_ph(P, h)</code>, <code>state_ps(P, s)</code>, <code>state_rho_h(rho, h)</code>, <code>state_pq(P, Q)</code>, <code>state_tq(T, Q)</code>, <code>state("T", ..., "P", ...)</code></td></tr>
 
     
-<tr><td>Supported properties</td><td><code>density</code>, <code>specific_heat_capacity</code>, <code>specific_heat_capacity_cv</code>, <code>gamma</code>, <code>speed_of_sound</code>, <code>dynamic_viscosity</code>, <code>thermal_conductivity</code>, <code>temperature</code>, <code>pressure</code></td></tr>
+<tr><td>Supported properties</td><td><code>density</code>, <code>specific_heat_capacity</code>, <code>specific_heat_capacity_cv</code>, <code>gamma</code>, <code>speed_of_sound</code>, <code>dynamic_viscosity</code>, <code>thermal_conductivity</code>, <code>temperature</code>, <code>pressure</code>, <code>specific_enthalpy</code>, <code>specific_entropy</code>, <code>quality</code></td></tr>
 
   </tbody>
 
 </table>
 
-<h2 id="example"><a class="header" href="#example">Example</a></h2>
+<h2 id="supported-state-input-pairs"><a class="header" href="#supported-state-input-pairs">Supported State Input Pairs</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Pair</th><th>Explicit constructor</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td><code>T,P</code></td><td><code>state_tp</code></td><td>General single-phase path</td></tr>
+<tr><td><code>P,h</code></td><td><code>state_ph</code></td><td>Enthalpy inversion</td></tr>
+<tr><td><code>P,s</code></td><td><code>state_ps</code></td><td>Entropy inversion</td></tr>
+<tr><td><code>rho,h</code></td><td><code>state_rho_h</code></td><td>Density/enthalpy path</td></tr>
+<tr><td><code>P,Q</code></td><td><code>state_pq</code></td><td>Two-phase by pressure</td></tr>
+<tr><td><code>T,Q</code></td><td><code>state_tq</code></td><td>Two-phase by temperature</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="constructor-examples-explicit--generic"><a class="header" href="#constructor-examples-explicit--generic">Constructor Examples (explicit + generic)</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>{
+    let n2_pt = eng::fluids::nitrogen().state_tp(
+        eng::units::typed::temperature::k(300.0),
+        eng::units::typed::pressure::bar(1.0),
+    )?;
+    let n2_h = n2_pt.h()?;
+    let n2_s = n2_pt.s()?;
+    let n2_rho = n2_pt.rho()?;
+
+    let _n2_ph =
+        eng::fluids::nitrogen().state_ph(eng::units::typed::pressure::bar(1.0), n2_h)?;
+    let _n2_ps =
+        eng::fluids::nitrogen().state_ps(eng::units::typed::pressure::bar(1.0), n2_s)?;
+    let _n2_rho_h = eng::fluids::nitrogen().state_rho_h(n2_rho, n2_h)?;
+
+    let _air_generic = eng::fluids::air().state("T", "300 K", "P", "1 bar")?;
+    let _air_generic_typed = eng::fluids::air().state(
+        "P",
+        eng::units::typed::pressure::bar(1.0),
+        "T",
+        eng::units::typed::temperature::k(300.0),
+    )?;
+}
+<span class="boring">}</span></code></pre>
+<h2 id="generic-property-name-aliases"><a class="header" href="#generic-property-name-aliases">Generic Property Name Aliases</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Canonical</th><th>Aliases</th></tr>
+</thead>
+<tbody>
+<tr><td>Temperature</td><td><code>T</code>, <code>temperature</code></td></tr>
+<tr><td>Pressure</td><td><code>P</code>, <code>pressure</code></td></tr>
+<tr><td>Density</td><td><code>rho</code>, <code>density</code></td></tr>
+<tr><td>Specific enthalpy</td><td><code>h</code>, <code>enthalpy</code></td></tr>
+<tr><td>Specific entropy</td><td><code>s</code>, <code>entropy</code></td></tr>
+<tr><td>Quality</td><td><code>Q</code>, <code>quality</code>, <code>x</code></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="property-accessors"><a class="header" href="#property-accessors">Property Accessors</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Property key</th><th>Accessors</th></tr>
+</thead>
+<tbody>
+<tr><td><code>pressure</code></td><td><code>pressure()</code>, <code>p()</code></td></tr>
+<tr><td><code>temperature</code></td><td><code>temperature()</code>, <code>t()</code></td></tr>
+<tr><td><code>density</code></td><td><code>density()</code>, <code>rho()</code></td></tr>
+<tr><td><code>dynamic_viscosity</code></td><td><code>dynamic_viscosity()</code>, <code>mu()</code></td></tr>
+<tr><td><code>thermal_conductivity</code></td><td><code>thermal_conductivity()</code>, <code>k()</code></td></tr>
+<tr><td><code>specific_heat_capacity</code></td><td><code>specific_heat_capacity()</code>, <code>cp()</code></td></tr>
+<tr><td><code>specific_heat_capacity_cv</code></td><td><code>specific_heat_capacity_cv()</code>, <code>cv()</code></td></tr>
+<tr><td><code>speed_of_sound</code></td><td><code>speed_of_sound()</code>, <code>a()</code></td></tr>
+<tr><td><code>specific_enthalpy</code></td><td><code>specific_enthalpy()</code>, <code>h()</code></td></tr>
+<tr><td><code>specific_entropy</code></td><td><code>specific_entropy()</code>, <code>s()</code></td></tr>
+<tr><td><code>gamma</code></td><td><code>gamma()</code></td></tr>
+<tr><td><code>quality</code></td><td><code>quality()</code></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="direct-property-access-example"><a class="header" href="#direct-property-access-example">Direct Property Access Example</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use eng_fluids as fluids;
 
 let state = fluids::propylene().state_tp("300 K", "1 bar")?;
-let rho = state.property(fluids::FluidProperty::Density)?;
-println!("rho = {rho} kg/m^3");
+let rho = state.rho();
+let mu = state.mu()?;
+println!("rho = {rho} kg/m^3, mu = {mu} Pa*s");
 <span class="boring">}</span></code></pre>
+<h2 id="saturation-and-metadata-example"><a class="header" href="#saturation-and-metadata-example">Saturation and Metadata Example</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>{
+    let sat = eng::fluids::water().saturation_at_pressure("1 bar")?;
+    let q_liq = sat.liquid.quality();
+    let q_vap = sat.vapor.quality();
+    let pair = sat.liquid.input_pair_label();
+    let fluid_key = sat.liquid.fluid_key();
+    let _inputs = sat.liquid.normalized_inputs();
+
+    assert_eq!(q_liq, Some(0.0));
+    assert_eq!(q_vap, Some(1.0));
+    assert_eq!(fluid_key, "H2O");
+    assert_eq!(pair, "P,Q");
+}
+<span class="boring">}</span></code></pre>
+<h2 id="state-metadata"><a class="header" href="#state-metadata">State Metadata</a></h2>
+<ul>
+<li><code>fluid_key()</code> / <code>fluid_name()</code></li>
+<li><code>input_pair_label()</code> / <code>normalized_inputs()</code></li>
+<li><code>quality()</code> and <code>phase()</code> when available</li>
+</ul>
+<h2 id="error-behavior"><a class="header" href="#error-behavior">Error Behavior</a></h2>
+<ul>
+<li>Unsupported pairs include a supported-pairs list.</li>
+<li>Unknown keys in generic <code>state(...)</code> return actionable key diagnostics.</li>
+<li>Duplicate keys in generic <code>state(...)</code> are rejected.</li>
+<li><code>u</code>/internal-energy keys are rejected to avoid ambiguity with <code>h</code>.</li>
+<li>Backend failures remain recoverable and include context.</li>
+</ul>
 <h2 id="example-equations-using-fluid-context"><a class="header" href="#example-equations-using-fluid-context">Example Equations Using Fluid Context</a></h2>
+<p>Use <code>solve_with_context(...).fluid(...)</code> when equations declare fluid resolvers.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use eng::{eq, equations, fluids};
+
+let re = eq
+    .solve_with_context(equations::fluids::reynolds_number::equation())
+    .fluid(fluids::water().state_tp("300 K", "1 bar")?)
+    .for_target("Re")
+    .given("V", "3 m/s")
+    .given("D", "0.1 m")
+    .value()?;
+<span class="boring">}</span></code></pre>
 <ul>
 <li><a href="../equations/fluids/reynolds_number.html">Reynolds Number</a></li>
 </ul>

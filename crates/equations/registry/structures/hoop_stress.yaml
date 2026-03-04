@@ -5,6 +5,9 @@ taxonomy:
 aliases:
   - thin_wall_hoop_stress
 name: Thin-Wall Hoop Stress
+source:
+  source: "Roark's Formulas for Stress and Strain"
+  note: "https://www.mheducation.com/highered/product/roark-s-formulas-stress-strain-young-budynas/M9780071742475.html"
 display:
   latex: "\\sigma_h = \\frac{P r}{t}"
 variables:

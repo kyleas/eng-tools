@@ -5,21 +5,135 @@
   <tbody>
     <tr><td>Key</td><td><code>Ethane</code></td></tr>
     <tr><td>Aliases</td><td><code>c2h6</code></td></tr>
-    <tr><td>Supported state inputs</td><td><code>state_tp(T, P)</code></td></tr>
-    <tr><td>Supported properties</td><td><code>density</code>, <code>specific_heat_capacity</code>, <code>specific_heat_capacity_cv</code>, <code>gamma</code>, <code>speed_of_sound</code>, <code>dynamic_viscosity</code>, <code>thermal_conductivity</code>, <code>temperature</code>, <code>pressure</code></td></tr>
+    <tr><td>Supported state inputs</td><td><code>state_tp(T, P)</code>, <code>state_ph(P, h)</code>, <code>state_ps(P, s)</code>, <code>state_rho_h(rho, h)</code>, <code>state_pq(P, Q)</code>, <code>state_tq(T, Q)</code>, <code>state("T", ..., "P", ...)</code></td></tr>
+    <tr><td>Supported properties</td><td><code>density</code>, <code>specific_heat_capacity</code>, <code>specific_heat_capacity_cv</code>, <code>gamma</code>, <code>speed_of_sound</code>, <code>dynamic_viscosity</code>, <code>thermal_conductivity</code>, <code>temperature</code>, <code>pressure</code>, <code>specific_enthalpy</code>, <code>specific_entropy</code>, <code>quality</code></td></tr>
   </tbody>
 </table>
 
-## Example
+## Supported State Input Pairs
+
+| Pair | Explicit constructor | Notes |
+| --- | --- | --- |
+| `T,P` | `state_tp` | General single-phase path |
+| `P,h` | `state_ph` | Enthalpy inversion |
+| `P,s` | `state_ps` | Entropy inversion |
+| `rho,h` | `state_rho_h` | Density/enthalpy path |
+| `P,Q` | `state_pq` | Two-phase by pressure |
+| `T,Q` | `state_tq` | Two-phase by temperature |
+
+## Constructor Examples (explicit + generic)
+
+```rust
+{
+    let n2_pt = eng::fluids::nitrogen().state_tp(
+        eng::units::typed::temperature::k(300.0),
+        eng::units::typed::pressure::bar(1.0),
+    )?;
+    let n2_h = n2_pt.h()?;
+    let n2_s = n2_pt.s()?;
+    let n2_rho = n2_pt.rho()?;
+
+    let _n2_ph =
+        eng::fluids::nitrogen().state_ph(eng::units::typed::pressure::bar(1.0), n2_h)?;
+    let _n2_ps =
+        eng::fluids::nitrogen().state_ps(eng::units::typed::pressure::bar(1.0), n2_s)?;
+    let _n2_rho_h = eng::fluids::nitrogen().state_rho_h(n2_rho, n2_h)?;
+
+    let _air_generic = eng::fluids::air().state("T", "300 K", "P", "1 bar")?;
+    let _air_generic_typed = eng::fluids::air().state(
+        "P",
+        eng::units::typed::pressure::bar(1.0),
+        "T",
+        eng::units::typed::temperature::k(300.0),
+    )?;
+}
+```
+
+## Generic Property Name Aliases
+
+| Canonical | Aliases |
+| --- | --- |
+| Temperature | `T`, `temperature` |
+| Pressure | `P`, `pressure` |
+| Density | `rho`, `density` |
+| Specific enthalpy | `h`, `enthalpy` |
+| Specific entropy | `s`, `entropy` |
+| Quality | `Q`, `quality`, `x` |
+
+## Property Accessors
+
+| Property key | Accessors |
+| --- | --- |
+| `pressure` | `pressure()`, `p()` |
+| `temperature` | `temperature()`, `t()` |
+| `density` | `density()`, `rho()` |
+| `dynamic_viscosity` | `dynamic_viscosity()`, `mu()` |
+| `thermal_conductivity` | `thermal_conductivity()`, `k()` |
+| `specific_heat_capacity` | `specific_heat_capacity()`, `cp()` |
+| `specific_heat_capacity_cv` | `specific_heat_capacity_cv()`, `cv()` |
+| `speed_of_sound` | `speed_of_sound()`, `a()` |
+| `specific_enthalpy` | `specific_enthalpy()`, `h()` |
+| `specific_entropy` | `specific_entropy()`, `s()` |
+| `gamma` | `gamma()` |
+| `quality` | `quality()` |
+
+## Direct Property Access Example
 
 ```rust
 use eng_fluids as fluids;
 
 let state = fluids::ethane().state_tp("300 K", "1 bar")?;
-let rho = state.property(fluids::FluidProperty::Density)?;
-println!("rho = {rho} kg/m^3");
+let rho = state.rho();
+let mu = state.mu()?;
+println!("rho = {rho} kg/m^3, mu = {mu} Pa*s");
 ```
 
+## Saturation and Metadata Example
+
+```rust
+{
+    let sat = eng::fluids::water().saturation_at_pressure("1 bar")?;
+    let q_liq = sat.liquid.quality();
+    let q_vap = sat.vapor.quality();
+    let pair = sat.liquid.input_pair_label();
+    let fluid_key = sat.liquid.fluid_key();
+    let _inputs = sat.liquid.normalized_inputs();
+
+    assert_eq!(q_liq, Some(0.0));
+    assert_eq!(q_vap, Some(1.0));
+    assert_eq!(fluid_key, "H2O");
+    assert_eq!(pair, "P,Q");
+}
+```
+
+## State Metadata
+
+- `fluid_key()` / `fluid_name()`
+- `input_pair_label()` / `normalized_inputs()`
+- `quality()` and `phase()` when available
+
+## Error Behavior
+
+- Unsupported pairs include a supported-pairs list.
+- Unknown keys in generic `state(...)` return actionable key diagnostics.
+- Duplicate keys in generic `state(...)` are rejected.
+- `u`/internal-energy keys are rejected to avoid ambiguity with `h`.
+- Backend failures remain recoverable and include context.
+
 ## Example Equations Using Fluid Context
+
+Use `solve_with_context(...).fluid(...)` when equations declare fluid resolvers.
+
+```rust
+use eng::{eq, equations, fluids};
+
+let re = eq
+    .solve_with_context(equations::fluids::reynolds_number::equation())
+    .fluid(fluids::water().state_tp("300 K", "1 bar")?)
+    .for_target("Re")
+    .given("V", "3 m/s")
+    .given("D", "0.1 m")
+    .value()?;
+```
 
 - [Reynolds Number](../equations/fluids/reynolds_number.md)

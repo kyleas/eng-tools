@@ -29,6 +29,7 @@ pub struct EquationPageModel {
     pub branches: Vec<BranchSummary>,
     pub diagram_labels: Vec<DiagramLabelSummary>,
     pub assumptions: Vec<String>,
+    pub source: Option<PageReference>,
     pub references: Vec<PageReference>,
     pub variables: Vec<VariableSummary>,
     pub uses_constants: Vec<ConstantUsageSummary>,
@@ -136,6 +137,10 @@ pub fn build_page_models(equations: &[EquationDef]) -> Vec<EquationPageModel> {
                     .map(|(variable, label)| DiagramLabelSummary { variable, label })
                     .collect(),
                 assumptions: eq.assumptions.clone(),
+                source: eq.source.as_ref().map(|s| PageReference {
+                    source: s.source.clone(),
+                    note: s.note.clone(),
+                }),
                 references: eq
                     .references
                     .iter()

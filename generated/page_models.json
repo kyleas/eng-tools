@@ -63,6 +63,10 @@
         "Quasi-one-dimensional isentropic flow.",
         "Calorically perfect gas with constant gamma."
       ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
       "references": [
         {
           "source": "Anderson, Modern Compressible Flow",
@@ -172,6 +176,10 @@
         "One-dimensional isentropic converging nozzle at critical condition (M=1 at throat).",
         "Perfect gas with constant gamma and R."
       ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -313,6 +321,10 @@
       "assumptions": [
         "Isentropic perfect-gas flow with constant gamma."
       ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -414,6 +426,10 @@
       "assumptions": [
         "One-dimensional isentropic flow of a calorically perfect gas."
       ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -515,6 +531,10 @@
       "assumptions": [
         "Isentropic perfect-gas flow with constant gamma."
       ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -616,6 +636,10 @@
       "assumptions": [
         "Cross-section is circular and unobstructed."
       ],
+      "source": {
+        "source": "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -737,6 +761,10 @@
         "Fully developed turbulent internal flow.",
         "Incompressible flow behavior."
       ],
+      "source": {
+        "source": "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics",
+        "note": null
+      },
       "references": [
         {
           "source": "Colebrook, C. F. (1939)",
@@ -837,6 +865,10 @@
       "assumptions": [
         "One-dimensional mean properties represent cross-section averages."
       ],
+      "source": {
+        "source": "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -1048,6 +1080,10 @@
       "assumptions": [
         "Fully developed internal flow in a constant-diameter conduit."
       ],
+      "source": {
+        "source": "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -1367,6 +1403,10 @@
       "assumptions": [
         "Incompressible single-phase flow through a sharp-edged restriction."
       ],
+      "source": {
+        "source": "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -1625,6 +1665,10 @@
       "assumptions": [
         "Internal-flow characteristic length is represented by hydraulic diameter."
       ],
+      "source": {
+        "source": "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics",
+        "note": "https://www.wiley.com/en-us/Introduction+to+Fluid+Mechanics%2C+9th+Edition-p-9781119721025"
+      },
       "references": [],
       "variables": [
         {
@@ -1865,6 +1909,10 @@
       "assumptions": [
         "One-dimensional steady conduction through a homogeneous plane wall."
       ],
+      "source": {
+        "source": "Incropera et al., Fundamentals of Heat and Mass Transfer",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -2172,6 +2220,10 @@
       "assumptions": [
         "Newton's law of cooling with uniform h and area."
       ],
+      "source": {
+        "source": "Incropera et al., Fundamentals of Heat and Mass Transfer",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -2406,6 +2458,10 @@
       "assumptions": [
         "End-point temperature differences remain positive and unequal."
       ],
+      "source": {
+        "source": "Incropera et al., Fundamentals of Heat and Mass Transfer",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -2526,6 +2582,10 @@
       "assumptions": [
         "One-dimensional steady conduction with constant properties."
       ],
+      "source": {
+        "source": "Incropera et al., Fundamentals of Heat and Mass Transfer",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -2719,6 +2779,10 @@
       "assumptions": [
         "Uniform convection coefficient over the area."
       ],
+      "source": {
+        "source": "Incropera et al., Fundamentals of Heat and Mass Transfer",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -2855,6 +2919,10 @@
       "assumptions": [
         "Ideal nozzle flow with calorically perfect combustion products."
       ],
+      "source": {
+        "source": "Sutton and Biblarz, Rocket Propulsion Elements",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -2985,6 +3053,10 @@
       "assumptions": [
         "Vacuum-equivalent ideal performance relation."
       ],
+      "source": {
+        "source": "Sutton and Biblarz, Rocket Propulsion Elements",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -3129,6 +3201,10 @@
       "assumptions": [
         "Ideal isentropic nozzle expansion."
       ],
+      "source": {
+        "source": "Sutton and Biblarz, Rocket Propulsion Elements",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -3267,6 +3343,10 @@
       "assumptions": [
         "Pressure-thrust contribution is embedded in effective exhaust velocity."
       ],
+      "source": {
+        "source": "Sutton and Biblarz, Rocket Propulsion Elements",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -3415,6 +3495,10 @@
       "assumptions": [
         "Uniform axial loading and stress distribution."
       ],
+      "source": {
+        "source": "Roark's Formulas for Stress and Strain",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -3569,6 +3653,10 @@
       "assumptions": [
         "Linear elastic beam bending with small strains."
       ],
+      "source": {
+        "source": "Roark's Formulas for Stress and Strain",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -3774,6 +3862,10 @@
       "assumptions": [
         "Ideal slender column with elastic buckling."
       ],
+      "source": {
+        "source": "Roark's Formulas for Stress and Strain",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -4050,6 +4142,10 @@
         "Thin-wall approximation is valid (t << r).",
         "Material behavior remains in the elastic membrane-stress regime."
       ],
+      "source": {
+        "source": "Roark's Formulas for Stress and Strain",
+        "note": "https://www.mheducation.com/highered/product/roark-s-formulas-stress-strain-young-budynas/M9780071742475.html"
+      },
       "references": [
         {
           "source": "Roark's Formulas for Stress and Strain",
@@ -4254,6 +4350,10 @@
       "assumptions": [
         "Thin-wall cylindrical vessel behavior."
       ],
+      "source": {
+        "source": "Roark's Formulas for Stress and Strain",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -4453,6 +4553,10 @@
       "assumptions": [
         "Circular shaft in Saint-Venant torsion."
       ],
+      "source": {
+        "source": "Roark's Formulas for Stress and Strain",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -4659,6 +4763,10 @@
         "Thermally and calorically ideal gas behavior.",
         "Single-phase gas state."
       ],
+      "source": {
+        "source": "Moran et al., Fundamentals of Engineering Thermodynamics",
+        "note": null
+      },
       "references": [],
       "variables": [
         {
@@ -4872,6 +4980,10 @@
         "Thermally and calorically ideal gas behavior.",
         "Gas is in equilibrium at a single representative state."
       ],
+      "source": {
+        "source": "Moran et al., Fundamentals of Engineering Thermodynamics",
+        "note": null
+      },
       "references": [],
       "variables": [
         {

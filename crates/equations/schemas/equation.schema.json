@@ -87,6 +87,17 @@
     "solve": {
       "$ref": "#/definitions/SolveConfig"
     },
+    "source": {
+      "default": null,
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Reference"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "taxonomy": {
       "$ref": "#/definitions/Taxonomy"
     },

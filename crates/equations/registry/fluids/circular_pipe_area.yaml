@@ -1,7 +1,8 @@
 key: circular_pipe_area
 taxonomy:
   category: fluids
-name: Circular Pipe Flow Area
+name: Circular Pipe Flow Area
+source: "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics"
 display:
   latex: 'A = \frac{\pi D^2}{4}'
 variables:

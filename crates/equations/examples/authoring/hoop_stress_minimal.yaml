@@ -3,6 +3,7 @@ key: hoop_stress
 taxonomy:
   category: structures
 name: Thin-Wall Hoop Stress
+source: "Roark's Formulas for Stress and Strain"
 display:
   latex: "\\sigma_h = \\frac{P r}{t}"
 variables:

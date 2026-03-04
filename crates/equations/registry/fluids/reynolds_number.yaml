@@ -2,6 +2,9 @@ key: reynolds_number
 taxonomy:
   category: fluids
 name: Reynolds Number
+source:
+  source: "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics"
+  note: "https://www.wiley.com/en-us/Introduction+to+Fluid+Mechanics%2C+9th+Edition-p-9781119721025"
 display:
   latex: 'Re = \frac{\rho V D}{\mu}'
 variables:

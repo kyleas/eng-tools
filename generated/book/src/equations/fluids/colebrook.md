@@ -47,7 +47,11 @@ let value = eq
     .value()?;
 ```
 
+## Source
+
+- Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics
+
 ## References
 
-- Colebrook, C. F. (1939) Turbulent flow in pipes with rough walls.
+- Colebrook, C. F. (1939) — Turbulent flow in pipes with rough walls.
 

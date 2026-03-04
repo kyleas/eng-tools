@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-4f14994d.js";
+            window.path_to_searchindex_js = "../searchindex-dcdfad48.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-34cb225c.js"></script>
+        <script src="../toc-dfb3c088.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -264,11 +264,16 @@ let p_pa = eq
 <h2 id="property-lookups"><a class="header" href="#property-lookups">Property Lookups</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>use eng::fluids::{self, FluidProperty};
+</span>use eng::fluids;
+use eng::units::typed::{pressure, temperature};
 
-let state = fluids::water().state_tp("300 K", "1 bar")?;
-let rho = state.property(FluidProperty::Density)?;
-let mu = state.property(FluidProperty::DynamicViscosity)?;
+let state = fluids::water().state_tp(temperature::k(300.0), pressure::bar(1.0))?;
+let rho = state.rho()?;
+let mu = state.mu()?;
+let cp = state.cp()?;
+
+let state_generic = fluids::air().state("T", "300 K", "P", "1 bar")?;
+let gamma = state_generic.gamma()?;
 <span class="boring">}</span></code></pre>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {

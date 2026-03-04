@@ -2,6 +2,7 @@ key: darcy_weisbach_pressure_drop
 taxonomy:
   category: fluids
 name: Darcy-Weisbach Pressure Drop
+source: "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics"
 display:
   latex: '\Delta p = f \frac{L}{D} \frac{\rho V^2}{2}'
 variables:

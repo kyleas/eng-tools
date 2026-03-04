@@ -2,6 +2,7 @@ key: shaft_torsion_stress
 taxonomy:
   category: structures
 name: Circular Shaft Torsion Stress
+source: "Roark's Formulas for Stress and Strain"
 display:
   latex: '\tau = \frac{T r}{J}'
 variables:

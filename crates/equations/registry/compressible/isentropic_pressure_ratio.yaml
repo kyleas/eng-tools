@@ -1,7 +1,8 @@
 key: isentropic_pressure_ratio
 taxonomy:
   category: compressible
-name: Isentropic Pressure Ratio
+name: Isentropic Pressure Ratio
+source: "Anderson, Modern Compressible Flow: With Historical Perspective"
 display:
   latex: '\frac{p}{p_0} = \left(1+\frac{\gamma-1}{2}M^2\right)^{-\gamma/(\gamma-1)}'
 variables:

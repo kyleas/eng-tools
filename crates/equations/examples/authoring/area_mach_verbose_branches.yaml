@@ -12,6 +12,7 @@ aliases:                                  # optional
   - isentropic_area_mach
 
 name: Isentropic Area-Mach Relation       # required
+source: "Anderson, Modern Compressible Flow: With Historical Perspective" # optional but recommended
 
 display:
   latex: "A_Astar = (1/M) * ((2/(gamma+1))*(1+((gamma-1)/2)M^2))^((gamma+1)/(2(gamma-1)))" # required

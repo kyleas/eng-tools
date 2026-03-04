@@ -91,3 +91,7 @@ let value = equations::heat_transfer::log_mean_temperature_difference::solve_del
 
 - Returns SI by default; use `.value_in("<unit>")` for display units.
 
+## Source
+
+- Incropera et al., Fundamentals of Heat and Mass Transfer
+

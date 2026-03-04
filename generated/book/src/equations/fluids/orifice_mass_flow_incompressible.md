@@ -107,3 +107,7 @@ let value = equations::fluids::orifice_mass_flow_incompressible::solve_m_dot(
 
 - Returns SI by default; use `.value_in("<unit>")` for display units.
 
+## Source
+
+- Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics
+

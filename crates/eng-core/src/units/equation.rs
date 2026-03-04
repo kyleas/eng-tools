@@ -110,6 +110,10 @@ pub fn default_unit_for_dimension(dimension: &str) -> Option<&'static str> {
         "thermal_resistance" => Some("K/W"),
         "volumetric_flow_rate" => Some("m3/s"),
         "specific_heat_capacity" => Some("J/(kg*K)"),
+        "specific_heat_capacity_cv" => Some("J/(kg*K)"),
+        "specific_enthalpy" | "internal_energy" => Some("J/kg"),
+        "specific_entropy" => Some("J/(kg*K)"),
+        "quality" => Some("1"),
         _ => None,
     }
 }
@@ -143,10 +147,19 @@ fn expected_signature_for_dimension(
         "area_moment_of_inertia" | "polar_moment_of_inertia" => {
             (DimensionSignature::new(0, 4, 0, 0, 0), "second moment")
         }
-        "gas_constant" | "specific_heat_capacity" => (
+        "gas_constant" | "specific_heat_capacity" | "specific_heat_capacity_cv" => (
             DimensionSignature::new(0, 2, -2, -1, 0),
             "specific gas constant/cp",
         ),
+        "specific_enthalpy" | "internal_energy" => (
+            DimensionSignature::new(0, 2, -2, 0, 0),
+            "specific enthalpy/internal energy",
+        ),
+        "specific_entropy" => (
+            DimensionSignature::new(0, 2, -2, -1, 0),
+            "specific entropy",
+        ),
+        "quality" => (DimensionSignature::dimless(), "quality"),
         "universal_gas_constant" => (
             DimensionSignature::new(1, 2, -2, -1, -1),
             "universal gas constant",

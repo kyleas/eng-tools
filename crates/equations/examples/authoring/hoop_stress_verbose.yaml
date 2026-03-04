@@ -12,6 +12,7 @@ aliases:                         # optional
   - thin_wall_hoop_stress
 
 name: Thin-Wall Hoop Stress      # required
+source: "Roark's Formulas for Stress and Strain" # optional but recommended
 
 display:
   latex: "\\sigma_h = \\frac{P r}{t}"    # required / primary authored display

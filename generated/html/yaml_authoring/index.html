@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-4f14994d.js";
+            window.path_to_searchindex_js = "../searchindex-dcdfad48.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-34cb225c.js"></script>
+        <script src="../toc-dfb3c088.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -199,6 +199,7 @@ Family files: <code>crates/equations/registry/families/*.yaml</code></p>
 <tr><td><code>variables</code></td><td>yes</td><td>Variable metadata.</td></tr>
 <tr><td><code>residual.expression</code></td><td>yes</td><td>Source-of-truth relation.</td></tr>
 <tr><td><code>tests.baseline</code></td><td>yes</td><td>Trust/regression baseline.</td></tr>
+<tr><td><code>source</code></td><td>optional (recommended)</td><td>Primary citation for the equation.</td></tr>
 <tr><td><code>display</code></td><td>optional (recommended)</td><td>Latex/unicode/ascii authoring control.</td></tr>
 <tr><td><code>solve.explicit_forms</code></td><td>optional</td><td>Add explicit target forms when available.</td></tr>
 <tr><td><code>assumptions</code>/<code>references</code></td><td>optional (recommended)</td><td>Concise trust metadata.</td></tr>
@@ -210,6 +211,7 @@ Family files: <code>crates/equations/registry/families/*.yaml</code></p>
 <pre><code class="language-yaml">key: hoop_stress
 taxonomy: { category: structures }
 name: Thin-Wall Hoop Stress
+source: "Roark's Formulas for Stress and Strain"
 display: { latex: "\\sigma_h = \\frac{P r}{t}" }
 variables:
   sigma_h: { dimension: stress, default_unit: Pa }
@@ -225,6 +227,9 @@ tests:
 taxonomy:
   category: fluids
 name: Reynolds Number
+source:
+  source: Fox, McDonald, and Pritchard - Introduction to Fluid Mechanics
+  note: https://www.wiley.com/en-us/Introduction+to+Fluid+Mechanics%2C+9th+Edition-p-9781119721025
 display:
   latex: "Re = \\frac{\\rho V D}{\\mu}"
 variables:
@@ -251,6 +256,8 @@ taxonomy:
   category: fluids
   subcategory: internal_flow
 name: Darcy-Weisbach Pressure Drop
+source:
+  source: Darcy-Weisbach relation (standard fluid mechanics texts)
 display:
   latex: "\\Delta p = f \\frac{L}{D} \\frac{\\rho V^2}{2}"
   unicode: "delta_p = f (L/D) (rho V^2 / 2)"
@@ -298,7 +305,7 @@ variants:
 <h2 id="optional-vs-required-summary"><a class="header" href="#optional-vs-required-summary">Optional vs Required Summary</a></h2>
 <ul>
 <li>Required: <code>key</code>, <code>taxonomy.category</code>, <code>name</code>, <code>variables</code>, <code>residual.expression</code>, <code>tests.baseline</code>.</li>
-<li>Optional but recommended: <code>display</code>, <code>assumptions</code>, <code>references</code>, explicit solve forms.</li>
+<li>Optional but recommended: <code>source</code>, <code>display</code>, <code>assumptions</code>, <code>references</code>, explicit solve forms.</li>
 <li>Rare optional: <code>unsupported_targets</code> (only when numerical solving is genuinely unsafe/misleading).</li>
 <li>Family files require <code>variants</code>; shared assumptions/references are optional but recommended.</li>
 </ul>

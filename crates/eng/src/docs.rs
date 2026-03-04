@@ -115,10 +115,13 @@ const SNIPPET_SIMPLE_EQUATION_SOLVE: &str =
     include_str!("../docs_snippets/simple_equation_solve.rs");
 const SNIPPET_TYPED_UNIT_INPUT: &str = include_str!("../docs_snippets/typed_unit_input.rs");
 const SNIPPET_QTY_MACRO_INPUT: &str = include_str!("../docs_snippets/qty_macro_input.rs");
-const SNIPPET_RUNTIME_STRING_INPUT: &str =
-    include_str!("../docs_snippets/runtime_string_input.rs");
+const SNIPPET_RUNTIME_STRING_INPUT: &str = include_str!("../docs_snippets/runtime_string_input.rs");
 const SNIPPET_FLUID_PROPERTY_LOOKUP: &str =
     include_str!("../docs_snippets/fluid_property_lookup.rs");
+const SNIPPET_FLUID_STATE_CONSTRUCTORS: &str =
+    include_str!("../docs_snippets/fluid_state_constructors.rs");
+const SNIPPET_FLUID_SATURATION_METADATA: &str =
+    include_str!("../docs_snippets/fluid_saturation_metadata.rs");
 const SNIPPET_MATERIAL_PROPERTY_LOOKUP: &str =
     include_str!("../docs_snippets/material_property_lookup.rs");
 const SNIPPET_CONTEXT_SOLVE: &str = include_str!("../docs_snippets/context_solve.rs");
@@ -550,10 +553,19 @@ mathjax-support = true
         &render_architecture_page(),
     )?;
     write_text(src.join("workflows/index.md"), &render_workflows())?;
-    write_text(src.join("yaml_authoring/index.md"), &render_yaml_authoring())?;
-    write_text(src.join("validation_trust/index.md"), &render_validation_trust())?;
+    write_text(
+        src.join("yaml_authoring/index.md"),
+        &render_yaml_authoring(),
+    )?;
+    write_text(
+        src.join("validation_trust/index.md"),
+        &render_validation_trust(),
+    )?;
     write_text(src.join("equations/guide.md"), &render_equations_guide())?;
-    write_text(src.join("equations/families/index.md"), &render_families_index(c))?;
+    write_text(
+        src.join("equations/families/index.md"),
+        &render_families_index(c),
+    )?;
     write_text(src.join("constants/index.md"), &render_constants_index(c))?;
     write_text(src.join("fluids/guide.md"), &render_fluids_guide())?;
     write_text(src.join("fluids/index.md"), &render_fluids_index(c))?;
@@ -579,7 +591,7 @@ mathjax-support = true
         write_text(
             src.join("fluids")
                 .join(format!("{}.md", snake_case(&f.key))),
-            &render_fluid_page(f),
+            &render_fluid_page(f, c),
         )?;
     }
     for m in &c.materials {
@@ -734,7 +746,9 @@ fn render_units_quantities() -> String {
 fn render_equations_guide() -> String {
     let mut md = String::new();
     md.push_str("# Equations Guide\n\n");
-    md.push_str("Atomic equations are scalar-first relations with strong validation and tests.\n\n");
+    md.push_str(
+        "Atomic equations are scalar-first relations with strong validation and tests.\n\n",
+    );
     md.push_str("- [Equation Catalog](./index.md)\n");
     md.push_str("- [Equation Families](./families/index.md)\n\n");
     md.push_str("Family pages and variant pages are equation-scoped and cross-linked from each equation page.\n");
@@ -744,20 +758,79 @@ fn render_equations_guide() -> String {
 fn render_fluids_guide() -> String {
     let mut md = String::new();
     md.push_str("# Fluids Guide\n\n");
-    md.push_str("Fluids are catalog-backed with typed wrappers and state builders.\n\n");
-    md.push_str("## Property Lookup\n\n```rust\n");
+    md.push_str("Fluids are first-class engineering objects with typed wrappers, explicit state constructors, a flexible generic state path, direct property accessors, and context integration with equations.\n\n");
+    md.push_str("## Recommended Usage Path\n\n");
+    md.push_str("- **Preferred fast path**: explicit constructors like `state_tp`, `state_ph`, `state_ps`, `state_rho_h`, `state_pq`, `state_tq`.\n");
+    md.push_str("- **Flexible path**: generic `state(\"T\", value, \"P\", value)` where property identity is explicit.\n");
+    md.push_str("- Use direct accessor methods (`rho()`, `mu()`, `cp()`, `gamma()`, ...) instead of generic string property reads when writing Rust code.\n\n");
+    md.push_str("## Constructor Capability Matrix\n\n");
+    md.push_str("| Constructor | Meaning | Typical Use |\n");
+    md.push_str("| --- | --- | --- |\n");
+    md.push_str("| `state_tp(T, P)` | Temperature + pressure | Most common fast path |\n");
+    md.push_str("| `state_ph(P, h)` | Pressure + specific enthalpy | Thermodynamic inversion workflows |\n");
+    md.push_str("| `state_ps(P, s)` | Pressure + specific entropy | Isentropic/entropy constrained workflows |\n");
+    md.push_str("| `state_rho_h(rho, h)` | Density + specific enthalpy | Density-driven model integration |\n");
+    md.push_str("| `state_pq(P, Q)` | Pressure + quality | Two-phase saturation states |\n");
+    md.push_str("| `state_tq(T, Q)` | Temperature + quality | Two-phase saturation states |\n");
+    md.push_str("| `state(\"T\", v1, \"P\", v2)` | Explicit property-name pair | Flexible bindings/CLI/file paths |\n\n");
+    md.push_str("## Generic Property Alias Map\n\n");
+    md.push_str("| Canonical | Accepted aliases |\n");
+    md.push_str("| --- | --- |\n");
+    md.push_str("| Temperature | `T`, `temperature` |\n");
+    md.push_str("| Pressure | `P`, `pressure` |\n");
+    md.push_str("| Density | `rho`, `density` |\n");
+    md.push_str("| Specific enthalpy | `h`, `enthalpy` |\n");
+    md.push_str("| Specific entropy | `s`, `entropy` |\n");
+    md.push_str("| Quality | `Q`, `quality`, `x` |\n\n");
+    md.push_str("Property identity is required in the generic path; there is no unit-only inference. This avoids ambiguity (for example `h` vs `u`).\n\n");
+    md.push_str("## Verified State Construction Examples\n\n```rust\n");
+    md.push_str(SNIPPET_FLUID_STATE_CONSTRUCTORS.trim());
+    md.push_str("\n```\n\n");
+    md.push_str("## Direct Property Accessors\n\n");
+    md.push_str("| Accessor | Meaning |\n");
+    md.push_str("| --- | --- |\n");
+    md.push_str("| `pressure()` / `p()` | Pressure (Pa) |\n");
+    md.push_str("| `temperature()` / `t()` | Temperature (K) |\n");
+    md.push_str("| `density()` / `rho()` | Density (kg/m^3) |\n");
+    md.push_str("| `dynamic_viscosity()` / `mu()` | Dynamic viscosity (Pa*s) |\n");
+    md.push_str("| `thermal_conductivity()` / `k()` | Thermal conductivity (W/(m*K)) |\n");
+    md.push_str("| `specific_heat_capacity()` / `cp()` | Cp (J/(kg*K)) |\n");
+    md.push_str("| `specific_heat_capacity_cv()` / `cv()` | Cv (J/(kg*K)) |\n");
+    md.push_str("| `gamma()` | Heat capacity ratio |\n");
+    md.push_str("| `speed_of_sound()` / `a()` | Speed of sound (m/s) |\n");
+    md.push_str("| `specific_enthalpy()` / `h()` | Specific enthalpy (J/kg) |\n");
+    md.push_str("| `specific_entropy()` / `s()` | Specific entropy (J/(kg*K)) |\n");
+    md.push_str("| `quality()` | Quality in `[0,1]` for Q-based states |\n\n");
+    md.push_str("```rust\n");
     md.push_str(SNIPPET_FLUID_PROPERTY_LOOKUP.trim());
     md.push_str("\n```\n\n");
+    md.push_str("## Quality, Saturation, and State Metadata\n\n");
+    md.push_str("- `saturation_at_pressure(P)` returns `{ liquid, vapor }`\n");
+    md.push_str("- `saturation_at_temperature(T)` returns `{ liquid, vapor }`\n");
+    md.push_str("- State metadata includes `fluid_key()`, `fluid_name()`, `input_pair()`, `input_pair_label()`, `normalized_inputs()`, `quality()`, and `phase()`\n\n");
+    md.push_str("```rust\n");
+    md.push_str(SNIPPET_FLUID_SATURATION_METADATA.trim());
+    md.push_str("\n```\n\n");
+    md.push_str("## Equation Context Integration\n\n");
+    md.push_str("Use direct property lookup when you need one-off values. Use `solve_with_context(...).fluid(state)` when an equation should auto-resolve fluid-dependent variables.\n\n");
     md.push_str("Use fluid states directly in context solves:\n\n```rust\n");
     md.push_str(SNIPPET_CONTEXT_SOLVE.trim());
-    md.push_str("\n```\n");
+    md.push_str("\n```\n\n");
+    md.push_str("## Common Errors and Gotchas\n\n");
+    md.push_str("- Unknown/invalid generic property keys are rejected with explicit supported-key guidance.\n");
+    md.push_str("- Unsupported input pairs (for example `rho,T`) return clear pair diagnostics listing supported pairs.\n");
+    md.push_str("- `u`/internal-energy identifiers are intentionally rejected in the generic state-input path to avoid confusion with enthalpy `h`.\n");
+    md.push_str("- Parse and backend failures are recoverable and include fluid/pair/property context.\n\n");
+    md.push_str("## Catalog\n\n- [Fluids Catalog](./index.md)\n");
     md
 }
 
 fn render_materials_guide() -> String {
     let mut md = String::new();
     md.push_str("# Materials Guide\n\n");
-    md.push_str("Materials provide temperature-conditioned property lookup from curated datasets.\n\n");
+    md.push_str(
+        "Materials provide temperature-conditioned property lookup from curated datasets.\n\n",
+    );
     md.push_str("## Property Lookup\n\n```rust\n");
     md.push_str(SNIPPET_MATERIAL_PROPERTY_LOOKUP.trim());
     md.push_str("\n```\n");
@@ -837,7 +910,7 @@ fn render_architecture_page() -> String {
 
     md.push_str("## Ownership Map\n\n");
     md.push_str("| Layer | Owner | Owns | Does not own |\n");
-    md.push_str("| --- | --- | --- | --- |\n");
+    md.push_str("| --- | --- | --- | --- | --- |\n");
     for r in &spec.ownership {
         md.push_str(&format!(
             "| `{:?}` | `{:?}` | {} | {} |\n",
@@ -1061,9 +1134,30 @@ fn render_constants_index(c: &UnifiedDocsContribution) -> String {
 fn render_fluids_index(c: &UnifiedDocsContribution) -> String {
     let mut md = String::new();
     md.push_str("# Fluids\n\n");
+    md.push_str("Catalog-backed fluid wrappers with typed and generic state APIs.\n\n");
+    md.push_str("- [Fluids Guide](./guide.md)\n\n");
+    md.push_str("| Fluid | Key | Aliases | Supported State Inputs | Properties |\n");
+    md.push_str("| --- | --- | --- | --- |\n");
     for f in &c.fluids {
-        md.push_str(&format!("- [{}](./{}.md)\n", f.name, snake_case(&f.key)));
+        md.push_str(&format!(
+            "| [{}](./{}.md) | `{}` | {} | `{}` | {} |\n",
+            f.name,
+            snake_case(&f.key),
+            f.key,
+            if f.aliases.is_empty() {
+                "-".to_string()
+            } else {
+                f.aliases
+                    .iter()
+                    .map(|a| format!("`{}`", a))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            },
+            f.supported_state_inputs.join(", "),
+            f.supported_properties.len()
+        ));
     }
+    md.push_str("\nEach fluid page includes constructor patterns, generic input aliases, direct accessor guidance, saturation helpers, and equation-context usage.\n");
     md
 }
 
@@ -1098,20 +1192,118 @@ fn render_constant_page(c: &EngineeringConstant) -> String {
     )
 }
 
-fn render_fluid_page(f: &eng_fluids::FluidDocsEntry) -> String {
+fn render_fluid_page(f: &eng_fluids::FluidDocsEntry, c: &UnifiedDocsContribution) -> String {
     let aliases = if f.aliases.is_empty() {
         "none".to_string()
     } else {
         f.aliases.join(", ")
     };
-    format!(
-        "# {}\n\n- Key: `{}`\n- Aliases: {}\n- State inputs: {}\n- Supported properties: {}\n",
-        f.name,
-        f.key,
-        aliases,
-        f.supported_state_inputs.join(", "),
-        f.supported_properties.join(", ")
-    )
+    let mut md = String::new();
+    md.push_str(&format!("# {}\n\n", f.name));
+    md.push_str("| Field | Value |\n");
+    md.push_str("| --- | --- |\n");
+    md.push_str(&format!("| Key | `{}` |\n", f.key));
+    md.push_str(&format!("| Aliases | {} |\n", aliases));
+    md.push_str(&format!(
+        "| Supported state inputs | `{}` |\n",
+        f.supported_state_inputs.join(", ")
+    ));
+    md.push_str(&format!(
+        "| Supported properties | {} |\n\n",
+        f.supported_properties.len()
+    ));
+
+    md.push_str("## Supported State Input Pairs\n\n");
+    md.push_str("| Pair | Notes |\n");
+    md.push_str("| --- | --- |\n");
+    for pair in &f.supported_state_inputs {
+        let note = match pair.as_str() {
+            "T,P" => "General purpose explicit state constructor (`state_tp`)",
+            "P,h" => "Pressure/enthalpy inversion (`state_ph`)",
+            "P,s" => "Pressure/entropy inversion (`state_ps`)",
+            "rho,h" => "Density/enthalpy construction (`state_rho_h`)",
+            "P,Q" => "Two-phase saturation by pressure (`state_pq`)",
+            "T,Q" => "Two-phase saturation by temperature (`state_tq`)",
+            _ => "Supported by backend model",
+        };
+        md.push_str(&format!("| `{}` | {} |\n", pair, note));
+    }
+
+    md.push_str("\n## Verified Constructor and Generic Examples\n\n");
+    md.push_str("```rust\n");
+    md.push_str(SNIPPET_FLUID_STATE_CONSTRUCTORS.trim());
+    md.push_str("```\n\n");
+
+    md.push_str("## Generic Property Aliases\n\n");
+    md.push_str("| Canonical | Aliases |\n");
+    md.push_str("| --- | --- |\n");
+    md.push_str("| Temperature | `T`, `temperature` |\n");
+    md.push_str("| Pressure | `P`, `pressure` |\n");
+    md.push_str("| Density | `rho`, `density` |\n");
+    md.push_str("| Specific enthalpy | `h`, `enthalpy` |\n");
+    md.push_str("| Specific entropy | `s`, `entropy` |\n");
+    md.push_str("| Quality | `Q`, `quality`, `x` |\n\n");
+
+    md.push_str("## Supported Property Keys\n\n");
+    md.push_str("| Property key | Direct accessor |\n| --- | --- |\n");
+    for p in &f.supported_properties {
+        let accessor = match p.as_str() {
+            "pressure" => "`pressure()`, `p()`",
+            "temperature" => "`temperature()`, `t()`",
+            "density" => "`density()`, `rho()`",
+            "dynamic_viscosity" => "`dynamic_viscosity()`, `mu()`",
+            "thermal_conductivity" => "`thermal_conductivity()`, `k()`",
+            "specific_heat_capacity" => "`specific_heat_capacity()`, `cp()`",
+            "specific_heat_capacity_cv" => "`specific_heat_capacity_cv()`, `cv()`",
+            "speed_of_sound" => "`speed_of_sound()`, `a()`",
+            "specific_enthalpy" => "`specific_enthalpy()`, `h()`",
+            "specific_entropy" => "`specific_entropy()`, `s()`",
+            "gamma" => "`gamma()`",
+            "quality" => "`quality()`",
+            _ => "`property_by_name(...)`",
+        };
+        md.push_str(&format!("| `{}` | {} |\n", p, accessor));
+    }
+
+    md.push_str("\n## Direct Property Access Example\n\n```rust\n");
+    md.push_str(SNIPPET_FLUID_PROPERTY_LOOKUP.trim());
+    md.push_str("\n```\n\n");
+
+    md.push_str("## Saturation and Metadata Example\n\n```rust\n");
+    md.push_str(SNIPPET_FLUID_SATURATION_METADATA.trim());
+    md.push_str("\n```\n\n");
+
+    md.push_str("## Using This Fluid With Equations\n\n");
+    md.push_str("```rust\n");
+    md.push_str(SNIPPET_CONTEXT_SOLVE.trim());
+    md.push_str("\n```\n\n");
+    md.push_str("### Equations currently using `fluid` context\n\n");
+    let from = format!("fluids/{}.md", snake_case(&f.key));
+    let mut listed = 0usize;
+    for page in &c.equations.page_models {
+        let uses_fluid = page
+            .variables
+            .iter()
+            .any(|v| v.resolver_source.as_deref() == Some("fluid"));
+        if uses_fluid {
+            let to = doc_routes::equation_doc_path_from_path_id(&page.path_id);
+            let link = doc_routes::relative_doc_link(&from, &to);
+            md.push_str(&format!("- [{}]({})\n", page.name, link));
+            listed += 1;
+            if listed >= 12 {
+                break;
+            }
+        }
+    }
+    if listed == 0 {
+        md.push_str("- No current equation pages declare `fluid` resolver context.\n");
+    }
+    md.push_str("\n## Error Behavior\n\n");
+    md.push_str("- Unsupported input pairs return explicit pair diagnostics with a supported-pairs list.\n");
+    md.push_str("- Unknown/invalid generic property keys return actionable key guidance.\n");
+    md.push_str("- `u`/internal-energy keys are rejected intentionally to prevent ambiguity with `h`.\n");
+    md.push_str("- Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.\n");
+    md
 }
 
 fn render_material_page(m: &eng_materials::MaterialDocsEntry) -> String {
@@ -1190,10 +1382,9 @@ fn render_equation_page(
         }
         md.push('\n');
     }
-    if let Some((family, variant)) = equations::equation_families::family_by_equation_path_id(
-        families,
-        &p.path_id,
-    ) {
+    if let Some((family, variant)) =
+        equations::equation_families::family_by_equation_path_id(families, &p.path_id)
+    {
         let from = doc_routes::equation_doc_path_from_path_id(&p.path_id);
         let to = doc_routes::family_doc_path(&family.key);
         let family_link = doc_routes::relative_doc_link(&from, &to);

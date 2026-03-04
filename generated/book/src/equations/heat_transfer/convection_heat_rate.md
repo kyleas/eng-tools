@@ -107,3 +107,7 @@ let value = equations::heat_transfer::convection_heat_rate::solve_q_dot(
 
 - Returns SI by default; use `.value_in("<unit>")` for display units.
 
+## Source
+
+- Incropera et al., Fundamentals of Heat and Mass Transfer
+

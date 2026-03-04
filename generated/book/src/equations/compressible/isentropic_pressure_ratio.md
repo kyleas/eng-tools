@@ -77,3 +77,7 @@ let value = equations::compressible::isentropic_pressure_ratio::solve_p_p0(
 )?;
 ```
 
+## Source
+
+- Anderson, Modern Compressible Flow: With Historical Perspective
+

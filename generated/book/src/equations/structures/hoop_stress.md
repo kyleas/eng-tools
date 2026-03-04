@@ -102,9 +102,13 @@ let value = equations::structures::hoop_stress::solve_sigma_h(
 
 - Returns SI by default; use `.value_in("<unit>")` for display units.
 
+## Source
+
+- [Roark's Formulas for Stress and Strain](https://www.mheducation.com/highered/product/roark-s-formulas-stress-strain-young-budynas/M9780071742475.html)
+
 ## References
 
-- Roark's Formulas for Stress and Strain Thin-walled cylindrical pressure vessel relations.
+- Roark's Formulas for Stress and Strain — Thin-walled cylindrical pressure vessel relations.
 
 ## Aliases
 

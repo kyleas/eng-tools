@@ -100,3 +100,7 @@ let value = equations::compressible::choked_mass_flux::solve_g_star(
 
 - Returns SI by default; use `.value_in("<unit>")` for display units.
 
+## Source
+
+- Anderson, Modern Compressible Flow: With Historical Perspective
+

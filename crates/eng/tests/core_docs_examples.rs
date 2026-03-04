@@ -1,12 +1,16 @@
 use eng::{
     eq, equations,
-    fluids::{self, FluidProperty},
+    fluids,
     materials, qty,
     units::typed::{length, pressure},
 };
 
 #[test]
 fn core_handbook_workflows_execute() -> Result<(), Box<dyn std::error::Error>> {
+    {
+        include!("../docs_snippets/fluid_state_constructors.rs");
+    }
+
     let sigma_h_si = eq
         .solve(equations::structures::hoop_stress::equation())
         .target_sigma_h()
@@ -44,8 +48,17 @@ fn core_handbook_workflows_execute() -> Result<(), Box<dyn std::error::Error>> {
     assert!(sigma_h_runtime > 0.0);
 
     let water = fluids::water().state_tp("300 K", "1 bar")?;
-    assert!(water.property(FluidProperty::Density)? > 0.0);
-    assert!(water.property(FluidProperty::DynamicViscosity)? > 0.0);
+    assert!(water.rho()? > 0.0);
+    assert!(water.mu()? > 0.0);
+    let by_name = fluids::air().state("T", "300 K", "P", "1 bar")?;
+    assert!(by_name.gamma()? > 1.0);
+    let sat = fluids::water().saturation_at_pressure("1 bar")?;
+    assert_eq!(sat.liquid.quality(), Some(0.0));
+    assert_eq!(sat.vapor.quality(), Some(1.0));
+
+    {
+        include!("../docs_snippets/fluid_saturation_metadata.rs");
+    }
 
     let steel = materials::stainless_304().temperature("350 K")?;
     assert!(steel.property("elastic_modulus")? > 0.0);

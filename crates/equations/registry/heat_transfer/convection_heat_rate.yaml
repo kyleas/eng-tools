@@ -2,6 +2,7 @@ key: convection_heat_rate
 taxonomy:
   category: heat_transfer
 name: Convection Heat Transfer Rate
+source: "Incropera et al., Fundamentals of Heat and Mass Transfer"
 display:
   latex: '\dot{Q} = h A (T_s - T_\infty)'
 variables:

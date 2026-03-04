@@ -2,6 +2,7 @@ key: longitudinal_stress_thin_wall
 taxonomy:
   category: structures
 name: Thin-Wall Longitudinal Stress
+source: "Roark's Formulas for Stress and Strain"
 display:
   latex: '\sigma_l = \frac{P r}{2 t}'
 variables:

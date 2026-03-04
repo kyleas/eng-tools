@@ -2,6 +2,7 @@ key: beam_bending_stress
 taxonomy:
   category: structures
 name: Beam Bending Stress
+source: "Roark's Formulas for Stress and Strain"
 display:
   latex: '\sigma_b = \frac{M c}{I}'
 variables:

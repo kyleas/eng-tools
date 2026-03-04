@@ -101,3 +101,7 @@ let value = equations::rockets::specific_impulse_ideal::solve_i_sp(
 
 - Returns SI by default; use `.value_in("<unit>")` for display units.
 
+## Source
+
+- Sutton and Biblarz, Rocket Propulsion Elements
+

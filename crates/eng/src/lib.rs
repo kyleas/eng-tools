@@ -35,9 +35,9 @@ pub mod architecture;
 pub mod docs;
 
 pub use eng_core as core;
-pub use eng_qty_macros::qty;
 pub use eng_fluids as fluids;
 pub use eng_materials as materials;
+pub use eng_qty_macros::qty;
 pub use equations::constants;
 pub use equations::{self, eq};
 

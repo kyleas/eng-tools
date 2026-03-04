@@ -3,6 +3,7 @@ key: continuity_mass_flow
 taxonomy:
   category: fluids
 name: Continuity Mass Flow
+source: "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics"
 display:
   latex: '\dot{m} = \rho A V'
 variables:

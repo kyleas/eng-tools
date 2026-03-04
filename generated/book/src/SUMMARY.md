@@ -54,6 +54,7 @@
   - [Stefan-Boltzmann Constant](constants/stefan_boltzmann.md)
   - [Universal Gas Constant](constants/universal_gas_constant.md)
 - [Fluids](fluids/index.md)
+  - [Fluids Guide](fluids/guide.md)
   - [Air](fluids/air.md)
   - [Nitrogen](fluids/n2.md)
   - [Oxygen](fluids/o2.md)

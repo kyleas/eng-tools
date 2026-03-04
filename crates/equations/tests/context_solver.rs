@@ -1,12 +1,12 @@
-use eng_fluids::{FluidProperty, water};
+use eng_fluids::water;
 use eng_materials::stainless_304;
 use equations::{eq, fluids, structures};
 
 #[test]
 fn solve_with_fluid_context_resolves_density() {
     let state = water().state_tp("300 K", "1 bar").expect("state");
-    let rho = state.property(FluidProperty::Density).expect("rho");
-    let mu = state.property(FluidProperty::DynamicViscosity).expect("mu");
+    let rho = state.rho().expect("rho");
+    let mu = state.mu().expect("mu");
 
     let with_context = eq
         .solve_with_context(fluids::reynolds_number::equation())

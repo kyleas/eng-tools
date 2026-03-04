@@ -2,6 +2,7 @@ key: thrust_coefficient_ideal
 taxonomy:
   category: rockets
 name: Ideal Thrust Coefficient
+source: "Sutton and Biblarz, Rocket Propulsion Elements"
 display:
   latex: 'C_f = \sqrt{\frac{2\gamma^2}{\gamma-1}\left(\frac{2}{\gamma+1}\right)^{(\gamma+1)/(\gamma-1)}\left(1-\left(\frac{p_e}{p_c}\right)^{(\gamma-1)/\gamma}\right)} + \left(\frac{p_e}{p_c}-\frac{p_a}{p_c}\right)\frac{A_e}{A_t}'
 variables:

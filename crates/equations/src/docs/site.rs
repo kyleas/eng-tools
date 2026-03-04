@@ -40,17 +40,21 @@ pub struct HtmlExportReport {
     pub status: HtmlBuildStatus,
 }
 
-const SNIPPET_TOP_LEVEL_IMPORT: &str = include_str!("../../../eng/docs_snippets/top_level_import.rs");
+const SNIPPET_TOP_LEVEL_IMPORT: &str =
+    include_str!("../../../eng/docs_snippets/top_level_import.rs");
 const SNIPPET_SIMPLE_EQUATION_SOLVE: &str =
     include_str!("../../../eng/docs_snippets/simple_equation_solve.rs");
 const SNIPPET_TYPED_UNIT_INPUT: &str =
     include_str!("../../../eng/docs_snippets/typed_unit_input.rs");
-const SNIPPET_QTY_MACRO_INPUT: &str =
-    include_str!("../../../eng/docs_snippets/qty_macro_input.rs");
+const SNIPPET_QTY_MACRO_INPUT: &str = include_str!("../../../eng/docs_snippets/qty_macro_input.rs");
 const SNIPPET_RUNTIME_STRING_INPUT: &str =
     include_str!("../../../eng/docs_snippets/runtime_string_input.rs");
 const SNIPPET_FLUID_PROPERTY_LOOKUP: &str =
     include_str!("../../../eng/docs_snippets/fluid_property_lookup.rs");
+const SNIPPET_FLUID_STATE_CONSTRUCTORS: &str =
+    include_str!("../../../eng/docs_snippets/fluid_state_constructors.rs");
+const SNIPPET_FLUID_SATURATION_METADATA: &str =
+    include_str!("../../../eng/docs_snippets/fluid_saturation_metadata.rs");
 const SNIPPET_MATERIAL_PROPERTY_LOOKUP: &str =
     include_str!("../../../eng/docs_snippets/material_property_lookup.rs");
 const SNIPPET_CONTEXT_SOLVE: &str = include_str!("../../../eng/docs_snippets/context_solve.rs");
@@ -193,6 +197,7 @@ mathjax-support = true
         src_root.join("constants/index.md"),
         &render_constants_index(lib),
     )?;
+    write_text(src_root.join("fluids/guide.md"), &render_fluids_guide())?;
     write_text(src_root.join("fluids/index.md"), &render_fluids_index()?)?;
     write_text(
         src_root.join("materials/index.md"),
@@ -447,7 +452,9 @@ fn render_input_styles_page() -> String {
         "All equation input methods support four styles:\n\n1. plain numeric SI\n2. typed unit constructors\n3. `qty!(\"...\")`\n4. runtime strings\n\n",
     );
     md.push_str("## Which Style Should I Use?\n\n");
-    md.push_str("- **Fastest path**: plain SI numeric (`f64`) when values are already canonical.\n");
+    md.push_str(
+        "- **Fastest path**: plain SI numeric (`f64`) when values are already canonical.\n",
+    );
     md.push_str("- **Most explicit Rust path**: typed unit constructors (`pressure::mpa(2.5)`).\n");
     md.push_str("- **Preferred expression path in Rust runtime code**: `qty!(\"...\")`.\n");
     md.push_str("- **Boundary convenience path**: runtime strings from CLI/UI/files.\n\n");
@@ -459,7 +466,9 @@ fn render_input_styles_page() -> String {
     md.push_str("## Performance Notes\n\n");
     md.push_str("- `f64` and typed constructors are lowest-overhead internal paths.\n");
     md.push_str("- `qty!` is preferred for static expressions in Rust code.\n");
-    md.push_str("- Runtime strings are boundary convenience and include parse/validation cost.\n\n");
+    md.push_str(
+        "- Runtime strings are boundary convenience and include parse/validation cost.\n\n",
+    );
     md.push_str("## Plain SI\n\n```rust\n");
     md.push_str(SNIPPET_SIMPLE_EQUATION_SOLVE.trim());
     md.push_str("\n```\n\n");
@@ -483,9 +492,13 @@ fn render_units_quantities_page() -> String {
     md.push_str("- Atomic unit registry defines aliases, canonical symbols, scale factors, and dimension signatures.\n");
     md.push_str("- Parser handles unit expressions and quantity arithmetic.\n");
     md.push_str("- Reducer computes canonical SI value + final dimension signature.\n");
-    md.push_str("- Validator checks the final dimension against the variable's expected dimension.\n\n");
+    md.push_str(
+        "- Validator checks the final dimension against the variable's expected dimension.\n\n",
+    );
     md.push_str("## What Is Supported\n\n");
-    md.push_str("- Atomic units + strict aliases (`m`, `ft`, `Pa`, `psi`, `L`, `gal`, `s`, `min`, ...).\n");
+    md.push_str(
+        "- Atomic units + strict aliases (`m`, `ft`, `Pa`, `psi`, `L`, `gal`, `s`, `min`, ...).\n",
+    );
     md.push_str("- Compound units (`kg/(m*s)`, `Pa*s`, `N*s/m^2`, `W/(m*K)`, `J/(kg*K)`).\n");
     md.push_str("- Quantity expressions with `+`, `-`, `*`, `/`, and parentheses.\n");
     md.push_str("- Equivalent expressions normalized to the same canonical dimensions.\n\n");
@@ -498,8 +511,12 @@ fn render_units_quantities_page() -> String {
     md.push_str("- Final expression dimension matches expected variable dimension.\n\n");
     md.push_str("## Advanced Conversion Behavior\n\n");
     md.push_str("- Dynamic viscosity equivalence: `Pa*s` == `kg/(m*s)` == `N*s/m^2`.\n");
-    md.push_str("- Volumetric flow conversions across time/volume units (`gal/min`, `L/s`, `m^3/hr`).\n");
-    md.push_str("- Thermal/transport forms normalize by dimension even when syntactically different.\n\n");
+    md.push_str(
+        "- Volumetric flow conversions across time/volume units (`gal/min`, `L/s`, `m^3/hr`).\n",
+    );
+    md.push_str(
+        "- Thermal/transport forms normalize by dimension even when syntactically different.\n\n",
+    );
     md.push_str("## What Is Intentionally Restricted\n\n");
     md.push_str("- Mixed-dimension addition/subtraction is rejected.\n");
     md.push_str("- Unknown or ambiguous unit tokens are rejected, not guessed.\n");
@@ -536,15 +553,23 @@ fn render_yaml_authoring_page() -> String {
     md.push_str("| `variables` | yes | Variable metadata. |\n");
     md.push_str("| `residual.expression` | yes | Source-of-truth relation. |\n");
     md.push_str("| `tests.baseline` | yes | Trust/regression baseline. |\n");
-    md.push_str("| `display` | optional (recommended) | Latex/unicode/ascii authoring control. |\n");
-    md.push_str("| `solve.explicit_forms` | optional | Add explicit target forms when available. |\n");
-    md.push_str("| `assumptions`/`references` | optional (recommended) | Concise trust metadata. |\n");
+    md.push_str("| `source` | optional (recommended) | Primary citation for the equation. |\n");
+    md.push_str(
+        "| `display` | optional (recommended) | Latex/unicode/ascii authoring control. |\n",
+    );
+    md.push_str(
+        "| `solve.explicit_forms` | optional | Add explicit target forms when available. |\n",
+    );
+    md.push_str(
+        "| `assumptions`/`references` | optional (recommended) | Concise trust metadata. |\n",
+    );
     md.push_str("| `solve.unsupported_targets` | optional (rare) | Only for truly unsafe/unsupported numerical paths. |\n\n");
 
     md.push_str("## Minimal Equation Example\n\n```yaml\n");
     md.push_str("key: hoop_stress\n");
     md.push_str("taxonomy: { category: structures }\n");
     md.push_str("name: Thin-Wall Hoop Stress\n");
+    md.push_str("source: \"Roark's Formulas for Stress and Strain\"\n");
     md.push_str("display: { latex: \"\\\\sigma_h = \\\\frac{P r}{t}\" }\n");
     md.push_str("variables:\n  sigma_h: { dimension: stress, default_unit: Pa }\n  P: { dimension: pressure, default_unit: Pa }\n  r: { dimension: length, default_unit: m }\n  t: { dimension: length, default_unit: m }\n");
     md.push_str("residual: { expression: \"sigma_h - P*r/t\" }\n");
@@ -555,6 +580,7 @@ fn render_yaml_authoring_page() -> String {
     md.push_str("key: reynolds_number\n");
     md.push_str("taxonomy:\n  category: fluids\n");
     md.push_str("name: Reynolds Number\n");
+    md.push_str("source:\n  source: Fox, McDonald, and Pritchard - Introduction to Fluid Mechanics\n  note: https://www.wiley.com/en-us/Introduction+to+Fluid+Mechanics%2C+9th+Edition-p-9781119721025\n");
     md.push_str("display:\n  latex: \"Re = \\\\frac{\\\\rho V D}{\\\\mu}\"\n");
     md.push_str("variables:\n");
     md.push_str("  Re: { name: Reynolds number, dimension: dimensionless, default_unit: \"1\" }\n");
@@ -571,6 +597,7 @@ fn render_yaml_authoring_page() -> String {
     md.push_str("key: darcy_weisbach_pressure_drop\n");
     md.push_str("taxonomy:\n  category: fluids\n  subcategory: internal_flow\n");
     md.push_str("name: Darcy-Weisbach Pressure Drop\n");
+    md.push_str("source:\n  source: Darcy-Weisbach relation (standard fluid mechanics texts)\n");
     md.push_str("display:\n  latex: \"\\\\Delta p = f \\\\frac{L}{D} \\\\frac{\\\\rho V^2}{2}\"\n  unicode: \"delta_p = f (L/D) (rho V^2 / 2)\"\n  ascii: \"delta_p = f*(L/D)*(rho*V^2/2)\"\n");
     md.push_str("variables:\n");
     md.push_str("  delta_p: { name: Pressure drop, symbol: \"\\\\Delta p\", dimension: pressure, default_unit: Pa }\n");
@@ -578,7 +605,9 @@ fn render_yaml_authoring_page() -> String {
     md.push_str("  L: { name: Pipe length, symbol: L, dimension: length, default_unit: m }\n");
     md.push_str("  D: { name: Pipe diameter, symbol: D, dimension: length, default_unit: m }\n");
     md.push_str("  rho: { name: Fluid density, symbol: \"\\\\rho\", dimension: density, default_unit: kg/m^3 }\n");
-    md.push_str("  V: { name: Mean velocity, symbol: V, dimension: velocity, default_unit: m/s }\n");
+    md.push_str(
+        "  V: { name: Mean velocity, symbol: V, dimension: velocity, default_unit: m/s }\n",
+    );
     md.push_str("residual:\n  expression: \"delta_p - f*(L/D)*(rho*V^2/2)\"\n");
     md.push_str("solve:\n  explicit_forms:\n    delta_p: \"f*(L/D)*(rho*V^2/2)\"\n    f: \"delta_p/((L/D)*(rho*V^2/2))\"\n");
     md.push_str("assumptions:\n  - Steady, incompressible internal flow form.\n");
@@ -602,7 +631,7 @@ fn render_yaml_authoring_page() -> String {
     md.push_str("```\n\n");
     md.push_str("## Optional vs Required Summary\n\n");
     md.push_str("- Required: `key`, `taxonomy.category`, `name`, `variables`, `residual.expression`, `tests.baseline`.\n");
-    md.push_str("- Optional but recommended: `display`, `assumptions`, `references`, explicit solve forms.\n");
+    md.push_str("- Optional but recommended: `source`, `display`, `assumptions`, `references`, explicit solve forms.\n");
     md.push_str("- Rare optional: `unsupported_targets` (only when numerical solving is genuinely unsafe/misleading).\n");
     md.push_str("- Family files require `variants`; shared assumptions/references are optional but recommended.\n");
     md
@@ -739,6 +768,7 @@ fn render_summary(lib: &LibraryPresentation, families: &[EquationFamilyDef]) -> 
         s.push_str(&format!("  - [{}](constants/{}.md)\n", c.name, c.key));
     }
     s.push_str("- [Fluids](fluids/index.md)\n");
+    s.push_str("  - [Fluids Guide](fluids/guide.md)\n");
     for fluid in eng_fluids::catalog() {
         s.push_str(&format!(
             "  - [{}](fluids/{}.md)\n",
@@ -759,12 +789,95 @@ fn render_summary(lib: &LibraryPresentation, families: &[EquationFamilyDef]) -> 
     s
 }
 
+fn render_fluids_guide() -> String {
+    let mut md = String::new();
+    md.push_str("# Fluids Guide\n\n");
+    md.push_str(
+        "The fluids layer provides typed wrappers, explicit state constructors, a flexible generic state API, direct property accessors, quality support, saturation helpers, and structured state metadata/errors.\n\n",
+    );
+    md.push_str("## Recommended Usage Paths\n\n");
+    md.push_str("- **Preferred fast path:** explicit constructors such as `state_tp`, `state_ph`, `state_ps`, `state_rho_h`, `state_pq`, and `state_tq`.\n");
+    md.push_str("- **Flexible path:** generic `state(\"T\", ..., \"P\", ...)` with explicit property identity.\n");
+    md.push_str("- Generic path does not infer property identity from units; you must provide property keys.\n\n");
+
+    md.push_str("## State Constructor Patterns\n\n");
+    md.push_str("| Constructor | Inputs | Typical use |\n");
+    md.push_str("| --- | --- | --- |\n");
+    md.push_str("| `state_tp(T, P)` | temperature, pressure | standard single-phase setup |\n");
+    md.push_str("| `state_ph(P, h)` | pressure, specific enthalpy | inversion from energy state |\n");
+    md.push_str("| `state_ps(P, s)` | pressure, specific entropy | entropy-based state setup |\n");
+    md.push_str("| `state_rho_h(rho, h)` | density, specific enthalpy | density/energy-defined state |\n");
+    md.push_str("| `state_pq(P, Q)` | pressure, quality | saturation/two-phase state at pressure |\n");
+    md.push_str("| `state_tq(T, Q)` | temperature, quality | saturation/two-phase state at temperature |\n");
+    md.push_str("| `state(\"T\", v1, \"P\", v2)` | explicit property keys + values | flexible pair-input construction |\n\n");
+
+    md.push_str("## Generic Property Key Aliases\n\n");
+    md.push_str("| Canonical | Aliases |\n");
+    md.push_str("| --- | --- |\n");
+    md.push_str("| Temperature | `T`, `temperature` |\n");
+    md.push_str("| Pressure | `P`, `pressure` |\n");
+    md.push_str("| Density | `rho`, `density` |\n");
+    md.push_str("| Specific enthalpy | `h`, `enthalpy` |\n");
+    md.push_str("| Specific entropy | `s`, `entropy` |\n");
+    md.push_str("| Quality | `Q`, `quality`, `x` |\n\n");
+
+    md.push_str("## Direct Property Accessors\n\n");
+    md.push_str("| Property | Accessors |\n");
+    md.push_str("| --- | --- |\n");
+    md.push_str("| Pressure | `pressure()`, `p()` |\n");
+    md.push_str("| Temperature | `temperature()`, `t()` |\n");
+    md.push_str("| Density | `density()`, `rho()` |\n");
+    md.push_str("| Dynamic viscosity | `dynamic_viscosity()`, `mu()` |\n");
+    md.push_str("| Thermal conductivity | `thermal_conductivity()`, `k()` |\n");
+    md.push_str("| Specific heat (cp) | `specific_heat_capacity()`, `cp()` |\n");
+    md.push_str("| Specific heat (cv) | `specific_heat_capacity_cv()`, `cv()` |\n");
+    md.push_str("| Speed of sound | `speed_of_sound()`, `a()` |\n");
+    md.push_str("| Specific enthalpy | `specific_enthalpy()`, `h()` |\n");
+    md.push_str("| Specific entropy | `specific_entropy()`, `s()` |\n");
+    md.push_str("| Heat capacity ratio | `gamma()` |\n");
+    md.push_str("| Quality | `quality()` |\n\n");
+
+    md.push_str("## Verified Constructor + Generic State Examples\n\n```rust\n");
+    md.push_str(SNIPPET_FLUID_STATE_CONSTRUCTORS.trim());
+    md.push_str("\n```\n\n");
+
+    md.push_str("## Verified Direct Property Access Example\n\n```rust\n");
+    md.push_str(SNIPPET_FLUID_PROPERTY_LOOKUP.trim());
+    md.push_str("\n```\n\n");
+
+    md.push_str("## Verified Saturation + Metadata Example\n\n```rust\n");
+    md.push_str(SNIPPET_FLUID_SATURATION_METADATA.trim());
+    md.push_str("\n```\n\n");
+
+    md.push_str("## State Metadata\n\n");
+    md.push_str("- `fluid_key()` and `fluid_name()` identify the wrapper/backend fluid.\n");
+    md.push_str("- `input_pair()` and `input_pair_label()` show which pair initialized the state.\n");
+    md.push_str("- `normalized_inputs()` reports normalized SI inputs used for backend calls.\n");
+    md.push_str("- `quality()` and `phase()` expose two-phase context where available.\n\n");
+
+    md.push_str("## Error Behavior\n\n");
+    md.push_str("- Unsupported state pairs return an explicit supported-pairs list.\n");
+    md.push_str("- Unknown generic property keys return actionable key errors.\n");
+    md.push_str("- Duplicate keys in generic `state(...)` are rejected.\n");
+    md.push_str("- `u`/internal-energy keys are intentionally rejected to avoid ambiguity with enthalpy.\n");
+    md.push_str("- Backend failures remain recoverable and include fluid/pair/property context.\n\n");
+
+    md.push_str("## Equation Integration\n\n");
+    md.push_str("Use direct fluid property lookups for ad hoc calculations. Use equation context solving (`solve_with_context(...).fluid(...)`) when equations declare resolver metadata and you want automatic property resolution.\n\n");
+    md.push_str("```rust\n");
+    md.push_str(SNIPPET_CONTEXT_SOLVE.trim());
+    md.push_str("\n```\n\n");
+    md.push_str("See the [Fluids Catalog](./index.md) for per-fluid reference pages.\n");
+    md
+}
+
 fn render_fluids_index() -> Result<String> {
     let mut md = String::new();
     md.push_str("# Fluids Catalog\n\n");
     md.push_str("Catalog-backed fluid wrappers generated from the supported backend set.\n\n");
+    md.push_str("- [Fluids Guide](./guide.md)\n\n");
     md.push_str("<table>\n");
-    md.push_str("  <thead><tr><th>Key</th><th>Name</th><th>Aliases</th><th>Rust Wrapper</th></tr></thead>\n");
+    md.push_str("  <thead><tr><th>Fluid</th><th>Key</th><th>Aliases</th><th>Supported State Inputs</th><th>Properties</th></tr></thead>\n");
     md.push_str("  <tbody>\n");
     for fluid in eng_fluids::catalog() {
         let alias = if fluid.aliases.is_empty() {
@@ -773,15 +886,17 @@ fn render_fluids_index() -> Result<String> {
             fluid.aliases.join(", ")
         };
         md.push_str(&format!(
-            "    <tr><td><a href=\"{}.md\"><code>{}</code></a></td><td>{}</td><td>{}</td><td><code>eng_fluids::{}</code></td></tr>\n",
+            "    <tr><td><a href=\"{}.md\">{}</a></td><td><code>{}</code></td><td>{}</td><td><code>{}</code></td><td>{}</td></tr>\n",
             snake_case(fluid.key),
-            escape_html(fluid.key),
             escape_html(fluid.display_name),
+            escape_html(fluid.key),
             escape_html(&alias),
-            snake_case(fluid.display_name)
+            "T,P | P,h | P,s | rho,h | P,Q | T,Q",
+            eng_fluids::SUPPORTED_PROPERTIES.len()
         ));
     }
     md.push_str("  </tbody>\n</table>\n");
+    md.push_str("\nEach fluid page includes explicit constructor and generic `state(...)` examples, direct accessor mapping, saturation/quality notes, metadata notes, and context-equation links.\n");
     Ok(md)
 }
 
@@ -809,9 +924,7 @@ fn render_fluid_page(fluid: FluidRef, lib: &LibraryPresentation) -> String {
                 .join(", ")
         }
     ));
-    md.push_str(
-        "    <tr><td>Supported state inputs</td><td><code>state_tp(T, P)</code></td></tr>\n",
-    );
+    md.push_str("    <tr><td>Supported state inputs</td><td><code>state_tp(T, P)</code>, <code>state_ph(P, h)</code>, <code>state_ps(P, s)</code>, <code>state_rho_h(rho, h)</code>, <code>state_pq(P, Q)</code>, <code>state_tq(T, Q)</code>, <code>state(\"T\", ..., \"P\", ...)</code></td></tr>\n");
     md.push_str(&format!(
         "    <tr><td>Supported properties</td><td>{}</td></tr>\n",
         eng_fluids::SUPPORTED_PROPERTIES
@@ -821,19 +934,82 @@ fn render_fluid_page(fluid: FluidRef, lib: &LibraryPresentation) -> String {
             .join(", ")
     ));
     md.push_str("  </tbody>\n</table>\n\n");
-    md.push_str("## Example\n\n");
+    md.push_str("## Supported State Input Pairs\n\n");
+    md.push_str("| Pair | Explicit constructor | Notes |\n");
+    md.push_str("| --- | --- | --- |\n");
+    md.push_str("| `T,P` | `state_tp` | General single-phase path |\n");
+    md.push_str("| `P,h` | `state_ph` | Enthalpy inversion |\n");
+    md.push_str("| `P,s` | `state_ps` | Entropy inversion |\n");
+    md.push_str("| `rho,h` | `state_rho_h` | Density/enthalpy path |\n");
+    md.push_str("| `P,Q` | `state_pq` | Two-phase by pressure |\n");
+    md.push_str("| `T,Q` | `state_tq` | Two-phase by temperature |\n\n");
+
+    md.push_str("## Constructor Examples (explicit + generic)\n\n");
+    md.push_str("```rust\n");
+    md.push_str(SNIPPET_FLUID_STATE_CONSTRUCTORS.trim());
+    md.push_str("\n```\n\n");
+
+    md.push_str("## Generic Property Name Aliases\n\n");
+    md.push_str("| Canonical | Aliases |\n");
+    md.push_str("| --- | --- |\n");
+    md.push_str("| Temperature | `T`, `temperature` |\n");
+    md.push_str("| Pressure | `P`, `pressure` |\n");
+    md.push_str("| Density | `rho`, `density` |\n");
+    md.push_str("| Specific enthalpy | `h`, `enthalpy` |\n");
+    md.push_str("| Specific entropy | `s`, `entropy` |\n");
+    md.push_str("| Quality | `Q`, `quality`, `x` |\n\n");
+
+    md.push_str("## Property Accessors\n\n");
+    md.push_str("| Property key | Accessors |\n");
+    md.push_str("| --- | --- |\n");
+    md.push_str("| `pressure` | `pressure()`, `p()` |\n");
+    md.push_str("| `temperature` | `temperature()`, `t()` |\n");
+    md.push_str("| `density` | `density()`, `rho()` |\n");
+    md.push_str("| `dynamic_viscosity` | `dynamic_viscosity()`, `mu()` |\n");
+    md.push_str("| `thermal_conductivity` | `thermal_conductivity()`, `k()` |\n");
+    md.push_str("| `specific_heat_capacity` | `specific_heat_capacity()`, `cp()` |\n");
+    md.push_str("| `specific_heat_capacity_cv` | `specific_heat_capacity_cv()`, `cv()` |\n");
+    md.push_str("| `speed_of_sound` | `speed_of_sound()`, `a()` |\n");
+    md.push_str("| `specific_enthalpy` | `specific_enthalpy()`, `h()` |\n");
+    md.push_str("| `specific_entropy` | `specific_entropy()`, `s()` |\n");
+    md.push_str("| `gamma` | `gamma()` |\n");
+    md.push_str("| `quality` | `quality()` |\n\n");
+
+    md.push_str("## Direct Property Access Example\n\n");
     md.push_str("```rust\n");
     md.push_str("use eng_fluids as fluids;\n\n");
     md.push_str(&format!(
         "let state = fluids::{}().state_tp(\"300 K\", \"1 bar\")?;\n",
         fn_name
     ));
-    md.push_str("let rho = state.property(fluids::FluidProperty::Density)?;\n");
-    md.push_str("println!(\"rho = {rho} kg/m^3\");\n");
+    md.push_str("let rho = state.rho();\n");
+    md.push_str("let mu = state.mu()?;\n");
+    md.push_str("println!(\"rho = {rho} kg/m^3, mu = {mu} Pa*s\");\n");
     md.push_str("```\n");
+
+    md.push_str("\n## Saturation and Metadata Example\n\n```rust\n");
+    md.push_str(SNIPPET_FLUID_SATURATION_METADATA.trim());
+    md.push_str("\n```\n");
+
+    md.push_str("\n## State Metadata\n\n");
+    md.push_str("- `fluid_key()` / `fluid_name()`\n");
+    md.push_str("- `input_pair_label()` / `normalized_inputs()`\n");
+    md.push_str("- `quality()` and `phase()` when available\n");
+
+    md.push_str("\n## Error Behavior\n\n");
+    md.push_str("- Unsupported pairs include a supported-pairs list.\n");
+    md.push_str("- Unknown keys in generic `state(...)` return actionable key diagnostics.\n");
+    md.push_str("- Duplicate keys in generic `state(...)` are rejected.\n");
+    md.push_str("- `u`/internal-energy keys are rejected to avoid ambiguity with `h`.\n");
+    md.push_str("- Backend failures remain recoverable and include context.\n");
+
     let linked = equations_using_context("fluid", lib);
     if !linked.is_empty() {
         md.push_str("\n## Example Equations Using Fluid Context\n\n");
+        md.push_str("Use `solve_with_context(...).fluid(...)` when equations declare fluid resolvers.\n\n");
+        md.push_str("```rust\n");
+        md.push_str(SNIPPET_CONTEXT_SOLVE.trim());
+        md.push_str("\n```\n\n");
         for (name, rel) in linked {
             md.push_str(&format!("- [{}]({})\n", name, rel));
         }
@@ -1319,11 +1495,15 @@ fn render_equation_page(
         }
     }
 
+    if let Some(source) = &eq.page.source {
+        md.push_str("## Source\n\n");
+        md.push_str(&format!("- {}\n\n", render_reference_entry(source)));
+    }
+
     if !eq.page.references.is_empty() {
         md.push_str("## References\n\n");
         for r in &eq.page.references {
-            let note = r.note.clone().unwrap_or_default();
-            md.push_str(&format!("- {} {}\n", r.source, note));
+            md.push_str(&format!("- {}\n", render_reference_entry(r)));
         }
         md.push_str("\n");
     }
@@ -1617,6 +1797,33 @@ fn escape_html(input: &str) -> String {
         .replace('&', "&amp;")
         .replace('<', "&lt;")
         .replace('>', "&gt;")
+}
+
+fn is_url(s: &str) -> bool {
+    let trimmed = s.trim();
+    trimmed.starts_with("http://") || trimmed.starts_with("https://")
+}
+
+fn render_reference_entry(r: &crate::docs::page_model::PageReference) -> String {
+    let source = r.source.trim();
+    let note = r.note.as_deref().unwrap_or("").trim();
+    if source.is_empty() {
+        return String::new();
+    }
+    if is_url(source) {
+        if note.is_empty() {
+            return format!("[{}]({})", source, source);
+        }
+        return format!("[{}]({}) — {}", source, source, note);
+    }
+    if is_url(note) {
+        return format!("[{}]({})", source, note);
+    }
+    if note.is_empty() {
+        source.to_string()
+    } else {
+        format!("{} — {}", source, note)
+    }
 }
 
 fn normalize_symbol_to_latex(symbol: &str) -> String {
@@ -1948,20 +2155,15 @@ fn render_equations_catalog_page(lib: &LibraryPresentation) -> String {
     md.push_str(
         "Browse all generated equations in one table. Use links to open full equation reference pages.\n\n",
     );
-    md.push_str("| Category | Equation | Path ID | Default Target | Variables | Constants Used |\n");
+    md.push_str("| Category | Equation | Path ID | Default Target | Variables | Source |\n");
     md.push_str("| --- | --- | --- | --- | --- | --- |\n");
     for eq in flatten_equations(lib) {
         let equation_link =
             routes::relative_doc_link("equations/index.md", &routes::equation_doc_path(&eq));
-        let constants_used = if eq.page.uses_constants.is_empty() {
-            "-".to_string()
+        let source = if let Some(source) = &eq.page.source {
+            render_reference_entry(source)
         } else {
-            eq.page
-                .uses_constants
-                .iter()
-                .map(|c| format!("`{}`", c.key))
-                .collect::<Vec<_>>()
-                .join(", ")
+            "-".to_string()
         };
         md.push_str(&format!(
             "| {} | [{}]({}) | `{}` | `{}` | {} | {} |\n",
@@ -1971,11 +2173,9 @@ fn render_equations_catalog_page(lib: &LibraryPresentation) -> String {
             eq.path_id,
             eq.page.default_target.as_deref().unwrap_or("-"),
             eq.page.variables.len(),
-            constants_used
+            source
         ));
     }
     md.push_str("\nUse the chapter tree for category/subcategory browsing.\n");
     md
 }
-
-

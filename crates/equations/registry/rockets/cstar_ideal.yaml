@@ -2,6 +2,7 @@ key: cstar_ideal
 taxonomy:
   category: rockets
 name: Ideal Characteristic Velocity
+source: "Sutton and Biblarz, Rocket Propulsion Elements"
 display:
   latex: 'c^* = \sqrt{\frac{R T_c}{\gamma}} \left(\frac{\gamma+1}{2}\right)^{(\gamma+1)/(2(\gamma-1))}'
 variables:

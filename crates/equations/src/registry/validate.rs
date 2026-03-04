@@ -111,6 +111,14 @@ pub fn validate_equation(eq: &EquationDef) -> Result<()> {
             eq.key
         )));
     }
+    if let Some(source) = &eq.source
+        && source.source.trim().is_empty()
+    {
+        return Err(EquationError::Validation(format!(
+            "equation '{}' source.source cannot be empty",
+            eq.key
+        )));
+    }
 
     for (key, var) in &eq.variables {
         let _ = resolved_symbol(key, var.symbol.as_deref());

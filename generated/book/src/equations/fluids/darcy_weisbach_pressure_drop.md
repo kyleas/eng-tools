@@ -113,3 +113,7 @@ let value = equations::fluids::darcy_weisbach_pressure_drop::solve_delta_p(
 
 - Returns SI by default; use `.value_in("<unit>")` for display units.
 
+## Source
+
+- Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics
+

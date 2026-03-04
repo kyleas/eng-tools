@@ -127,3 +127,7 @@ let value = equations::structures::euler_buckling_load::solve_p_cr(
 
 - Returns SI by default; use `.value_in("<unit>")` for display units.
 
+## Source
+
+- Roark's Formulas for Stress and Strain
+

@@ -2,6 +2,7 @@ key: orifice_mass_flow_incompressible
 taxonomy:
   category: fluids
 name: Incompressible Orifice Mass Flow
+source: "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics"
 display:
   latex: '\dot{m} = C_d A \sqrt{2 \rho \Delta p}'
 variables:

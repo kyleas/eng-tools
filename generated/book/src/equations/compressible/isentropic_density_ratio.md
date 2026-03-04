@@ -77,3 +77,7 @@ let value = equations::compressible::isentropic_density_ratio::solve_rho_rho0(
 )?;
 ```
 
+## Source
+
+- Anderson, Modern Compressible Flow: With Historical Perspective
+

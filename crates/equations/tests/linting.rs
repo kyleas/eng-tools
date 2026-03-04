@@ -31,4 +31,8 @@ tests:
         warnings.iter().any(|w| w.code == "unused_variable"),
         "warnings={warnings:?}"
     );
+    assert!(
+        warnings.iter().any(|w| w.code == "missing_source"),
+        "warnings={warnings:?}"
+    );
 }

@@ -157,7 +157,8 @@ pub fn validate_families(families: &[EquationFamilyDef], equations: &[EquationDe
             if v.equation_id == fam.canonical_equation {
                 canonical_in_variants = true;
             }
-            if let Some(prev_family) = equation_to_family.insert(v.equation_id.clone(), fam.key.clone())
+            if let Some(prev_family) =
+                equation_to_family.insert(v.equation_id.clone(), fam.key.clone())
                 && prev_family != fam.key
             {
                 return Err(EquationError::Validation(format!(

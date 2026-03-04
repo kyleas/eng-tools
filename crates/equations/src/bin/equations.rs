@@ -250,6 +250,7 @@ fn scaffold_equation(
 taxonomy:
   category: {category}
 name: {name}
+source: \"<primary source citation>\"
 display:
   latex: \"<equation latex>\"
 variables:

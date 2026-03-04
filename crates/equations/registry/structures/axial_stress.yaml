@@ -2,6 +2,7 @@ key: axial_stress
 taxonomy:
   category: structures
 name: Axial Normal Stress
+source: "Roark's Formulas for Stress and Strain"
 display:
   latex: '\sigma = \frac{F}{A}'
 variables:

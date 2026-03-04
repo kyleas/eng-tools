@@ -101,3 +101,7 @@ let value = equations::structures::longitudinal_stress_thin_wall::solve_sigma_l(
 
 - Returns SI by default; use `.value_in("<unit>")` for display units.
 
+## Source
+
+- Roark's Formulas for Stress and Strain
+

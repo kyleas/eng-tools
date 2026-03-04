@@ -3,6 +3,7 @@ taxonomy:
   category: fluids
   subcategories: []
 name: Colebrook-White Friction Factor
+source: "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics"
 display:
   latex: "\\frac{1}{\\sqrt{f}} + 2\\log_{10}\\left(\\frac{\\varepsilon_D}{3.7} + \\frac{2.51}{Re\\sqrt{f}}\\right) = 0"
   unicode: "1/sqrt(f) + 2 log10(eps_D/3.7 + 2.51/(Re sqrt(f))) = 0"

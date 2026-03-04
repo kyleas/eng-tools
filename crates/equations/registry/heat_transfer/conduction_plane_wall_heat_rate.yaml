@@ -2,6 +2,7 @@ key: conduction_plane_wall_heat_rate
 taxonomy:
   category: heat_transfer
 name: Plane-Wall Conduction Heat Rate
+source: "Incropera et al., Fundamentals of Heat and Mass Transfer"
 display:
   latex: '\dot{Q} = k A \frac{T_h - T_c}{L}'
 variables:

@@ -4,6 +4,7 @@ taxonomy:
   category: thermo
   subcategories: [ideal_gas]
 name: Ideal Gas Law (Density Form)
+source: "Moran et al., Fundamentals of Engineering Thermodynamics"
 display:
   latex: "P = \\rho R T"
 variables:

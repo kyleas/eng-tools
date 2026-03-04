@@ -32,6 +32,8 @@ pub struct EquationDef {
     pub assumptions: Vec<String>,
     #[serde(default)]
     pub references: Vec<Reference>,
+    #[serde(default)]
+    pub source: Option<Reference>,
     pub diagram: Option<DiagramMetadata>,
     #[schemars(with = "TestsSchema")]
     pub tests: TestsConfig,
@@ -132,8 +134,17 @@ struct EquationDefWire {
     assumptions: Vec<String>,
     #[serde(default)]
     references: Vec<Reference>,
+    #[serde(default)]
+    source: Option<SourceField>,
     diagram: Option<DiagramMetadata>,
     tests: TestsConfig,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(untagged)]
+enum SourceField {
+    Text(String),
+    Detail(Reference),
 }
 
 impl<'de> Deserialize<'de> for EquationDef {
@@ -177,8 +188,89 @@ impl<'de> Deserialize<'de> for EquationDef {
             branches: wire.branches,
             assumptions: wire.assumptions,
             references: wire.references,
+            source: normalize_source_field(wire.source),
             diagram: wire.diagram,
             tests: wire.tests,
         })
+    }
+}
+
+fn normalize_source_field(source: Option<SourceField>) -> Option<Reference> {
+    match source {
+        None => None,
+        Some(SourceField::Text(text)) => {
+            let trimmed = text.trim();
+            if trimmed.is_empty() {
+                None
+            } else {
+                Some(Reference {
+                    source: trimmed.to_string(),
+                    note: None,
+                })
+            }
+        }
+        Some(SourceField::Detail(detail)) => {
+            if detail.source.trim().is_empty() {
+                None
+            } else {
+                Some(detail)
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::EquationDef;
+
+    #[test]
+    fn source_accepts_string_shorthand() {
+        let yaml = r#"
+key: demo_eq
+taxonomy: { category: structures }
+name: Demo
+source: "Roark's Formulas for Stress and Strain"
+display: { latex: "x = y" }
+variables:
+  x: { name: X, dimension: dimensionless }
+  y: { name: Y, dimension: dimensionless }
+residual: "x - y"
+solve: { explicit_forms: { x: y } }
+assumptions: []
+tests:
+  - full_state: { x: 1, y: 1 }
+"#;
+        let eq: EquationDef = serde_yaml::from_str(yaml).expect("parse");
+        let source = eq.source.expect("source");
+        assert_eq!(source.source, "Roark's Formulas for Stress and Strain");
+        assert!(source.note.is_none());
+    }
+
+    #[test]
+    fn source_accepts_object_form() {
+        let yaml = r#"
+key: demo_eq
+taxonomy: { category: structures }
+name: Demo
+source:
+  source: Roark's Formulas for Stress and Strain
+  note: https://example.com/reference
+display: { latex: "x = y" }
+variables:
+  x: { name: X, dimension: dimensionless }
+  y: { name: Y, dimension: dimensionless }
+residual: "x - y"
+solve: { explicit_forms: { x: y } }
+assumptions: []
+tests:
+  - full_state: { x: 1, y: 1 }
+"#;
+        let eq: EquationDef = serde_yaml::from_str(yaml).expect("parse");
+        let source = eq.source.expect("source");
+        assert_eq!(source.source, "Roark's Formulas for Stress and Strain");
+        assert_eq!(
+            source.note.as_deref(),
+            Some("https://example.com/reference")
+        );
     }
 }

@@ -2,6 +2,7 @@ key: thermal_resistance_convection
 taxonomy:
   category: heat_transfer
 name: Convection Thermal Resistance
+source: "Incropera et al., Fundamentals of Heat and Mass Transfer"
 display:
   latex: 'R_{th} = \frac{1}{h A}'
 variables:

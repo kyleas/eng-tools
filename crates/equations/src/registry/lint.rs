@@ -25,6 +25,14 @@ pub fn lint_registry(equations: &[EquationDef]) -> Result<Vec<LintWarning>> {
 }
 
 fn lint_equation(eq: &EquationDef, out: &mut Vec<LintWarning>) -> Result<()> {
+    if eq.source.is_none() {
+        out.push(LintWarning {
+            equation: eq.key.clone(),
+            code: "missing_source",
+            message: "equation is missing top-level source metadata; add `source:` with citation (and optional URL in note)".to_string(),
+        });
+    }
+
     let residual_expr = parse_expression(&eq.relation.residual)?;
     let used_in_residual: BTreeSet<String> = collect_symbols(&residual_expr).into_iter().collect();
 

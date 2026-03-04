@@ -5,6 +5,7 @@ taxonomy:
 aliases:
   - isentropic_area_mach
 name: Isentropic Area-Mach Relation
+source: "Anderson, Modern Compressible Flow: With Historical Perspective"
 display:
   latex: "\\frac{A}{A^*} = \\frac{1}{M}\\left(\\frac{2}{\\gamma+1}\\left(1+\\frac{\\gamma-1}{2}M^2\\right)\\right)^{\\frac{\\gamma+1}{2(\\gamma-1)}}"
   unicode: "A/A* = (1/M) * ((2/(gamma+1))*(1+((gamma-1)/2)M^2))^((gamma+1)/(2(gamma-1)))"

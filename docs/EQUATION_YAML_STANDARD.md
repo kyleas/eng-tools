@@ -12,6 +12,7 @@ It exists to ensure:
 ## 2. Core principles
 - Residual/source-of-truth first: `residual` is authoritative.
 - Strong defaults: keep common files short and explicit only where needed.
+- Source traceability: every equation should carry a primary `source` citation.
 - Symbolic readability: preserve symbolic math for human-facing output.
 - Constants are first-class: reference constants symbolically; auto-resolve at solve time.
 - Tests are mandatory: every equation must include registry tests.
@@ -26,6 +27,7 @@ key: hoop_stress
 taxonomy:
   category: structures
 name: Thin-Wall Hoop Stress
+source: "Roark's Formulas for Stress and Strain"
 display:
   latex: "\\sigma_h = \\frac{P r}{t}"
 variables:
@@ -55,6 +57,7 @@ taxonomy:
   category: structures
 aliases: [thin_wall_hoop_stress]
 name: Thin-Wall Hoop Stress
+source: "Roark's Formulas for Stress and Strain"
 display:
   latex: "\\sigma_h = \\frac{P r}{t}"
 variables:
@@ -131,11 +134,21 @@ Use only when defaults are insufficient (special numerical bounds, branch-heavy 
 - Optional but strongly recommended.
 - Keep concise and physically meaningful.
 
-### 4.9 `references`
+### 4.9 `source`
+- Optional but strongly recommended.
+- Primary citation for the equation.
+- Preferred shape:
+  - string shorthand:
+    - `source: "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics"`
+  - object form:
+    - `source: { source: "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics", note: "https://..." }`
+- In generated docs, URL notes are rendered as clickable links.
+
+### 4.10 `references`
 - Optional.
 - Prefer authoritative source + short note.
 
-### 4.10 `tests`
+### 4.11 `tests`
 - Required.
 - Minimal valid form is one baseline `full_state`.
 
@@ -283,6 +296,7 @@ taxonomy:
   category: structures
 aliases: [thin_wall_hoop_stress]
 name: Thin-Wall Hoop Stress
+source: "Roark's Formulas for Stress and Strain"
 display:
   latex: "\\sigma_h = \\frac{P r}{t}"
 variables:
@@ -314,6 +328,7 @@ tests:
 key: circular_pipe_area
 taxonomy: { category: fluids }
 name: Circular Pipe Flow Area
+source: "Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics"
 display: { latex: "A = \\frac{\\pi D^2}{4}" }
 variables:
   A: { name: Flow area, dimension: area }

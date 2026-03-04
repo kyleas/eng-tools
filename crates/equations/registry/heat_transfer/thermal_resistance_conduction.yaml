@@ -2,6 +2,7 @@ key: thermal_resistance_conduction
 taxonomy:
   category: heat_transfer
 name: Conduction Thermal Resistance
+source: "Incropera et al., Fundamentals of Heat and Mass Transfer"
 display:
   latex: 'R_{th} = \frac{L}{k A}'
 variables:

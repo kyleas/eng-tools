@@ -77,3 +77,7 @@ let value = equations::compressible::isentropic_temperature_ratio::solve_t_t0(
 )?;
 ```
 
+## Source
+
+- Anderson, Modern Compressible Flow: With Historical Perspective
+

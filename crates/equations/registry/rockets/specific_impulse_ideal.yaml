@@ -1,7 +1,8 @@
 key: specific_impulse_ideal
 taxonomy:
   category: rockets
-name: Ideal Specific Impulse
+name: Ideal Specific Impulse
+source: "Sutton and Biblarz, Rocket Propulsion Elements"
 display:
   latex: 'I_{sp} = \frac{C_f c^*}{g_0}'
 variables:

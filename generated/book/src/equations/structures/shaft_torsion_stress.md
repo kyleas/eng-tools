@@ -101,3 +101,7 @@ let value = equations::structures::shaft_torsion_stress::solve_tau(
 
 - Returns SI by default; use `.value_in("<unit>")` for display units.
 
+## Source
+
+- Roark's Formulas for Stress and Strain
+

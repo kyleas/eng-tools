@@ -118,3 +118,7 @@ let value = equations::fluids::reynolds_number::solve_re(
 
 - Returns SI by default; use `.value_in("<unit>")` for display units.
 
+## Source
+
+- [Fox, McDonald, and Pritchard, Introduction to Fluid Mechanics](https://www.wiley.com/en-us/Introduction+to+Fluid+Mechanics%2C+9th+Edition-p-9781119721025)
+

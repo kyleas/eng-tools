@@ -95,3 +95,7 @@ let value = equations::rockets::thrust_from_mass_flow::solve_f(
 
 - Returns SI by default; use `.value_in("<unit>")` for display units.
 
+## Source
+
+- Sutton and Biblarz, Rocket Propulsion Elements
+

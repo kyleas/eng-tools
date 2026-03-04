@@ -82,3 +82,7 @@ let value = equations::rockets::thrust_coefficient_ideal::solve_c_f(
 )?;
 ```
 
+## Source
+
+- Sutton and Biblarz, Rocket Propulsion Elements
+

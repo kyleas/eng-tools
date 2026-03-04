@@ -108,3 +108,7 @@ let value = equations::thermo::density::solve_p(
 
 - Returns SI by default; use `.value_in("<unit>")` for display units.
 
+## Source
+
+- Moran et al., Fundamentals of Engineering Thermodynamics
+

@@ -61,6 +61,7 @@ struct UnifiedEquationEntry {
     category: String,
     subcategories: Vec<String>,
     default_target: Option<String>,
+    source: Option<String>,
     uses_constants: Vec<String>,
     resolver_contexts: Vec<String>,
 }
@@ -341,6 +342,7 @@ fn build_unified_catalog(
             category: p.category.clone(),
             subcategories: p.subcategories.clone(),
             default_target: p.default_target.clone(),
+            source: p.source.as_ref().map(|s| s.source.clone()),
             uses_constants: p.uses_constants.iter().map(|c| c.key.clone()).collect(),
             resolver_contexts,
         });

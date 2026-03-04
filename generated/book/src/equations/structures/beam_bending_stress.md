@@ -101,3 +101,7 @@ let value = equations::structures::beam_bending_stress::solve_sigma_b(
 
 - Returns SI by default; use `.value_in("<unit>")` for display units.
 
+## Source
+
+- Roark's Formulas for Stress and Strain
+
