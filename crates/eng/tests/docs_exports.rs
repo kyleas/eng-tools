@@ -44,12 +44,18 @@ fn unified_mdbook_export_api_writes_book_structure() {
     );
     assert_eq!(paths.source_dir, book_root);
 
-    let isentropic_page =
-        std::fs::read_to_string(book_root.join("src").join("devices").join("isentropic_calc.md"))
-            .expect("read generated isentropic device page");
+    let isentropic_page = std::fs::read_to_string(
+        book_root
+            .join("src")
+            .join("devices")
+            .join("isentropic_calc.md"),
+    )
+    .expect("read generated isentropic device page");
     assert!(isentropic_page.contains("# Isentropic Calculator"));
     assert!(isentropic_page.contains("ENG_ISENTROPIC("));
     assert!(isentropic_page.contains("ENG_ISENTROPIC_FROM_A_ASTAR_TO_M("));
+    assert!(isentropic_page.contains("ENG_ISENTROPIC_FROM_NU_DEG_TO_M("));
+    assert!(isentropic_page.contains("ENG_ISENTROPIC_FROM_M_TO_NU_DEG("));
 
     let area_mach = std::fs::read_to_string(
         book_root
@@ -63,6 +69,17 @@ fn unified_mdbook_export_api_writes_book_structure() {
     assert!(area_mach.contains("branch=\""));
     assert!(area_mach.contains("ENG_COMPRESSIBLE_AREA_MACH_M("));
     assert!(area_mach.contains("ENG_EQUATION_BRANCHES_TEXT(\"compressible.area_mach\")"));
+
+    let prandtl_meyer = std::fs::read_to_string(
+        book_root
+            .join("src")
+            .join("equations")
+            .join("compressible")
+            .join("prandtl_meyer.md"),
+    )
+    .expect("read generated prandtl_meyer page");
+    assert!(prandtl_meyer.contains("Prandtl-Meyer"));
+    assert!(prandtl_meyer.contains("ENG_COMPRESSIBLE_PRANDTL_MEYER_M("));
 
     let continuity = std::fs::read_to_string(
         book_root

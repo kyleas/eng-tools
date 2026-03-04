@@ -80,8 +80,12 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(xloil_text.contains("ENG_ISENTROPIC_PATH_TEXT"));
     assert!(xloil_text.contains("ENG_ISENTROPIC_FROM_M_TO_P_P0"));
     assert!(xloil_text.contains("ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0"));
+    assert!(xloil_text.contains("ENG_ISENTROPIC_FROM_NU_DEG_TO_M"));
+    assert!(xloil_text.contains("ENG_ISENTROPIC_FROM_M_TO_NU_DEG"));
     assert!(xloil_text.contains("ENG_ISENTROPIC_FROM_A_ASTAR_TO_M"));
     assert!(xloil_text.contains("ENG_EQUATION_TARGETS"));
+    assert!(xloil_text.contains("ENG_COMPRESSIBLE_PRANDTL_MEYER_NU"));
+    assert!(xloil_text.contains("ENG_COMPRESSIBLE_PRANDTL_MEYER_M"));
     assert!(xloil_text.contains("Arguments:"));
     assert!(xloil_text.contains("density"));
     assert!(xloil_text.contains("roughness"));
@@ -112,7 +116,11 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(pyxll_text.contains("ENG_ISENTROPIC_PATH_TEXT"));
     assert!(pyxll_text.contains("ENG_ISENTROPIC_FROM_M_TO_P_P0"));
     assert!(pyxll_text.contains("ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0"));
+    assert!(pyxll_text.contains("ENG_ISENTROPIC_FROM_NU_DEG_TO_M"));
+    assert!(pyxll_text.contains("ENG_ISENTROPIC_FROM_M_TO_NU_DEG"));
     assert!(pyxll_text.contains("ENG_ISENTROPIC_FROM_A_ASTAR_TO_M"));
+    assert!(pyxll_text.contains("ENG_COMPRESSIBLE_PRANDTL_MEYER_NU"));
+    assert!(pyxll_text.contains("ENG_COMPRESSIBLE_PRANDTL_MEYER_M"));
     assert!(pyxll_text.contains("Arguments:"));
     assert!(pyxll_text.contains("state_prop_1"));
 
@@ -136,6 +144,16 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(py_devices.contains("def isentropic_calc("));
     assert!(py_devices.contains("def isentropic_pivot_mach("));
     assert!(py_devices.contains("def isentropic_path_text("));
+    assert!(py_devices.contains("def isentropic_from_nu_deg_to_m("));
+    assert!(py_devices.contains("def isentropic_from_m_to_nu_deg("));
+
+    let py_pm = fs::read_to_string(
+        tmp.path()
+            .join("bindings/python/engpy/equations/compressible/prandtl_meyer.py"),
+    )
+    .expect("read generated python PM module");
+    assert!(py_pm.contains("def solve_nu("));
+    assert!(py_pm.contains("def solve_m("));
 
     let pyproject_text = fs::read_to_string(pyproject).expect("read generated pyproject");
     assert!(pyproject_text.contains("maturin"));

@@ -116,7 +116,10 @@ fn invoke_equation_solve_area_mach_honors_explicit_branch() {
     let sub_resp = run_invoke(sub_req);
     assert_eq!(sub_resp["ok"], true, "response: {sub_resp}");
     let m_sub = sub_resp["value"].as_f64().unwrap_or(0.0);
-    assert!(m_sub > 0.0 && m_sub < 1.0, "expected subsonic branch, got {m_sub}");
+    assert!(
+        m_sub > 0.0 && m_sub < 1.0,
+        "expected subsonic branch, got {m_sub}"
+    );
 
     let sup_req = json!({
         "protocol_version": "eng-invoke.v1",
@@ -225,7 +228,10 @@ fn invoke_isentropic_calc_supports_deg_input_and_output() {
     let resp = run_invoke(req);
     assert_eq!(resp["ok"], true, "response: {resp}");
     let mu_deg = resp["value"].as_f64().unwrap_or(0.0);
-    assert!((mu_deg - 30.0).abs() < 1e-8, "expected 30 deg, got {mu_deg}");
+    assert!(
+        (mu_deg - 30.0).abs() < 1e-8,
+        "expected 30 deg, got {mu_deg}"
+    );
 }
 
 #[test]
@@ -250,6 +256,79 @@ fn invoke_isentropic_calc_requires_branch_for_area_ratio_inversion() {
             .contains("branch is required"),
         "expected missing-branch guidance, got: {}",
         resp["error"]["message"].as_str().unwrap_or("")
+    );
+}
+
+#[test]
+fn invoke_equation_solve_prandtl_meyer_forward_and_inverse_work() {
+    let forward_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "equation.solve",
+        "args": {
+            "path_id": "compressible.prandtl_meyer",
+            "target": "nu",
+            "M": 2.0,
+            "gamma": 1.4
+        }
+    });
+    let forward_resp = run_invoke(forward_req);
+    assert_eq!(forward_resp["ok"], true, "response: {forward_resp}");
+    let nu = forward_resp["value"].as_f64().unwrap_or(-1.0);
+    assert!((nu - 0.460_413_682_082_694_73).abs() < 1e-9, "nu={nu}");
+
+    let inverse_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "equation.solve",
+        "args": {
+            "path_id": "compressible.prandtl_meyer",
+            "target": "M",
+            "nu": nu,
+            "gamma": 1.4
+        }
+    });
+    let inverse_resp = run_invoke(inverse_req);
+    assert_eq!(inverse_resp["ok"], true, "response: {inverse_resp}");
+    let m = inverse_resp["value"].as_f64().unwrap_or(-1.0);
+    assert!((m - 2.0).abs() < 1e-8, "M={m}");
+}
+
+#[test]
+fn invoke_isentropic_calc_supports_prandtl_meyer_deg_kinds() {
+    let req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "device.isentropic_calc.value",
+        "args": {
+            "input_kind": "prandtl_meyer_angle_deg",
+            "input_value": 26.379760813416457,
+            "target_kind": "mach",
+            "gamma": 1.4
+        }
+    });
+    let resp = run_invoke(req);
+    assert_eq!(resp["ok"], true, "response: {resp}");
+    let m = resp["value"].as_f64().unwrap_or(0.0);
+    assert!((m - 2.0).abs() < 1e-8, "expected M~2, got {m}");
+}
+
+#[test]
+fn invoke_isentropic_calc_rejects_out_of_domain_prandtl_meyer_angle() {
+    let req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "device.isentropic_calc.value",
+        "args": {
+            "input_kind": "prandtl_meyer_angle_deg",
+            "input_value": 150.0,
+            "target_kind": "mach",
+            "gamma": 1.4
+        }
+    });
+    let resp = run_invoke(req);
+    assert_eq!(resp["ok"], false, "response: {resp}");
+    assert_eq!(resp["error"]["code"], "device_isentropic_calc_failed");
+    let msg = resp["error"]["message"].as_str().unwrap_or("");
+    assert!(
+        msg.contains("PrandtlMeyerAngleRad") && msg.contains("expected 0 <="),
+        "expected PM domain guidance, got: {msg}"
     );
 }
 
@@ -304,7 +383,10 @@ fn invoke_format_and_meta_helpers_work() {
         }
     });
     let missing_in_unit_resp = run_invoke(missing_in_unit_req);
-    assert_eq!(missing_in_unit_resp["ok"], false, "response: {missing_in_unit_resp}");
+    assert_eq!(
+        missing_in_unit_resp["ok"], false,
+        "response: {missing_in_unit_resp}"
+    );
     assert_eq!(missing_in_unit_resp["error"]["code"], "missing_arg");
     assert_eq!(missing_in_unit_resp["error"]["field"], "in_unit");
 
@@ -327,7 +409,10 @@ fn invoke_format_and_meta_helpers_work() {
         "args": { "path_id": "structures.hoop_stress" }
     });
     let targets_text_resp = run_invoke(targets_text_req);
-    assert_eq!(targets_text_resp["ok"], true, "response: {targets_text_resp}");
+    assert_eq!(
+        targets_text_resp["ok"], true,
+        "response: {targets_text_resp}"
+    );
     let targets_text = targets_text_resp["value"].as_str().unwrap_or("");
     assert_eq!(targets_text, "P; r; sigma_h; t");
 
@@ -340,7 +425,10 @@ fn invoke_format_and_meta_helpers_work() {
     assert_eq!(vars_table_resp["ok"], true, "response: {vars_table_resp}");
     let rows = vars_table_resp["value"].as_array().expect("table rows");
     assert!(!rows.is_empty());
-    assert!(rows.iter().all(|r| r.as_array().is_some_and(|a| a.len() == 2)));
+    assert!(
+        rows.iter()
+            .all(|r| r.as_array().is_some_and(|a| a.len() == 2))
+    );
 
     let branches_text_req = json!({
         "protocol_version": "eng-invoke.v1",
@@ -348,7 +436,10 @@ fn invoke_format_and_meta_helpers_work() {
         "args": { "path_id": "compressible.area_mach" }
     });
     let branches_text_resp = run_invoke(branches_text_req);
-    assert_eq!(branches_text_resp["ok"], true, "response: {branches_text_resp}");
+    assert_eq!(
+        branches_text_resp["ok"], true,
+        "response: {branches_text_resp}"
+    );
     let branches_text = branches_text_resp["value"].as_str().unwrap_or("");
     assert!(branches_text.contains("subsonic"));
     assert!(branches_text.contains("supersonic"));
@@ -359,10 +450,19 @@ fn invoke_format_and_meta_helpers_work() {
         "args": { "path_id": "compressible.area_mach" }
     });
     let branches_table_resp = run_invoke(branches_table_req);
-    assert_eq!(branches_table_resp["ok"], true, "response: {branches_table_resp}");
-    let branch_rows = branches_table_resp["value"].as_array().expect("branch rows");
+    assert_eq!(
+        branches_table_resp["ok"], true,
+        "response: {branches_table_resp}"
+    );
+    let branch_rows = branches_table_resp["value"]
+        .as_array()
+        .expect("branch rows");
     assert!(!branch_rows.is_empty());
-    assert!(branch_rows.iter().all(|r| r.as_array().is_some_and(|a| a.len() == 2)));
+    assert!(
+        branch_rows
+            .iter()
+            .all(|r| r.as_array().is_some_and(|a| a.len() == 2))
+    );
 
     let fluid_count_req = json!({
         "protocol_version": "eng-invoke.v1",

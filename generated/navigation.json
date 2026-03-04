@@ -12,7 +12,13 @@
           "isentropic_density_ratio",
           "isentropic_pressure_ratio",
           "isentropic_temperature_ratio",
-          "mach_angle"
+          "mach_angle",
+          "normal_shock_density_ratio",
+          "normal_shock_m2",
+          "normal_shock_pressure_ratio",
+          "normal_shock_stagnation_pressure_ratio",
+          "normal_shock_temperature_ratio",
+          "prandtl_meyer"
         ]
       }
     },

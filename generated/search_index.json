@@ -83,6 +83,84 @@
       ]
     },
     {
+      "key": "normal_shock_density_ratio",
+      "path_id": "compressible.normal_shock_density_ratio",
+      "name": "Normal Shock Density Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Density ratio across a normal shock.",
+      "aliases": [],
+      "solve_targets": [
+        "rho2_rho1",
+        "M1"
+      ]
+    },
+    {
+      "key": "normal_shock_m2",
+      "path_id": "compressible.normal_shock_m2",
+      "name": "Normal Shock Downstream Mach Number",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Downstream Mach number after a normal shock.",
+      "aliases": [],
+      "solve_targets": [
+        "M2",
+        "M1"
+      ]
+    },
+    {
+      "key": "normal_shock_pressure_ratio",
+      "path_id": "compressible.normal_shock_pressure_ratio",
+      "name": "Normal Shock Static Pressure Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Static pressure ratio across a normal shock.",
+      "aliases": [],
+      "solve_targets": [
+        "p2_p1",
+        "M1"
+      ]
+    },
+    {
+      "key": "normal_shock_stagnation_pressure_ratio",
+      "path_id": "compressible.normal_shock_stagnation_pressure_ratio",
+      "name": "Normal Shock Stagnation Pressure Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Stagnation pressure ratio across a normal shock.",
+      "aliases": [],
+      "solve_targets": [
+        "p02_p01",
+        "M1"
+      ]
+    },
+    {
+      "key": "normal_shock_temperature_ratio",
+      "path_id": "compressible.normal_shock_temperature_ratio",
+      "name": "Normal Shock Temperature Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Static temperature ratio across a normal shock.",
+      "aliases": [],
+      "solve_targets": [
+        "T2_T1",
+        "M1"
+      ]
+    },
+    {
+      "key": "prandtl_meyer",
+      "path_id": "compressible.prandtl_meyer",
+      "name": "Prandtl-Meyer Expansion Angle",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Prandtl-Meyer angle as a function of Mach number for supersonic expansion.",
+      "aliases": [],
+      "solve_targets": [
+        "nu",
+        "M"
+      ]
+    },
+    {
       "key": "circular_pipe_area",
       "path_id": "fluids.circular_pipe_area",
       "name": "Circular Pipe Flow Area",

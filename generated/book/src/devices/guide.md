@@ -65,5 +65,13 @@ Devices/components compose multiple atomic equations into a higher-level enginee
 - Branch-sensitive inverse paths (such as `area_ratio -> mach`) require explicit branch selection.
 - Outputs include scalar value, pivot Mach, and step diagnostics/path text.
 
+## Calculator Device: Normal Shock
+
+- API entrypoint: `eng::devices::normal_shock_calc()`
+- Uses deterministic M1-pivot orchestration (`input_kind -> pivot M1 -> target_kind`).
+- All mathematical relations are resolved through registry-backed atomic equations.
+- Outputs include scalar value, pivot M1, and step diagnostics/path text.
+
 See [Devices Index](./index.md) and [Pipe Pressure Drop](./pipe_loss.md).
 See also [Isentropic Calculator](./isentropic_calc.md).
+See also [Normal Shock Calculator](./normal_shock_calc.md).

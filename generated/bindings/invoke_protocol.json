@@ -171,6 +171,22 @@
       "description": "Run isentropic calculator device and return compact path trace text"
     },
     {
+      "op": "device.normal_shock_calc",
+      "description": "Run normal-shock calculator device and return value+pivot+path diagnostics"
+    },
+    {
+      "op": "device.normal_shock_calc.value",
+      "description": "Run normal-shock calculator device and return scalar output value"
+    },
+    {
+      "op": "device.normal_shock_calc.pivot_m1",
+      "description": "Run normal-shock calculator device and return resolved pivot M1"
+    },
+    {
+      "op": "device.normal_shock_calc.path_text",
+      "description": "Run normal-shock calculator device and return compact path trace text"
+    },
+    {
       "op": "device.pipe_loss.solve_delta_p",
       "description": "Solve pipe-loss device pressure drop"
     },

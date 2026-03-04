@@ -13,6 +13,12 @@
 | [Isentropic Pressure Ratio](compressible/isentropic_pressure_ratio.md) | Compressible | 2 | - |
 | [Isentropic Temperature Ratio](compressible/isentropic_temperature_ratio.md) | Compressible | 2 | - |
 | [Mach Angle](compressible/mach_angle.md) | Compressible | 2 | - |
+| [Normal Shock Density Ratio](compressible/normal_shock_density_ratio.md) | Compressible | 2 | - |
+| [Normal Shock Downstream Mach Number](compressible/normal_shock_m2.md) | Compressible | 2 | - |
+| [Normal Shock Static Pressure Ratio](compressible/normal_shock_pressure_ratio.md) | Compressible | 2 | - |
+| [Normal Shock Stagnation Pressure Ratio](compressible/normal_shock_stagnation_pressure_ratio.md) | Compressible | 2 | - |
+| [Normal Shock Temperature Ratio](compressible/normal_shock_temperature_ratio.md) | Compressible | 2 | - |
+| [Prandtl-Meyer Expansion Angle](compressible/prandtl_meyer.md) | Compressible | 2 | - |
 | [Circular Pipe Flow Area](fluids/circular_pipe_area.md) | Fluids | 2 | `pi` |
 | [Colebrook-White Friction Factor](fluids/colebrook.md) | Fluids | 1 | - |
 | [Continuity Mass Flow](fluids/continuity_mass_flow.md) | Fluids | 4 | - |

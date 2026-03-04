@@ -23,7 +23,7 @@
       "name": "Isentropic Calculator",
       "summary": "Calculator-style compressible device: solve any supported isentropic input to any supported output through Mach pivot orchestration.",
       "supported_modes": [
-        "Input kinds: Mach, MachAngle, p/p0, T/T0, rho/rho0, A/A*",
+        "Input kinds: Mach, MachAngle, Prandtl-Meyer angle, p/p0, T/T0, rho/rho0, A/A*",
         "Branch-aware inversion for A/A*"
       ],
       "outputs": [
@@ -32,6 +32,21 @@
         "path diagnostics"
       ],
       "route": "devices/isentropic_calc.md"
+    },
+    {
+      "key": "normal_shock_calc",
+      "name": "Normal Shock Calculator",
+      "summary": "Calculator-style compressible device: solve normal-shock input kinds to target kinds through deterministic M1 pivot orchestration.",
+      "supported_modes": [
+        "Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01",
+        "Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01"
+      ],
+      "outputs": [
+        "value_si",
+        "pivot_m1",
+        "path diagnostics"
+      ],
+      "route": "devices/normal_shock_calc.md"
     }
   ]
 }

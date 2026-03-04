@@ -139,3 +139,52 @@ fn qty_macro_dimension_mismatch_is_rejected_by_given_dimension() {
         .expect_err("expected dimension mismatch");
     assert!(err.to_string().contains("dimension mismatch"));
 }
+
+#[test]
+fn prandtl_meyer_forward_inverse_and_units_work() {
+    let gamma = 1.4;
+    let nu = eq
+        .solve("compressible.prandtl_meyer")
+        .for_target("nu")
+        .given("M", 2.0)
+        .given("gamma", gamma)
+        .value()
+        .expect("nu solve");
+    assert!((nu - 0.460_413_682_082_694_73).abs() < 1e-10);
+
+    let m = eq
+        .solve("compressible.prandtl_meyer")
+        .for_target("M")
+        .given("nu", nu)
+        .given("gamma", gamma)
+        .value()
+        .expect("M solve");
+    assert!((m - 2.0).abs() < 1e-8);
+
+    let m_from_deg = eq
+        .solve("compressible.prandtl_meyer")
+        .for_target("M")
+        .given("nu", "26.379760813416457 deg")
+        .given("gamma", gamma)
+        .value()
+        .expect("M solve from deg");
+    assert!((m_from_deg - 2.0).abs() < 1e-8);
+}
+
+#[test]
+fn prandtl_meyer_out_of_domain_nu_errors() {
+    let err = eq
+        .solve("compressible.prandtl_meyer")
+        .for_target("M")
+        .given("nu", 3.0)
+        .given("gamma", 1.4)
+        .value()
+        .expect_err("expected out-of-domain PM angle");
+    let msg = err.to_string();
+    assert!(
+        msg.contains("could not discover a valid bracket")
+            || msg.contains("does not straddle a root")
+            || msg.contains("invalid domain"),
+        "unexpected error: {msg}"
+    );
+}

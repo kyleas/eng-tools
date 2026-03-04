@@ -36,6 +36,10 @@ pub const INVOKE_SUPPORTED_OPS: &[&str] = &[
     "device.isentropic_calc.value",
     "device.isentropic_calc.pivot_mach",
     "device.isentropic_calc.path_text",
+    "device.normal_shock_calc",
+    "device.normal_shock_calc.value",
+    "device.normal_shock_calc.pivot_m1",
+    "device.normal_shock_calc.path_text",
     "device.pipe_loss.solve_delta_p",
     "fluid.prop",
     "material.prop",
@@ -239,8 +243,7 @@ pub fn invoke_protocol_spec() -> InvokeProtocolSpec {
                     }
                     "fluid.property.count" => "Read fluid property count".to_string(),
                     "material.properties.text" => {
-                        "Read material properties as one deterministic delimited string"
-                            .to_string()
+                        "Read material properties as one deterministic delimited string".to_string()
                     }
                     "material.properties.table" => {
                         "Read material properties as 2-column table rows".to_string()
@@ -260,10 +263,27 @@ pub fn invoke_protocol_spec() -> InvokeProtocolSpec {
                             .to_string()
                     }
                     "device.isentropic_calc.pivot_mach" => {
-                        "Run isentropic calculator device and return resolved pivot Mach".to_string()
+                        "Run isentropic calculator device and return resolved pivot Mach"
+                            .to_string()
                     }
                     "device.isentropic_calc.path_text" => {
                         "Run isentropic calculator device and return compact path trace text"
+                            .to_string()
+                    }
+                    "device.normal_shock_calc" => {
+                        "Run normal-shock calculator device and return value+pivot+path diagnostics"
+                            .to_string()
+                    }
+                    "device.normal_shock_calc.value" => {
+                        "Run normal-shock calculator device and return scalar output value"
+                            .to_string()
+                    }
+                    "device.normal_shock_calc.pivot_m1" => {
+                        "Run normal-shock calculator device and return resolved pivot M1"
+                            .to_string()
+                    }
+                    "device.normal_shock_calc.path_text" => {
+                        "Run normal-shock calculator device and return compact path trace text"
                             .to_string()
                     }
                     "device.pipe_loss.solve_delta_p" => {

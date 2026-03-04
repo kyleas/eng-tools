@@ -13,15 +13,20 @@ def e_n_g_c_o_n_s_t(key):
     """Get constant value from registry | Arguments: | - key: Constant key | Returns: f64 | Example: =ENG_CONST('g0')"""
     return invoke("constant.get", {"key": key})
 
-@xl_func(name="ENG_ISENTROPIC", doc="Isentropic calculator: input kind -> target kind through Mach pivot | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: f64 | Example: =ENG_ISENTROPIC('mach',2.0,'pressure_ratio',1.4,'')")
+@xl_func(name="ENG_ISENTROPIC", doc="Isentropic calculator: input kind -> target kind through Mach pivot | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: f64 | Example: =ENG_ISENTROPIC('mach',2.0,'pressure_ratio',1.4,'')")
 def e_n_g_i_s_e_n_t_r_o_p_i_c(value_kind_in, value_in, target_kind_out, gamma, branch=""):
-    """Isentropic calculator: input kind -> target kind through Mach pivot | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: f64 | Example: =ENG_ISENTROPIC('mach',2.0,'pressure_ratio',1.4,'')"""
+    """Isentropic calculator: input kind -> target kind through Mach pivot | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: f64 | Example: =ENG_ISENTROPIC('mach',2.0,'pressure_ratio',1.4,'')"""
     return invoke("device.isentropic_calc.value", {"input_kind": value_kind_in, "input_value": value_in, "target_kind": target_kind_out, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
 
 @xl_func(name="ENG_ISENTROPIC_FROM_A_ASTAR_TO_M", doc="Convenience isentropic path: A/A* -> Mach (branch required) | Arguments: | - value_in: Area ratio A/A* | - gamma: Specific heat ratio | - branch: Required: subsonic or supersonic | Returns: f64 | Example: =ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,'supersonic')")
 def e_n_g_i_s_e_n_t_r_o_p_i_c_f_r_o_m_a_a_s_t_a_r_t_o_m(value_in, gamma, branch=""):
     """Convenience isentropic path: A/A* -> Mach (branch required) | Arguments: | - value_in: Area ratio A/A* | - gamma: Specific heat ratio | - branch: Required: subsonic or supersonic | Returns: f64 | Example: =ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,'supersonic')"""
     return invoke("device.isentropic_calc.value", {"input_kind": "area_ratio", "target_kind": "mach", "input_value": value_in, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_ISENTROPIC_FROM_M_TO_NU_DEG", doc="Convenience isentropic path: Mach -> nu(deg) | Arguments: | - value_in: Mach number | - gamma: Specific heat ratio | - branch: Optional branch (unused for this path) | Returns: f64 | Example: =ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,'')")
+def e_n_g_i_s_e_n_t_r_o_p_i_c_f_r_o_m_m_t_o_n_u_d_e_g(value_in, gamma, branch=""):
+    """Convenience isentropic path: Mach -> nu(deg) | Arguments: | - value_in: Mach number | - gamma: Specific heat ratio | - branch: Optional branch (unused for this path) | Returns: f64 | Example: =ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,'')"""
+    return invoke("device.isentropic_calc.value", {"input_kind": "mach", "target_kind": "prandtl_meyer_angle_deg", "input_value": value_in, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
 
 @xl_func(name="ENG_ISENTROPIC_FROM_M_TO_P_P0", doc="Convenience isentropic path: Mach -> p/p0 | Arguments: | - value_in: Mach number | - gamma: Specific heat ratio | - branch: Optional branch (unused for this path) | Returns: f64 | Example: =ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,'')")
 def e_n_g_i_s_e_n_t_r_o_p_i_c_f_r_o_m_m_t_o_p_p0(value_in, gamma, branch=""):
@@ -33,14 +38,19 @@ def e_n_g_i_s_e_n_t_r_o_p_i_c_f_r_o_m_m_u_d_e_g_t_o_p_p0(value_in, gamma, branch
     """Convenience isentropic path: mu(deg) -> p/p0 | Arguments: | - value_in: Mach angle in degrees | - gamma: Specific heat ratio | - branch: Optional branch (unused for this path) | Returns: f64 | Example: =ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30.0,1.4,'')"""
     return invoke("device.isentropic_calc.value", {"input_kind": "mach_angle_deg", "target_kind": "pressure_ratio", "input_value": value_in, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
 
-@xl_func(name="ENG_ISENTROPIC_PATH_TEXT", doc="Isentropic calculator helper: compact step trace text | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: str | Example: =ENG_ISENTROPIC_PATH_TEXT('mach_angle_deg',30.0,'pressure_ratio',1.4,'')")
+@xl_func(name="ENG_ISENTROPIC_FROM_NU_DEG_TO_M", doc="Convenience isentropic path: nu(deg) -> Mach | Arguments: | - value_in: Prandtl-Meyer angle in degrees | - gamma: Specific heat ratio | - branch: Optional branch (unused for this path) | Returns: f64 | Example: =ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,'')")
+def e_n_g_i_s_e_n_t_r_o_p_i_c_f_r_o_m_n_u_d_e_g_t_o_m(value_in, gamma, branch=""):
+    """Convenience isentropic path: nu(deg) -> Mach | Arguments: | - value_in: Prandtl-Meyer angle in degrees | - gamma: Specific heat ratio | - branch: Optional branch (unused for this path) | Returns: f64 | Example: =ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,'')"""
+    return invoke("device.isentropic_calc.value", {"input_kind": "prandtl_meyer_angle_deg", "target_kind": "mach", "input_value": value_in, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_ISENTROPIC_PATH_TEXT", doc="Isentropic calculator helper: compact step trace text | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: str | Example: =ENG_ISENTROPIC_PATH_TEXT('mach_angle_deg',30.0,'pressure_ratio',1.4,'')")
 def e_n_g_i_s_e_n_t_r_o_p_i_c_p_a_t_h_t_e_x_t(value_kind_in, value_in, target_kind_out, gamma, branch=""):
-    """Isentropic calculator helper: compact step trace text | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: str | Example: =ENG_ISENTROPIC_PATH_TEXT('mach_angle_deg',30.0,'pressure_ratio',1.4,'')"""
+    """Isentropic calculator helper: compact step trace text | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: str | Example: =ENG_ISENTROPIC_PATH_TEXT('mach_angle_deg',30.0,'pressure_ratio',1.4,'')"""
     return invoke("device.isentropic_calc.path_text", {"input_kind": value_kind_in, "input_value": value_in, "target_kind": target_kind_out, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
 
-@xl_func(name="ENG_ISENTROPIC_PIVOT_MACH", doc="Isentropic calculator helper: return resolved pivot Mach | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: f64 | Example: =ENG_ISENTROPIC_PIVOT_MACH('area_ratio',2.0,'mach',1.4,'subsonic')")
+@xl_func(name="ENG_ISENTROPIC_PIVOT_MACH", doc="Isentropic calculator helper: return resolved pivot Mach | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: f64 | Example: =ENG_ISENTROPIC_PIVOT_MACH('area_ratio',2.0,'mach',1.4,'subsonic')")
 def e_n_g_i_s_e_n_t_r_o_p_i_c_p_i_v_o_t_m_a_c_h(value_kind_in, value_in, target_kind_out, gamma, branch=""):
-    """Isentropic calculator helper: return resolved pivot Mach | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: f64 | Example: =ENG_ISENTROPIC_PIVOT_MACH('area_ratio',2.0,'mach',1.4,'subsonic')"""
+    """Isentropic calculator helper: return resolved pivot Mach | Arguments: | - value_kind_in: Input kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - value_in: Input value | - target_kind_out: Target kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio) | - gamma: Specific heat ratio | - branch: Optional branch for double-valued inversions (subsonic/supersonic) | Returns: f64 | Example: =ENG_ISENTROPIC_PIVOT_MACH('area_ratio',2.0,'mach',1.4,'subsonic')"""
     return invoke("device.isentropic_calc.pivot_mach", {"input_kind": value_kind_in, "input_value": value_in, "target_kind": target_kind_out, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
 
 @xl_func(name="ENG_DEVICE_MODES", doc="Read supported modes for a device | Arguments: | - key: Device key | Returns: list | Example: =ENG_DEVICE_MODES('pipe_loss')")
@@ -57,6 +67,46 @@ def e_n_g_d_e_v_i_c_e_m_o_d_e_c_o_u_n_t(key):
 def e_n_g_d_e_v_i_c_e_m_o_d_e_s_t_e_x_t(key):
     """Read device modes as delimited text | Arguments: | - key: Device key | Returns: str | Example: =ENG_DEVICE_MODES_TEXT('pipe_loss')"""
     return invoke("device.modes.text", {"key": key})
+
+@xl_func(name="ENG_NORMAL_SHOCK", doc="Normal shock calculator: input kind -> target kind through M1 pivot | Arguments: | - input_kind: Input kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - input_value: Input value | - target_kind: Target kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_NORMAL_SHOCK('m1',2.0,'p2_p1',1.4)")
+def e_n_g_n_o_r_m_a_l_s_h_o_c_k(input_kind, input_value, target_kind, gamma):
+    """Normal shock calculator: input kind -> target kind through M1 pivot | Arguments: | - input_kind: Input kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - input_value: Input value | - target_kind: Target kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_NORMAL_SHOCK('m1',2.0,'p2_p1',1.4)"""
+    return invoke("device.normal_shock_calc.value", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma})
+
+@xl_func(name="ENG_NORMAL_SHOCK_FROM_M1_TO_M2", doc="Convenience normal-shock path: M1 -> M2 | Arguments: | - input_value: Upstream Mach number M1 | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_NORMAL_SHOCK_FROM_M1_TO_M2(2.0,1.4)")
+def e_n_g_n_o_r_m_a_l_s_h_o_c_k_f_r_o_m_m1_t_o_m2(input_value, gamma):
+    """Convenience normal-shock path: M1 -> M2 | Arguments: | - input_value: Upstream Mach number M1 | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_NORMAL_SHOCK_FROM_M1_TO_M2(2.0,1.4)"""
+    return invoke("device.normal_shock_calc.value", {"input_kind": "m1", "target_kind": "m2", "input_value": input_value, "gamma": gamma})
+
+@xl_func(name="ENG_NORMAL_SHOCK_FROM_M1_TO_P02_P01", doc="Convenience normal-shock path: M1 -> p02/p01 | Arguments: | - input_value: Upstream Mach number M1 | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_NORMAL_SHOCK_FROM_M1_TO_P02_P01(2.0,1.4)")
+def e_n_g_n_o_r_m_a_l_s_h_o_c_k_f_r_o_m_m1_t_o_p02_p01(input_value, gamma):
+    """Convenience normal-shock path: M1 -> p02/p01 | Arguments: | - input_value: Upstream Mach number M1 | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_NORMAL_SHOCK_FROM_M1_TO_P02_P01(2.0,1.4)"""
+    return invoke("device.normal_shock_calc.value", {"input_kind": "m1", "target_kind": "p02_p01", "input_value": input_value, "gamma": gamma})
+
+@xl_func(name="ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1", doc="Convenience normal-shock path: M1 -> p2/p1 | Arguments: | - input_value: Upstream Mach number M1 | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1(2.0,1.4)")
+def e_n_g_n_o_r_m_a_l_s_h_o_c_k_f_r_o_m_m1_t_o_p2_p1(input_value, gamma):
+    """Convenience normal-shock path: M1 -> p2/p1 | Arguments: | - input_value: Upstream Mach number M1 | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1(2.0,1.4)"""
+    return invoke("device.normal_shock_calc.value", {"input_kind": "m1", "target_kind": "p2_p1", "input_value": input_value, "gamma": gamma})
+
+@xl_func(name="ENG_NORMAL_SHOCK_FROM_M1_TO_RHO2_RHO1", doc="Convenience normal-shock path: M1 -> rho2/rho1 | Arguments: | - input_value: Upstream Mach number M1 | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_NORMAL_SHOCK_FROM_M1_TO_RHO2_RHO1(2.0,1.4)")
+def e_n_g_n_o_r_m_a_l_s_h_o_c_k_f_r_o_m_m1_t_o_r_h_o2_r_h_o1(input_value, gamma):
+    """Convenience normal-shock path: M1 -> rho2/rho1 | Arguments: | - input_value: Upstream Mach number M1 | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_NORMAL_SHOCK_FROM_M1_TO_RHO2_RHO1(2.0,1.4)"""
+    return invoke("device.normal_shock_calc.value", {"input_kind": "m1", "target_kind": "rho2_rho1", "input_value": input_value, "gamma": gamma})
+
+@xl_func(name="ENG_NORMAL_SHOCK_FROM_M1_TO_T2_T1", doc="Convenience normal-shock path: M1 -> T2/T1 | Arguments: | - input_value: Upstream Mach number M1 | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_NORMAL_SHOCK_FROM_M1_TO_T2_T1(2.0,1.4)")
+def e_n_g_n_o_r_m_a_l_s_h_o_c_k_f_r_o_m_m1_t_o_t2_t1(input_value, gamma):
+    """Convenience normal-shock path: M1 -> T2/T1 | Arguments: | - input_value: Upstream Mach number M1 | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_NORMAL_SHOCK_FROM_M1_TO_T2_T1(2.0,1.4)"""
+    return invoke("device.normal_shock_calc.value", {"input_kind": "m1", "target_kind": "t2_t1", "input_value": input_value, "gamma": gamma})
+
+@xl_func(name="ENG_NORMAL_SHOCK_PATH_TEXT", doc="Normal shock calculator helper: compact step trace text | Arguments: | - input_kind: Input kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - input_value: Input value | - target_kind: Target kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - gamma: Specific heat ratio | Returns: str | Example: =ENG_NORMAL_SHOCK_PATH_TEXT('p02_p01',0.72,'m2',1.4)")
+def e_n_g_n_o_r_m_a_l_s_h_o_c_k_p_a_t_h_t_e_x_t(input_kind, input_value, target_kind, gamma):
+    """Normal shock calculator helper: compact step trace text | Arguments: | - input_kind: Input kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - input_value: Input value | - target_kind: Target kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - gamma: Specific heat ratio | Returns: str | Example: =ENG_NORMAL_SHOCK_PATH_TEXT('p02_p01',0.72,'m2',1.4)"""
+    return invoke("device.normal_shock_calc.path_text", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma})
+
+@xl_func(name="ENG_NORMAL_SHOCK_PIVOT_M1", doc="Normal shock calculator helper: return resolved pivot M1 | Arguments: | - input_kind: Input kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - input_value: Input value | - target_kind: Target kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_NORMAL_SHOCK_PIVOT_M1('p2_p1',4.5,'m2',1.4)")
+def e_n_g_n_o_r_m_a_l_s_h_o_c_k_p_i_v_o_t_m1(input_kind, input_value, target_kind, gamma):
+    """Normal shock calculator helper: return resolved pivot M1 | Arguments: | - input_kind: Input kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - input_value: Input value | - target_kind: Target kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01) | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_NORMAL_SHOCK_PIVOT_M1('p2_p1',4.5,'m2',1.4)"""
+    return invoke("device.normal_shock_calc.pivot_m1", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma})
 
 @xl_func(name="ENG_PIPE_LOSS_DELTA_P", doc="Solve pipe pressure drop using Fixed/Colebrook friction model | Arguments: | - friction_model: Colebrook or Fixed | - fixed_f: Required when friction_model=Fixed | - density: Density input (optional with fluid context) | - viscosity: Viscosity input (required for Colebrook without fluid context) | - velocity: Velocity | - diameter: Diameter | - length: Length | - roughness: Roughness (Colebrook) | - fluid: Optional fluid key (e.g. H2O) | - in1_key: Fluid state input key 1 | - in1_value: Fluid state input value 1 | - in2_key: Fluid state input key 2 | - in2_value: Fluid state input value 2 | Returns: f64 | Example: =ENG_PIPE_LOSS_DELTA_P(...)")
 def e_n_g_p_i_p_e_l_o_s_s_d_e_l_t_a_p(friction_model, fixed_f, density, viscosity, velocity, diameter, length, roughness, fluid, in1_key, in1_value, in2_key, in2_value):
@@ -132,6 +182,66 @@ def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_m_a_c_h_a_n_g_l_e_m(mu):
 def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_m_a_c_h_a_n_g_l_e_m_u(m):
     """Solve Mach Angle for mu | Arguments: | - m: Mach number | Returns: f64 | Example: =ENG_COMPRESSIBLE_MACH_ANGLE_MU('...')"""
     return invoke("equation.solve", {"path_id": "compressible.mach_angle", "target": "mu", "M": m})
+
+@xl_func(name="ENG_COMPRESSIBLE_NORMAL_SHOCK_DENSITY_RATIO_M1", doc="Solve Normal Shock Density Ratio for M1 | Arguments: | - rho2_rho1: Density ratio | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_DENSITY_RATIO_M1('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_n_o_r_m_a_l_s_h_o_c_k_d_e_n_s_i_t_y_r_a_t_i_o_m1(rho2_rho1, gamma):
+    """Solve Normal Shock Density Ratio for M1 | Arguments: | - rho2_rho1: Density ratio | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_DENSITY_RATIO_M1('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.normal_shock_density_ratio", "target": "M1", "rho2_rho1": rho2_rho1, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_NORMAL_SHOCK_DENSITY_RATIO_RHO2_RHO1", doc="Solve Normal Shock Density Ratio for rho2_rho1 | Arguments: | - m1: Upstream Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_DENSITY_RATIO_RHO2_RHO1('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_n_o_r_m_a_l_s_h_o_c_k_d_e_n_s_i_t_y_r_a_t_i_o_r_h_o2_r_h_o1(m1, gamma):
+    """Solve Normal Shock Density Ratio for rho2_rho1 | Arguments: | - m1: Upstream Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_DENSITY_RATIO_RHO2_RHO1('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.normal_shock_density_ratio", "target": "rho2_rho1", "M1": m1, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_NORMAL_SHOCK_M2_M1", doc="Solve Normal Shock Downstream Mach Number for M1 | Arguments: | - m2: Downstream Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_M2_M1('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_n_o_r_m_a_l_s_h_o_c_k_m2_m1(m2, gamma):
+    """Solve Normal Shock Downstream Mach Number for M1 | Arguments: | - m2: Downstream Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_M2_M1('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.normal_shock_m2", "target": "M1", "M2": m2, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_NORMAL_SHOCK_M2_M2", doc="Solve Normal Shock Downstream Mach Number for M2 | Arguments: | - m1: Upstream Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_M2_M2('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_n_o_r_m_a_l_s_h_o_c_k_m2_m2(m1, gamma):
+    """Solve Normal Shock Downstream Mach Number for M2 | Arguments: | - m1: Upstream Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_M2_M2('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.normal_shock_m2", "target": "M2", "M1": m1, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_NORMAL_SHOCK_PRESSURE_RATIO_M1", doc="Solve Normal Shock Static Pressure Ratio for M1 | Arguments: | - p2_p1: Static pressure ratio | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_PRESSURE_RATIO_M1('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_n_o_r_m_a_l_s_h_o_c_k_p_r_e_s_s_u_r_e_r_a_t_i_o_m1(p2_p1, gamma):
+    """Solve Normal Shock Static Pressure Ratio for M1 | Arguments: | - p2_p1: Static pressure ratio | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_PRESSURE_RATIO_M1('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.normal_shock_pressure_ratio", "target": "M1", "p2_p1": p2_p1, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_NORMAL_SHOCK_PRESSURE_RATIO_P2_P1", doc="Solve Normal Shock Static Pressure Ratio for p2_p1 | Arguments: | - m1: Upstream Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_PRESSURE_RATIO_P2_P1('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_n_o_r_m_a_l_s_h_o_c_k_p_r_e_s_s_u_r_e_r_a_t_i_o_p2_p1(m1, gamma):
+    """Solve Normal Shock Static Pressure Ratio for p2_p1 | Arguments: | - m1: Upstream Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_PRESSURE_RATIO_P2_P1('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.normal_shock_pressure_ratio", "target": "p2_p1", "M1": m1, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_NORMAL_SHOCK_STAGNATION_PRESSURE_RATIO_M1", doc="Solve Normal Shock Stagnation Pressure Ratio for M1 | Arguments: | - p02_p01: Stagnation pressure ratio | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_STAGNATION_PRESSURE_RATIO_M1('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_n_o_r_m_a_l_s_h_o_c_k_s_t_a_g_n_a_t_i_o_n_p_r_e_s_s_u_r_e_r_a_t_i_o_m1(p02_p01, gamma):
+    """Solve Normal Shock Stagnation Pressure Ratio for M1 | Arguments: | - p02_p01: Stagnation pressure ratio | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_STAGNATION_PRESSURE_RATIO_M1('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.normal_shock_stagnation_pressure_ratio", "target": "M1", "p02_p01": p02_p01, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_NORMAL_SHOCK_STAGNATION_PRESSURE_RATIO_P02_P01", doc="Solve Normal Shock Stagnation Pressure Ratio for p02_p01 | Arguments: | - m1: Upstream Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_STAGNATION_PRESSURE_RATIO_P02_P01('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_n_o_r_m_a_l_s_h_o_c_k_s_t_a_g_n_a_t_i_o_n_p_r_e_s_s_u_r_e_r_a_t_i_o_p02_p01(m1, gamma):
+    """Solve Normal Shock Stagnation Pressure Ratio for p02_p01 | Arguments: | - m1: Upstream Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_STAGNATION_PRESSURE_RATIO_P02_P01('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.normal_shock_stagnation_pressure_ratio", "target": "p02_p01", "M1": m1, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_NORMAL_SHOCK_TEMPERATURE_RATIO_M1", doc="Solve Normal Shock Temperature Ratio for M1 | Arguments: | - t2_t1: Static temperature ratio | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_TEMPERATURE_RATIO_M1('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_n_o_r_m_a_l_s_h_o_c_k_t_e_m_p_e_r_a_t_u_r_e_r_a_t_i_o_m1(t2_t1, gamma):
+    """Solve Normal Shock Temperature Ratio for M1 | Arguments: | - t2_t1: Static temperature ratio | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_TEMPERATURE_RATIO_M1('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.normal_shock_temperature_ratio", "target": "M1", "T2_T1": t2_t1, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_NORMAL_SHOCK_TEMPERATURE_RATIO_T2_T1", doc="Solve Normal Shock Temperature Ratio for T2_T1 | Arguments: | - m1: Upstream Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_TEMPERATURE_RATIO_T2_T1('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_n_o_r_m_a_l_s_h_o_c_k_t_e_m_p_e_r_a_t_u_r_e_r_a_t_i_o_t2_t1(m1, gamma):
+    """Solve Normal Shock Temperature Ratio for T2_T1 | Arguments: | - m1: Upstream Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_NORMAL_SHOCK_TEMPERATURE_RATIO_T2_T1('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.normal_shock_temperature_ratio", "target": "T2_T1", "M1": m1, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_PRANDTL_MEYER_M", doc="Solve Prandtl-Meyer Expansion Angle for M | Arguments: | - nu: Prandtl-Meyer angle | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_PRANDTL_MEYER_M('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_p_r_a_n_d_t_l_m_e_y_e_r_m(nu, gamma):
+    """Solve Prandtl-Meyer Expansion Angle for M | Arguments: | - nu: Prandtl-Meyer angle | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_PRANDTL_MEYER_M('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.prandtl_meyer", "target": "M", "nu": nu, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_PRANDTL_MEYER_NU", doc="Solve Prandtl-Meyer Expansion Angle for nu | Arguments: | - m: Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_PRANDTL_MEYER_NU('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_p_r_a_n_d_t_l_m_e_y_e_r_n_u(m, gamma):
+    """Solve Prandtl-Meyer Expansion Angle for nu | Arguments: | - m: Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_PRANDTL_MEYER_NU('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.prandtl_meyer", "target": "nu", "M": m, "gamma": gamma})
 
 @xl_func(name="ENG_EQUATION_DEFAULT_UNIT", doc="Read canonical default unit for one equation variable | Arguments: | - path_id: Equation path id | - variable: Variable key (case-insensitive) | Returns: str | Example: =ENG_EQUATION_DEFAULT_UNIT('fluids.reynolds_number','mu')")
 def e_n_g_e_q_u_a_t_i_o_n_d_e_f_a_u_l_t_u_n_i_t(path_id, variable):

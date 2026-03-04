@@ -79,6 +79,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         branch_result.value_si, branch_result.method, branch_result.branch
     );
 
+    // 5b) Prandtl-Meyer forward/inverse path.
+    let nu_deg = eq
+        .solve(compressible::prandtl_meyer::equation())
+        .target_nu()
+        .given_m(2.0)
+        .given_gamma(1.4)
+        .value_in("deg")?;
+    let m_from_nu = eq
+        .solve(compressible::prandtl_meyer::equation())
+        .target_m()
+        .given_nu(format!("{nu_deg} deg"))
+        .given_gamma(1.4)
+        .value()?;
+    println!("[pm] nu={} deg, M_back={}", nu_deg, m_from_nu);
+
     // 6) Short helper path (still available).
     let sigma_helper = eq.solve_value(
         "structures.hoop_stress",

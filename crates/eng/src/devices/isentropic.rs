@@ -5,6 +5,7 @@ use thiserror::Error;
 pub enum IsentropicInputKind {
     Mach,
     MachAngleRad,
+    PrandtlMeyerAngleRad,
     PressureRatio,
     TemperatureRatio,
     DensityRatio,
@@ -15,6 +16,7 @@ pub enum IsentropicInputKind {
 pub enum IsentropicOutputKind {
     Mach,
     MachAngleRad,
+    PrandtlMeyerAngleRad,
     PressureRatio,
     TemperatureRatio,
     DensityRatio,
@@ -156,6 +158,13 @@ pub fn calc(req: IsentropicCalcRequest) -> Result<IsentropicCalcResponse> {
             reason: "must be finite".to_string(),
         });
     }
+    if matches!(req.input_kind, IsentropicInputKind::PrandtlMeyerAngleRad) && req.input_value < 0.0
+    {
+        return Err(IsentropicCalcError::InvalidInputDomain {
+            kind: input_kind_label(req.input_kind),
+            reason: "must be >= 0 rad".to_string(),
+        });
+    }
 
     let mut path = Vec::<CalcStep>::new();
     let pivot_mach = resolve_pivot_mach(&req, &mut path)?;
@@ -166,7 +175,13 @@ pub fn calc(req: IsentropicCalcRequest) -> Result<IsentropicCalcResponse> {
         });
     }
 
-    let value_si = solve_target(req.gamma, req.target_kind, pivot_mach, req.branch, &mut path)?;
+    let value_si = solve_target(
+        req.gamma,
+        req.target_kind,
+        pivot_mach,
+        req.branch,
+        &mut path,
+    )?;
     Ok(IsentropicCalcResponse {
         value_si,
         pivot_mach,
@@ -192,6 +207,37 @@ fn resolve_pivot_mach(req: &IsentropicCalcRequest, path: &mut Vec<CalcStep>) -> 
                 method: method_label(solved.method),
                 branch: solved.branch,
                 inputs_used: vec![("mu".to_string(), input)],
+            });
+            Ok(solved.value_si)
+        }
+        IsentropicInputKind::PrandtlMeyerAngleRad => {
+            let solved = eq
+                .solve(compressible::prandtl_meyer::equation())
+                .target_m()
+                .given_nu(input)
+                .given_gamma(gamma)
+                .result()
+                .map_err(|source| {
+                    let nu_max_hint = eq
+                        .solve(compressible::prandtl_meyer::equation())
+                        .target_nu()
+                        .given_m(100.0)
+                        .given_gamma(gamma)
+                        .value()
+                        .unwrap_or(2.276_853_163_690_696);
+                    IsentropicCalcError::InvalidInputDomain {
+                        kind: "PrandtlMeyerAngleRad",
+                        reason: format!(
+                            "expected 0 <= nu < ~{nu_max_hint:.12} rad for gamma={gamma}; solver detail: {source}"
+                        ),
+                    }
+                })?;
+            path.push(CalcStep {
+                equation_path_id: "compressible.prandtl_meyer".to_string(),
+                solved_for: "M".to_string(),
+                method: method_label(solved.method),
+                branch: solved.branch,
+                inputs_used: vec![("nu".to_string(), input), ("gamma".to_string(), gamma)],
             });
             Ok(solved.value_si)
         }
@@ -239,7 +285,10 @@ fn resolve_pivot_mach(req: &IsentropicCalcRequest, path: &mut Vec<CalcStep>) -> 
                 solved_for: "M".to_string(),
                 method: method_label(solved.method),
                 branch: solved.branch,
-                inputs_used: vec![("rho_rho0".to_string(), input), ("gamma".to_string(), gamma)],
+                inputs_used: vec![
+                    ("rho_rho0".to_string(), input),
+                    ("gamma".to_string(), gamma),
+                ],
             });
             Ok(solved.value_si)
         }
@@ -259,7 +308,10 @@ fn resolve_pivot_mach(req: &IsentropicCalcRequest, path: &mut Vec<CalcStep>) -> 
                 solved_for: "M".to_string(),
                 method: method_label(solved.method),
                 branch: solved.branch,
-                inputs_used: vec![("area_ratio".to_string(), input), ("gamma".to_string(), gamma)],
+                inputs_used: vec![
+                    ("area_ratio".to_string(), input),
+                    ("gamma".to_string(), gamma),
+                ],
             });
             Ok(solved.value_si)
         }
@@ -287,6 +339,22 @@ fn solve_target(
                 method: method_label(solved.method),
                 branch: solved.branch,
                 inputs_used: vec![("M".to_string(), mach)],
+            });
+            Ok(solved.value_si)
+        }
+        IsentropicOutputKind::PrandtlMeyerAngleRad => {
+            let solved = eq
+                .solve(compressible::prandtl_meyer::equation())
+                .target_nu()
+                .given_m(mach)
+                .given_gamma(gamma)
+                .result()?;
+            path.push(CalcStep {
+                equation_path_id: "compressible.prandtl_meyer".to_string(),
+                solved_for: "nu".to_string(),
+                method: method_label(solved.method),
+                branch: solved.branch,
+                inputs_used: vec![("M".to_string(), mach), ("gamma".to_string(), gamma)],
             });
             Ok(solved.value_si)
         }
@@ -370,6 +438,7 @@ fn input_kind_label(kind: IsentropicInputKind) -> &'static str {
     match kind {
         IsentropicInputKind::Mach => "Mach",
         IsentropicInputKind::MachAngleRad => "MachAngleRad",
+        IsentropicInputKind::PrandtlMeyerAngleRad => "PrandtlMeyerAngleRad",
         IsentropicInputKind::PressureRatio => "PressureRatio",
         IsentropicInputKind::TemperatureRatio => "TemperatureRatio",
         IsentropicInputKind::DensityRatio => "DensityRatio",
@@ -467,5 +536,77 @@ mod tests {
         .expect("supersonic branch");
         assert!(sub.value_si > 0.0 && sub.value_si < 1.0);
         assert!(sup.value_si > 1.0);
+    }
+
+    #[test]
+    fn prandtl_meyer_angle_to_pressure_ratio_chain_works() {
+        let gamma = 1.4;
+        let m = 3.0_f64;
+        let nu = eq
+            .solve(compressible::prandtl_meyer::equation())
+            .target_nu()
+            .given_m(m)
+            .given_gamma(gamma)
+            .value()
+            .expect("nu from M");
+        let out = calc(IsentropicCalcRequest {
+            gamma,
+            input_kind: IsentropicInputKind::PrandtlMeyerAngleRad,
+            input_value: nu,
+            target_kind: IsentropicOutputKind::PressureRatio,
+            branch: None,
+        })
+        .expect("isentropic calc");
+        let expected = eq
+            .solve(compressible::isentropic_pressure_ratio::equation())
+            .target_p_p0()
+            .given_m(m)
+            .given_gamma(gamma)
+            .value()
+            .expect("direct pressure ratio");
+        assert!((out.pivot_mach - m).abs() < 1e-8);
+        assert!((out.value_si - expected).abs() < 1e-8);
+        assert!(
+            out.path
+                .iter()
+                .any(|s| s.equation_path_id == "compressible.prandtl_meyer"),
+            "expected registry-backed prandtl_meyer step in path"
+        );
+    }
+
+    #[test]
+    fn invalid_prandtl_meyer_angle_domain_is_rejected() {
+        let err = calc(IsentropicCalcRequest {
+            gamma: 1.4,
+            input_kind: IsentropicInputKind::PrandtlMeyerAngleRad,
+            input_value: 10.0,
+            target_kind: IsentropicOutputKind::Mach,
+            branch: None,
+        })
+        .expect_err("nu out of domain should fail");
+        let msg = err.to_string();
+        assert!(
+            msg.contains("PrandtlMeyerAngleRad") && msg.contains("expected 0 <="),
+            "unexpected error: {msg}"
+        );
+    }
+
+    #[test]
+    fn mach_to_prandtl_meyer_angle_target_works() {
+        let out = calc(IsentropicCalcRequest {
+            gamma: 1.4,
+            input_kind: IsentropicInputKind::Mach,
+            input_value: 2.0,
+            target_kind: IsentropicOutputKind::PrandtlMeyerAngleRad,
+            branch: None,
+        })
+        .expect("mach -> nu");
+        assert!((out.value_si - 0.460_413_682_082_694_73).abs() < 1e-10);
+        assert!(
+            out.path
+                .iter()
+                .any(|s| s.equation_path_id == "compressible.prandtl_meyer"),
+            "expected prandtl_meyer in path"
+        );
     }
 }

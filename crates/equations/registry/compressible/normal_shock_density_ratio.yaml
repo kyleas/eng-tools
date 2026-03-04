@@ -1,0 +1,62 @@
+key: normal_shock_density_ratio
+taxonomy:
+  category: compressible
+name: Normal Shock Density Ratio
+source: "Anderson, Modern Compressible Flow: With Historical Perspective"
+display:
+  latex: '\frac{\rho_2}{\rho_1} = \frac{(\gamma+1)M_1^2}{(\gamma-1)M_1^2+2}'
+  unicode: "rho2_rho1 = ((gamma+1)*M1^2) / (((gamma-1)*M1^2) + 2)"
+  ascii: "rho2_rho1 = ((gamma+1)*M1^2) / (((gamma-1)*M1^2) + 2)"
+  description: Density ratio across a normal shock.
+variables:
+  rho2_rho1:
+    name: Density ratio
+    symbol: '\frac{\rho_2}{\rho_1}'
+    dimension: ratio
+    constraints:
+      min: 1.0
+  M1:
+    name: Upstream Mach number
+    symbol: 'M_1'
+    dimension: mach
+    constraints:
+      min: 1.0
+  gamma:
+    name: Specific heat ratio
+    symbol: '\gamma'
+    dimension: dimensionless
+    constraints:
+      min: 1.01
+residual: rho2_rho1 - (((gamma + 1) * M1^2) / (((gamma - 1) * M1^2) + 2))
+solve:
+  explicit_forms:
+    rho2_rho1: ((gamma + 1) * M1^2) / (((gamma - 1) * M1^2) + 2)
+  numerical:
+    unsupported_targets: [gamma]
+    solver: bisection
+    initial_guess: 2.0
+    bracket: [1.000001, 20.0]
+    tolerance_abs: 1e-12
+    tolerance_rel: 1e-10
+    max_iter: 400
+assumptions:
+  - One-dimensional, steady, adiabatic normal shock.
+  - Calorically perfect gas with constant gamma.
+tests:
+  units_policy: auto_convert_to_si
+  relation_tolerance:
+    abs: 1e-11
+    rel: 1e-9
+  cases:
+    - id: m1_2
+      full_state:
+        M1: 2.0
+        gamma: 1.4
+        rho2_rho1: 2.666666666666667
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: rho2_rho1
+            methods: [explicit]
+          - target: M1
+            methods: [numerical]

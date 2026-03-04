@@ -93,3 +93,27 @@ fn eval_call(
         }),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashMap;
+
+    use crate::expr::{evaluate_expression, parse_expression};
+
+    #[test]
+    fn atan_eval_matches_stdlib() {
+        let expr_text = "atan(1)";
+        let expr = parse_expression(expr_text).expect("parse");
+        let v = evaluate_expression(expr_text, &expr, &HashMap::new()).expect("eval");
+        assert!((v - std::f64::consts::FRAC_PI_4).abs() < 1e-12);
+    }
+
+    #[test]
+    fn prandtl_meyer_core_expression_evaluates() {
+        let expr_text = "sqrt((gamma + 1) / (gamma - 1)) * atan(sqrt(((gamma - 1) / (gamma + 1)) * (M^2 - 1))) - atan(sqrt(M^2 - 1))";
+        let expr = parse_expression(expr_text).expect("parse");
+        let vars = HashMap::from([(String::from("gamma"), 1.4), (String::from("M"), 2.0)]);
+        let v = evaluate_expression(expr_text, &expr, &vars).expect("eval");
+        assert!((v - 0.460_413_682_082_694_73).abs() < 1e-12);
+    }
+}

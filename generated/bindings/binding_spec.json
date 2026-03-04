@@ -37,7 +37,7 @@
       "args": [
         {
           "name": "input_kind",
-          "description": "Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
+          "description": "Input kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
         },
         {
           "name": "input_value",
@@ -45,7 +45,7 @@
         },
         {
           "name": "target_kind",
-          "description": "Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
+          "description": "Target kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
         },
         {
           "name": "gamma",
@@ -95,6 +95,39 @@
       "python_example": "engpy.devices.isentropic_from_area_ratio_to_m(2.0, 1.4, \"supersonic\")",
       "xloil_example": "=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")",
       "pyxll_example": "=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")"
+    },
+    {
+      "id": "device.isentropic_calc.from_m.to_nu_deg",
+      "entity": "device",
+      "source": "isentropic_calc",
+      "python_module": "devices",
+      "python_name": "isentropic_from_m_to_nu_deg",
+      "excel_name": "ENG_ISENTROPIC_FROM_M_TO_NU_DEG",
+      "op": "device.isentropic_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "prandtl_meyer_angle_deg"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch (unused for this path)"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience isentropic path: Mach -> nu(deg)",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.isentropic_from_m_to_nu_deg(2.0, 1.4)",
+      "xloil_example": "=ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,\"\")",
+      "pyxll_example": "=ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,\"\")"
     },
     {
       "id": "device.isentropic_calc.from_m.to_p_p0",
@@ -163,6 +196,39 @@
       "pyxll_example": "=ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30.0,1.4,\"\")"
     },
     {
+      "id": "device.isentropic_calc.from_nu_deg.to_m",
+      "entity": "device",
+      "source": "isentropic_calc",
+      "python_module": "devices",
+      "python_name": "isentropic_from_nu_deg_to_m",
+      "excel_name": "ENG_ISENTROPIC_FROM_NU_DEG_TO_M",
+      "op": "device.isentropic_calc.value",
+      "fixed_args": {
+        "input_kind": "prandtl_meyer_angle_deg",
+        "target_kind": "mach"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Prandtl-Meyer angle in degrees"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch (unused for this path)"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience isentropic path: nu(deg) -> Mach",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.isentropic_from_nu_deg_to_m(26.3797608134, 1.4)",
+      "xloil_example": "=ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,\"\")",
+      "pyxll_example": "=ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,\"\")"
+    },
+    {
       "id": "device.isentropic_calc.path_text",
       "entity": "device",
       "source": "isentropic_calc",
@@ -174,7 +240,7 @@
       "args": [
         {
           "name": "input_kind",
-          "description": "Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
+          "description": "Input kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
         },
         {
           "name": "input_value",
@@ -182,7 +248,7 @@
         },
         {
           "name": "target_kind",
-          "description": "Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
+          "description": "Target kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
         },
         {
           "name": "gamma",
@@ -212,7 +278,7 @@
       "args": [
         {
           "name": "input_kind",
-          "description": "Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
+          "description": "Input kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
         },
         {
           "name": "input_value",
@@ -220,7 +286,7 @@
         },
         {
           "name": "target_kind",
-          "description": "Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
+          "description": "Target kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)"
         },
         {
           "name": "gamma",
@@ -306,6 +372,253 @@
       "python_example": "engpy.helpers.device_modes_text(\"pipe_loss\")",
       "xloil_example": "=ENG_DEVICE_MODES_TEXT(\"pipe_loss\")",
       "pyxll_example": "=ENG_DEVICE_MODES_TEXT(\"pipe_loss\")"
+    },
+    {
+      "id": "device.normal_shock_calc",
+      "entity": "device",
+      "source": "normal_shock_calc",
+      "python_module": "devices",
+      "python_name": "normal_shock_calc",
+      "excel_name": "ENG_NORMAL_SHOCK",
+      "op": "device.normal_shock_calc.value",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "input_kind",
+          "description": "Input kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input value"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Normal shock calculator: input kind -> target kind through M1 pivot",
+      "rust_example": "eng::devices::normal_shock_calc().solve()?",
+      "python_example": "engpy.devices.normal_shock_calc(\"m1\", 2.0, \"p2_p1\", 1.4)",
+      "xloil_example": "=ENG_NORMAL_SHOCK(\"m1\",2.0,\"p2_p1\",1.4)",
+      "pyxll_example": "=ENG_NORMAL_SHOCK(\"m1\",2.0,\"p2_p1\",1.4)"
+    },
+    {
+      "id": "device.normal_shock_calc.from_m1.to_m2",
+      "entity": "device",
+      "source": "normal_shock_calc",
+      "python_module": "devices",
+      "python_name": "normal_shock_from_m1_to_m2",
+      "excel_name": "ENG_NORMAL_SHOCK_FROM_M1_TO_M2",
+      "op": "device.normal_shock_calc.value",
+      "fixed_args": {
+        "input_kind": "m1",
+        "target_kind": "m2"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Upstream Mach number M1"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience normal-shock path: M1 -> M2",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.normal_shock_from_m1_to_m2(2.0, 1.4)",
+      "xloil_example": "=ENG_NORMAL_SHOCK_FROM_M1_TO_M2(2.0,1.4)",
+      "pyxll_example": "=ENG_NORMAL_SHOCK_FROM_M1_TO_M2(2.0,1.4)"
+    },
+    {
+      "id": "device.normal_shock_calc.from_m1.to_p02_p01",
+      "entity": "device",
+      "source": "normal_shock_calc",
+      "python_module": "devices",
+      "python_name": "normal_shock_from_m1_to_p02_p01",
+      "excel_name": "ENG_NORMAL_SHOCK_FROM_M1_TO_P02_P01",
+      "op": "device.normal_shock_calc.value",
+      "fixed_args": {
+        "input_kind": "m1",
+        "target_kind": "p02_p01"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Upstream Mach number M1"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience normal-shock path: M1 -> p02/p01",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.normal_shock_from_m1_to_p02_p01(2.0, 1.4)",
+      "xloil_example": "=ENG_NORMAL_SHOCK_FROM_M1_TO_P02_P01(2.0,1.4)",
+      "pyxll_example": "=ENG_NORMAL_SHOCK_FROM_M1_TO_P02_P01(2.0,1.4)"
+    },
+    {
+      "id": "device.normal_shock_calc.from_m1.to_p2_p1",
+      "entity": "device",
+      "source": "normal_shock_calc",
+      "python_module": "devices",
+      "python_name": "normal_shock_from_m1_to_p2_p1",
+      "excel_name": "ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1",
+      "op": "device.normal_shock_calc.value",
+      "fixed_args": {
+        "input_kind": "m1",
+        "target_kind": "p2_p1"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Upstream Mach number M1"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience normal-shock path: M1 -> p2/p1",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.normal_shock_from_m1_to_p2_p1(2.0, 1.4)",
+      "xloil_example": "=ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1(2.0,1.4)",
+      "pyxll_example": "=ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1(2.0,1.4)"
+    },
+    {
+      "id": "device.normal_shock_calc.from_m1.to_rho2_rho1",
+      "entity": "device",
+      "source": "normal_shock_calc",
+      "python_module": "devices",
+      "python_name": "normal_shock_from_m1_to_rho2_rho1",
+      "excel_name": "ENG_NORMAL_SHOCK_FROM_M1_TO_RHO2_RHO1",
+      "op": "device.normal_shock_calc.value",
+      "fixed_args": {
+        "input_kind": "m1",
+        "target_kind": "rho2_rho1"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Upstream Mach number M1"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience normal-shock path: M1 -> rho2/rho1",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.normal_shock_from_m1_to_rho2_rho1(2.0, 1.4)",
+      "xloil_example": "=ENG_NORMAL_SHOCK_FROM_M1_TO_RHO2_RHO1(2.0,1.4)",
+      "pyxll_example": "=ENG_NORMAL_SHOCK_FROM_M1_TO_RHO2_RHO1(2.0,1.4)"
+    },
+    {
+      "id": "device.normal_shock_calc.from_m1.to_t2_t1",
+      "entity": "device",
+      "source": "normal_shock_calc",
+      "python_module": "devices",
+      "python_name": "normal_shock_from_m1_to_t2_t1",
+      "excel_name": "ENG_NORMAL_SHOCK_FROM_M1_TO_T2_T1",
+      "op": "device.normal_shock_calc.value",
+      "fixed_args": {
+        "input_kind": "m1",
+        "target_kind": "t2_t1"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Upstream Mach number M1"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience normal-shock path: M1 -> T2/T1",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.normal_shock_from_m1_to_t2_t1(2.0, 1.4)",
+      "xloil_example": "=ENG_NORMAL_SHOCK_FROM_M1_TO_T2_T1(2.0,1.4)",
+      "pyxll_example": "=ENG_NORMAL_SHOCK_FROM_M1_TO_T2_T1(2.0,1.4)"
+    },
+    {
+      "id": "device.normal_shock_calc.path_text",
+      "entity": "device",
+      "source": "normal_shock_calc",
+      "python_module": "devices",
+      "python_name": "normal_shock_path_text",
+      "excel_name": "ENG_NORMAL_SHOCK_PATH_TEXT",
+      "op": "device.normal_shock_calc.path_text",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "input_kind",
+          "description": "Input kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input value"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "str",
+      "help": "Normal shock calculator helper: compact step trace text",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.normal_shock_path_text(\"p02_p01\", 0.72, \"m2\", 1.4)",
+      "xloil_example": "=ENG_NORMAL_SHOCK_PATH_TEXT(\"p02_p01\",0.72,\"m2\",1.4)",
+      "pyxll_example": "=ENG_NORMAL_SHOCK_PATH_TEXT(\"p02_p01\",0.72,\"m2\",1.4)"
+    },
+    {
+      "id": "device.normal_shock_calc.pivot",
+      "entity": "device",
+      "source": "normal_shock_calc",
+      "python_module": "devices",
+      "python_name": "normal_shock_pivot_m1",
+      "excel_name": "ENG_NORMAL_SHOCK_PIVOT_M1",
+      "op": "device.normal_shock_calc.pivot_m1",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "input_kind",
+          "description": "Input kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input value"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Normal shock calculator helper: return resolved pivot M1",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.normal_shock_pivot_m1(\"p2_p1\", 4.5, \"m2\", 1.4)",
+      "xloil_example": "=ENG_NORMAL_SHOCK_PIVOT_M1(\"p2_p1\",4.5,\"m2\",1.4)",
+      "pyxll_example": "=ENG_NORMAL_SHOCK_PIVOT_M1(\"p2_p1\",4.5,\"m2\",1.4)"
     },
     {
       "id": "device.pipe_loss.solve_delta_p",
@@ -769,6 +1082,354 @@
       "python_example": "engpy.equations.compressible.mach_angle.solve_mu(m=\"...\")",
       "xloil_example": "=ENG_COMPRESSIBLE_MACH_ANGLE_MU(\"...\")",
       "pyxll_example": "=ENG_COMPRESSIBLE_MACH_ANGLE_MU(\"...\")"
+    },
+    {
+      "id": "equation.compressible.normal_shock_density_ratio.M1",
+      "entity": "equation",
+      "source": "compressible.normal_shock_density_ratio",
+      "python_module": "equations.compressible.normal_shock_density_ratio",
+      "python_name": "solve_m1",
+      "excel_name": "ENG_COMPRESSIBLE_NORMAL_SHOCK_DENSITY_RATIO_M1",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.normal_shock_density_ratio",
+        "target": "M1"
+      },
+      "args": [
+        {
+          "name": "rho2_rho1",
+          "description": "Density ratio"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Normal Shock Density Ratio for M1",
+      "rust_example": "eq.solve(equations::compressible::normal_shock_density_ratio::equation()).for_target(\"M1\").value()?",
+      "python_example": "engpy.equations.compressible.normal_shock_density_ratio.solve_m1(rho2_rho1=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_DENSITY_RATIO_M1(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_DENSITY_RATIO_M1(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.normal_shock_density_ratio.rho2_rho1",
+      "entity": "equation",
+      "source": "compressible.normal_shock_density_ratio",
+      "python_module": "equations.compressible.normal_shock_density_ratio",
+      "python_name": "solve_rho2_rho1",
+      "excel_name": "ENG_COMPRESSIBLE_NORMAL_SHOCK_DENSITY_RATIO_RHO2_RHO1",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.normal_shock_density_ratio",
+        "target": "rho2_rho1"
+      },
+      "args": [
+        {
+          "name": "M1",
+          "description": "Upstream Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Normal Shock Density Ratio for rho2_rho1",
+      "rust_example": "eq.solve(equations::compressible::normal_shock_density_ratio::equation()).for_target(\"rho2_rho1\").value()?",
+      "python_example": "engpy.equations.compressible.normal_shock_density_ratio.solve_rho2_rho1(m1=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_DENSITY_RATIO_RHO2_RHO1(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_DENSITY_RATIO_RHO2_RHO1(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.normal_shock_m2.M1",
+      "entity": "equation",
+      "source": "compressible.normal_shock_m2",
+      "python_module": "equations.compressible.normal_shock_m2",
+      "python_name": "solve_m1",
+      "excel_name": "ENG_COMPRESSIBLE_NORMAL_SHOCK_M2_M1",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.normal_shock_m2",
+        "target": "M1"
+      },
+      "args": [
+        {
+          "name": "M2",
+          "description": "Downstream Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Normal Shock Downstream Mach Number for M1",
+      "rust_example": "eq.solve(equations::compressible::normal_shock_m2::equation()).for_target(\"M1\").value()?",
+      "python_example": "engpy.equations.compressible.normal_shock_m2.solve_m1(m2=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_M2_M1(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_M2_M1(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.normal_shock_m2.M2",
+      "entity": "equation",
+      "source": "compressible.normal_shock_m2",
+      "python_module": "equations.compressible.normal_shock_m2",
+      "python_name": "solve_m2",
+      "excel_name": "ENG_COMPRESSIBLE_NORMAL_SHOCK_M2_M2",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.normal_shock_m2",
+        "target": "M2"
+      },
+      "args": [
+        {
+          "name": "M1",
+          "description": "Upstream Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Normal Shock Downstream Mach Number for M2",
+      "rust_example": "eq.solve(equations::compressible::normal_shock_m2::equation()).for_target(\"M2\").value()?",
+      "python_example": "engpy.equations.compressible.normal_shock_m2.solve_m2(m1=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_M2_M2(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_M2_M2(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.normal_shock_pressure_ratio.M1",
+      "entity": "equation",
+      "source": "compressible.normal_shock_pressure_ratio",
+      "python_module": "equations.compressible.normal_shock_pressure_ratio",
+      "python_name": "solve_m1",
+      "excel_name": "ENG_COMPRESSIBLE_NORMAL_SHOCK_PRESSURE_RATIO_M1",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.normal_shock_pressure_ratio",
+        "target": "M1"
+      },
+      "args": [
+        {
+          "name": "p2_p1",
+          "description": "Static pressure ratio"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Normal Shock Static Pressure Ratio for M1",
+      "rust_example": "eq.solve(equations::compressible::normal_shock_pressure_ratio::equation()).for_target(\"M1\").value()?",
+      "python_example": "engpy.equations.compressible.normal_shock_pressure_ratio.solve_m1(p2_p1=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_PRESSURE_RATIO_M1(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_PRESSURE_RATIO_M1(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.normal_shock_pressure_ratio.p2_p1",
+      "entity": "equation",
+      "source": "compressible.normal_shock_pressure_ratio",
+      "python_module": "equations.compressible.normal_shock_pressure_ratio",
+      "python_name": "solve_p2_p1",
+      "excel_name": "ENG_COMPRESSIBLE_NORMAL_SHOCK_PRESSURE_RATIO_P2_P1",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.normal_shock_pressure_ratio",
+        "target": "p2_p1"
+      },
+      "args": [
+        {
+          "name": "M1",
+          "description": "Upstream Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Normal Shock Static Pressure Ratio for p2_p1",
+      "rust_example": "eq.solve(equations::compressible::normal_shock_pressure_ratio::equation()).for_target(\"p2_p1\").value()?",
+      "python_example": "engpy.equations.compressible.normal_shock_pressure_ratio.solve_p2_p1(m1=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_PRESSURE_RATIO_P2_P1(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_PRESSURE_RATIO_P2_P1(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.normal_shock_stagnation_pressure_ratio.M1",
+      "entity": "equation",
+      "source": "compressible.normal_shock_stagnation_pressure_ratio",
+      "python_module": "equations.compressible.normal_shock_stagnation_pressure_ratio",
+      "python_name": "solve_m1",
+      "excel_name": "ENG_COMPRESSIBLE_NORMAL_SHOCK_STAGNATION_PRESSURE_RATIO_M1",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.normal_shock_stagnation_pressure_ratio",
+        "target": "M1"
+      },
+      "args": [
+        {
+          "name": "p02_p01",
+          "description": "Stagnation pressure ratio"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Normal Shock Stagnation Pressure Ratio for M1",
+      "rust_example": "eq.solve(equations::compressible::normal_shock_stagnation_pressure_ratio::equation()).for_target(\"M1\").value()?",
+      "python_example": "engpy.equations.compressible.normal_shock_stagnation_pressure_ratio.solve_m1(p02_p01=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_STAGNATION_PRESSURE_RATIO_M1(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_STAGNATION_PRESSURE_RATIO_M1(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.normal_shock_stagnation_pressure_ratio.p02_p01",
+      "entity": "equation",
+      "source": "compressible.normal_shock_stagnation_pressure_ratio",
+      "python_module": "equations.compressible.normal_shock_stagnation_pressure_ratio",
+      "python_name": "solve_p02_p01",
+      "excel_name": "ENG_COMPRESSIBLE_NORMAL_SHOCK_STAGNATION_PRESSURE_RATIO_P02_P01",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.normal_shock_stagnation_pressure_ratio",
+        "target": "p02_p01"
+      },
+      "args": [
+        {
+          "name": "M1",
+          "description": "Upstream Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Normal Shock Stagnation Pressure Ratio for p02_p01",
+      "rust_example": "eq.solve(equations::compressible::normal_shock_stagnation_pressure_ratio::equation()).for_target(\"p02_p01\").value()?",
+      "python_example": "engpy.equations.compressible.normal_shock_stagnation_pressure_ratio.solve_p02_p01(m1=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_STAGNATION_PRESSURE_RATIO_P02_P01(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_STAGNATION_PRESSURE_RATIO_P02_P01(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.normal_shock_temperature_ratio.M1",
+      "entity": "equation",
+      "source": "compressible.normal_shock_temperature_ratio",
+      "python_module": "equations.compressible.normal_shock_temperature_ratio",
+      "python_name": "solve_m1",
+      "excel_name": "ENG_COMPRESSIBLE_NORMAL_SHOCK_TEMPERATURE_RATIO_M1",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.normal_shock_temperature_ratio",
+        "target": "M1"
+      },
+      "args": [
+        {
+          "name": "T2_T1",
+          "description": "Static temperature ratio"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Normal Shock Temperature Ratio for M1",
+      "rust_example": "eq.solve(equations::compressible::normal_shock_temperature_ratio::equation()).for_target(\"M1\").value()?",
+      "python_example": "engpy.equations.compressible.normal_shock_temperature_ratio.solve_m1(t2_t1=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_TEMPERATURE_RATIO_M1(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_TEMPERATURE_RATIO_M1(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.normal_shock_temperature_ratio.T2_T1",
+      "entity": "equation",
+      "source": "compressible.normal_shock_temperature_ratio",
+      "python_module": "equations.compressible.normal_shock_temperature_ratio",
+      "python_name": "solve_t2_t1",
+      "excel_name": "ENG_COMPRESSIBLE_NORMAL_SHOCK_TEMPERATURE_RATIO_T2_T1",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.normal_shock_temperature_ratio",
+        "target": "T2_T1"
+      },
+      "args": [
+        {
+          "name": "M1",
+          "description": "Upstream Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Normal Shock Temperature Ratio for T2_T1",
+      "rust_example": "eq.solve(equations::compressible::normal_shock_temperature_ratio::equation()).for_target(\"T2_T1\").value()?",
+      "python_example": "engpy.equations.compressible.normal_shock_temperature_ratio.solve_t2_t1(m1=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_TEMPERATURE_RATIO_T2_T1(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_NORMAL_SHOCK_TEMPERATURE_RATIO_T2_T1(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.prandtl_meyer.M",
+      "entity": "equation",
+      "source": "compressible.prandtl_meyer",
+      "python_module": "equations.compressible.prandtl_meyer",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_PRANDTL_MEYER_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.prandtl_meyer",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "nu",
+          "description": "Prandtl-Meyer angle"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Prandtl-Meyer Expansion Angle for M",
+      "rust_example": "eq.solve(equations::compressible::prandtl_meyer::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.prandtl_meyer.solve_m(nu=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_PRANDTL_MEYER_M(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_PRANDTL_MEYER_M(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.prandtl_meyer.nu",
+      "entity": "equation",
+      "source": "compressible.prandtl_meyer",
+      "python_module": "equations.compressible.prandtl_meyer",
+      "python_name": "solve_nu",
+      "excel_name": "ENG_COMPRESSIBLE_PRANDTL_MEYER_NU",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.prandtl_meyer",
+        "target": "nu"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Prandtl-Meyer Expansion Angle for nu",
+      "rust_example": "eq.solve(equations::compressible::prandtl_meyer::equation()).for_target(\"nu\").value()?",
+      "python_example": "engpy.equations.compressible.prandtl_meyer.solve_nu(m=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_PRANDTL_MEYER_NU(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_PRANDTL_MEYER_NU(\"...\",\"...\")"
     },
     {
       "id": "equation.default_unit",

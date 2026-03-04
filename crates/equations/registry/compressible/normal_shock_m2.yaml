@@ -1,0 +1,63 @@
+key: normal_shock_m2
+taxonomy:
+  category: compressible
+name: Normal Shock Downstream Mach Number
+source: "Anderson, Modern Compressible Flow: With Historical Perspective"
+display:
+  latex: 'M_2 = \sqrt{\frac{1 + \frac{\gamma-1}{2}M_1^2}{\gamma M_1^2 - \frac{\gamma-1}{2}}}'
+  unicode: "M2 = sqrt((1 + ((gamma-1)/2) * M1^2) / (gamma*M1^2 - ((gamma-1)/2)))"
+  ascii: "M2 = sqrt((1 + ((gamma-1)/2) * M1^2) / (gamma*M1^2 - ((gamma-1)/2)))"
+  description: Downstream Mach number after a normal shock.
+variables:
+  M2:
+    name: Downstream Mach number
+    symbol: 'M_2'
+    dimension: mach
+    constraints:
+      positive: true
+      max: 1.0
+  M1:
+    name: Upstream Mach number
+    symbol: 'M_1'
+    dimension: mach
+    constraints:
+      min: 1.0
+  gamma:
+    name: Specific heat ratio
+    symbol: '\gamma'
+    dimension: dimensionless
+    constraints:
+      min: 1.01
+residual: M2 - sqrt((1 + ((gamma - 1) / 2) * M1^2) / (gamma * M1^2 - ((gamma - 1) / 2)))
+solve:
+  explicit_forms:
+    M2: sqrt((1 + ((gamma - 1) / 2) * M1^2) / (gamma * M1^2 - ((gamma - 1) / 2)))
+  numerical:
+    unsupported_targets: [gamma]
+    solver: bisection
+    initial_guess: 2.0
+    bracket: [1.000001, 20.0]
+    tolerance_abs: 1e-12
+    tolerance_rel: 1e-10
+    max_iter: 400
+assumptions:
+  - One-dimensional, steady, adiabatic normal shock.
+  - Calorically perfect gas with constant gamma.
+tests:
+  units_policy: auto_convert_to_si
+  relation_tolerance:
+    abs: 1e-11
+    rel: 1e-9
+  cases:
+    - id: m1_2
+      full_state:
+        M1: 2.0
+        gamma: 1.4
+        M2: 0.5773502691896257
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: M2
+            methods: [explicit]
+          - target: M1
+            methods: [numerical]

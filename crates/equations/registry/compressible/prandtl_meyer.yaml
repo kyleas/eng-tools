@@ -1,0 +1,101 @@
+key: prandtl_meyer
+taxonomy:
+  category: compressible
+name: Prandtl-Meyer Expansion Angle
+source: "Anderson, Modern Compressible Flow: With Historical Perspective"
+display:
+  latex: '\nu = \sqrt{\frac{\gamma+1}{\gamma-1}} \tan^{-1}\!\left(\sqrt{\frac{\gamma-1}{\gamma+1}(M^2-1)}\right) - \tan^{-1}\!\left(\sqrt{M^2-1}\right)'
+  unicode: "nu = sqrt((gamma+1)/(gamma-1))*atan(sqrt(((gamma-1)/(gamma+1))*(M^2-1))) - atan(sqrt(M^2-1))"
+  ascii: "nu = sqrt((gamma+1)/(gamma-1))*atan(sqrt(((gamma-1)/(gamma+1))*(M^2-1))) - atan(sqrt(M^2-1))"
+  description: Prandtl-Meyer angle as a function of Mach number for supersonic expansion.
+variables:
+  nu:
+    name: Prandtl-Meyer angle
+    symbol: '\nu'
+    dimension: angle
+    constraints:
+      min: 0.0
+  M:
+    name: Mach number
+    symbol: 'M'
+    dimension: mach
+    constraints:
+      min: 1.0
+  gamma:
+    name: Specific heat ratio
+    symbol: '\gamma'
+    dimension: dimensionless
+    constraints:
+      min: 1.01
+residual: nu - (sqrt((gamma + 1) / (gamma - 1)) * atan(sqrt(((gamma - 1) / (gamma + 1)) * (M^2 - 1))) - atan(sqrt(M^2 - 1)))
+solve:
+  explicit_forms:
+    nu: sqrt((gamma + 1) / (gamma - 1)) * atan(sqrt(((gamma - 1) / (gamma + 1)) * (M^2 - 1))) - atan(sqrt(M^2 - 1))
+  numerical:
+    unsupported_targets: [gamma]
+    solver: bisection
+    initial_guess: 2.0
+    bracket: [1.000001, 100.0]
+    tolerance_abs: 1e-12
+    tolerance_rel: 1e-10
+    max_iter: 400
+assumptions:
+  - Calorically perfect gas with constant gamma.
+  - Defined for M >= 1 in supersonic expansion flow.
+references:
+  - source: Anderson, Modern Compressible Flow
+    note: Prandtl-Meyer function tables and formula.
+  - source: NASA Glenn Research Center, Prandtl-Meyer Angle
+    note: Educational reference for nu(M, gamma).
+tests:
+  units_policy: auto_convert_to_si
+  relation_tolerance:
+    abs: 1e-11
+    rel: 1e-9
+  cases:
+    - id: m_1
+      full_state:
+        M: 1.0
+        gamma: 1.4
+        nu: 0.0
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: nu
+            methods: [explicit]
+    - id: m_2
+      full_state:
+        M: 2.0
+        gamma: 1.4
+        nu: 0.46041368208269473
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: nu
+            methods: [explicit]
+          - target: M
+            methods: [numerical]
+    - id: m_3
+      full_state:
+        M: 3.0
+        gamma: 1.4
+        nu: 0.8684295277453202
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: nu
+            methods: [explicit]
+          - target: M
+            methods: [numerical]
+    - id: m_5
+      full_state:
+        M: 5.0
+        gamma: 1.4
+        nu: 1.3425110219676064
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: nu
+            methods: [explicit]
+          - target: M
+            methods: [numerical]

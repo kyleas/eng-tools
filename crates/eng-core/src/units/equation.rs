@@ -289,8 +289,8 @@ mod tests {
 
     #[test]
     fn converts_angle_rad_to_deg() {
-        let deg = convert_equation_value_from_si("angle", "deg", std::f64::consts::PI)
-            .expect("convert");
+        let deg =
+            convert_equation_value_from_si("angle", "deg", std::f64::consts::PI).expect("convert");
         assert!((deg - 180.0).abs() < 1e-12);
     }
 

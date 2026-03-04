@@ -65,6 +65,66 @@
         "resolver_contexts": []
       },
       {
+        "key": "normal_shock_density_ratio",
+        "path_id": "compressible.normal_shock_density_ratio",
+        "name": "Normal Shock Density Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "normal_shock_m2",
+        "path_id": "compressible.normal_shock_m2",
+        "name": "Normal Shock Downstream Mach Number",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "normal_shock_pressure_ratio",
+        "path_id": "compressible.normal_shock_pressure_ratio",
+        "name": "Normal Shock Static Pressure Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "normal_shock_stagnation_pressure_ratio",
+        "path_id": "compressible.normal_shock_stagnation_pressure_ratio",
+        "name": "Normal Shock Stagnation Pressure Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "normal_shock_temperature_ratio",
+        "path_id": "compressible.normal_shock_temperature_ratio",
+        "name": "Normal Shock Temperature Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "prandtl_meyer",
+        "path_id": "compressible.prandtl_meyer",
+        "name": "Prandtl-Meyer Expansion Angle",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
         "key": "circular_pipe_area",
         "path_id": "fluids.circular_pipe_area",
         "name": "Circular Pipe Flow Area",
@@ -447,7 +507,7 @@
         "name": "Isentropic Calculator",
         "summary": "Calculator-style compressible device: solve any supported isentropic input to any supported output through Mach pivot orchestration.",
         "supported_modes": [
-          "Input kinds: Mach, MachAngle, p/p0, T/T0, rho/rho0, A/A*",
+          "Input kinds: Mach, MachAngle, Prandtl-Meyer angle, p/p0, T/T0, rho/rho0, A/A*",
           "Branch-aware inversion for A/A*"
         ],
         "outputs": [
@@ -456,6 +516,21 @@
           "path diagnostics"
         ],
         "route": "devices/isentropic_calc.md"
+      },
+      {
+        "key": "normal_shock_calc",
+        "name": "Normal Shock Calculator",
+        "summary": "Calculator-style compressible device: solve normal-shock input kinds to target kinds through deterministic M1 pivot orchestration.",
+        "supported_modes": [
+          "Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01",
+          "Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01"
+        ],
+        "outputs": [
+          "value_si",
+          "pivot_m1",
+          "path diagnostics"
+        ],
+        "route": "devices/normal_shock_calc.md"
       }
     ],
     "fluids": [
@@ -1408,6 +1483,36 @@
         "relation": "device_uses_equation",
         "from": "isentropic_calc",
         "to": "compressible.mach_angle"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "isentropic_calc",
+        "to": "compressible.prandtl_meyer"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "normal_shock_calc",
+        "to": "compressible.normal_shock_density_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "normal_shock_calc",
+        "to": "compressible.normal_shock_m2"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "normal_shock_calc",
+        "to": "compressible.normal_shock_pressure_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "normal_shock_calc",
+        "to": "compressible.normal_shock_stagnation_pressure_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "normal_shock_calc",
+        "to": "compressible.normal_shock_temperature_ratio"
       },
       {
         "relation": "device_uses_equation",

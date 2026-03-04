@@ -746,10 +746,7 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
                     .join(", ");
                 args.push(BindingArg {
                     name: "branch".to_string(),
-                    description: format!(
-                        "Optional branch selection. Supported: {}",
-                        options
-                    ),
+                    description: format!("Optional branch selection. Supported: {}", options),
                 });
             }
             let eq_slug = page
@@ -1244,8 +1241,8 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
         returns: "str".to_string(),
         help: "Read equation targets as delimited text".to_string(),
         rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-        python_example:
-            "engpy.helpers.equation_targets_text(\"structures.hoop_stress\")".to_string(),
+        python_example: "engpy.helpers.equation_targets_text(\"structures.hoop_stress\")"
+            .to_string(),
         xloil_example: "=ENG_EQUATION_TARGETS_TEXT(\"structures.hoop_stress\")".to_string(),
         pyxll_example: "=ENG_EQUATION_TARGETS_TEXT(\"structures.hoop_stress\")".to_string(),
     });
@@ -1265,8 +1262,8 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
         returns: "str".to_string(),
         help: "Read equation variables as delimited text".to_string(),
         rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-        python_example:
-            "engpy.helpers.equation_variables_text(\"structures.hoop_stress\")".to_string(),
+        python_example: "engpy.helpers.equation_variables_text(\"structures.hoop_stress\")"
+            .to_string(),
         xloil_example: "=ENG_EQUATION_VARIABLES_TEXT(\"structures.hoop_stress\")".to_string(),
         pyxll_example: "=ENG_EQUATION_VARIABLES_TEXT(\"structures.hoop_stress\")".to_string(),
     });
@@ -1286,8 +1283,8 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
         returns: "str".to_string(),
         help: "Read equation branch names as delimited text".to_string(),
         rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-        python_example:
-            "engpy.helpers.equation_branches_text(\"compressible.area_mach\")".to_string(),
+        python_example: "engpy.helpers.equation_branches_text(\"compressible.area_mach\")"
+            .to_string(),
         xloil_example: "=ENG_EQUATION_BRANCHES_TEXT(\"compressible.area_mach\")".to_string(),
         pyxll_example: "=ENG_EQUATION_BRANCHES_TEXT(\"compressible.area_mach\")".to_string(),
     });
@@ -1307,8 +1304,8 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
         returns: "list[list]".to_string(),
         help: "Read equation targets table rows [target, is_default]".to_string(),
         rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-        python_example:
-            "engpy.helpers.equation_targets_table(\"structures.hoop_stress\")".to_string(),
+        python_example: "engpy.helpers.equation_targets_table(\"structures.hoop_stress\")"
+            .to_string(),
         xloil_example: "=ENG_EQUATION_TARGETS_TABLE(\"structures.hoop_stress\")".to_string(),
         pyxll_example: "=ENG_EQUATION_TARGETS_TABLE(\"structures.hoop_stress\")".to_string(),
     });
@@ -1328,8 +1325,8 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
         returns: "list[list]".to_string(),
         help: "Read equation variable table rows [variable, default_unit]".to_string(),
         rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-        python_example:
-            "engpy.helpers.equation_variables_table(\"structures.hoop_stress\")".to_string(),
+        python_example: "engpy.helpers.equation_variables_table(\"structures.hoop_stress\")"
+            .to_string(),
         xloil_example: "=ENG_EQUATION_VARIABLES_TABLE(\"structures.hoop_stress\")".to_string(),
         pyxll_example: "=ENG_EQUATION_VARIABLES_TABLE(\"structures.hoop_stress\")".to_string(),
     });
@@ -1349,8 +1346,8 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
         returns: "list[list]".to_string(),
         help: "Read equation branch table rows [branch, is_preferred]".to_string(),
         rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-        python_example:
-            "engpy.helpers.equation_branches_table(\"compressible.area_mach\")".to_string(),
+        python_example: "engpy.helpers.equation_branches_table(\"compressible.area_mach\")"
+            .to_string(),
         xloil_example: "=ENG_EQUATION_BRANCHES_TABLE(\"compressible.area_mach\")".to_string(),
         pyxll_example: "=ENG_EQUATION_BRANCHES_TABLE(\"compressible.area_mach\")".to_string(),
     });
@@ -1370,8 +1367,8 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
         returns: "u64".to_string(),
         help: "Read equation target count".to_string(),
         rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-        python_example:
-            "engpy.helpers.equation_target_count(\"structures.hoop_stress\")".to_string(),
+        python_example: "engpy.helpers.equation_target_count(\"structures.hoop_stress\")"
+            .to_string(),
         xloil_example: "=ENG_EQUATION_TARGET_COUNT(\"structures.hoop_stress\")".to_string(),
         pyxll_example: "=ENG_EQUATION_TARGET_COUNT(\"structures.hoop_stress\")".to_string(),
     });
@@ -1391,8 +1388,8 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
         returns: "u64".to_string(),
         help: "Read equation variable count".to_string(),
         rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-        python_example:
-            "engpy.helpers.equation_variable_count(\"structures.hoop_stress\")".to_string(),
+        python_example: "engpy.helpers.equation_variable_count(\"structures.hoop_stress\")"
+            .to_string(),
         xloil_example: "=ENG_EQUATION_VARIABLE_COUNT(\"structures.hoop_stress\")".to_string(),
         pyxll_example: "=ENG_EQUATION_VARIABLE_COUNT(\"structures.hoop_stress\")".to_string(),
     });
@@ -1636,7 +1633,7 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
             let args = vec![
                 BindingArg {
                     name: "input_kind".to_string(),
-                    description: "Input kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)".to_string(),
+                    description: "Input kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)".to_string(),
                 },
                 BindingArg {
                     name: "input_value".to_string(),
@@ -1644,7 +1641,7 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
                 },
                 BindingArg {
                     name: "target_kind".to_string(),
-                    description: "Target kind (mach, mach_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)".to_string(),
+                    description: "Target kind (mach, mach_angle_deg, prandtl_meyer_angle_deg, pressure_ratio, temperature_ratio, density_ratio, area_ratio)".to_string(),
                 },
                 BindingArg {
                     name: "gamma".to_string(),
@@ -1736,9 +1733,18 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
                     ("target_kind".to_string(), "pressure_ratio".to_string()),
                 ]),
                 args: vec![
-                    BindingArg { name: "input_value".to_string(), description: "Mach number".to_string() },
-                    BindingArg { name: "gamma".to_string(), description: "Specific heat ratio".to_string() },
-                    BindingArg { name: "branch".to_string(), description: "Optional branch (unused for this path)".to_string() },
+                    BindingArg {
+                        name: "input_value".to_string(),
+                        description: "Mach number".to_string(),
+                    },
+                    BindingArg {
+                        name: "gamma".to_string(),
+                        description: "Specific heat ratio".to_string(),
+                    },
+                    BindingArg {
+                        name: "branch".to_string(),
+                        description: "Optional branch (unused for this path)".to_string(),
+                    },
                 ],
                 returns: "f64".to_string(),
                 help: "Convenience isentropic path: Mach -> p/p0".to_string(),
@@ -1760,14 +1766,24 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
                     ("target_kind".to_string(), "pressure_ratio".to_string()),
                 ]),
                 args: vec![
-                    BindingArg { name: "input_value".to_string(), description: "Mach angle in degrees".to_string() },
-                    BindingArg { name: "gamma".to_string(), description: "Specific heat ratio".to_string() },
-                    BindingArg { name: "branch".to_string(), description: "Optional branch (unused for this path)".to_string() },
+                    BindingArg {
+                        name: "input_value".to_string(),
+                        description: "Mach angle in degrees".to_string(),
+                    },
+                    BindingArg {
+                        name: "gamma".to_string(),
+                        description: "Specific heat ratio".to_string(),
+                    },
+                    BindingArg {
+                        name: "branch".to_string(),
+                        description: "Optional branch (unused for this path)".to_string(),
+                    },
                 ],
                 returns: "f64".to_string(),
                 help: "Convenience isentropic path: mu(deg) -> p/p0".to_string(),
                 rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-                python_example: "engpy.devices.isentropic_from_mu_deg_to_p_p0(30.0, 1.4)".to_string(),
+                python_example: "engpy.devices.isentropic_from_mu_deg_to_p_p0(30.0, 1.4)"
+                    .to_string(),
                 xloil_example: "=ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30.0,1.4,\"\")".to_string(),
                 pyxll_example: "=ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30.0,1.4,\"\")".to_string(),
             });
@@ -1784,17 +1800,260 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
                     ("target_kind".to_string(), "mach".to_string()),
                 ]),
                 args: vec![
-                    BindingArg { name: "input_value".to_string(), description: "Area ratio A/A*".to_string() },
-                    BindingArg { name: "gamma".to_string(), description: "Specific heat ratio".to_string() },
-                    BindingArg { name: "branch".to_string(), description: "Required: subsonic or supersonic".to_string() },
+                    BindingArg {
+                        name: "input_value".to_string(),
+                        description: "Area ratio A/A*".to_string(),
+                    },
+                    BindingArg {
+                        name: "gamma".to_string(),
+                        description: "Specific heat ratio".to_string(),
+                    },
+                    BindingArg {
+                        name: "branch".to_string(),
+                        description: "Required: subsonic or supersonic".to_string(),
+                    },
                 ],
                 returns: "f64".to_string(),
                 help: "Convenience isentropic path: A/A* -> Mach (branch required)".to_string(),
                 rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
-                python_example: "engpy.devices.isentropic_from_area_ratio_to_m(2.0, 1.4, \"supersonic\")".to_string(),
-                xloil_example: "=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")".to_string(),
-                pyxll_example: "=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")".to_string(),
+                python_example:
+                    "engpy.devices.isentropic_from_area_ratio_to_m(2.0, 1.4, \"supersonic\")"
+                        .to_string(),
+                xloil_example: "=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")"
+                    .to_string(),
+                pyxll_example: "=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")"
+                    .to_string(),
             });
+            functions.push(BindingFunction {
+                id: "device.isentropic_calc.from_nu_deg.to_m".to_string(),
+                entity: "device".to_string(),
+                source: "isentropic_calc".to_string(),
+                python_module: "devices".to_string(),
+                python_name: "isentropic_from_nu_deg_to_m".to_string(),
+                excel_name: "ENG_ISENTROPIC_FROM_NU_DEG_TO_M".to_string(),
+                op: "device.isentropic_calc.value".to_string(),
+                fixed_args: BTreeMap::from([
+                    (
+                        "input_kind".to_string(),
+                        "prandtl_meyer_angle_deg".to_string(),
+                    ),
+                    ("target_kind".to_string(), "mach".to_string()),
+                ]),
+                args: vec![
+                    BindingArg {
+                        name: "input_value".to_string(),
+                        description: "Prandtl-Meyer angle in degrees".to_string(),
+                    },
+                    BindingArg {
+                        name: "gamma".to_string(),
+                        description: "Specific heat ratio".to_string(),
+                    },
+                    BindingArg {
+                        name: "branch".to_string(),
+                        description: "Optional branch (unused for this path)".to_string(),
+                    },
+                ],
+                returns: "f64".to_string(),
+                help: "Convenience isentropic path: nu(deg) -> Mach".to_string(),
+                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+                python_example: "engpy.devices.isentropic_from_nu_deg_to_m(26.3797608134, 1.4)"
+                    .to_string(),
+                xloil_example: "=ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,\"\")"
+                    .to_string(),
+                pyxll_example: "=ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,\"\")"
+                    .to_string(),
+            });
+            functions.push(BindingFunction {
+                id: "device.isentropic_calc.from_m.to_nu_deg".to_string(),
+                entity: "device".to_string(),
+                source: "isentropic_calc".to_string(),
+                python_module: "devices".to_string(),
+                python_name: "isentropic_from_m_to_nu_deg".to_string(),
+                excel_name: "ENG_ISENTROPIC_FROM_M_TO_NU_DEG".to_string(),
+                op: "device.isentropic_calc.value".to_string(),
+                fixed_args: BTreeMap::from([
+                    ("input_kind".to_string(), "mach".to_string()),
+                    (
+                        "target_kind".to_string(),
+                        "prandtl_meyer_angle_deg".to_string(),
+                    ),
+                ]),
+                args: vec![
+                    BindingArg {
+                        name: "input_value".to_string(),
+                        description: "Mach number".to_string(),
+                    },
+                    BindingArg {
+                        name: "gamma".to_string(),
+                        description: "Specific heat ratio".to_string(),
+                    },
+                    BindingArg {
+                        name: "branch".to_string(),
+                        description: "Optional branch (unused for this path)".to_string(),
+                    },
+                ],
+                returns: "f64".to_string(),
+                help: "Convenience isentropic path: Mach -> nu(deg)".to_string(),
+                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+                python_example: "engpy.devices.isentropic_from_m_to_nu_deg(2.0, 1.4)".to_string(),
+                xloil_example: "=ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,\"\")".to_string(),
+                pyxll_example: "=ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,\"\")".to_string(),
+            });
+        }
+        if device.key == "normal_shock_calc" {
+            let args = vec![
+                BindingArg {
+                    name: "input_kind".to_string(),
+                    description: "Input kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01)"
+                        .to_string(),
+                },
+                BindingArg {
+                    name: "input_value".to_string(),
+                    description: "Input value".to_string(),
+                },
+                BindingArg {
+                    name: "target_kind".to_string(),
+                    description: "Target kind (m1, m2, p2_p1, rho2_rho1, t2_t1, p02_p01)"
+                        .to_string(),
+                },
+                BindingArg {
+                    name: "gamma".to_string(),
+                    description: "Specific heat ratio".to_string(),
+                },
+            ];
+            functions.push(BindingFunction {
+                id: "device.normal_shock_calc".to_string(),
+                entity: "device".to_string(),
+                source: "normal_shock_calc".to_string(),
+                python_module: "devices".to_string(),
+                python_name: "normal_shock_calc".to_string(),
+                excel_name: "ENG_NORMAL_SHOCK".to_string(),
+                op: "device.normal_shock_calc.value".to_string(),
+                fixed_args: BTreeMap::new(),
+                args: args.clone(),
+                returns: "f64".to_string(),
+                help: "Normal shock calculator: input kind -> target kind through M1 pivot"
+                    .to_string(),
+                rust_example: "eng::devices::normal_shock_calc().solve()?".to_string(),
+                python_example: "engpy.devices.normal_shock_calc(\"m1\", 2.0, \"p2_p1\", 1.4)"
+                    .to_string(),
+                xloil_example: "=ENG_NORMAL_SHOCK(\"m1\",2.0,\"p2_p1\",1.4)".to_string(),
+                pyxll_example: "=ENG_NORMAL_SHOCK(\"m1\",2.0,\"p2_p1\",1.4)".to_string(),
+            });
+            functions.push(BindingFunction {
+                id: "device.normal_shock_calc.pivot".to_string(),
+                entity: "device".to_string(),
+                source: "normal_shock_calc".to_string(),
+                python_module: "devices".to_string(),
+                python_name: "normal_shock_pivot_m1".to_string(),
+                excel_name: "ENG_NORMAL_SHOCK_PIVOT_M1".to_string(),
+                op: "device.normal_shock_calc.pivot_m1".to_string(),
+                fixed_args: BTreeMap::new(),
+                args: args.clone(),
+                returns: "f64".to_string(),
+                help: "Normal shock calculator helper: return resolved pivot M1".to_string(),
+                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+                python_example: "engpy.devices.normal_shock_pivot_m1(\"p2_p1\", 4.5, \"m2\", 1.4)"
+                    .to_string(),
+                xloil_example: "=ENG_NORMAL_SHOCK_PIVOT_M1(\"p2_p1\",4.5,\"m2\",1.4)".to_string(),
+                pyxll_example: "=ENG_NORMAL_SHOCK_PIVOT_M1(\"p2_p1\",4.5,\"m2\",1.4)".to_string(),
+            });
+            functions.push(BindingFunction {
+                id: "device.normal_shock_calc.path_text".to_string(),
+                entity: "device".to_string(),
+                source: "normal_shock_calc".to_string(),
+                python_module: "devices".to_string(),
+                python_name: "normal_shock_path_text".to_string(),
+                excel_name: "ENG_NORMAL_SHOCK_PATH_TEXT".to_string(),
+                op: "device.normal_shock_calc.path_text".to_string(),
+                fixed_args: BTreeMap::new(),
+                args: args.clone(),
+                returns: "str".to_string(),
+                help: "Normal shock calculator helper: compact step trace text".to_string(),
+                rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+                python_example:
+                    "engpy.devices.normal_shock_path_text(\"p02_p01\", 0.72, \"m2\", 1.4)"
+                        .to_string(),
+                xloil_example: "=ENG_NORMAL_SHOCK_PATH_TEXT(\"p02_p01\",0.72,\"m2\",1.4)"
+                    .to_string(),
+                pyxll_example: "=ENG_NORMAL_SHOCK_PATH_TEXT(\"p02_p01\",0.72,\"m2\",1.4)"
+                    .to_string(),
+            });
+
+            let normal_convenience = [
+                (
+                    "device.normal_shock_calc.from_m1.to_m2",
+                    "normal_shock_from_m1_to_m2",
+                    "ENG_NORMAL_SHOCK_FROM_M1_TO_M2",
+                    "m2",
+                    "M2",
+                    "Convenience normal-shock path: M1 -> M2",
+                ),
+                (
+                    "device.normal_shock_calc.from_m1.to_p2_p1",
+                    "normal_shock_from_m1_to_p2_p1",
+                    "ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1",
+                    "p2_p1",
+                    "p2_p1",
+                    "Convenience normal-shock path: M1 -> p2/p1",
+                ),
+                (
+                    "device.normal_shock_calc.from_m1.to_rho2_rho1",
+                    "normal_shock_from_m1_to_rho2_rho1",
+                    "ENG_NORMAL_SHOCK_FROM_M1_TO_RHO2_RHO1",
+                    "rho2_rho1",
+                    "rho2_rho1",
+                    "Convenience normal-shock path: M1 -> rho2/rho1",
+                ),
+                (
+                    "device.normal_shock_calc.from_m1.to_t2_t1",
+                    "normal_shock_from_m1_to_t2_t1",
+                    "ENG_NORMAL_SHOCK_FROM_M1_TO_T2_T1",
+                    "t2_t1",
+                    "T2_T1",
+                    "Convenience normal-shock path: M1 -> T2/T1",
+                ),
+                (
+                    "device.normal_shock_calc.from_m1.to_p02_p01",
+                    "normal_shock_from_m1_to_p02_p01",
+                    "ENG_NORMAL_SHOCK_FROM_M1_TO_P02_P01",
+                    "p02_p01",
+                    "p02_p01",
+                    "Convenience normal-shock path: M1 -> p02/p01",
+                ),
+            ];
+            for (id, py, excel, target_kind, label, help) in normal_convenience {
+                functions.push(BindingFunction {
+                    id: id.to_string(),
+                    entity: "device".to_string(),
+                    source: "normal_shock_calc".to_string(),
+                    python_module: "devices".to_string(),
+                    python_name: py.to_string(),
+                    excel_name: excel.to_string(),
+                    op: "device.normal_shock_calc.value".to_string(),
+                    fixed_args: BTreeMap::from([
+                        ("input_kind".to_string(), "m1".to_string()),
+                        ("target_kind".to_string(), target_kind.to_string()),
+                    ]),
+                    args: vec![
+                        BindingArg {
+                            name: "input_value".to_string(),
+                            description: "Upstream Mach number M1".to_string(),
+                        },
+                        BindingArg {
+                            name: "gamma".to_string(),
+                            description: "Specific heat ratio".to_string(),
+                        },
+                    ],
+                    returns: "f64".to_string(),
+                    help: help.to_string(),
+                    rust_example: "eng::invoke::process_invoke_json(\"...\")".to_string(),
+                    python_example: format!("engpy.devices.{py}(2.0, 1.4)"),
+                    xloil_example: format!("={excel}(2.0,1.4)"),
+                    pyxll_example: format!("={excel}(2.0,1.4)"),
+                });
+                let _ = label;
+            }
         }
     }
 
@@ -2518,7 +2777,10 @@ fn write_python_equation_modules(manifest: &BindingManifest, equations_root: &Pa
     let mut by_module: BTreeMap<String, Vec<&BindingFunction>> = BTreeMap::new();
     for f in &manifest.functions {
         if f.python_module.starts_with("equations.") {
-            by_module.entry(f.python_module.clone()).or_default().push(f);
+            by_module
+                .entry(f.python_module.clone())
+                .or_default()
+                .push(f);
         }
     }
 
@@ -2568,7 +2830,10 @@ fn write_python_equation_modules(manifest: &BindingManifest, equations_root: &Pa
                 let p = snake_case(&a.name);
                 if a.name == "branch" {
                     params.push(format!("{p}=None"));
-                    payload_parts.push(format!("**({{\"{}\": {}}} if {} is not None else {{}})", a.name, p, p));
+                    payload_parts.push(format!(
+                        "**({{\"{}\": {}}} if {} is not None else {{}})",
+                        a.name, p, p
+                    ));
                 } else {
                     params.push(p.clone());
                     payload_parts.push(format!("\"{}\": {}", a.name, p));
@@ -2633,10 +2898,7 @@ fn write_python_equation_modules(manifest: &BindingManifest, equations_root: &Pa
                 if let Some(funcs) = module_functions.get(&module_rel) {
                     for f in funcs {
                         *alias_counts.entry(f.python_name.clone()).or_insert(0) += 1;
-                        alias_src.insert(
-                            f.python_name.clone(),
-                            (m.clone(), f.python_name.clone()),
-                        );
+                        alias_src.insert(f.python_name.clone(), (m.clone(), f.python_name.clone()));
                     }
                 }
             }
@@ -2644,10 +2906,7 @@ fn write_python_equation_modules(manifest: &BindingManifest, equations_root: &Pa
             for (name, count) in alias_counts {
                 if count == 1 {
                     if let Some((m, src_name)) = alias_src.get(&name) {
-                        out.push_str(&format!(
-                            "from .{} import {} as {}\n",
-                            m, src_name, name
-                        ));
+                        out.push_str(&format!("from .{} import {} as {}\n", m, src_name, name));
                     }
                 } else {
                     omitted.push(name);
@@ -2700,7 +2959,10 @@ fn render_xloil_module(manifest: &BindingManifest) -> String {
             let p = excel_param_name(f, a);
             if a.name == "branch" {
                 params.push(format!("{p}=\"\""));
-                kwargs.push(format!("**({{\"{}\": {}}} if {} not in (None, \"\") else {{}})", a.name, p, p));
+                kwargs.push(format!(
+                    "**({{\"{}\": {}}} if {} not in (None, \"\") else {{}})",
+                    a.name, p, p
+                ));
             } else {
                 params.push(p.clone());
                 kwargs.push(format!("\"{}\": {}", a.name, p));
@@ -2741,7 +3003,10 @@ fn render_pyxll_module(manifest: &BindingManifest) -> String {
             let p = excel_param_name(f, a);
             if a.name == "branch" {
                 params.push(format!("{p}=\"\""));
-                kwargs.push(format!("**({{\"{}\": {}}} if {} not in (None, \"\") else {{}})", a.name, p, p));
+                kwargs.push(format!(
+                    "**({{\"{}\": {}}} if {} not in (None, \"\") else {{}})",
+                    a.name, p, p
+                ));
             } else {
                 params.push(p.clone());
                 kwargs.push(format!("\"{}\": {}", a.name, p));
@@ -3412,13 +3677,19 @@ fn render_bindings_guide() -> String {
     md.push_str("  - `ENG_EQUATION_DESCRIPTION(path_id)`\n");
     md.push_str("  - `ENG_EQUATION_FAMILY(path_id)`\n");
     md.push_str("  - `ENG_EQUATION_DEFAULT_UNIT(path_id, variable)`\n\n");
-    md.push_str("  - `ENG_EQUATION_TARGETS_TEXT(path_id)` / `ENG_EQUATION_VARIABLES_TEXT(path_id)`\n");
+    md.push_str(
+        "  - `ENG_EQUATION_TARGETS_TEXT(path_id)` / `ENG_EQUATION_VARIABLES_TEXT(path_id)`\n",
+    );
     md.push_str("  - `ENG_EQUATION_BRANCHES_TEXT(path_id)`\n");
     md.push_str("  - `ENG_FLUID_PROPERTIES_TEXT(fluid_key)` / `ENG_MATERIAL_PROPERTIES_TEXT(material_key)` / `ENG_DEVICE_MODES_TEXT(device_key)`\n");
-    md.push_str("  - `ENG_EQUATION_TARGETS_TABLE(path_id)` / `ENG_EQUATION_VARIABLES_TABLE(path_id)`\n");
+    md.push_str(
+        "  - `ENG_EQUATION_TARGETS_TABLE(path_id)` / `ENG_EQUATION_VARIABLES_TABLE(path_id)`\n",
+    );
     md.push_str("  - `ENG_EQUATION_BRANCHES_TABLE(path_id)`\n");
     md.push_str("  - `ENG_FLUID_PROPERTIES_TABLE(fluid_key)` / `ENG_MATERIAL_PROPERTIES_TABLE(material_key)`\n");
-    md.push_str("  - `ENG_EQUATION_TARGET_COUNT(path_id)` / `ENG_EQUATION_VARIABLE_COUNT(path_id)`\n");
+    md.push_str(
+        "  - `ENG_EQUATION_TARGET_COUNT(path_id)` / `ENG_EQUATION_VARIABLE_COUNT(path_id)`\n",
+    );
     md.push_str("  - `ENG_FLUID_PROPERTY_COUNT(fluid_key)` / `ENG_MATERIAL_PROPERTY_COUNT(material_key)` / `ENG_DEVICE_MODE_COUNT(device_key)`\n\n");
     md.push_str("Delimited TEXT helpers use `; ` as a deterministic separator.\n\n");
     md.push_str("Use these helpers for a composable workflow: keep core engineering calls simple, then layer formatting/reference metadata as needed.\n\n");
@@ -3568,7 +3839,10 @@ fn render_binding_examples_for_family(
     md.push_str("## Bindings\n\n");
     md.push_str("### Python\n\n");
     md.push_str("```python\n");
-    md.push_str(&format!("from engpy.equations.families import {}\n", snake_case(&family.key)));
+    md.push_str(&format!(
+        "from engpy.equations.families import {}\n",
+        snake_case(&family.key)
+    ));
     if let Some(v) = family.variants.first() {
         md.push_str(&format!(
             "{}.{}.solve_<target>(...)\n",
@@ -3585,7 +3859,8 @@ fn render_binding_examples_for_family(
 fn render_binding_examples_for_device(device_key: &str) -> String {
     match device_key {
         "pipe_loss" => "## Bindings\n\n### Python\n```python\ndp = engpy.devices.pipe_loss_solve_delta_p(friction_model=\"Colebrook\", v=\"3 m/s\", d=\"0.1 m\", l=\"10 m\", eps=\"0.00015 in\", fluid=\"H2O\", in1_key=\"T\", in1_value=\"300 K\", in2_key=\"P\", in2_value=\"1 atm\")\nengpy.helpers.format_value(dp, \"Pa\", \"psia\")\n```\n\n### Excel\n```excel\n=ENG_PIPE_LOSS_DELTA_P(\"Colebrook\",,\"\",,\"3 m/s\",\"0.1 m\",\"10 m\",\"0.00015 in\",\"H2O\",\"T\",\"300 K\",\"P\",\"1 atm\")\n=ENG_FORMAT(ENG_PIPE_LOSS_DELTA_P(\"Colebrook\",,\"\",,\"3 m/s\",\"0.1 m\",\"10 m\",\"0.00015 in\",\"H2O\",\"T\",\"300 K\",\"P\",\"1 atm\"),\"Pa\",\"psia\")\n=ENG_META(\"device\",\"pipe_loss\",\"supported_modes\")\n```\n\n**Excel arguments**\n- `friction_model`: `Colebrook` or `Fixed`\n- `fixed_f`: fixed Darcy friction factor when model is `Fixed`\n- `density` / `viscosity` / `velocity` / `diameter` / `length` / `roughness`: direct engineering inputs\n- `fluid`, `in1_key`, `in1_value`, `in2_key`, `in2_value`: optional fluid-state context pair\n".to_string(),
-        "isentropic_calc" => "## Bindings\n\n### Python\n```python\nengpy.devices.isentropic_calc(\"mach_angle_deg\", 30.0, \"pressure_ratio\", 1.4)\nengpy.devices.isentropic_pivot_mach(\"area_ratio\", 2.0, \"mach\", 1.4, \"supersonic\")\nengpy.devices.isentropic_path_text(\"area_ratio\", 2.0, \"mach\", 1.4, \"subsonic\")\n```\n\n### Excel\n```excel\n=ENG_ISENTROPIC(\"mach_angle_deg\",30,\"pressure_ratio\",1.4,\"\")\n=ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,\"\")\n=ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30,1.4,\"\")\n=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")\n=ENG_ISENTROPIC_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,\"subsonic\")\n=ENG_ISENTROPIC_PATH_TEXT(\"mach\",2.0,\"pressure_ratio\",1.4,\"\")\n```\n\n**Excel arguments**\n- `value_kind_in`: `mach`, `mach_angle_deg`, `pressure_ratio`, `temperature_ratio`, `density_ratio`, `area_ratio`\n- `value_in`: input value\n- `target_kind_out`: same enum family as input kind\n- `gamma`: specific heat ratio\n- `branch`: optional, required for double-valued inverse paths like `area_ratio -> mach`\n".to_string(),
+        "isentropic_calc" => "## Bindings\n\n### Python\n```python\nengpy.devices.isentropic_calc(\"mach_angle_deg\", 30.0, \"pressure_ratio\", 1.4)\nengpy.devices.isentropic_from_nu_deg_to_m(26.3797608134, 1.4)\nengpy.devices.isentropic_pivot_mach(\"area_ratio\", 2.0, \"mach\", 1.4, \"supersonic\")\nengpy.devices.isentropic_path_text(\"area_ratio\", 2.0, \"mach\", 1.4, \"subsonic\")\n```\n\n### Excel\n```excel\n=ENG_ISENTROPIC(\"mach_angle_deg\",30,\"pressure_ratio\",1.4,\"\")\n=ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,\"\")\n=ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30,1.4,\"\")\n=ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,\"\")\n=ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,\"\")\n=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")\n=ENG_ISENTROPIC_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,\"subsonic\")\n=ENG_ISENTROPIC_PATH_TEXT(\"mach\",2.0,\"pressure_ratio\",1.4,\"\")\n```\n\n**Excel arguments**\n- `value_kind_in`: `mach`, `mach_angle_deg`, `prandtl_meyer_angle_deg`, `pressure_ratio`, `temperature_ratio`, `density_ratio`, `area_ratio`\n- `value_in`: input value\n- `target_kind_out`: same enum family as input kind\n- `gamma`: specific heat ratio\n- `branch`: optional, required for double-valued inverse paths like `area_ratio -> mach`\n".to_string(),
+        "normal_shock_calc" => "## Bindings\n\n### Python\n```python\nengpy.devices.normal_shock_calc(\"m1\", 2.0, \"p2_p1\", 1.4)\nengpy.devices.normal_shock_from_m1_to_m2(2.0, 1.4)\nengpy.devices.normal_shock_pivot_m1(\"p2_p1\", 4.5, \"m2\", 1.4)\nengpy.devices.normal_shock_path_text(\"p02_p01\", 0.7208738615, \"m2\", 1.4)\n```\n\n### Excel\n```excel\n=ENG_NORMAL_SHOCK(\"m1\",2.0,\"p2_p1\",1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_M2(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_RHO2_RHO1(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_T2_T1(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_P02_P01(2.0,1.4)\n=ENG_NORMAL_SHOCK_PIVOT_M1(\"p2_p1\",4.5,\"m2\",1.4)\n=ENG_NORMAL_SHOCK_PATH_TEXT(\"p02_p01\",0.7208738615,\"m2\",1.4)\n```\n\n**Excel arguments**\n- `value_kind_in`: `m1`, `m2`, `p2_p1`, `rho2_rho1`, `t2_t1`, `p02_p01`\n- `value_in`: input value\n- `target_kind_out`: same enum family as input kind\n- `gamma`: specific heat ratio\n".to_string(),
         _ => String::new(),
     }
 }
@@ -4135,12 +4410,25 @@ fn render_devices_guide() -> String {
     md.push_str("## Calculator Device: Isentropic\n\n");
     md.push_str("- API entrypoint: `eng::devices::isentropic_calc()`\n");
     md.push_str("- Uses deterministic Mach-pivot orchestration (`input_kind -> pivot Mach -> target_kind`).\n");
-    md.push_str("- All mathematical relations are resolved through registry-backed atomic equations.\n");
+    md.push_str(
+        "- All mathematical relations are resolved through registry-backed atomic equations.\n",
+    );
     md.push_str("- Branch-sensitive inverse paths (such as `area_ratio -> mach`) require explicit branch selection.\n");
     md.push_str("- Outputs include scalar value, pivot Mach, and step diagnostics/path text.\n\n");
 
+    md.push_str("## Calculator Device: Normal Shock\n\n");
+    md.push_str("- API entrypoint: `eng::devices::normal_shock_calc()`\n");
+    md.push_str(
+        "- Uses deterministic M1-pivot orchestration (`input_kind -> pivot M1 -> target_kind`).\n",
+    );
+    md.push_str(
+        "- All mathematical relations are resolved through registry-backed atomic equations.\n",
+    );
+    md.push_str("- Outputs include scalar value, pivot M1, and step diagnostics/path text.\n\n");
+
     md.push_str("See [Devices Index](./index.md) and [Pipe Pressure Drop](./pipe_loss.md).\n");
     md.push_str("See also [Isentropic Calculator](./isentropic_calc.md).\n");
+    md.push_str("See also [Normal Shock Calculator](./normal_shock_calc.md).\n");
     md
 }
 
@@ -4170,22 +4458,72 @@ fn render_device_page(d: &crate::devices::DeviceDocsEntry) -> String {
         md.push_str("Calculator-style compressible-flow device that accepts one isentropic input kind and one target kind, resolves a pivot Mach number, then computes the requested output.\n\n");
         md.push_str("All relation math is delegated to equation-registry atomic equations (no device-local formula authority).\n\n");
         md.push_str("## Supported Inputs (v1)\n\n");
-        md.push_str("- `mach`\n- `mach_angle_deg` (Excel/Python convenience; internally converted to radians)\n- `pressure_ratio` (`p/p0`)\n- `temperature_ratio` (`T/T0`)\n- `density_ratio` (`rho/rho0`)\n- `area_ratio` (`A/A*`, branch-sensitive)\n\n");
+        md.push_str("- `mach`\n- `mach_angle_deg` (Excel/Python convenience; internally converted to radians)\n- `prandtl_meyer_angle_deg` (Excel/Python convenience; internally converted to radians)\n- `pressure_ratio` (`p/p0`)\n- `temperature_ratio` (`T/T0`)\n- `density_ratio` (`rho/rho0`)\n- `area_ratio` (`A/A*`, branch-sensitive)\n\n");
         md.push_str("## Supported Targets (v1)\n\n");
-        md.push_str("- `mach`\n- `mach_angle_deg`\n- `pressure_ratio`\n- `temperature_ratio`\n- `density_ratio`\n- `area_ratio`\n\n");
+        md.push_str("- `mach`\n- `mach_angle_deg`\n- `prandtl_meyer_angle_deg`\n- `pressure_ratio`\n- `temperature_ratio`\n- `density_ratio`\n- `area_ratio`\n\n");
         md.push_str("## Branch Behavior\n\n");
         md.push_str("- `area_ratio -> mach` is double-valued and requires explicit branch (`subsonic` or `supersonic`).\n");
         md.push_str("- If branch-sensitive inversion is requested without branch, the device returns a structured error.\n\n");
+        md.push_str("## Domain Notes\n\n");
+        md.push_str(
+            "- `mach_angle` and `prandtl_meyer_angle` are valid for supersonic flow (`M >= 1`).\n",
+        );
+        md.push_str("- `prandtl_meyer_angle` input is validated as `0 <= nu < nu_max(gamma)` and reports clear domain errors.\n\n");
         md.push_str("## Examples\n\n");
         md.push_str("### Rust\n```rust\nuse eng::devices::{isentropic_calc, IsentropicInputKind, IsentropicOutputKind, IsentropicBranch};\nlet out = isentropic_calc()\n    .gamma(1.4)\n    .input(IsentropicInputKind::AreaRatio, 2.0)\n    .target(IsentropicOutputKind::Mach)\n    .branch(IsentropicBranch::Supersonic)\n    .solve()?;\nprintln!(\"M={}, p/p0={}\", out.pivot_mach, out.value_si);\n```\n\n");
-        md.push_str("### Python\n```python\nengpy.devices.isentropic_calc(\"mach_angle_deg\", 30.0, \"pressure_ratio\", 1.4)\nengpy.devices.isentropic_pivot_mach(\"area_ratio\", 2.0, \"mach\", 1.4, \"subsonic\")\nengpy.devices.isentropic_path_text(\"area_ratio\", 2.0, \"mach\", 1.4, \"supersonic\")\n```\n\n");
-        md.push_str("### Excel\n```excel\n=ENG_ISENTROPIC(\"mach_angle_deg\",30,\"pressure_ratio\",1.4,\"\")\n=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")\n=ENG_ISENTROPIC_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,\"subsonic\")\n=ENG_ISENTROPIC_PATH_TEXT(\"mach\",2.0,\"pressure_ratio\",1.4,\"\")\n```\n\n");
+        md.push_str("### Python\n```python\nengpy.devices.isentropic_calc(\"mach_angle_deg\", 30.0, \"pressure_ratio\", 1.4)\nengpy.devices.isentropic_from_nu_deg_to_m(26.3797608134, 1.4)\nengpy.devices.isentropic_from_m_to_nu_deg(2.0, 1.4)\nengpy.devices.isentropic_pivot_mach(\"area_ratio\", 2.0, \"mach\", 1.4, \"subsonic\")\nengpy.devices.isentropic_path_text(\"area_ratio\", 2.0, \"mach\", 1.4, \"supersonic\")\n```\n\n");
+        md.push_str("### Excel\n```excel\n=ENG_ISENTROPIC(\"mach_angle_deg\",30,\"pressure_ratio\",1.4,\"\")\n=ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,\"\")\n=ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,\"\")\n=ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")\n=ENG_ISENTROPIC_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,\"subsonic\")\n=ENG_ISENTROPIC_PATH_TEXT(\"mach\",2.0,\"pressure_ratio\",1.4,\"\")\n```\n\n");
         md.push_str("## Internal Composition\n\n");
         md.push_str("- [Mach Angle](../equations/compressible/mach_angle.md)\n");
+        md.push_str(
+            "- [Prandtl-Meyer Expansion Angle](../equations/compressible/prandtl_meyer.md)\n",
+        );
         md.push_str("- [Isentropic Pressure Ratio](../equations/compressible/isentropic_pressure_ratio.md)\n");
         md.push_str("- [Isentropic Temperature Ratio](../equations/compressible/isentropic_temperature_ratio.md)\n");
-        md.push_str("- [Isentropic Density Ratio](../equations/compressible/isentropic_density_ratio.md)\n");
-        md.push_str("- [Isentropic Area-Mach Relation](../equations/compressible/area_mach.md)\n\n");
+        md.push_str(
+            "- [Isentropic Density Ratio](../equations/compressible/isentropic_density_ratio.md)\n",
+        );
+        md.push_str(
+            "- [Isentropic Area-Mach Relation](../equations/compressible/area_mach.md)\n\n",
+        );
+        md.push_str(&render_binding_examples_for_device(&d.key));
+        return md;
+    }
+    if d.key == "normal_shock_calc" {
+        let mut md = String::new();
+        md.push_str("# Normal Shock Calculator\n\n");
+        md.push_str("Calculator-style compressible-flow device that accepts one normal-shock input kind and one target kind, resolves a pivot upstream Mach number `M1`, then computes the requested output.\n\n");
+        md.push_str("All relation math is delegated to equation-registry atomic equations (no device-local formula authority).\n\n");
+        md.push_str("## Supported Inputs (v1)\n\n");
+        md.push_str("- `m1`\n- `m2`\n- `p2_p1`\n- `rho2_rho1`\n- `t2_t1`\n- `p02_p01`\n\n");
+        md.push_str("## Supported Targets (v1)\n\n");
+        md.push_str("- `m1`\n- `m2`\n- `p2_p1`\n- `rho2_rho1`\n- `t2_t1`\n- `p02_p01`\n\n");
+        md.push_str("## Pivot Strategy\n\n");
+        md.push_str("- Deterministic orchestration always resolves a pivot `M1` first.\n");
+        md.push_str("- Then target value is computed from `M1` through the corresponding normal-shock equation.\n\n");
+        md.push_str("## Domain Notes\n\n");
+        md.push_str("- `M1 >= 1` for normal shocks.\n");
+        md.push_str("- Ratios are checked for physically valid ranges (e.g., `p2_p1 >= 1`, `0 < p02_p01 <= 1`).\n\n");
+        md.push_str("## Examples\n\n");
+        md.push_str("### Rust\n```rust\nuse eng::devices::{normal_shock_calc, NormalShockInputKind, NormalShockOutputKind};\nlet out = normal_shock_calc()\n    .gamma(1.4)\n    .input(NormalShockInputKind::PressureRatio, 4.5)\n    .target(NormalShockOutputKind::TemperatureRatio)\n    .solve()?;\nprintln!(\"M1={}, T2/T1={}\", out.pivot_m1, out.value_si);\n```\n\n");
+        md.push_str("### Python\n```python\nengpy.devices.normal_shock_calc(\"m1\", 2.0, \"p2_p1\", 1.4)\nengpy.devices.normal_shock_from_m1_to_m2(2.0, 1.4)\nengpy.devices.normal_shock_pivot_m1(\"p02_p01\", 0.7208738615, \"m2\", 1.4)\nengpy.devices.normal_shock_path_text(\"p2_p1\", 4.5, \"m2\", 1.4)\n```\n\n");
+        md.push_str("### Excel\n```excel\n=ENG_NORMAL_SHOCK(\"m1\",2.0,\"p2_p1\",1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_M2(2.0,1.4)\n=ENG_NORMAL_SHOCK_FROM_M1_TO_P2_P1(2.0,1.4)\n=ENG_NORMAL_SHOCK_PIVOT_M1(\"p2_p1\",4.5,\"m2\",1.4)\n=ENG_NORMAL_SHOCK_PATH_TEXT(\"p02_p01\",0.7208738615,\"m2\",1.4)\n```\n\n");
+        md.push_str("## Internal Composition\n\n");
+        md.push_str(
+            "- [Normal Shock Downstream Mach Number](../equations/compressible/normal_shock_m2.md)\n",
+        );
+        md.push_str(
+            "- [Normal Shock Static Pressure Ratio](../equations/compressible/normal_shock_pressure_ratio.md)\n",
+        );
+        md.push_str(
+            "- [Normal Shock Density Ratio](../equations/compressible/normal_shock_density_ratio.md)\n",
+        );
+        md.push_str(
+            "- [Normal Shock Temperature Ratio](../equations/compressible/normal_shock_temperature_ratio.md)\n",
+        );
+        md.push_str(
+            "- [Normal Shock Stagnation Pressure Ratio](../equations/compressible/normal_shock_stagnation_pressure_ratio.md)\n\n",
+        );
         md.push_str(&render_binding_examples_for_device(&d.key));
         return md;
     }
@@ -4236,10 +4574,18 @@ fn device_equation_dependencies(device_key: &str) -> &'static [&'static str] {
         ],
         "isentropic_calc" => &[
             "compressible.mach_angle",
+            "compressible.prandtl_meyer",
             "compressible.area_mach",
             "compressible.isentropic_pressure_ratio",
             "compressible.isentropic_temperature_ratio",
             "compressible.isentropic_density_ratio",
+        ],
+        "normal_shock_calc" => &[
+            "compressible.normal_shock_m2",
+            "compressible.normal_shock_pressure_ratio",
+            "compressible.normal_shock_density_ratio",
+            "compressible.normal_shock_temperature_ratio",
+            "compressible.normal_shock_stagnation_pressure_ratio",
         ],
         _ => &[],
     }

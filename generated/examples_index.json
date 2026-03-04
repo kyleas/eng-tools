@@ -100,6 +100,84 @@
       "style": "convenience"
     },
     {
+      "code": "let value = eq\n    .solve(compressible::normal_shock_density_ratio::equation())\n    .target_rho2_rho1()\n    .given_m1(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.normal_shock_density_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::normal_shock_density_ratio::solve_rho2_rho1(\n    2.0,\n    1.4,\n)?;",
+      "label": "convenience_rho2_rho1",
+      "path_id": "compressible.normal_shock_density_ratio",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::normal_shock_m2::equation())\n    .target_m2()\n    .given_m1(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.normal_shock_m2",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::normal_shock_m2::solve_m2(\n    2.0,\n    1.4,\n)?;",
+      "label": "convenience_m2",
+      "path_id": "compressible.normal_shock_m2",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::normal_shock_pressure_ratio::equation())\n    .target_p2_p1()\n    .given_m1(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.normal_shock_pressure_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::normal_shock_pressure_ratio::solve_p2_p1(\n    2.0,\n    1.4,\n)?;",
+      "label": "convenience_p2_p1",
+      "path_id": "compressible.normal_shock_pressure_ratio",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::normal_shock_stagnation_pressure_ratio::equation())\n    .target_p02_p01()\n    .given_m1(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.normal_shock_stagnation_pressure_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::normal_shock_stagnation_pressure_ratio::solve_p02_p01(\n    2.0,\n    1.4,\n)?;",
+      "label": "convenience_p02_p01",
+      "path_id": "compressible.normal_shock_stagnation_pressure_ratio",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::normal_shock_temperature_ratio::equation())\n    .target_t2_t1()\n    .given_m1(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.normal_shock_temperature_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::normal_shock_temperature_ratio::solve_t2_t1(\n    2.0,\n    1.4,\n)?;",
+      "label": "convenience_t2_t1",
+      "path_id": "compressible.normal_shock_temperature_ratio",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::prandtl_meyer::equation())\n    .target_nu()\n    .given_m(1.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.prandtl_meyer",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::prandtl_meyer::equation())\n    .target_nu()\n    .given_m(1.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_units",
+      "path_id": "compressible.prandtl_meyer",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::prandtl_meyer::solve_nu(\n    1.0,\n    1.4,\n)?;",
+      "label": "convenience_nu",
+      "path_id": "compressible.prandtl_meyer",
+      "style": "convenience"
+    },
+    {
       "code": "let value = eq\n    .solve(fluids::circular_pipe_area::equation())\n    .target_a()\n    .given_d(0.1)\n    .value()?;",
       "label": "typed_builder_si",
       "path_id": "fluids.circular_pipe_area",

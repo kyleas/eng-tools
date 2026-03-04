@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-cb405dff.js";
+            window.path_to_searchindex_js = "../searchindex-1b4a51a9.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-3fe63638.js"></script>
+        <script src="../toc-11a28804.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,6 +183,7 @@
 <ul>
 <li><code>mach</code></li>
 <li><code>mach_angle_deg</code> (Excel/Python convenience; internally converted to radians)</li>
+<li><code>prandtl_meyer_angle_deg</code> (Excel/Python convenience; internally converted to radians)</li>
 <li><code>pressure_ratio</code> (<code>p/p0</code>)</li>
 <li><code>temperature_ratio</code> (<code>T/T0</code>)</li>
 <li><code>density_ratio</code> (<code>rho/rho0</code>)</li>
@@ -192,6 +193,7 @@
 <ul>
 <li><code>mach</code></li>
 <li><code>mach_angle_deg</code></li>
+<li><code>prandtl_meyer_angle_deg</code></li>
 <li><code>pressure_ratio</code></li>
 <li><code>temperature_ratio</code></li>
 <li><code>density_ratio</code></li>
@@ -201,6 +203,11 @@
 <ul>
 <li><code>area_ratio -&gt; mach</code> is double-valued and requires explicit branch (<code>subsonic</code> or <code>supersonic</code>).</li>
 <li>If branch-sensitive inversion is requested without branch, the device returns a structured error.</li>
+</ul>
+<h2 id="domain-notes"><a class="header" href="#domain-notes">Domain Notes</a></h2>
+<ul>
+<li><code>mach_angle</code> and <code>prandtl_meyer_angle</code> are valid for supersonic flow (<code>M &gt;= 1</code>).</li>
+<li><code>prandtl_meyer_angle</code> input is validated as <code>0 &lt;= nu &lt; nu_max(gamma)</code> and reports clear domain errors.</li>
 </ul>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
 <h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
@@ -217,11 +224,15 @@ println!("M={}, p/p0={}", out.pivot_mach, out.value_si);
 <span class="boring">}</span></code></pre>
 <h3 id="python"><a class="header" href="#python">Python</a></h3>
 <pre><code class="language-python">engpy.devices.isentropic_calc("mach_angle_deg", 30.0, "pressure_ratio", 1.4)
+engpy.devices.isentropic_from_nu_deg_to_m(26.3797608134, 1.4)
+engpy.devices.isentropic_from_m_to_nu_deg(2.0, 1.4)
 engpy.devices.isentropic_pivot_mach("area_ratio", 2.0, "mach", 1.4, "subsonic")
 engpy.devices.isentropic_path_text("area_ratio", 2.0, "mach", 1.4, "supersonic")
 </code></pre>
 <h3 id="excel"><a class="header" href="#excel">Excel</a></h3>
 <pre><code class="language-excel">=ENG_ISENTROPIC("mach_angle_deg",30,"pressure_ratio",1.4,"")
+=ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,"")
+=ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,"")
 =ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,"supersonic")
 =ENG_ISENTROPIC_PIVOT_MACH("area_ratio",2.0,"mach",1.4,"subsonic")
 =ENG_ISENTROPIC_PATH_TEXT("mach",2.0,"pressure_ratio",1.4,"")
@@ -229,6 +240,7 @@ engpy.devices.isentropic_path_text("area_ratio", 2.0, "mach", 1.4, "supersonic")
 <h2 id="internal-composition"><a class="header" href="#internal-composition">Internal Composition</a></h2>
 <ul>
 <li><a href="../equations/compressible/mach_angle.html">Mach Angle</a></li>
+<li><a href="../equations/compressible/prandtl_meyer.html">Prandtl-Meyer Expansion Angle</a></li>
 <li><a href="../equations/compressible/isentropic_pressure_ratio.html">Isentropic Pressure Ratio</a></li>
 <li><a href="../equations/compressible/isentropic_temperature_ratio.html">Isentropic Temperature Ratio</a></li>
 <li><a href="../equations/compressible/isentropic_density_ratio.html">Isentropic Density Ratio</a></li>
@@ -237,6 +249,7 @@ engpy.devices.isentropic_path_text("area_ratio", 2.0, "mach", 1.4, "supersonic")
 <h2 id="bindings"><a class="header" href="#bindings">Bindings</a></h2>
 <h3 id="python-1"><a class="header" href="#python-1">Python</a></h3>
 <pre><code class="language-python">engpy.devices.isentropic_calc("mach_angle_deg", 30.0, "pressure_ratio", 1.4)
+engpy.devices.isentropic_from_nu_deg_to_m(26.3797608134, 1.4)
 engpy.devices.isentropic_pivot_mach("area_ratio", 2.0, "mach", 1.4, "supersonic")
 engpy.devices.isentropic_path_text("area_ratio", 2.0, "mach", 1.4, "subsonic")
 </code></pre>
@@ -244,13 +257,15 @@ engpy.devices.isentropic_path_text("area_ratio", 2.0, "mach", 1.4, "subsonic")
 <pre><code class="language-excel">=ENG_ISENTROPIC("mach_angle_deg",30,"pressure_ratio",1.4,"")
 =ENG_ISENTROPIC_FROM_M_TO_P_P0(2.0,1.4,"")
 =ENG_ISENTROPIC_FROM_MU_DEG_TO_P_P0(30,1.4,"")
+=ENG_ISENTROPIC_FROM_NU_DEG_TO_M(26.3797608134,1.4,"")
+=ENG_ISENTROPIC_FROM_M_TO_NU_DEG(2.0,1.4,"")
 =ENG_ISENTROPIC_FROM_A_ASTAR_TO_M(2.0,1.4,"supersonic")
 =ENG_ISENTROPIC_PIVOT_MACH("area_ratio",2.0,"mach",1.4,"subsonic")
 =ENG_ISENTROPIC_PATH_TEXT("mach",2.0,"pressure_ratio",1.4,"")
 </code></pre>
 <p><strong>Excel arguments</strong></p>
 <ul>
-<li><code>value_kind_in</code>: <code>mach</code>, <code>mach_angle_deg</code>, <code>pressure_ratio</code>, <code>temperature_ratio</code>, <code>density_ratio</code>, <code>area_ratio</code></li>
+<li><code>value_kind_in</code>: <code>mach</code>, <code>mach_angle_deg</code>, <code>prandtl_meyer_angle_deg</code>, <code>pressure_ratio</code>, <code>temperature_ratio</code>, <code>density_ratio</code>, <code>area_ratio</code></li>
 <li><code>value_in</code>: input value</li>
 <li><code>target_kind_out</code>: same enum family as input kind</li>
 <li><code>gamma</code>: specific heat ratio</li>
@@ -265,7 +280,7 @@ engpy.devices.isentropic_path_text("area_ratio", 2.0, "mach", 1.4, "subsonic")
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../constants/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../devices/normal_shock_calc.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -279,7 +294,7 @@ engpy.devices.isentropic_path_text("area_ratio", 2.0, "mach", 1.4, "subsonic")
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../constants/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../devices/normal_shock_calc.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-cb405dff.js";
+            window.path_to_searchindex_js = "../searchindex-1b4a51a9.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-3fe63638.js"></script>
+        <script src="../toc-11a28804.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -238,8 +238,16 @@
 <li>Branch-sensitive inverse paths (such as <code>area_ratio -&gt; mach</code>) require explicit branch selection.</li>
 <li>Outputs include scalar value, pivot Mach, and step diagnostics/path text.</li>
 </ul>
+<h2 id="calculator-device-normal-shock"><a class="header" href="#calculator-device-normal-shock">Calculator Device: Normal Shock</a></h2>
+<ul>
+<li>API entrypoint: <code>eng::devices::normal_shock_calc()</code></li>
+<li>Uses deterministic M1-pivot orchestration (<code>input_kind -&gt; pivot M1 -&gt; target_kind</code>).</li>
+<li>All mathematical relations are resolved through registry-backed atomic equations.</li>
+<li>Outputs include scalar value, pivot M1, and step diagnostics/path text.</li>
+</ul>
 <p>See <a href="./index.html">Devices Index</a> and <a href="./pipe_loss.html">Pipe Pressure Drop</a>.
-See also <a href="./isentropic_calc.html">Isentropic Calculator</a>.</p>
+See also <a href="./isentropic_calc.html">Isentropic Calculator</a>.
+See also <a href="./normal_shock_calc.html">Normal Shock Calculator</a>.</p>
 
                     </main>
 

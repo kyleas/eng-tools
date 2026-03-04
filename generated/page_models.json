@@ -716,6 +716,659 @@
       ]
     },
     {
+      "key": "normal_shock_density_ratio",
+      "path_id": "compressible.normal_shock_density_ratio",
+      "slug": "normal_shock_density_ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Normal Shock Density Ratio",
+      "description": "Density ratio across a normal shock.",
+      "latex": "\\frac{\\rho_2}{\\rho_1} = \\frac{(\\gamma+1)M_1^2}{(\\gamma-1)M_1^2+2}",
+      "unicode": "rho2_rho1 = ((gamma+1)*M1^2) / (((gamma-1)*M1^2) + 2)",
+      "ascii": "rho2_rho1 = ((gamma+1)*M1^2) / (((gamma-1)*M1^2) + 2)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "M1",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "rho2_rho1",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "One-dimensional, steady, adiabatic normal shock.",
+        "Calorically perfect gas with constant gamma."
+      ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
+      "references": [],
+      "variables": [
+        {
+          "key": "rho2_rho1",
+          "name": "Density ratio",
+          "symbol": "\\frac{\\rho_2}{\\rho_1}",
+          "symbol_authored": true,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M1",
+          "name": "Upstream Mach number",
+          "symbol": "M_1",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::normal_shock_density_ratio::equation())\n    .target_rho2_rho1()\n    .given_m1(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_rho2_rho1",
+          "style": "convenience",
+          "code": "let value = equations::compressible::normal_shock_density_ratio::solve_rho2_rho1(\n    2.0,\n    1.4,\n)?;",
+          "target": "rho2_rho1",
+          "signature": "equations::compressible::normal_shock_density_ratio::solve_rho2_rho1(M1, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M1",
+              "description": "Upstream Mach number"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "normal_shock_m2",
+      "path_id": "compressible.normal_shock_m2",
+      "slug": "normal_shock_m2",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Normal Shock Downstream Mach Number",
+      "description": "Downstream Mach number after a normal shock.",
+      "latex": "M_2 = \\sqrt{\\frac{1 + \\frac{\\gamma-1}{2}M_1^2}{\\gamma M_1^2 - \\frac{\\gamma-1}{2}}}",
+      "unicode": "M2 = sqrt((1 + ((gamma-1)/2) * M1^2) / (gamma*M1^2 - ((gamma-1)/2)))",
+      "ascii": "M2 = sqrt((1 + ((gamma-1)/2) * M1^2) / (gamma*M1^2 - ((gamma-1)/2)))",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "M1",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "M2",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "One-dimensional, steady, adiabatic normal shock.",
+        "Calorically perfect gas with constant gamma."
+      ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
+      "references": [],
+      "variables": [
+        {
+          "key": "M2",
+          "name": "Downstream Mach number",
+          "symbol": "M_2",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M1",
+          "name": "Upstream Mach number",
+          "symbol": "M_1",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::normal_shock_m2::equation())\n    .target_m2()\n    .given_m1(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_m2",
+          "style": "convenience",
+          "code": "let value = equations::compressible::normal_shock_m2::solve_m2(\n    2.0,\n    1.4,\n)?;",
+          "target": "M2",
+          "signature": "equations::compressible::normal_shock_m2::solve_m2(M1, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M1",
+              "description": "Upstream Mach number"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "normal_shock_pressure_ratio",
+      "path_id": "compressible.normal_shock_pressure_ratio",
+      "slug": "normal_shock_pressure_ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Normal Shock Static Pressure Ratio",
+      "description": "Static pressure ratio across a normal shock.",
+      "latex": "\\frac{p_2}{p_1} = 1 + \\frac{2\\gamma}{\\gamma+1}(M_1^2-1)",
+      "unicode": "p2_p1 = 1 + (2*gamma/(gamma+1))*(M1^2 - 1)",
+      "ascii": "p2_p1 = 1 + (2*gamma/(gamma+1))*(M1^2 - 1)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "M1",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "p2_p1",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "One-dimensional, steady, adiabatic normal shock.",
+        "Calorically perfect gas with constant gamma."
+      ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
+      "references": [],
+      "variables": [
+        {
+          "key": "p2_p1",
+          "name": "Static pressure ratio",
+          "symbol": "\\frac{p_2}{p_1}",
+          "symbol_authored": true,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M1",
+          "name": "Upstream Mach number",
+          "symbol": "M_1",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::normal_shock_pressure_ratio::equation())\n    .target_p2_p1()\n    .given_m1(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_p2_p1",
+          "style": "convenience",
+          "code": "let value = equations::compressible::normal_shock_pressure_ratio::solve_p2_p1(\n    2.0,\n    1.4,\n)?;",
+          "target": "p2_p1",
+          "signature": "equations::compressible::normal_shock_pressure_ratio::solve_p2_p1(M1, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M1",
+              "description": "Upstream Mach number"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "normal_shock_stagnation_pressure_ratio",
+      "path_id": "compressible.normal_shock_stagnation_pressure_ratio",
+      "slug": "normal_shock_stagnation_pressure_ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Normal Shock Stagnation Pressure Ratio",
+      "description": "Stagnation pressure ratio across a normal shock.",
+      "latex": "\\frac{p_{02}}{p_{01}} = \\left(\\frac{(\\gamma+1)M_1^2}{(\\gamma-1)M_1^2+2}\\right)^{\\gamma/(\\gamma-1)}\\left(\\frac{\\gamma+1}{2\\gamma M_1^2-(\\gamma-1)}\\right)^{1/(\\gamma-1)}",
+      "unicode": "p02_p01 = (((gamma+1)*M1^2)/(((gamma-1)*M1^2)+2))^(gamma/(gamma-1)) * ((gamma+1)/(2*gamma*M1^2 - (gamma-1)))^(1/(gamma-1))",
+      "ascii": "p02_p01 = (((gamma+1)*M1^2)/(((gamma-1)*M1^2)+2))^(gamma/(gamma-1)) * ((gamma+1)/(2*gamma*M1^2 - (gamma-1)))^(1/(gamma-1))",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "M1",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "p02_p01",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "One-dimensional, steady, adiabatic normal shock.",
+        "Calorically perfect gas with constant gamma."
+      ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
+      "references": [],
+      "variables": [
+        {
+          "key": "p02_p01",
+          "name": "Stagnation pressure ratio",
+          "symbol": "\\frac{p_{02}}{p_{01}}",
+          "symbol_authored": true,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M1",
+          "name": "Upstream Mach number",
+          "symbol": "M_1",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::normal_shock_stagnation_pressure_ratio::equation())\n    .target_p02_p01()\n    .given_m1(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_p02_p01",
+          "style": "convenience",
+          "code": "let value = equations::compressible::normal_shock_stagnation_pressure_ratio::solve_p02_p01(\n    2.0,\n    1.4,\n)?;",
+          "target": "p02_p01",
+          "signature": "equations::compressible::normal_shock_stagnation_pressure_ratio::solve_p02_p01(M1, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M1",
+              "description": "Upstream Mach number"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "normal_shock_temperature_ratio",
+      "path_id": "compressible.normal_shock_temperature_ratio",
+      "slug": "normal_shock_temperature_ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Normal Shock Temperature Ratio",
+      "description": "Static temperature ratio across a normal shock.",
+      "latex": "\\frac{T_2}{T_1} = \\frac{p_2/p_1}{\\rho_2/\\rho_1} = \\left(1+\\frac{2\\gamma}{\\gamma+1}(M_1^2-1)\\right)\\frac{(\\gamma-1)M_1^2+2}{(\\gamma+1)M_1^2}",
+      "unicode": "T2_T1 = (1 + (2*gamma/(gamma+1))*(M1^2-1)) * (((gamma-1)*M1^2 + 2)/((gamma+1)*M1^2))",
+      "ascii": "T2_T1 = (1 + (2*gamma/(gamma+1))*(M1^2-1)) * (((gamma-1)*M1^2 + 2)/((gamma+1)*M1^2))",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "M1",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "T2_T1",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "One-dimensional, steady, adiabatic normal shock.",
+        "Calorically perfect gas with constant gamma."
+      ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
+      "references": [],
+      "variables": [
+        {
+          "key": "T2_T1",
+          "name": "Static temperature ratio",
+          "symbol": "\\frac{T_2}{T_1}",
+          "symbol_authored": true,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M1",
+          "name": "Upstream Mach number",
+          "symbol": "M_1",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::normal_shock_temperature_ratio::equation())\n    .target_t2_t1()\n    .given_m1(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_t2_t1",
+          "style": "convenience",
+          "code": "let value = equations::compressible::normal_shock_temperature_ratio::solve_t2_t1(\n    2.0,\n    1.4,\n)?;",
+          "target": "T2_T1",
+          "signature": "equations::compressible::normal_shock_temperature_ratio::solve_t2_t1(M1, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M1",
+              "description": "Upstream Mach number"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "prandtl_meyer",
+      "path_id": "compressible.prandtl_meyer",
+      "slug": "prandtl_meyer",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Prandtl-Meyer Expansion Angle",
+      "description": "Prandtl-Meyer angle as a function of Mach number for supersonic expansion.",
+      "latex": "\\nu = \\sqrt{\\frac{\\gamma+1}{\\gamma-1}} \\tan^{-1}\\!\\left(\\sqrt{\\frac{\\gamma-1}{\\gamma+1}(M^2-1)}\\right) - \\tan^{-1}\\!\\left(\\sqrt{M^2-1}\\right)",
+      "unicode": "nu = sqrt((gamma+1)/(gamma-1))*atan(sqrt(((gamma-1)/(gamma+1))*(M^2-1))) - atan(sqrt(M^2-1))",
+      "ascii": "nu = sqrt((gamma+1)/(gamma-1))*atan(sqrt(((gamma-1)/(gamma+1))*(M^2-1))) - atan(sqrt(M^2-1))",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "M",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "nu",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "Calorically perfect gas with constant gamma.",
+        "Defined for M >= 1 in supersonic expansion flow."
+      ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
+      "references": [
+        {
+          "source": "Anderson, Modern Compressible Flow",
+          "note": "Prandtl-Meyer function tables and formula."
+        },
+        {
+          "source": "NASA Glenn Research Center, Prandtl-Meyer Angle",
+          "note": "Educational reference for nu(M, gamma)."
+        }
+      ],
+      "variables": [
+        {
+          "key": "nu",
+          "name": "Prandtl-Meyer angle",
+          "symbol": "\\nu",
+          "symbol_authored": true,
+          "dimension": "angle",
+          "default_unit": "rad",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M",
+          "name": "Mach number",
+          "symbol": "M",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::prandtl_meyer::equation())\n    .target_nu()\n    .given_m(1.0)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "typed_builder_units",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::prandtl_meyer::equation())\n    .target_nu()\n    .given_m(1.0)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_nu",
+          "style": "convenience",
+          "code": "let value = equations::compressible::prandtl_meyer::solve_nu(\n    1.0,\n    1.4,\n)?;",
+          "target": "nu",
+          "signature": "equations::compressible::prandtl_meyer::solve_nu(M, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M",
+              "description": "Mach number"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "key": "circular_pipe_area",
       "path_id": "fluids.circular_pipe_area",
       "slug": "circular_pipe_area",

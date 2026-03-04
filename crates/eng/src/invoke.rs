@@ -86,6 +86,14 @@ pub fn handle_invoke(req: InvokeRequest) -> InvokeResponse {
         "device.isentropic_calc.path_text" => {
             invoke_isentropic_calc_path_text(&op, request_id, &args)
         }
+        "device.normal_shock_calc" => invoke_normal_shock_calc(&op, request_id, &args),
+        "device.normal_shock_calc.value" => invoke_normal_shock_calc_value(&op, request_id, &args),
+        "device.normal_shock_calc.pivot_m1" => {
+            invoke_normal_shock_calc_pivot_m1(&op, request_id, &args)
+        }
+        "device.normal_shock_calc.path_text" => {
+            invoke_normal_shock_calc_path_text(&op, request_id, &args)
+        }
         "device.pipe_loss.solve_delta_p" => invoke_pipe_loss(&op, request_id, &args),
         "fluid.prop" => invoke_fluid_prop(&op, request_id, &args),
         "material.prop" => invoke_material_prop(&op, request_id, &args),
@@ -624,7 +632,10 @@ fn equation_branches_for(eq: &EquationDef) -> Vec<(String, bool)> {
         .collect()
 }
 
-fn resolve_fluid_entry<'a>(key: &str, entries: &'a [eng_fluids::FluidDocsEntry]) -> Option<&'a eng_fluids::FluidDocsEntry> {
+fn resolve_fluid_entry<'a>(
+    key: &str,
+    entries: &'a [eng_fluids::FluidDocsEntry],
+) -> Option<&'a eng_fluids::FluidDocsEntry> {
     entries.iter().find(|f| {
         f.key.eq_ignore_ascii_case(key) || f.aliases.iter().any(|a| a.eq_ignore_ascii_case(key))
     })
@@ -648,10 +659,16 @@ fn fluid_property_default_unit(prop: &str) -> &'static str {
     }
 }
 
-fn invoke_equation_targets_text(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+fn invoke_equation_targets_text(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
     let path_id = match req_str(args, "path_id") {
         Ok(v) => v,
-        Err(e) => return InvokeResponse::err(op, request_id, "missing_arg", e, Some("path_id"), None),
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("path_id"), None);
+        }
     };
     let eq = match crate::eq.equation(path_id) {
         Ok(v) => v,
@@ -663,17 +680,23 @@ fn invoke_equation_targets_text(op: &str, request_id: Option<String>, args: &Val
                 e.to_string(),
                 Some("path_id"),
                 None,
-            )
+            );
         }
     };
     let targets = equation_targets_for(eq);
     InvokeResponse::ok(op, request_id, json!(targets.join(LIST_TEXT_DELIMITER)))
 }
 
-fn invoke_equation_targets_table(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+fn invoke_equation_targets_table(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
     let path_id = match req_str(args, "path_id") {
         Ok(v) => v,
-        Err(e) => return InvokeResponse::err(op, request_id, "missing_arg", e, Some("path_id"), None),
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("path_id"), None);
+        }
     };
     let eq = match crate::eq.equation(path_id) {
         Ok(v) => v,
@@ -685,7 +708,7 @@ fn invoke_equation_targets_table(op: &str, request_id: Option<String>, args: &Va
                 e.to_string(),
                 Some("path_id"),
                 None,
-            )
+            );
         }
     };
     let default_target = eq.solve.default_target.clone();
@@ -696,10 +719,16 @@ fn invoke_equation_targets_table(op: &str, request_id: Option<String>, args: &Va
     InvokeResponse::ok(op, request_id, json!(rows))
 }
 
-fn invoke_equation_target_count(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+fn invoke_equation_target_count(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
     let path_id = match req_str(args, "path_id") {
         Ok(v) => v,
-        Err(e) => return InvokeResponse::err(op, request_id, "missing_arg", e, Some("path_id"), None),
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("path_id"), None);
+        }
     };
     let eq = match crate::eq.equation(path_id) {
         Ok(v) => v,
@@ -711,16 +740,22 @@ fn invoke_equation_target_count(op: &str, request_id: Option<String>, args: &Val
                 e.to_string(),
                 Some("path_id"),
                 None,
-            )
+            );
         }
     };
     InvokeResponse::ok(op, request_id, json!(equation_targets_for(eq).len()))
 }
 
-fn invoke_equation_branches_text(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+fn invoke_equation_branches_text(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
     let path_id = match req_str(args, "path_id") {
         Ok(v) => v,
-        Err(e) => return InvokeResponse::err(op, request_id, "missing_arg", e, Some("path_id"), None),
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("path_id"), None);
+        }
     };
     let eq = match crate::eq.equation(path_id) {
         Ok(v) => v,
@@ -732,7 +767,7 @@ fn invoke_equation_branches_text(op: &str, request_id: Option<String>, args: &Va
                 e.to_string(),
                 Some("path_id"),
                 None,
-            )
+            );
         }
     };
     let branches = equation_branches_for(eq)
@@ -742,10 +777,16 @@ fn invoke_equation_branches_text(op: &str, request_id: Option<String>, args: &Va
     InvokeResponse::ok(op, request_id, json!(branches.join(LIST_TEXT_DELIMITER)))
 }
 
-fn invoke_equation_branches_table(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+fn invoke_equation_branches_table(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
     let path_id = match req_str(args, "path_id") {
         Ok(v) => v,
-        Err(e) => return InvokeResponse::err(op, request_id, "missing_arg", e, Some("path_id"), None),
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("path_id"), None);
+        }
     };
     let eq = match crate::eq.equation(path_id) {
         Ok(v) => v,
@@ -757,7 +798,7 @@ fn invoke_equation_branches_table(op: &str, request_id: Option<String>, args: &V
                 e.to_string(),
                 Some("path_id"),
                 None,
-            )
+            );
         }
     };
     let rows: Vec<Value> = equation_branches_for(eq)
@@ -767,10 +808,16 @@ fn invoke_equation_branches_table(op: &str, request_id: Option<String>, args: &V
     InvokeResponse::ok(op, request_id, json!(rows))
 }
 
-fn invoke_equation_variables_text(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+fn invoke_equation_variables_text(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
     let path_id = match req_str(args, "path_id") {
         Ok(v) => v,
-        Err(e) => return InvokeResponse::err(op, request_id, "missing_arg", e, Some("path_id"), None),
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("path_id"), None);
+        }
     };
     let eq = match crate::eq.equation(path_id) {
         Ok(v) => v,
@@ -782,7 +829,7 @@ fn invoke_equation_variables_text(op: &str, request_id: Option<String>, args: &V
                 e.to_string(),
                 Some("path_id"),
                 None,
-            )
+            );
         }
     };
     InvokeResponse::ok(
@@ -792,10 +839,16 @@ fn invoke_equation_variables_text(op: &str, request_id: Option<String>, args: &V
     )
 }
 
-fn invoke_equation_variables_table(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+fn invoke_equation_variables_table(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
     let path_id = match req_str(args, "path_id") {
         Ok(v) => v,
-        Err(e) => return InvokeResponse::err(op, request_id, "missing_arg", e, Some("path_id"), None),
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("path_id"), None);
+        }
     };
     let eq = match crate::eq.equation(path_id) {
         Ok(v) => v,
@@ -807,7 +860,7 @@ fn invoke_equation_variables_table(op: &str, request_id: Option<String>, args: &
                 e.to_string(),
                 Some("path_id"),
                 None,
-            )
+            );
         }
     };
     let rows: Vec<Value> = equation_variables_for(eq)
@@ -816,9 +869,7 @@ fn invoke_equation_variables_table(op: &str, request_id: Option<String>, args: &
             let default_unit = eq
                 .variables
                 .get(&v)
-                .and_then(|def| {
-                    resolved_default_unit(&def.dimension, def.default_unit.as_deref())
-                })
+                .and_then(|def| resolved_default_unit(&def.dimension, def.default_unit.as_deref()))
                 .unwrap_or_default();
             json!([v, default_unit])
         })
@@ -826,10 +877,16 @@ fn invoke_equation_variables_table(op: &str, request_id: Option<String>, args: &
     InvokeResponse::ok(op, request_id, json!(rows))
 }
 
-fn invoke_equation_variable_count(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+fn invoke_equation_variable_count(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
     let path_id = match req_str(args, "path_id") {
         Ok(v) => v,
-        Err(e) => return InvokeResponse::err(op, request_id, "missing_arg", e, Some("path_id"), None),
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("path_id"), None);
+        }
     };
     let eq = match crate::eq.equation(path_id) {
         Ok(v) => v,
@@ -841,20 +898,31 @@ fn invoke_equation_variable_count(op: &str, request_id: Option<String>, args: &V
                 e.to_string(),
                 Some("path_id"),
                 None,
-            )
+            );
         }
     };
     InvokeResponse::ok(op, request_id, json!(equation_variables_for(eq).len()))
 }
 
-fn invoke_fluid_properties_text(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+fn invoke_fluid_properties_text(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
     let key = match req_str(args, "key") {
         Ok(v) => v,
         Err(e) => return InvokeResponse::err(op, request_id, "missing_arg", e, Some("key"), None),
     };
     let entries = eng_fluids::docs_entries();
     let Some(f) = resolve_fluid_entry(key, &entries) else {
-        return InvokeResponse::err(op, request_id, "unknown_fluid", format!("unknown fluid '{key}'"), Some("key"), None);
+        return InvokeResponse::err(
+            op,
+            request_id,
+            "unknown_fluid",
+            format!("unknown fluid '{key}'"),
+            Some("key"),
+            None,
+        );
     };
     InvokeResponse::ok(
         op,
@@ -863,14 +931,25 @@ fn invoke_fluid_properties_text(op: &str, request_id: Option<String>, args: &Val
     )
 }
 
-fn invoke_fluid_properties_table(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+fn invoke_fluid_properties_table(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
     let key = match req_str(args, "key") {
         Ok(v) => v,
         Err(e) => return InvokeResponse::err(op, request_id, "missing_arg", e, Some("key"), None),
     };
     let entries = eng_fluids::docs_entries();
     let Some(f) = resolve_fluid_entry(key, &entries) else {
-        return InvokeResponse::err(op, request_id, "unknown_fluid", format!("unknown fluid '{key}'"), Some("key"), None);
+        return InvokeResponse::err(
+            op,
+            request_id,
+            "unknown_fluid",
+            format!("unknown fluid '{key}'"),
+            Some("key"),
+            None,
+        );
     };
     let rows: Vec<Value> = f
         .supported_properties
@@ -880,19 +959,34 @@ fn invoke_fluid_properties_table(op: &str, request_id: Option<String>, args: &Va
     InvokeResponse::ok(op, request_id, json!(rows))
 }
 
-fn invoke_fluid_property_count(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+fn invoke_fluid_property_count(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
     let key = match req_str(args, "key") {
         Ok(v) => v,
         Err(e) => return InvokeResponse::err(op, request_id, "missing_arg", e, Some("key"), None),
     };
     let entries = eng_fluids::docs_entries();
     let Some(f) = resolve_fluid_entry(key, &entries) else {
-        return InvokeResponse::err(op, request_id, "unknown_fluid", format!("unknown fluid '{key}'"), Some("key"), None);
+        return InvokeResponse::err(
+            op,
+            request_id,
+            "unknown_fluid",
+            format!("unknown fluid '{key}'"),
+            Some("key"),
+            None,
+        );
     };
     InvokeResponse::ok(op, request_id, json!(f.supported_properties.len()))
 }
 
-fn invoke_material_properties_text(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+fn invoke_material_properties_text(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
     let key = match req_str(args, "key") {
         Ok(v) => v,
         Err(e) => return InvokeResponse::err(op, request_id, "missing_arg", e, Some("key"), None),
@@ -907,20 +1001,31 @@ fn invoke_material_properties_text(op: &str, request_id: Option<String>, args: &
                 e.to_string(),
                 Some("key"),
                 None,
-            )
+            );
         }
     };
     let def = match material.definition() {
         Ok(v) => v,
         Err(e) => {
-            return InvokeResponse::err(op, request_id, "material_docs_error", e.to_string(), None, None)
+            return InvokeResponse::err(
+                op,
+                request_id,
+                "material_docs_error",
+                e.to_string(),
+                None,
+                None,
+            );
         }
     };
     let props: Vec<String> = def.properties.keys().cloned().collect();
     InvokeResponse::ok(op, request_id, json!(props.join(LIST_TEXT_DELIMITER)))
 }
 
-fn invoke_material_properties_table(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+fn invoke_material_properties_table(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
     let key = match req_str(args, "key") {
         Ok(v) => v,
         Err(e) => return InvokeResponse::err(op, request_id, "missing_arg", e, Some("key"), None),
@@ -935,13 +1040,20 @@ fn invoke_material_properties_table(op: &str, request_id: Option<String>, args: 
                 e.to_string(),
                 Some("key"),
                 None,
-            )
+            );
         }
     };
     let def = match material.definition() {
         Ok(v) => v,
         Err(e) => {
-            return InvokeResponse::err(op, request_id, "material_docs_error", e.to_string(), None, None)
+            return InvokeResponse::err(
+                op,
+                request_id,
+                "material_docs_error",
+                e.to_string(),
+                None,
+                None,
+            );
         }
     };
     let rows: Vec<Value> = def
@@ -952,7 +1064,11 @@ fn invoke_material_properties_table(op: &str, request_id: Option<String>, args: 
     InvokeResponse::ok(op, request_id, json!(rows))
 }
 
-fn invoke_material_property_count(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+fn invoke_material_property_count(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
     let key = match req_str(args, "key") {
         Ok(v) => v,
         Err(e) => return InvokeResponse::err(op, request_id, "missing_arg", e, Some("key"), None),
@@ -967,13 +1083,20 @@ fn invoke_material_property_count(op: &str, request_id: Option<String>, args: &V
                 e.to_string(),
                 Some("key"),
                 None,
-            )
+            );
         }
     };
     let def = match material.definition() {
         Ok(v) => v,
         Err(e) => {
-            return InvokeResponse::err(op, request_id, "material_docs_error", e.to_string(), None, None)
+            return InvokeResponse::err(
+                op,
+                request_id,
+                "material_docs_error",
+                e.to_string(),
+                None,
+                None,
+            );
         }
     };
     InvokeResponse::ok(op, request_id, json!(def.properties.len()))
@@ -986,9 +1109,20 @@ fn invoke_device_modes_text(op: &str, request_id: Option<String>, args: &Value) 
     };
     let entries = crate::devices::docs_entries();
     let Some(d) = entries.iter().find(|d| d.key.eq_ignore_ascii_case(key)) else {
-        return InvokeResponse::err(op, request_id, "unknown_device", format!("unknown device '{key}'"), Some("key"), None);
+        return InvokeResponse::err(
+            op,
+            request_id,
+            "unknown_device",
+            format!("unknown device '{key}'"),
+            Some("key"),
+            None,
+        );
     };
-    InvokeResponse::ok(op, request_id, json!(d.supported_modes.join(LIST_TEXT_DELIMITER)))
+    InvokeResponse::ok(
+        op,
+        request_id,
+        json!(d.supported_modes.join(LIST_TEXT_DELIMITER)),
+    )
 }
 
 fn invoke_device_mode_count(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
@@ -998,13 +1132,22 @@ fn invoke_device_mode_count(op: &str, request_id: Option<String>, args: &Value) 
     };
     let entries = crate::devices::docs_entries();
     let Some(d) = entries.iter().find(|d| d.key.eq_ignore_ascii_case(key)) else {
-        return InvokeResponse::err(op, request_id, "unknown_device", format!("unknown device '{key}'"), Some("key"), None);
+        return InvokeResponse::err(
+            op,
+            request_id,
+            "unknown_device",
+            format!("unknown device '{key}'"),
+            Some("key"),
+            None,
+        );
     };
     InvokeResponse::ok(op, request_id, json!(d.supported_modes.len()))
 }
 
 fn invoke_format_value(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
-    fn unit_to_si_factor_and_sig(unit: &str) -> Result<(f64, eng_core::units::DimensionSignature), String> {
+    fn unit_to_si_factor_and_sig(
+        unit: &str,
+    ) -> Result<(f64, eng_core::units::DimensionSignature), String> {
         let expr = format!("1 {unit}");
         match eng_core::units::parse_quantity_expression(&expr) {
             Ok(v) => Ok((v.value_si, v.signature)),
@@ -1469,6 +1612,16 @@ fn parse_isentropic_input_kind(
             crate::devices::IsentropicInputKind::MachAngleRad,
             value.to_radians(),
         )),
+        "prandtl_meyer_angle" | "prandtl_meyer_angle_rad" | "prandtl_meyer" | "nu" | "nu_rad" => {
+            Some((
+                crate::devices::IsentropicInputKind::PrandtlMeyerAngleRad,
+                value,
+            ))
+        }
+        "prandtl_meyer_angle_deg" | "prandtl_meyer_deg" | "nu_deg" => Some((
+            crate::devices::IsentropicInputKind::PrandtlMeyerAngleRad,
+            value.to_radians(),
+        )),
         "pressure_ratio" | "p_p0" | "p/p0" => {
             Some((crate::devices::IsentropicInputKind::PressureRatio, value))
         }
@@ -1478,30 +1631,45 @@ fn parse_isentropic_input_kind(
         "density_ratio" | "rho_rho0" | "rho/rho0" => {
             Some((crate::devices::IsentropicInputKind::DensityRatio, value))
         }
-        "area_ratio" | "a_astar" | "a/a*" => Some((crate::devices::IsentropicInputKind::AreaRatio, value)),
+        "area_ratio" | "a_astar" | "a/a*" => {
+            Some((crate::devices::IsentropicInputKind::AreaRatio, value))
+        }
         _ => None,
     }
 }
 
-fn parse_isentropic_output_kind(
-    raw: &str,
-) -> Option<(crate::devices::IsentropicOutputKind, bool)> {
+fn parse_isentropic_output_kind(raw: &str) -> Option<(crate::devices::IsentropicOutputKind, bool)> {
     match raw.trim().to_ascii_lowercase().as_str() {
         "mach" | "m" => Some((crate::devices::IsentropicOutputKind::Mach, false)),
         "mach_angle" | "mach_angle_rad" | "mu" | "mu_rad" => {
             Some((crate::devices::IsentropicOutputKind::MachAngleRad, false))
         }
-        "mach_angle_deg" | "mu_deg" => Some((crate::devices::IsentropicOutputKind::MachAngleRad, true)),
+        "mach_angle_deg" | "mu_deg" => {
+            Some((crate::devices::IsentropicOutputKind::MachAngleRad, true))
+        }
+        "prandtl_meyer_angle" | "prandtl_meyer_angle_rad" | "prandtl_meyer" | "nu" | "nu_rad" => {
+            Some((
+                crate::devices::IsentropicOutputKind::PrandtlMeyerAngleRad,
+                false,
+            ))
+        }
+        "prandtl_meyer_angle_deg" | "prandtl_meyer_deg" | "nu_deg" => Some((
+            crate::devices::IsentropicOutputKind::PrandtlMeyerAngleRad,
+            true,
+        )),
         "pressure_ratio" | "p_p0" | "p/p0" => {
             Some((crate::devices::IsentropicOutputKind::PressureRatio, false))
         }
-        "temperature_ratio" | "t_t0" | "t/t0" => {
-            Some((crate::devices::IsentropicOutputKind::TemperatureRatio, false))
-        }
+        "temperature_ratio" | "t_t0" | "t/t0" => Some((
+            crate::devices::IsentropicOutputKind::TemperatureRatio,
+            false,
+        )),
         "density_ratio" | "rho_rho0" | "rho/rho0" => {
             Some((crate::devices::IsentropicOutputKind::DensityRatio, false))
         }
-        "area_ratio" | "a_astar" | "a/a*" => Some((crate::devices::IsentropicOutputKind::AreaRatio, false)),
+        "area_ratio" | "a_astar" | "a/a*" => {
+            Some((crate::devices::IsentropicOutputKind::AreaRatio, false))
+        }
         _ => None,
     }
 }
@@ -1525,7 +1693,14 @@ fn isentropic_request_from_args(
     args: &Value,
 ) -> std::result::Result<IsentropicInvokeRequest, InvokeResponse> {
     let gamma = req_f64(args, "gamma").map_err(|e| {
-        InvokeResponse::err(op, request_id.clone(), "missing_arg", e, Some("gamma"), None)
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("gamma"),
+            None,
+        )
     })?;
     let input_kind_raw = req_str(args, "input_kind").map_err(|e| {
         InvokeResponse::err(
@@ -1557,26 +1732,28 @@ fn isentropic_request_from_args(
             None,
         )
     })?;
-    let (input_kind, input_value) = parse_isentropic_input_kind(input_kind_raw, input_value).ok_or_else(|| {
-        InvokeResponse::err(
-            op,
-            request_id.clone(),
-            "invalid_arg",
-            format!("unsupported input_kind '{input_kind_raw}'"),
-            Some("input_kind"),
-            None,
-        )
-    })?;
-    let (target_kind, output_angle_deg) = parse_isentropic_output_kind(target_kind_raw).ok_or_else(|| {
-        InvokeResponse::err(
-            op,
-            request_id.clone(),
-            "invalid_arg",
-            format!("unsupported target_kind '{target_kind_raw}'"),
-            Some("target_kind"),
-            None,
-        )
-    })?;
+    let (input_kind, input_value) = parse_isentropic_input_kind(input_kind_raw, input_value)
+        .ok_or_else(|| {
+            InvokeResponse::err(
+                op,
+                request_id.clone(),
+                "invalid_arg",
+                format!("unsupported input_kind '{input_kind_raw}'"),
+                Some("input_kind"),
+                None,
+            )
+        })?;
+    let (target_kind, output_angle_deg) = parse_isentropic_output_kind(target_kind_raw)
+        .ok_or_else(|| {
+            InvokeResponse::err(
+                op,
+                request_id.clone(),
+                "invalid_arg",
+                format!("unsupported target_kind '{target_kind_raw}'"),
+                Some("target_kind"),
+                None,
+            )
+        })?;
     let branch = match args.get("branch").and_then(Value::as_str) {
         Some(s) if !s.trim().is_empty() => Some(parse_isentropic_branch(s).ok_or_else(|| {
             InvokeResponse::err(
@@ -1704,6 +1881,226 @@ fn invoke_isentropic_calc_path_text(
             op,
             request_id,
             "device_isentropic_calc_failed",
+            e.to_string(),
+            None,
+            None,
+        ),
+    }
+}
+
+fn parse_normal_shock_input_kind(raw: &str) -> Option<crate::devices::NormalShockInputKind> {
+    match raw.trim().to_ascii_lowercase().as_str() {
+        "m1" | "mach1" | "upstream_mach" => Some(crate::devices::NormalShockInputKind::M1),
+        "m2" | "mach2" | "downstream_mach" => Some(crate::devices::NormalShockInputKind::M2),
+        "pressure_ratio" | "p2_p1" | "p2/p1" => {
+            Some(crate::devices::NormalShockInputKind::PressureRatio)
+        }
+        "density_ratio" | "rho2_rho1" | "rho2/rho1" => {
+            Some(crate::devices::NormalShockInputKind::DensityRatio)
+        }
+        "temperature_ratio" | "t2_t1" | "t2/t1" => {
+            Some(crate::devices::NormalShockInputKind::TemperatureRatio)
+        }
+        "stagnation_pressure_ratio" | "p02_p01" | "p02/p01" => {
+            Some(crate::devices::NormalShockInputKind::StagnationPressureRatio)
+        }
+        _ => None,
+    }
+}
+
+fn parse_normal_shock_output_kind(raw: &str) -> Option<crate::devices::NormalShockOutputKind> {
+    match raw.trim().to_ascii_lowercase().as_str() {
+        "m1" | "mach1" | "upstream_mach" => Some(crate::devices::NormalShockOutputKind::M1),
+        "m2" | "mach2" | "downstream_mach" => Some(crate::devices::NormalShockOutputKind::M2),
+        "pressure_ratio" | "p2_p1" | "p2/p1" => {
+            Some(crate::devices::NormalShockOutputKind::PressureRatio)
+        }
+        "density_ratio" | "rho2_rho1" | "rho2/rho1" => {
+            Some(crate::devices::NormalShockOutputKind::DensityRatio)
+        }
+        "temperature_ratio" | "t2_t1" | "t2/t1" => {
+            Some(crate::devices::NormalShockOutputKind::TemperatureRatio)
+        }
+        "stagnation_pressure_ratio" | "p02_p01" | "p02/p01" => {
+            Some(crate::devices::NormalShockOutputKind::StagnationPressureRatio)
+        }
+        _ => None,
+    }
+}
+
+struct NormalShockInvokeRequest {
+    req: crate::devices::NormalShockCalcRequest,
+}
+
+fn normal_shock_request_from_args(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> std::result::Result<NormalShockInvokeRequest, InvokeResponse> {
+    let gamma = req_f64(args, "gamma").map_err(|e| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("gamma"),
+            None,
+        )
+    })?;
+    let input_kind_raw = req_str(args, "input_kind").map_err(|e| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("input_kind"),
+            None,
+        )
+    })?;
+    let input_value = req_f64(args, "input_value").map_err(|e| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("input_value"),
+            None,
+        )
+    })?;
+    let target_kind_raw = req_str(args, "target_kind").map_err(|e| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("target_kind"),
+            None,
+        )
+    })?;
+    let input_kind = parse_normal_shock_input_kind(input_kind_raw).ok_or_else(|| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "invalid_arg",
+            format!("unsupported input_kind '{input_kind_raw}'"),
+            Some("input_kind"),
+            None,
+        )
+    })?;
+    let target_kind = parse_normal_shock_output_kind(target_kind_raw).ok_or_else(|| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "invalid_arg",
+            format!("unsupported target_kind '{target_kind_raw}'"),
+            Some("target_kind"),
+            None,
+        )
+    })?;
+
+    Ok(NormalShockInvokeRequest {
+        req: crate::devices::NormalShockCalcRequest {
+            gamma,
+            input_kind,
+            input_value,
+            target_kind,
+        },
+    })
+}
+
+fn invoke_normal_shock_calc(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+    let invoke_req = match normal_shock_request_from_args(op, request_id.clone(), args) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    match crate::devices::normal_shock_calc_from_request(invoke_req.req) {
+        Ok(r) => InvokeResponse::ok(
+            op,
+            request_id,
+            json!({
+                "value": r.value_si,
+                "value_unit": "si",
+                "pivot_m1": r.pivot_m1,
+                "path": r.path.iter().map(|s| json!({
+                    "equation_path_id": s.equation_path_id,
+                    "solved_for": s.solved_for,
+                    "method": s.method,
+                    "inputs_used": s.inputs_used.iter().map(|(k,v)| json!({"key":k, "value": v})).collect::<Vec<_>>()
+                })).collect::<Vec<_>>(),
+                "path_text": r.path_text(),
+                "warnings": r.warnings,
+            }),
+        ),
+        Err(e) => InvokeResponse::err(
+            op,
+            request_id,
+            "device_normal_shock_calc_failed",
+            e.to_string(),
+            None,
+            None,
+        ),
+    }
+}
+
+fn invoke_normal_shock_calc_value(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
+    let invoke_req = match normal_shock_request_from_args(op, request_id.clone(), args) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    match crate::devices::normal_shock_calc_from_request(invoke_req.req) {
+        Ok(r) => InvokeResponse::ok(op, request_id, json!(r.value_si)),
+        Err(e) => InvokeResponse::err(
+            op,
+            request_id,
+            "device_normal_shock_calc_failed",
+            e.to_string(),
+            None,
+            None,
+        ),
+    }
+}
+
+fn invoke_normal_shock_calc_pivot_m1(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
+    let invoke_req = match normal_shock_request_from_args(op, request_id.clone(), args) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    match crate::devices::normal_shock_calc_from_request(invoke_req.req) {
+        Ok(r) => InvokeResponse::ok(op, request_id, json!(r.pivot_m1)),
+        Err(e) => InvokeResponse::err(
+            op,
+            request_id,
+            "device_normal_shock_calc_failed",
+            e.to_string(),
+            None,
+            None,
+        ),
+    }
+}
+
+fn invoke_normal_shock_calc_path_text(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
+    let invoke_req = match normal_shock_request_from_args(op, request_id.clone(), args) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    match crate::devices::normal_shock_calc_from_request(invoke_req.req) {
+        Ok(r) => InvokeResponse::ok(op, request_id, json!(r.path_text())),
+        Err(e) => InvokeResponse::err(
+            op,
+            request_id,
+            "device_normal_shock_calc_failed",
             e.to_string(),
             None,
             None,
