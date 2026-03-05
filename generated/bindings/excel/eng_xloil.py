@@ -1221,3 +1221,28 @@ def e_n_g_m_e_t_a(entity, key, field):
     """General metadata helper for bindings | Arguments: | - entity: equation | device | fluid | material | constant | - key: Entity id/key | - field: Metadata field to read | Returns: scalar|list|dict | Example: =ENG_META('equation','structures.hoop_stress','ascii')"""
     return invoke("meta.get", {"entity": entity, "key": key, "field": field})
 
+@xloil.func(name="ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE", help="Study table for isentropic device Mach -> p/p0 | Arguments: | - gamma: Specific heat ratio | - start: Mach start | - end: Mach end | - count: Sample count | - branch: Optional branch | Returns: dict(table, spill) | Example: =ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE(1.4,0.2,3,21,'')")
+def e_n_g_s_t_u_d_y_i_s_e_n_t_r_o_p_i_c_m_t_o_p_p0_t_a_b_l_e(gamma, start, end, count, branch=""):
+    """Study table for isentropic device Mach -> p/p0 | Arguments: | - gamma: Specific heat ratio | - start: Mach start | - end: Mach end | - count: Sample count | - branch: Optional branch | Returns: dict(table, spill) | Example: =ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE(1.4,0.2,3,21,'')"""
+    return invoke("study.device.isentropic_m_to_p_p0.table", {"output": "spill", "gamma": gamma, "start": start, "end": end, "count": count, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_STUDY_NORMAL_SHOCK_TABLE", help="Study table for normal-shock device over M1 | Arguments: | - gamma: Specific heat ratio | - start: M1 start | - end: M1 end | - count: Sample count | Returns: dict(table, spill) | Example: =ENG_STUDY_NORMAL_SHOCK_TABLE(1.4,1.05,4,20)")
+def e_n_g_s_t_u_d_y_n_o_r_m_a_l_s_h_o_c_k_t_a_b_l_e(gamma, start, end, count):
+    """Study table for normal-shock device over M1 | Arguments: | - gamma: Specific heat ratio | - start: M1 start | - end: M1 end | - count: Sample count | Returns: dict(table, spill) | Example: =ENG_STUDY_NORMAL_SHOCK_TABLE(1.4,1.05,4,20)"""
+    return invoke("study.device.normal_shock.table", {"output": "spill", "gamma": gamma, "start": start, "end": end, "count": count})
+
+@xloil.func(name="ENG_STUDY_NOZZLE_FLOW_TABLE", help="Study table for nozzle-flow device over area ratio | Arguments: | - gamma: Specific heat ratio | - start: Area-ratio start | - end: Area-ratio end | - count: Sample count | - branch: Branch (subsonic/supersonic) | Returns: dict(table, spill) | Example: =ENG_STUDY_NOZZLE_FLOW_TABLE(1.4,1.2,3,20,'supersonic')")
+def e_n_g_s_t_u_d_y_n_o_z_z_l_e_f_l_o_w_t_a_b_l_e(gamma, start, end, count, branch=""):
+    """Study table for nozzle-flow device over area ratio | Arguments: | - gamma: Specific heat ratio | - start: Area-ratio start | - end: Area-ratio end | - count: Sample count | - branch: Branch (subsonic/supersonic) | Returns: dict(table, spill) | Example: =ENG_STUDY_NOZZLE_FLOW_TABLE(1.4,1.2,3,20,'supersonic')"""
+    return invoke("study.device.nozzle_flow.table", {"output": "spill", "gamma": gamma, "start": start, "end": end, "count": count, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_STUDY_EQUATION_TABLE", help="Generic equation study sweep table (1D axis) | Arguments: | - path_id: Equation path id | - target: Solve target key | - sweep_variable: Variable to sweep | - start: Sweep start | - end: Sweep end | - count: Number of samples | - spacing: Spacing mode (linear or logspace) | - branch: Optional branch | Returns: dict(table, spill) | Example: =ENG_STUDY_EQUATION_TABLE('compressible.isentropic_pressure_ratio','p_p0','M',0.2,3,20,'linear','')")
+def e_n_g_s_t_u_d_y_e_q_u_a_t_i_o_n_t_a_b_l_e(path_id, target, sweep_variable, start, end, count, spacing, branch=""):
+    """Generic equation study sweep table (1D axis) | Arguments: | - path_id: Equation path id | - target: Solve target key | - sweep_variable: Variable to sweep | - start: Sweep start | - end: Sweep end | - count: Number of samples | - spacing: Spacing mode (linear or logspace) | - branch: Optional branch | Returns: dict(table, spill) | Example: =ENG_STUDY_EQUATION_TABLE('compressible.isentropic_pressure_ratio','p_p0','M',0.2,3,20,'linear','')"""
+    return invoke("study.equation.sweep", {"output": "spill", "path_id": path_id, "target": target, "sweep_variable": sweep_variable, "start": start, "end": end, "count": count, "spacing": spacing, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xloil.func(name="ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE", help="Study table for nozzle + normal-shock chained workflow | Arguments: | - gamma: Specific heat ratio | - start: Area-ratio start | - end: Area-ratio end | - count: Sample count | - branch: Nozzle branch (subsonic/supersonic) | Returns: dict(table, spill) | Example: =ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE(1.4,1.2,3,20,'supersonic')")
+def e_n_g_s_t_u_d_y_n_o_z_z_l_e_n_o_r_m_a_l_s_h_o_c_k_w_o_r_k_f_l_o_w_t_a_b_l_e(gamma, start, end, count, branch=""):
+    """Study table for nozzle + normal-shock chained workflow | Arguments: | - gamma: Specific heat ratio | - start: Area-ratio start | - end: Area-ratio end | - count: Sample count | - branch: Nozzle branch (subsonic/supersonic) | Returns: dict(table, spill) | Example: =ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE(1.4,1.2,3,20,'supersonic')"""
+    return invoke("study.workflow.nozzle_normal_shock.table", {"output": "spill", "gamma": gamma, "start": start, "end": end, "count": count, **({"branch": branch} if branch not in (None, "") else {})})
+

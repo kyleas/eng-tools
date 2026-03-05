@@ -667,6 +667,10 @@ fn write_generated_bindings(c: &UnifiedDocsContribution, out_dir: &Path) -> Resu
         &render_python_helpers_module(&manifest),
     )?;
     write_text(
+        engpy_root.join("study.py"),
+        &render_python_study_module(&manifest),
+    )?;
+    write_text(
         engpy_root.join("equations").join("__init__.py"),
         &render_python_equations_init(&manifest),
     )?;
@@ -1588,6 +1592,208 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
     }
 
     functions.push(BindingFunction {
+        id: "study.equation.sweep".to_string(),
+        entity: "study".to_string(),
+        source: "equation".to_string(),
+        python_module: "study".to_string(),
+        python_name: "equation_sweep_table".to_string(),
+        excel_name: "ENG_STUDY_EQUATION_TABLE".to_string(),
+        op: "study.equation.sweep".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![
+            BindingArg {
+                name: "path_id".to_string(),
+                description: "Equation path id".to_string(),
+            },
+            BindingArg {
+                name: "target".to_string(),
+                description: "Solve target key".to_string(),
+            },
+            BindingArg {
+                name: "sweep_variable".to_string(),
+                description: "Variable to sweep".to_string(),
+            },
+            BindingArg {
+                name: "start".to_string(),
+                description: "Sweep start".to_string(),
+            },
+            BindingArg {
+                name: "end".to_string(),
+                description: "Sweep end".to_string(),
+            },
+            BindingArg {
+                name: "count".to_string(),
+                description: "Number of samples".to_string(),
+            },
+            BindingArg {
+                name: "spacing".to_string(),
+                description: "Spacing mode (linear or logspace)".to_string(),
+            },
+            BindingArg {
+                name: "branch".to_string(),
+                description: "Optional branch".to_string(),
+            },
+        ],
+        returns: "dict(table, spill)".to_string(),
+        help: "Generic equation study sweep table (1D axis)".to_string(),
+        rust_example: "eng::solve::run_equation_study(...)".to_string(),
+        python_example: "engpy.study.equation_sweep_table(path_id=\"compressible.isentropic_pressure_ratio\", target=\"p_p0\", sweep_variable=\"M\", start=0.2, end=3.0, count=20, spacing=\"linear\")".to_string(),
+        xloil_example: "=ENG_STUDY_EQUATION_TABLE(\"compressible.isentropic_pressure_ratio\",\"p_p0\",\"M\",0.2,3,20,\"linear\",\"\")".to_string(),
+        pyxll_example: "=ENG_STUDY_EQUATION_TABLE(\"compressible.isentropic_pressure_ratio\",\"p_p0\",\"M\",0.2,3,20,\"linear\",\"\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "study.device.isentropic_m_to_p_p0.table".to_string(),
+        entity: "study".to_string(),
+        source: "device.isentropic_calc".to_string(),
+        python_module: "study".to_string(),
+        python_name: "isentropic_m_to_p_p0_table".to_string(),
+        excel_name: "ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE".to_string(),
+        op: "study.device.isentropic_m_to_p_p0.table".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![
+            BindingArg {
+                name: "gamma".to_string(),
+                description: "Specific heat ratio".to_string(),
+            },
+            BindingArg {
+                name: "start".to_string(),
+                description: "Mach start".to_string(),
+            },
+            BindingArg {
+                name: "end".to_string(),
+                description: "Mach end".to_string(),
+            },
+            BindingArg {
+                name: "count".to_string(),
+                description: "Sample count".to_string(),
+            },
+            BindingArg {
+                name: "branch".to_string(),
+                description: "Optional branch".to_string(),
+            },
+        ],
+        returns: "dict(table, spill)".to_string(),
+        help: "Study table for isentropic device Mach -> p/p0".to_string(),
+        rust_example: "eng::solve::study_isentropic_m_to_p_p0(1.4, eng::solve::SweepAxis::linspace(0.2, 3.0, 21), None)".to_string(),
+        python_example: "engpy.study.isentropic_m_to_p_p0_table(gamma=1.4, start=0.2, end=3.0, count=21)".to_string(),
+        xloil_example: "=ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE(1.4,0.2,3,21,\"\")".to_string(),
+        pyxll_example: "=ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE(1.4,0.2,3,21,\"\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "study.device.nozzle_flow.table".to_string(),
+        entity: "study".to_string(),
+        source: "device.nozzle_flow_calc".to_string(),
+        python_module: "study".to_string(),
+        python_name: "nozzle_flow_table".to_string(),
+        excel_name: "ENG_STUDY_NOZZLE_FLOW_TABLE".to_string(),
+        op: "study.device.nozzle_flow.table".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![
+            BindingArg {
+                name: "gamma".to_string(),
+                description: "Specific heat ratio".to_string(),
+            },
+            BindingArg {
+                name: "start".to_string(),
+                description: "Area-ratio start".to_string(),
+            },
+            BindingArg {
+                name: "end".to_string(),
+                description: "Area-ratio end".to_string(),
+            },
+            BindingArg {
+                name: "count".to_string(),
+                description: "Sample count".to_string(),
+            },
+            BindingArg {
+                name: "branch".to_string(),
+                description: "Branch (subsonic/supersonic)".to_string(),
+            },
+        ],
+        returns: "dict(table, spill)".to_string(),
+        help: "Study table for nozzle-flow device over area ratio".to_string(),
+        rust_example: "eng::solve::study_nozzle_flow_area_ratio(1.4, eng::solve::SweepAxis::linspace(1.2, 3.0, 20), eng::devices::NozzleFlowBranch::Supersonic)".to_string(),
+        python_example: "engpy.study.nozzle_flow_table(gamma=1.4, start=1.2, end=3.0, count=20, branch=\"supersonic\")".to_string(),
+        xloil_example: "=ENG_STUDY_NOZZLE_FLOW_TABLE(1.4,1.2,3,20,\"supersonic\")".to_string(),
+        pyxll_example: "=ENG_STUDY_NOZZLE_FLOW_TABLE(1.4,1.2,3,20,\"supersonic\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "study.device.normal_shock.table".to_string(),
+        entity: "study".to_string(),
+        source: "device.normal_shock_calc".to_string(),
+        python_module: "study".to_string(),
+        python_name: "normal_shock_table".to_string(),
+        excel_name: "ENG_STUDY_NORMAL_SHOCK_TABLE".to_string(),
+        op: "study.device.normal_shock.table".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![
+            BindingArg {
+                name: "gamma".to_string(),
+                description: "Specific heat ratio".to_string(),
+            },
+            BindingArg {
+                name: "start".to_string(),
+                description: "M1 start".to_string(),
+            },
+            BindingArg {
+                name: "end".to_string(),
+                description: "M1 end".to_string(),
+            },
+            BindingArg {
+                name: "count".to_string(),
+                description: "Sample count".to_string(),
+            },
+        ],
+        returns: "dict(table, spill)".to_string(),
+        help: "Study table for normal-shock device over M1".to_string(),
+        rust_example:
+            "eng::solve::study_normal_shock_m1(1.4, eng::solve::SweepAxis::linspace(1.05, 4.0, 20))"
+                .to_string(),
+        python_example: "engpy.study.normal_shock_table(gamma=1.4, start=1.05, end=4.0, count=20)"
+            .to_string(),
+        xloil_example: "=ENG_STUDY_NORMAL_SHOCK_TABLE(1.4,1.05,4,20)".to_string(),
+        pyxll_example: "=ENG_STUDY_NORMAL_SHOCK_TABLE(1.4,1.05,4,20)".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "study.workflow.nozzle_normal_shock.table".to_string(),
+        entity: "study".to_string(),
+        source: "solve.workflow.nozzle_normal_shock".to_string(),
+        python_module: "study".to_string(),
+        python_name: "nozzle_normal_shock_workflow_table".to_string(),
+        excel_name: "ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE".to_string(),
+        op: "study.workflow.nozzle_normal_shock.table".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![
+            BindingArg {
+                name: "gamma".to_string(),
+                description: "Specific heat ratio".to_string(),
+            },
+            BindingArg {
+                name: "start".to_string(),
+                description: "Area-ratio start".to_string(),
+            },
+            BindingArg {
+                name: "end".to_string(),
+                description: "Area-ratio end".to_string(),
+            },
+            BindingArg {
+                name: "count".to_string(),
+                description: "Sample count".to_string(),
+            },
+            BindingArg {
+                name: "branch".to_string(),
+                description: "Nozzle branch (subsonic/supersonic)".to_string(),
+            },
+        ],
+        returns: "dict(table, spill)".to_string(),
+        help: "Study table for nozzle + normal-shock chained workflow".to_string(),
+        rust_example: "eng::solve::study_nozzle_normal_shock_workflow(1.4, eng::solve::SweepAxis::linspace(1.2, 3.0, 20), eng::devices::NozzleFlowBranch::Supersonic)".to_string(),
+        python_example: "engpy.study.nozzle_normal_shock_workflow_table(gamma=1.4, start=1.2, end=3.0, count=20, branch=\"supersonic\")".to_string(),
+        xloil_example: "=ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE(1.4,1.2,3,20,\"supersonic\")".to_string(),
+        pyxll_example: "=ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE(1.4,1.2,3,20,\"supersonic\")".to_string(),
+    });
+
+    functions.push(BindingFunction {
         id: "fluid.prop".to_string(),
         entity: "fluid".to_string(),
         source: "fluids".to_string(),
@@ -2053,7 +2259,7 @@ def invoke(op: str, args: dict, request_id=None):
 
 fn render_python_package_init(manifest: &BindingManifest) -> String {
     format!(
-        "from . import constants, devices, fluids, materials, helpers\nfrom .equations import *\n\n__all__ = [\"constants\", \"devices\", \"fluids\", \"materials\", \"helpers\", \"equations\"]\n# Generated from {}\n",
+        "from . import constants, devices, fluids, materials, helpers, study\nfrom .equations import *\n\n__all__ = [\"constants\", \"devices\", \"fluids\", \"materials\", \"helpers\", \"study\", \"equations\"]\n# Generated from {}\n",
         manifest.generated_from
     )
 }
@@ -2261,6 +2467,40 @@ fn render_python_helpers_module(manifest: &BindingManifest) -> String {
             let p = snake_case(&a.name);
             params.push(p.clone());
             payload_parts.push(format!("\"{}\": {}", a.name, p));
+        }
+        out.push_str(&format!(
+            "def {}({}):\n    \"\"\"{}\"\"\"\n    return invoke(\"{}\", {{{}}})\n\n",
+            f.python_name,
+            params.join(", "),
+            render_python_docstring(f),
+            f.op,
+            payload_parts.join(", ")
+        ));
+    }
+    out
+}
+
+fn render_python_study_module(manifest: &BindingManifest) -> String {
+    let mut out = String::new();
+    out.push_str("from ._runtime import invoke\n\n");
+    for f in manifest
+        .functions
+        .iter()
+        .filter(|f| f.python_module == "study")
+    {
+        let mut params = Vec::new();
+        let mut payload_parts = f
+            .fixed_args
+            .iter()
+            .map(|(k, v)| format!("\"{}\": \"{}\"", k, v))
+            .collect::<Vec<_>>();
+        for a in &f.args {
+            let p = snake_case(&a.name);
+            params.push(format!("{p}=None"));
+            payload_parts.push(format!(
+                "**({{\"{}\": {}}} if {} is not None else {{}})",
+                a.name, p, p
+            ));
         }
         out.push_str(&format!(
             "def {}({}):\n    \"\"\"{}\"\"\"\n    return invoke(\"{}\", {{{}}})\n\n",
@@ -2503,6 +2743,9 @@ fn render_xloil_module(manifest: &BindingManifest) -> String {
             .iter()
             .map(|(k, v)| format!("\"{}\": \"{}\"", k, v))
             .collect::<Vec<_>>();
+        if f.op.starts_with("study.") {
+            payload_parts.push("\"output\": \"spill\"".to_string());
+        }
         if !kwargs.is_empty() {
             payload_parts.extend(kwargs);
         }
@@ -2547,6 +2790,9 @@ fn render_pyxll_module(manifest: &BindingManifest) -> String {
             .iter()
             .map(|(k, v)| format!("\"{}\": \"{}\"", k, v))
             .collect::<Vec<_>>();
+        if f.op.starts_with("study.") {
+            payload_parts.push("\"output\": \"spill\"".to_string());
+        }
         if !kwargs.is_empty() {
             payload_parts.extend(kwargs);
         }
@@ -2608,6 +2854,7 @@ mathjax-support = true
     )?;
     write_text(src.join("workflows/index.md"), &render_workflows())?;
     write_text(src.join("solve/index.md"), &render_solve_layer_page())?;
+    write_text(src.join("studies/index.md"), &render_studies_page())?;
     write_text(src.join("bindings/index.md"), &render_bindings_guide())?;
     write_text(
         src.join("yaml_authoring/index.md"),
@@ -2718,6 +2965,7 @@ fn render_home(c: &UnifiedDocsContribution) -> String {
     md.push_str("- [Units & Quantities](units_quantities/index.md)\n");
     md.push_str("- [Examples & Workflows](workflows/index.md)\n\n");
     md.push_str("- [Engineering Solve Layer](solve/index.md)\n\n");
+    md.push_str("- [Studies and Parameter Sweeps](studies/index.md)\n\n");
     md.push_str("- [Bindings (Python/Excel)](bindings/index.md)\n\n");
     md.push_str("## Domain Guides\n\n");
     md.push_str("- [Equations Guide](equations/guide.md)\n");
@@ -2728,7 +2976,6 @@ fn render_home(c: &UnifiedDocsContribution) -> String {
     md.push_str("- [YAML Authoring](yaml_authoring/index.md)\n");
     md.push_str("- [Validation / Trust](validation_trust/index.md)\n");
     md.push_str("- [Architecture Overview](architecture/index.md)\n\n");
-    md.push_str("- [Bindings (Python/Excel)](bindings/index.md)\n\n");
     md.push_str("## Catalog\n\n");
     md.push_str("- [Equations](equations/index.md)\n");
     md.push_str("- [Equation Families](equations/families/index.md)\n");
@@ -3174,6 +3421,60 @@ fn render_solve_layer_page() -> String {
     md
 }
 
+fn render_studies_page() -> String {
+    let mut md = String::new();
+    md.push_str("# Studies and Parameter Sweeps\n\n");
+    md.push_str("`eng::solve::study` is the standard subsystem for diagnostics-aware parameter studies across equations, devices, and solve-layer workflows.\n\n");
+    md.push_str("## Scope\n\n");
+    md.push_str("- 1D sweeps (`values`, `linspace`, `logspace`)\n");
+    md.push_str("- per-row status (`ok`/`failed`) without aborting the whole study\n");
+    md.push_str("- table-first outputs suitable for Python and Excel spill ranges\n");
+    md.push_str("- concise per-row path/provenance summaries\n\n");
+    md.push_str("## Rust: Equation Study\n\n");
+    md.push_str("```rust\n");
+    md.push_str("use std::collections::BTreeMap;\n");
+    md.push_str("use eng::solve::{EquationStudySpec, SweepAxis, run_equation_study};\n\n");
+    md.push_str("let mut fixed = BTreeMap::new();\n");
+    md.push_str("fixed.insert(\"gamma\".to_string(), 1.4);\n");
+    md.push_str("let table = run_equation_study(&EquationStudySpec {\n");
+    md.push_str("    path_id: \"compressible.isentropic_pressure_ratio\".to_string(),\n");
+    md.push_str("    target: \"p_p0\".to_string(),\n");
+    md.push_str("    sweep_variable: \"M\".to_string(),\n");
+    md.push_str("    fixed_inputs: fixed,\n");
+    md.push_str("    branch: None,\n");
+    md.push_str("}, SweepAxis::linspace(0.2, 3.0, 21));\n");
+    md.push_str("```\n\n");
+    md.push_str("## Rust: Device Study\n\n");
+    md.push_str("```rust\n");
+    md.push_str("use eng::devices::NozzleFlowBranch;\n");
+    md.push_str("use eng::solve::{SweepAxis, study_nozzle_flow_area_ratio};\n\n");
+    md.push_str("let table = study_nozzle_flow_area_ratio(\n");
+    md.push_str("    1.4,\n");
+    md.push_str("    SweepAxis::linspace(1.2, 3.0, 20),\n");
+    md.push_str("    NozzleFlowBranch::Supersonic,\n");
+    md.push_str(");\n");
+    md.push_str("```\n\n");
+    md.push_str("## Rust: Workflow-Chain Study\n\n");
+    md.push_str("```rust\n");
+    md.push_str("use eng::devices::NozzleFlowBranch;\n");
+    md.push_str("use eng::solve::{SweepAxis, study_nozzle_normal_shock_workflow};\n\n");
+    md.push_str("let table = study_nozzle_normal_shock_workflow(\n");
+    md.push_str("    1.4,\n");
+    md.push_str("    SweepAxis::linspace(1.2, 3.0, 20),\n");
+    md.push_str("    NozzleFlowBranch::Supersonic,\n");
+    md.push_str(");\n");
+    md.push_str("```\n\n");
+    md.push_str("## Python / Excel (Targeted v1)\n\n");
+    md.push_str("- Python module: `engpy.study`\n");
+    md.push_str("- Excel spill-table helpers:\n");
+    md.push_str("  - `ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE(...)`\n");
+    md.push_str("  - `ENG_STUDY_NOZZLE_FLOW_TABLE(...)`\n");
+    md.push_str("  - `ENG_STUDY_NORMAL_SHOCK_TABLE(...)`\n");
+    md.push_str("  - `ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE(...)`\n\n");
+    md.push_str("Each helper returns a structured payload with both a rich `table` object and `spill` rows suitable for worksheet charting.\n");
+    md
+}
+
 fn render_families_index(c: &UnifiedDocsContribution) -> String {
     let mut md = String::new();
     md.push_str("# Equation Families\n\n");
@@ -3202,6 +3503,7 @@ fn render_bindings_guide() -> String {
     md.push_str("- `generated/bindings/binding_spec.json`\n");
     md.push_str("- `generated/bindings/invoke_protocol.json`\n");
     md.push_str("- `generated/bindings/python/engpy/...`\n");
+    md.push_str("- `generated/bindings/python/engpy/study.py`\n");
     md.push_str(
         "- `generated/bindings/python/pyproject.toml` (maturin build config for `engpy_native`)\n",
     );
@@ -3242,6 +3544,11 @@ fn render_bindings_guide() -> String {
     md.push_str("  - `engpy.helpers.device_mode_count(key)`\n");
     md.push_str("  - `engpy.helpers.format_value(value, in_unit, out_unit)`\n");
     md.push_str("  - `engpy.helpers.meta_get(entity, key, field)`\n");
+    md.push_str("  - `engpy.study.equation_sweep_table(...)`\n");
+    md.push_str("  - `engpy.study.isentropic_m_to_p_p0_table(...)`\n");
+    md.push_str("  - `engpy.study.nozzle_flow_table(...)`\n");
+    md.push_str("  - `engpy.study.normal_shock_table(...)`\n");
+    md.push_str("  - `engpy.study.nozzle_normal_shock_workflow_table(...)`\n");
     md.push_str("- Excel:\n");
     md.push_str("  - `ENG_FORMAT(value, in_unit, out_unit)`\n");
     md.push_str("  - `ENG_META(entity, key, field)`\n");
@@ -3255,6 +3562,12 @@ fn render_bindings_guide() -> String {
     md.push_str("  - `ENG_EQUATION_DESCRIPTION(path_id)`\n");
     md.push_str("  - `ENG_EQUATION_FAMILY(path_id)`\n");
     md.push_str("  - `ENG_EQUATION_DEFAULT_UNIT(path_id, variable)`\n\n");
+    md.push_str("  - `ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE(gamma, start, end, count, [branch])`\n");
+    md.push_str("  - `ENG_STUDY_NOZZLE_FLOW_TABLE(gamma, start, end, count, branch)`\n");
+    md.push_str("  - `ENG_STUDY_NORMAL_SHOCK_TABLE(gamma, start, end, count)`\n");
+    md.push_str(
+        "  - `ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE(gamma, start, end, count, branch)`\n\n",
+    );
     md.push_str(
         "  - `ENG_EQUATION_TARGETS_TEXT(path_id)` / `ENG_EQUATION_VARIABLES_TEXT(path_id)`\n",
     );
@@ -4076,6 +4389,7 @@ fn render_summary(c: &UnifiedDocsContribution) -> String {
     s.push_str("- [Units & Quantities](units_quantities/index.md)\n");
     s.push_str("- [Examples & Workflows](workflows/index.md)\n");
     s.push_str("- [Engineering Solve Layer](solve/index.md)\n");
+    s.push_str("- [Studies and Parameter Sweeps](studies/index.md)\n");
     s.push_str("- [Bindings (Python/Excel)](bindings/index.md)\n");
     s.push_str("- [Devices Guide](devices/guide.md)\n");
     s.push_str("- [YAML Authoring](yaml_authoring/index.md)\n");

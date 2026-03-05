@@ -58,6 +58,11 @@ pub const INVOKE_SUPPORTED_OPS: &[&str] = &[
     "device.nozzle_flow_calc.value",
     "device.nozzle_flow_calc.pivot_mach",
     "device.nozzle_flow_calc.path_text",
+    "study.equation.sweep",
+    "study.device.isentropic_m_to_p_p0.table",
+    "study.device.nozzle_flow.table",
+    "study.device.normal_shock.table",
+    "study.workflow.nozzle_normal_shock.table",
     "device.pipe_loss.solve_delta_p",
     "fluid.prop",
     "material.prop",
@@ -373,6 +378,22 @@ pub fn invoke_protocol_spec() -> InvokeProtocolSpec {
                     "device.nozzle_flow_calc.path_text" => {
                         "Run nozzle-flow calculator device and return compact path trace text"
                             .to_string()
+                    }
+                    "study.equation.sweep" => {
+                        "Run 1D equation parameter sweep and return diagnostics-aware table"
+                            .to_string()
+                    }
+                    "study.device.isentropic_m_to_p_p0.table" => {
+                        "Run 1D study table for isentropic device Mach->p/p0".to_string()
+                    }
+                    "study.device.nozzle_flow.table" => {
+                        "Run 1D study table for nozzle-flow device over area ratio".to_string()
+                    }
+                    "study.device.normal_shock.table" => {
+                        "Run 1D study table for normal-shock device over M1".to_string()
+                    }
+                    "study.workflow.nozzle_normal_shock.table" => {
+                        "Run 1D study table for nozzle+normal-shock workflow chain".to_string()
                     }
                     "device.pipe_loss.solve_delta_p" => {
                         "Solve pipe-loss device pressure drop".to_string()

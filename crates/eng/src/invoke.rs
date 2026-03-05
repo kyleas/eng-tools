@@ -130,6 +130,17 @@ pub fn handle_invoke(req: InvokeRequest) -> InvokeResponse {
         "device.nozzle_flow_calc.path_text" => {
             invoke_nozzle_flow_calc_path_text(&op, request_id, &args)
         }
+        "study.equation.sweep" => invoke_study_equation_sweep(&op, request_id, &args),
+        "study.device.isentropic_m_to_p_p0.table" => {
+            invoke_study_isentropic_m_to_p_p0(&op, request_id, &args)
+        }
+        "study.device.nozzle_flow.table" => invoke_study_nozzle_flow_table(&op, request_id, &args),
+        "study.device.normal_shock.table" => {
+            invoke_study_normal_shock_table(&op, request_id, &args)
+        }
+        "study.workflow.nozzle_normal_shock.table" => {
+            invoke_study_nozzle_normal_shock_table(&op, request_id, &args)
+        }
         "device.pipe_loss.solve_delta_p" => invoke_pipe_loss(&op, request_id, &args),
         "fluid.prop" => invoke_fluid_prop(&op, request_id, &args),
         "material.prop" => invoke_material_prop(&op, request_id, &args),
@@ -3201,6 +3212,303 @@ fn invoke_constant_get(op: &str, request_id: Option<String>, args: &Value) -> In
             None,
         ),
     }
+}
+
+fn parse_sweep_axis(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+    axis_field: &str,
+) -> std::result::Result<crate::solve::SweepAxis, InvokeResponse> {
+    if let Some(values) = args.get("values") {
+        let arr = values.as_array().ok_or_else(|| {
+            InvokeResponse::err(
+                op,
+                request_id.clone(),
+                "invalid_arg_type",
+                "values must be an array of numbers",
+                Some("values"),
+                None,
+            )
+        })?;
+        let mut out = Vec::new();
+        for (idx, v) in arr.iter().enumerate() {
+            let n = v.as_f64().ok_or_else(|| {
+                InvokeResponse::err(
+                    op,
+                    request_id.clone(),
+                    "invalid_arg_type",
+                    format!("values[{idx}] must be numeric"),
+                    Some("values"),
+                    None,
+                )
+            })?;
+            out.push(n);
+        }
+        return Ok(crate::solve::SweepAxis::values(out));
+    }
+    let start = req_f64(args, "start").map_err(|e| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("start"),
+            None,
+        )
+    })?;
+    let end = req_f64(args, "end").map_err(|e| {
+        InvokeResponse::err(op, request_id.clone(), "missing_arg", e, Some("end"), None)
+    })?;
+    let count = args
+        .get("count")
+        .and_then(|v| v.as_u64().or_else(|| v.as_f64().map(|n| n.round() as u64)))
+        .map(|v| v as usize)
+        .unwrap_or(21usize);
+    if count == 0 {
+        return Err(InvokeResponse::err(
+            op,
+            request_id,
+            "invalid_arg_value",
+            "count must be >= 1",
+            Some("count"),
+            None,
+        ));
+    }
+    let spacing = opt_str(args, "spacing").unwrap_or("linear");
+    let axis = match spacing {
+        "linear" | "linspace" => crate::solve::SweepAxis::linspace(start, end, count),
+        "log" | "logspace" => crate::solve::SweepAxis::logspace(start, end, count),
+        other => {
+            return Err(InvokeResponse::err(
+                op,
+                request_id,
+                "invalid_arg_value",
+                format!("unsupported spacing '{other}'"),
+                Some("spacing"),
+                None,
+            ));
+        }
+    };
+    if axis.samples().is_empty() {
+        return Err(InvokeResponse::err(
+            op,
+            request_id,
+            "invalid_arg_value",
+            format!("invalid sweep for axis '{axis_field}' (check start/end/count/spacing)"),
+            Some(axis_field),
+            None,
+        ));
+    }
+    Ok(axis)
+}
+
+fn invoke_study_equation_sweep(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
+    let path_id = match req_str(args, "path_id") {
+        Ok(v) => v.to_string(),
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("path_id"), None);
+        }
+    };
+    let target = match req_str(args, "target") {
+        Ok(v) => v.to_string(),
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("target"), None);
+        }
+    };
+    let sweep_variable = match req_str(args, "sweep_variable") {
+        Ok(v) => v.to_string(),
+        Err(e) => {
+            return InvokeResponse::err(
+                op,
+                request_id,
+                "missing_arg",
+                e,
+                Some("sweep_variable"),
+                None,
+            );
+        }
+    };
+    let axis = match parse_sweep_axis(op, request_id.clone(), args, &sweep_variable) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    let mut fixed_inputs = std::collections::BTreeMap::<String, f64>::new();
+    if let Some(obj) = args.get("fixed_inputs").and_then(Value::as_object) {
+        for (k, v) in obj {
+            let Some(n) = v.as_f64() else {
+                return InvokeResponse::err(
+                    op,
+                    request_id,
+                    "invalid_arg_type",
+                    format!("fixed_inputs['{k}'] must be numeric"),
+                    Some("fixed_inputs"),
+                    None,
+                );
+            };
+            fixed_inputs.insert(k.clone(), n);
+        }
+    }
+    let branch = opt_str(args, "branch").map(|s| s.to_string());
+    let spec = crate::solve::EquationStudySpec {
+        path_id,
+        target,
+        sweep_variable,
+        fixed_inputs,
+        branch,
+    };
+    let table = crate::solve::run_equation_study(&spec, axis);
+    study_response(op, request_id, args, table)
+}
+
+fn invoke_study_isentropic_m_to_p_p0(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
+    let gamma = match req_f64(args, "gamma") {
+        Ok(v) => v,
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("gamma"), None);
+        }
+    };
+    let axis = match parse_sweep_axis(op, request_id.clone(), args, "mach") {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    let branch = match opt_str(args, "branch") {
+        Some(s) if !s.trim().is_empty() => match crate::devices::isentropic::parse_branch(s) {
+            Some(v) => Some(v),
+            None => {
+                return InvokeResponse::err(
+                    op,
+                    request_id,
+                    "invalid_arg_value",
+                    format!("unsupported branch '{s}'"),
+                    Some("branch"),
+                    None,
+                );
+            }
+        },
+        _ => None,
+    };
+    let table = crate::solve::study_isentropic_m_to_p_p0(gamma, axis, branch);
+    study_response(op, request_id, args, table)
+}
+
+fn invoke_study_nozzle_flow_table(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
+    let gamma = match req_f64(args, "gamma") {
+        Ok(v) => v,
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("gamma"), None);
+        }
+    };
+    let axis = match parse_sweep_axis(op, request_id.clone(), args, "area_ratio") {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    let branch_raw = opt_str(args, "branch").unwrap_or("supersonic");
+    let branch = match crate::devices::nozzle_flow::parse_branch(branch_raw) {
+        Some(v) => v,
+        None => {
+            return InvokeResponse::err(
+                op,
+                request_id,
+                "invalid_arg_value",
+                format!("unsupported branch '{branch_raw}'"),
+                Some("branch"),
+                None,
+            );
+        }
+    };
+    let table = crate::solve::study_nozzle_flow_area_ratio(gamma, axis, branch);
+    study_response(op, request_id, args, table)
+}
+
+fn invoke_study_normal_shock_table(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
+    let gamma = match req_f64(args, "gamma") {
+        Ok(v) => v,
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("gamma"), None);
+        }
+    };
+    let axis = match parse_sweep_axis(op, request_id.clone(), args, "m1") {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    let table = crate::solve::study_normal_shock_m1(gamma, axis);
+    study_response(op, request_id, args, table)
+}
+
+fn invoke_study_nozzle_normal_shock_table(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
+    let gamma = match req_f64(args, "gamma") {
+        Ok(v) => v,
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("gamma"), None);
+        }
+    };
+    let axis = match parse_sweep_axis(op, request_id.clone(), args, "area_ratio") {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    let branch_raw = opt_str(args, "branch").unwrap_or("supersonic");
+    let branch = match crate::devices::nozzle_flow::parse_branch(branch_raw) {
+        Some(v) => v,
+        None => {
+            return InvokeResponse::err(
+                op,
+                request_id,
+                "invalid_arg_value",
+                format!("unsupported branch '{branch_raw}'"),
+                Some("branch"),
+                None,
+            );
+        }
+    };
+    let table = crate::solve::study_nozzle_normal_shock_workflow(gamma, axis, branch);
+    study_response(op, request_id, args, table)
+}
+
+fn study_response(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+    table: crate::solve::StudyTable,
+) -> InvokeResponse {
+    let mode = opt_str(args, "output").unwrap_or("table");
+    let spill = table.to_spill_strings(true);
+    let value = match mode {
+        "spill" => json!(spill),
+        "table" => json!(table),
+        "both" => json!({"table": table, "spill": spill}),
+        other => {
+            return InvokeResponse::err(
+                op,
+                request_id,
+                "invalid_arg_value",
+                format!("unsupported output '{other}' (use table, spill, both)"),
+                Some("output"),
+                None,
+            );
+        }
+    };
+    InvokeResponse::ok(op, request_id, value)
 }
 
 fn req_str<'a>(obj: &'a Value, key: &str) -> Result<&'a str, String> {

@@ -333,6 +333,71 @@ fn invoke_isentropic_calc_rejects_out_of_domain_prandtl_meyer_angle() {
 }
 
 #[test]
+fn invoke_study_equation_sweep_returns_table_and_spill() {
+    let req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "study.equation.sweep",
+        "args": {
+            "path_id": "compressible.isentropic_pressure_ratio",
+            "target": "p_p0",
+            "sweep_variable": "M",
+            "start": 0.2,
+            "end": 2.0,
+            "count": 8
+        }
+    });
+    let resp = run_invoke(req);
+    assert_eq!(resp["ok"], true, "response: {resp}");
+    assert!(resp["value"]["rows"].is_array());
+}
+
+#[test]
+fn invoke_study_device_tables_work() {
+    let req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "study.device.nozzle_flow.table",
+        "args": {
+            "gamma": 1.4,
+            "start": 1.2,
+            "end": 2.0,
+            "count": 5,
+            "branch": "supersonic"
+        }
+    });
+    let resp = run_invoke(req);
+    assert_eq!(resp["ok"], true, "response: {resp}");
+    assert_eq!(resp["value"]["study_id"], "study.nozzle_flow.area_ratio");
+    assert!(resp["value"]["rows"].is_array());
+}
+
+#[test]
+fn invoke_study_workflow_table_exposes_path_summary() {
+    let req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "study.workflow.nozzle_normal_shock.table",
+        "args": {
+            "gamma": 1.4,
+            "start": 1.4,
+            "end": 2.0,
+            "count": 3,
+            "branch": "supersonic"
+        }
+    });
+    let resp = run_invoke(req);
+    assert_eq!(resp["ok"], true, "response: {resp}");
+    let rows = resp["value"]["rows"]
+        .as_array()
+        .expect("rows array");
+    assert!(!rows.is_empty());
+    assert!(
+        rows[0]["path_summary"]
+            .as_str()
+            .unwrap_or("")
+            .contains("device.")
+    );
+}
+
+#[test]
 fn invoke_oblique_shock_calc_supports_weak_and_strong_branches() {
     let weak_req = json!({
         "protocol_version": "eng-invoke.v1",

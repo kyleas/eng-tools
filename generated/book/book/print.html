@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-472b5b40.js";
+            window.path_to_searchindex_js = "searchindex-67deae90.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-46165df7.js"></script>
+        <script src="toc-6c0f58de.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -197,38 +197,22 @@
 <p><a href="#engineering-solve-layer">Engineering Solve Layer</a></p>
 </li>
 <li>
+<p><a href="#studies-and-parameter-sweeps">Studies and Parameter Sweeps</a></p>
+</li>
+<li>
 <p><a href="#bindings-python-and-excel">Bindings (Python/Excel)</a></p>
 </li>
 </ul>
 <h2 id="domain-guides"><a class="header" href="#domain-guides">Domain Guides</a></h2>
 <ul>
-<li>
-<p><a href="#equations-guide">Equations Guide</a></p>
-</li>
-<li>
-<p><a href="#devices-guide">Devices Guide</a></p>
-</li>
-<li>
-<p><a href="#fluids-guide">Fluids Guide</a></p>
-</li>
-<li>
-<p><a href="#materials-guide">Materials Guide</a></p>
-</li>
-<li>
-<p><a href="#constants">Constants</a></p>
-</li>
-<li>
-<p><a href="#yaml-authoring">YAML Authoring</a></p>
-</li>
-<li>
-<p><a href="#validation--trust">Validation / Trust</a></p>
-</li>
-<li>
-<p><a href="#architecture-layers">Architecture Overview</a></p>
-</li>
-<li>
-<p><a href="#bindings-python-and-excel">Bindings (Python/Excel)</a></p>
-</li>
+<li><a href="#equations-guide">Equations Guide</a></li>
+<li><a href="#devices-guide">Devices Guide</a></li>
+<li><a href="#fluids-guide">Fluids Guide</a></li>
+<li><a href="#materials-guide">Materials Guide</a></li>
+<li><a href="#constants">Constants</a></li>
+<li><a href="#yaml-authoring">YAML Authoring</a></li>
+<li><a href="#validation--trust">Validation / Trust</a></li>
+<li><a href="#architecture-layers">Architecture Overview</a></li>
 </ul>
 <h2 id="catalog"><a class="header" href="#catalog">Catalog</a></h2>
 <ul>
@@ -546,6 +530,69 @@ println!("station trace: {}", chain.path_text());
 </ul>
 <p>Conical-shock Taylor-Maccoll stepping and branch-sensitive oblique/conical inversions use this layer.</p>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="studies-and-parameter-sweeps"><a class="header" href="#studies-and-parameter-sweeps">Studies and Parameter Sweeps</a></h1>
+<p><code>eng::solve::study</code> is the standard subsystem for diagnostics-aware parameter studies across equations, devices, and solve-layer workflows.</p>
+<h2 id="scope"><a class="header" href="#scope">Scope</a></h2>
+<ul>
+<li>1D sweeps (<code>values</code>, <code>linspace</code>, <code>logspace</code>)</li>
+<li>per-row status (<code>ok</code>/<code>failed</code>) without aborting the whole study</li>
+<li>table-first outputs suitable for Python and Excel spill ranges</li>
+<li>concise per-row path/provenance summaries</li>
+</ul>
+<h2 id="rust-equation-study"><a class="header" href="#rust-equation-study">Rust: Equation Study</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::BTreeMap;
+use eng::solve::{EquationStudySpec, SweepAxis, run_equation_study};
+
+let mut fixed = BTreeMap::new();
+fixed.insert("gamma".to_string(), 1.4);
+let table = run_equation_study(&amp;EquationStudySpec {
+    path_id: "compressible.isentropic_pressure_ratio".to_string(),
+    target: "p_p0".to_string(),
+    sweep_variable: "M".to_string(),
+    fixed_inputs: fixed,
+    branch: None,
+}, SweepAxis::linspace(0.2, 3.0, 21));
+<span class="boring">}</span></code></pre>
+<h2 id="rust-device-study"><a class="header" href="#rust-device-study">Rust: Device Study</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use eng::devices::NozzleFlowBranch;
+use eng::solve::{SweepAxis, study_nozzle_flow_area_ratio};
+
+let table = study_nozzle_flow_area_ratio(
+    1.4,
+    SweepAxis::linspace(1.2, 3.0, 20),
+    NozzleFlowBranch::Supersonic,
+);
+<span class="boring">}</span></code></pre>
+<h2 id="rust-workflow-chain-study"><a class="header" href="#rust-workflow-chain-study">Rust: Workflow-Chain Study</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use eng::devices::NozzleFlowBranch;
+use eng::solve::{SweepAxis, study_nozzle_normal_shock_workflow};
+
+let table = study_nozzle_normal_shock_workflow(
+    1.4,
+    SweepAxis::linspace(1.2, 3.0, 20),
+    NozzleFlowBranch::Supersonic,
+);
+<span class="boring">}</span></code></pre>
+<h2 id="python--excel-targeted-v1"><a class="header" href="#python--excel-targeted-v1">Python / Excel (Targeted v1)</a></h2>
+<ul>
+<li>Python module: <code>engpy.study</code></li>
+<li>Excel spill-table helpers:
+<ul>
+<li><code>ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE(...)</code></li>
+<li><code>ENG_STUDY_NOZZLE_FLOW_TABLE(...)</code></li>
+<li><code>ENG_STUDY_NORMAL_SHOCK_TABLE(...)</code></li>
+<li><code>ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE(...)</code></li>
+</ul>
+</li>
+</ul>
+<p>Each helper returns a structured payload with both a rich <code>table</code> object and <code>spill</code> rows suitable for worksheet charting.</p>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="bindings-python-and-excel"><a class="header" href="#bindings-python-and-excel">Bindings (Python and Excel)</a></h1>
 <p>Rust remains the authoritative implementation. Generated Python and Excel bindings are thin adapters over the same public binding model.</p>
 <h2 id="generated-outputs"><a class="header" href="#generated-outputs">Generated Outputs</a></h2>
@@ -553,6 +600,7 @@ println!("station trace: {}", chain.path_text());
 <li><code>generated/bindings/binding_spec.json</code></li>
 <li><code>generated/bindings/invoke_protocol.json</code></li>
 <li><code>generated/bindings/python/engpy/...</code></li>
+<li><code>generated/bindings/python/engpy/study.py</code></li>
 <li><code>generated/bindings/python/pyproject.toml</code> (maturin build config for <code>engpy_native</code>)</li>
 <li><code>generated/bindings/excel/eng_xloil.py</code></li>
 <li><code>generated/bindings/excel/eng_pyxll.py</code></li>
@@ -596,6 +644,11 @@ println!("station trace: {}", chain.path_text());
 <li><code>engpy.helpers.device_mode_count(key)</code></li>
 <li><code>engpy.helpers.format_value(value, in_unit, out_unit)</code></li>
 <li><code>engpy.helpers.meta_get(entity, key, field)</code></li>
+<li><code>engpy.study.equation_sweep_table(...)</code></li>
+<li><code>engpy.study.isentropic_m_to_p_p0_table(...)</code></li>
+<li><code>engpy.study.nozzle_flow_table(...)</code></li>
+<li><code>engpy.study.normal_shock_table(...)</code></li>
+<li><code>engpy.study.nozzle_normal_shock_workflow_table(...)</code></li>
 </ul>
 </li>
 <li>Excel:
@@ -635,6 +688,18 @@ println!("station trace: {}", chain.path_text());
 </li>
 <li>
 <p><code>ENG_EQUATION_DEFAULT_UNIT(path_id, variable)</code></p>
+</li>
+<li>
+<p><code>ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE(gamma, start, end, count, [branch])</code></p>
+</li>
+<li>
+<p><code>ENG_STUDY_NOZZLE_FLOW_TABLE(gamma, start, end, count, branch)</code></p>
+</li>
+<li>
+<p><code>ENG_STUDY_NORMAL_SHOCK_TABLE(gamma, start, end, count)</code></p>
+</li>
+<li>
+<p><code>ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE(gamma, start, end, count, branch)</code></p>
 </li>
 <li>
 <p><code>ENG_EQUATION_TARGETS_TEXT(path_id)</code> / <code>ENG_EQUATION_VARIABLES_TEXT(path_id)</code></p>

@@ -37,6 +37,9 @@ pub mod devices;
 pub mod docs;
 pub mod invoke;
 pub mod solve;
+pub mod study {
+    pub use crate::solve::study::*;
+}
 
 pub use eng_core as core;
 pub use eng_fluids as fluids;
@@ -59,5 +62,6 @@ pub mod prelude {
     pub use crate::materials;
     pub use crate::qty;
     pub use crate::solve;
+    pub use crate::study;
     pub use crate::units;
 }

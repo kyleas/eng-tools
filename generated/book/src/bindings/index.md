@@ -7,6 +7,7 @@ Rust remains the authoritative implementation. Generated Python and Excel bindin
 - `generated/bindings/binding_spec.json`
 - `generated/bindings/invoke_protocol.json`
 - `generated/bindings/python/engpy/...`
+- `generated/bindings/python/engpy/study.py`
 - `generated/bindings/python/pyproject.toml` (maturin build config for `engpy_native`)
 - `generated/bindings/excel/eng_xloil.py`
 - `generated/bindings/excel/eng_pyxll.py`
@@ -50,6 +51,11 @@ Rust remains the authoritative implementation. Generated Python and Excel bindin
   - `engpy.helpers.device_mode_count(key)`
   - `engpy.helpers.format_value(value, in_unit, out_unit)`
   - `engpy.helpers.meta_get(entity, key, field)`
+  - `engpy.study.equation_sweep_table(...)`
+  - `engpy.study.isentropic_m_to_p_p0_table(...)`
+  - `engpy.study.nozzle_flow_table(...)`
+  - `engpy.study.normal_shock_table(...)`
+  - `engpy.study.nozzle_normal_shock_workflow_table(...)`
 - Excel:
   - `ENG_FORMAT(value, in_unit, out_unit)`
   - `ENG_META(entity, key, field)`
@@ -63,6 +69,11 @@ Rust remains the authoritative implementation. Generated Python and Excel bindin
   - `ENG_EQUATION_DESCRIPTION(path_id)`
   - `ENG_EQUATION_FAMILY(path_id)`
   - `ENG_EQUATION_DEFAULT_UNIT(path_id, variable)`
+
+  - `ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE(gamma, start, end, count, [branch])`
+  - `ENG_STUDY_NOZZLE_FLOW_TABLE(gamma, start, end, count, branch)`
+  - `ENG_STUDY_NORMAL_SHOCK_TABLE(gamma, start, end, count)`
+  - `ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE(gamma, start, end, count, branch)`
 
   - `ENG_EQUATION_TARGETS_TEXT(path_id)` / `ENG_EQUATION_VARIABLES_TEXT(path_id)`
   - `ENG_EQUATION_BRANCHES_TEXT(path_id)`

@@ -7815,6 +7815,204 @@
       "python_example": "engpy.helpers.meta_get(\"equation\", \"structures.hoop_stress\", \"ascii\")",
       "xloil_example": "=ENG_META(\"equation\",\"structures.hoop_stress\",\"ascii\")",
       "pyxll_example": "=ENG_META(\"equation\",\"structures.hoop_stress\",\"ascii\")"
+    },
+    {
+      "id": "study.device.isentropic_m_to_p_p0.table",
+      "entity": "study",
+      "source": "device.isentropic_calc",
+      "python_module": "study",
+      "python_name": "isentropic_m_to_p_p0_table",
+      "excel_name": "ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE",
+      "op": "study.device.isentropic_m_to_p_p0.table",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "start",
+          "description": "Mach start"
+        },
+        {
+          "name": "end",
+          "description": "Mach end"
+        },
+        {
+          "name": "count",
+          "description": "Sample count"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch"
+        }
+      ],
+      "returns": "dict(table, spill)",
+      "help": "Study table for isentropic device Mach -> p/p0",
+      "rust_example": "eng::solve::study_isentropic_m_to_p_p0(1.4, eng::solve::SweepAxis::linspace(0.2, 3.0, 21), None)",
+      "python_example": "engpy.study.isentropic_m_to_p_p0_table(gamma=1.4, start=0.2, end=3.0, count=21)",
+      "xloil_example": "=ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE(1.4,0.2,3,21,\"\")",
+      "pyxll_example": "=ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE(1.4,0.2,3,21,\"\")"
+    },
+    {
+      "id": "study.device.normal_shock.table",
+      "entity": "study",
+      "source": "device.normal_shock_calc",
+      "python_module": "study",
+      "python_name": "normal_shock_table",
+      "excel_name": "ENG_STUDY_NORMAL_SHOCK_TABLE",
+      "op": "study.device.normal_shock.table",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "start",
+          "description": "M1 start"
+        },
+        {
+          "name": "end",
+          "description": "M1 end"
+        },
+        {
+          "name": "count",
+          "description": "Sample count"
+        }
+      ],
+      "returns": "dict(table, spill)",
+      "help": "Study table for normal-shock device over M1",
+      "rust_example": "eng::solve::study_normal_shock_m1(1.4, eng::solve::SweepAxis::linspace(1.05, 4.0, 20))",
+      "python_example": "engpy.study.normal_shock_table(gamma=1.4, start=1.05, end=4.0, count=20)",
+      "xloil_example": "=ENG_STUDY_NORMAL_SHOCK_TABLE(1.4,1.05,4,20)",
+      "pyxll_example": "=ENG_STUDY_NORMAL_SHOCK_TABLE(1.4,1.05,4,20)"
+    },
+    {
+      "id": "study.device.nozzle_flow.table",
+      "entity": "study",
+      "source": "device.nozzle_flow_calc",
+      "python_module": "study",
+      "python_name": "nozzle_flow_table",
+      "excel_name": "ENG_STUDY_NOZZLE_FLOW_TABLE",
+      "op": "study.device.nozzle_flow.table",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "start",
+          "description": "Area-ratio start"
+        },
+        {
+          "name": "end",
+          "description": "Area-ratio end"
+        },
+        {
+          "name": "count",
+          "description": "Sample count"
+        },
+        {
+          "name": "branch",
+          "description": "Branch (subsonic/supersonic)"
+        }
+      ],
+      "returns": "dict(table, spill)",
+      "help": "Study table for nozzle-flow device over area ratio",
+      "rust_example": "eng::solve::study_nozzle_flow_area_ratio(1.4, eng::solve::SweepAxis::linspace(1.2, 3.0, 20), eng::devices::NozzleFlowBranch::Supersonic)",
+      "python_example": "engpy.study.nozzle_flow_table(gamma=1.4, start=1.2, end=3.0, count=20, branch=\"supersonic\")",
+      "xloil_example": "=ENG_STUDY_NOZZLE_FLOW_TABLE(1.4,1.2,3,20,\"supersonic\")",
+      "pyxll_example": "=ENG_STUDY_NOZZLE_FLOW_TABLE(1.4,1.2,3,20,\"supersonic\")"
+    },
+    {
+      "id": "study.equation.sweep",
+      "entity": "study",
+      "source": "equation",
+      "python_module": "study",
+      "python_name": "equation_sweep_table",
+      "excel_name": "ENG_STUDY_EQUATION_TABLE",
+      "op": "study.equation.sweep",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "path_id",
+          "description": "Equation path id"
+        },
+        {
+          "name": "target",
+          "description": "Solve target key"
+        },
+        {
+          "name": "sweep_variable",
+          "description": "Variable to sweep"
+        },
+        {
+          "name": "start",
+          "description": "Sweep start"
+        },
+        {
+          "name": "end",
+          "description": "Sweep end"
+        },
+        {
+          "name": "count",
+          "description": "Number of samples"
+        },
+        {
+          "name": "spacing",
+          "description": "Spacing mode (linear or logspace)"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch"
+        }
+      ],
+      "returns": "dict(table, spill)",
+      "help": "Generic equation study sweep table (1D axis)",
+      "rust_example": "eng::solve::run_equation_study(...)",
+      "python_example": "engpy.study.equation_sweep_table(path_id=\"compressible.isentropic_pressure_ratio\", target=\"p_p0\", sweep_variable=\"M\", start=0.2, end=3.0, count=20, spacing=\"linear\")",
+      "xloil_example": "=ENG_STUDY_EQUATION_TABLE(\"compressible.isentropic_pressure_ratio\",\"p_p0\",\"M\",0.2,3,20,\"linear\",\"\")",
+      "pyxll_example": "=ENG_STUDY_EQUATION_TABLE(\"compressible.isentropic_pressure_ratio\",\"p_p0\",\"M\",0.2,3,20,\"linear\",\"\")"
+    },
+    {
+      "id": "study.workflow.nozzle_normal_shock.table",
+      "entity": "study",
+      "source": "solve.workflow.nozzle_normal_shock",
+      "python_module": "study",
+      "python_name": "nozzle_normal_shock_workflow_table",
+      "excel_name": "ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE",
+      "op": "study.workflow.nozzle_normal_shock.table",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "start",
+          "description": "Area-ratio start"
+        },
+        {
+          "name": "end",
+          "description": "Area-ratio end"
+        },
+        {
+          "name": "count",
+          "description": "Sample count"
+        },
+        {
+          "name": "branch",
+          "description": "Nozzle branch (subsonic/supersonic)"
+        }
+      ],
+      "returns": "dict(table, spill)",
+      "help": "Study table for nozzle + normal-shock chained workflow",
+      "rust_example": "eng::solve::study_nozzle_normal_shock_workflow(1.4, eng::solve::SweepAxis::linspace(1.2, 3.0, 20), eng::devices::NozzleFlowBranch::Supersonic)",
+      "python_example": "engpy.study.nozzle_normal_shock_workflow_table(gamma=1.4, start=1.2, end=3.0, count=20, branch=\"supersonic\")",
+      "xloil_example": "=ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE(1.4,1.2,3,20,\"supersonic\")",
+      "pyxll_example": "=ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE(1.4,1.2,3,20,\"supersonic\")"
     }
   ]
 }

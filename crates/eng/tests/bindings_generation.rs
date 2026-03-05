@@ -15,6 +15,7 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     let py_pkg = tmp.path().join("bindings/python/engpy/__init__.py");
     let py_runtime = tmp.path().join("bindings/python/engpy/_runtime.py");
     let py_helpers = tmp.path().join("bindings/python/engpy/helpers.py");
+    let py_study = tmp.path().join("bindings/python/engpy/study.py");
     let pyproject = tmp.path().join("bindings/python/pyproject.toml");
     let py_eq_init = tmp
         .path()
@@ -27,6 +28,7 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(py_pkg.exists(), "missing {}", py_pkg.display());
     assert!(py_runtime.exists(), "missing {}", py_runtime.display());
     assert!(py_helpers.exists(), "missing {}", py_helpers.display());
+    assert!(py_study.exists(), "missing {}", py_study.display());
     assert!(pyproject.exists(), "missing {}", pyproject.display());
     assert!(py_eq_init.exists(), "missing {}", py_eq_init.display());
     assert!(xloil.exists(), "missing {}", xloil.display());
@@ -89,6 +91,10 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(xloil_text.contains("ENG_NOZZLE_FLOW_FROM_M_TO_A_ASTAR"));
     assert!(xloil_text.contains("ENG_NOZZLE_FLOW_FROM_A_ASTAR_TO_M"));
     assert!(xloil_text.contains("ENG_NOZZLE_FLOW_FROM_M_TO_P_P0"));
+    assert!(xloil_text.contains("ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE"));
+    assert!(xloil_text.contains("ENG_STUDY_NOZZLE_FLOW_TABLE"));
+    assert!(xloil_text.contains("ENG_STUDY_NORMAL_SHOCK_TABLE"));
+    assert!(xloil_text.contains("ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE"));
     assert!(xloil_text.contains("ENG_EQUATION_TARGETS"));
     assert!(xloil_text.contains("ENG_COMPRESSIBLE_PRANDTL_MEYER_NU"));
     assert!(xloil_text.contains("ENG_COMPRESSIBLE_PRANDTL_MEYER_M"));
@@ -133,6 +139,10 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(pyxll_text.contains("ENG_NOZZLE_FLOW_FROM_M_TO_P_P0"));
     assert!(pyxll_text.contains("ENG_COMPRESSIBLE_PRANDTL_MEYER_NU"));
     assert!(pyxll_text.contains("ENG_COMPRESSIBLE_PRANDTL_MEYER_M"));
+    assert!(pyxll_text.contains("ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE"));
+    assert!(pyxll_text.contains("ENG_STUDY_NOZZLE_FLOW_TABLE"));
+    assert!(pyxll_text.contains("ENG_STUDY_NORMAL_SHOCK_TABLE"));
+    assert!(pyxll_text.contains("ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE"));
     assert!(pyxll_text.contains("Arguments:"));
     assert!(pyxll_text.contains("state_prop_1"));
 
@@ -168,6 +178,13 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(py_devices.contains("def conical_shock_from_m1_cone_deg_to_wave_deg("));
     assert!(py_devices.contains("def conical_shock_from_m1_cone_deg_to_mc("));
     assert!(py_devices.contains("def conical_shock_from_m1_wave_deg_to_cone_deg("));
+
+    let py_study_text = fs::read_to_string(py_study).expect("read generated python study module");
+    assert!(py_study_text.contains("def equation_sweep_table("));
+    assert!(py_study_text.contains("def isentropic_m_to_p_p0_table("));
+    assert!(py_study_text.contains("def nozzle_flow_table("));
+    assert!(py_study_text.contains("def normal_shock_table("));
+    assert!(py_study_text.contains("def nozzle_normal_shock_workflow_table("));
 
     let py_pm = fs::read_to_string(
         tmp.path()
@@ -229,9 +246,10 @@ fn generated_python_package_imports_when_python_available() {
 
     let python_root = tmp.path().join("bindings").join("python");
     let script = format!(
-        "import sys; sys.path.insert(0, r'{}'); import engpy; import engpy.equations; import engpy.fluids; import engpy.materials; import engpy.devices; import engpy.constants; import engpy.helpers; import engpy._runtime as rt; \
+        "import sys; sys.path.insert(0, r'{}'); import engpy; import engpy.equations; import engpy.fluids; import engpy.materials; import engpy.devices; import engpy.constants; import engpy.helpers; import engpy.study; import engpy._runtime as rt; \
 engpy.constants.get_constant(\"g0\"); s1 = rt.worker_stats(); mode = rt.runtime_mode(); engpy.constants.get_constant(\"pi\"); s2 = rt.worker_stats(); \
 engpy.helpers.meta_get(\"equation\", \"structures.hoop_stress\", \"ascii\"); \
+engpy.study.isentropic_m_to_p_p0_table(gamma=1.4, start=0.2, end=0.3, count=2); \
 assert mode in ('native', 'worker'); assert s2.get('request_count', 0) >= 2; \
 assert s2.get('runtime_mode') in ('native', 'worker'); \
 assert (mode == 'native') or (s1.get('worker_pid') is not None and s1.get('worker_pid') == s2.get('worker_pid'))",

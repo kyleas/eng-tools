@@ -46,6 +46,13 @@ fn unified_mdbook_export_api_writes_book_structure() {
     assert!(
         book_root
             .join("src")
+            .join("studies")
+            .join("index.md")
+            .exists()
+    );
+    assert!(
+        book_root
+            .join("src")
             .join("architecture")
             .join("index.md")
             .exists()
@@ -142,6 +149,13 @@ fn unified_mdbook_export_api_writes_book_structure() {
         .expect("read solve layer page");
     assert!(solve_page.contains("eng::solve"));
     assert!(solve_page.contains("run_nozzle_normal_shock_workflow"));
+
+    let studies_page =
+        std::fs::read_to_string(book_root.join("src").join("studies").join("index.md"))
+            .expect("read studies page");
+    assert!(studies_page.contains("Studies and Parameter Sweeps"));
+    assert!(studies_page.contains("run_equation_study"));
+    assert!(studies_page.contains("study_nozzle_normal_shock_workflow"));
 }
 
 #[test]

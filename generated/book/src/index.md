@@ -11,6 +11,8 @@ Docs are the primary user interface for this library. Every core workflow exampl
 
 - [Engineering Solve Layer](solve/index.md)
 
+- [Studies and Parameter Sweeps](studies/index.md)
+
 - [Bindings (Python/Excel)](bindings/index.md)
 
 ## Domain Guides
@@ -23,8 +25,6 @@ Docs are the primary user interface for this library. Every core workflow exampl
 - [YAML Authoring](yaml_authoring/index.md)
 - [Validation / Trust](validation_trust/index.md)
 - [Architecture Overview](architecture/index.md)
-
-- [Bindings (Python/Excel)](bindings/index.md)
 
 ## Catalog
 

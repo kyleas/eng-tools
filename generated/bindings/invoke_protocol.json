@@ -259,6 +259,26 @@
       "description": "Run nozzle-flow calculator device and return compact path trace text"
     },
     {
+      "op": "study.equation.sweep",
+      "description": "Run 1D equation parameter sweep and return diagnostics-aware table"
+    },
+    {
+      "op": "study.device.isentropic_m_to_p_p0.table",
+      "description": "Run 1D study table for isentropic device Mach->p/p0"
+    },
+    {
+      "op": "study.device.nozzle_flow.table",
+      "description": "Run 1D study table for nozzle-flow device over area ratio"
+    },
+    {
+      "op": "study.device.normal_shock.table",
+      "description": "Run 1D study table for normal-shock device over M1"
+    },
+    {
+      "op": "study.workflow.nozzle_normal_shock.table",
+      "description": "Run 1D study table for nozzle+normal-shock workflow chain"
+    },
+    {
       "op": "device.pipe_loss.solve_delta_p",
       "description": "Solve pipe-loss device pressure drop"
     },
