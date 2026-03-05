@@ -3725,7 +3725,7 @@ fn render_category_index(cat: &CategoryPresentation) -> String {
     let mut md = String::new();
     md.push_str(&format!("# {}\n\n", title_case(&cat.name)));
     md.push_str("## Equation Summary\n\n");
-    md.push_str(&render_category_equation_summary_table(cat));
+    md.push_str(&render_category_equation_summary_cards(cat));
     md.push('\n');
     md.push_str("## Browse\n\n");
     for eq in &cat.root_equations {
@@ -3741,22 +3741,22 @@ fn render_category_index(cat: &CategoryPresentation) -> String {
     md
 }
 
-fn render_category_equation_summary_table(cat: &CategoryPresentation) -> String {
-    #[derive(Debug)]
-    struct CategoryEqRow {
-        path_id: String,
-        name: String,
-        link: String,
-        latex: String,
-        targets: String,
-        default_target: String,
-        branches: String,
-        subcategory: String,
-    }
+#[derive(Debug)]
+struct EquationSummaryCardRow {
+    path_id: String,
+    name: String,
+    link: String,
+    latex: String,
+    targets: String,
+    default_target: String,
+    branches: String,
+    subcategory: Option<String>,
+}
 
-    let mut rows: Vec<CategoryEqRow> = Vec::new();
+fn render_category_equation_summary_cards(cat: &CategoryPresentation) -> String {
+    let mut rows: Vec<EquationSummaryCardRow> = Vec::new();
     for eq in &cat.root_equations {
-        rows.push(CategoryEqRow {
+        rows.push(EquationSummaryCardRow {
             path_id: eq.path_id.clone(),
             name: eq.page.name.clone(),
             link: format!("./{}.md", eq.slug),
@@ -3768,12 +3768,12 @@ fn render_category_equation_summary_table(cat: &CategoryPresentation) -> String 
                 .clone()
                 .unwrap_or_else(|| "-".to_string()),
             branches: format_compact_branches(&eq.page),
-            subcategory: "-".to_string(),
+            subcategory: None,
         });
     }
     for sub in &cat.subcategories {
         for eq in &sub.equations {
-            rows.push(CategoryEqRow {
+            rows.push(EquationSummaryCardRow {
                 path_id: eq.path_id.clone(),
                 name: eq.page.name.clone(),
                 link: format!("./{}/{}.md", sub.name, eq.slug),
@@ -3785,37 +3785,81 @@ fn render_category_equation_summary_table(cat: &CategoryPresentation) -> String 
                     .clone()
                     .unwrap_or_else(|| "-".to_string()),
                 branches: format_compact_branches(&eq.page),
-                subcategory: title_case(&sub.name),
+                subcategory: Some(title_case(&sub.name)),
             });
         }
     }
     rows.sort_by(|a, b| a.path_id.cmp(&b.path_id));
+    render_equation_summary_cards(rows, true)
+}
 
+fn render_subcategory_equation_summary_cards(sub: &SubcategoryPresentation) -> String {
+    let mut rows: Vec<EquationSummaryCardRow> = sub
+        .equations
+        .iter()
+        .map(|eq| EquationSummaryCardRow {
+            path_id: eq.path_id.clone(),
+            name: eq.page.name.clone(),
+            link: format!("./{}.md", eq.slug),
+            latex: eq.page.latex.clone(),
+            targets: format_compact_targets(&eq.page),
+            default_target: eq
+                .page
+                .default_target
+                .clone()
+                .unwrap_or_else(|| "-".to_string()),
+            branches: format_compact_branches(&eq.page),
+            subcategory: None,
+        })
+        .collect();
+    rows.sort_by(|a, b| a.path_id.cmp(&b.path_id));
+    render_equation_summary_cards(rows, false)
+}
+
+fn render_equation_summary_cards(
+    rows: Vec<EquationSummaryCardRow>,
+    include_subcategory: bool,
+) -> String {
     let mut md = String::new();
     // Invariant: category-level equation visibility must remain registry-driven.
     // This summary layout is built from category metadata (root + subcategory equations),
     // never from handwritten per-category markdown.
     //
-    // Invariant: category summary must be LaTeX-first and readable on laptop widths.
-    // Keep the equation expression in a prominent centered MathJax block and avoid
-    // dense multi-column tables that squeeze math.
+    // Invariant: title and LaTeX are the primary recognition surfaces.
+    // Keep metadata secondary and compact, and avoid regressing to dense debug-like cards.
+    //
+    // Invariant: do not remove the large centered MathJax block. Category/subcategory browse
+    // pages are intended for quick equation recognition on normal laptop widths.
     md.push_str(
         "<style>\n\
-         .equation-summary-cards { display: grid; grid-template-columns: 1fr; gap: 0.9rem; margin: 0.6rem 0 1rem; }\n\
-         .equation-summary-card { border: 1px solid var(--table-border-color); border-radius: 10px; padding: 0.9rem 1rem; background: rgba(255,255,255,0.02); }\n\
-         .equation-summary-title { font-size: 1.02rem; font-weight: 600; margin: 0 0 0.35rem; }\n\
-         .equation-summary-path { font-family: var(--mono-font); font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.45rem; overflow-wrap: anywhere; }\n\
-         .equation-summary-latex { text-align: center; font-size: 1.2rem; line-height: 1.45; margin: 0.5rem 0 0.6rem; overflow-x: auto; }\n\
-         .equation-summary-meta { display: grid; grid-template-columns: auto 1fr; column-gap: 0.55rem; row-gap: 0.25rem; font-size: 0.9rem; }\n\
-         .equation-summary-meta-label { opacity: 0.85; }\n\
-         .equation-summary-meta-value { overflow-wrap: anywhere; }\n\
-         .equation-summary-meta-value code { white-space: nowrap; }\n\
-         @media (max-width: 900px) { .equation-summary-latex { font-size: 1.1rem; } }\n\
+         .equation-summary-cards { display: grid; grid-template-columns: 1fr; gap: 1.2rem; margin: 0.75rem 0 1.25rem; }\n\
+         .equation-summary-card { position: relative; border: 1px solid var(--table-border-color); border-radius: 12px; padding: 1.15rem 1.25rem 1rem; background: rgba(255,255,255,0.03); box-shadow: 0 1px 0 rgba(255,255,255,0.02) inset; }\n\
+         .equation-summary-card:hover { border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.04); }\n\
+         .equation-summary-card-link { position: absolute; inset: 0; z-index: 1; border-radius: 12px; }\n\
+         .equation-summary-header { position: relative; z-index: 2; margin-bottom: 0.35rem; }\n\
+         .equation-summary-title { font-size: 1.24rem; line-height: 1.3; font-weight: 650; margin: 0 0 0.35rem; }\n\
+         .equation-summary-title a { position: relative; z-index: 2; }\n\
+         .equation-summary-path { font-family: var(--mono-font); font-size: 0.88rem; opacity: 0.75; margin: 0 0 0.7rem; overflow-wrap: anywhere; }\n\
+         .equation-summary-latex { position: relative; z-index: 2; text-align: center; font-size: 1.55rem; line-height: 1.5; margin: 0.5rem 0 0.75rem; padding: 0.35rem 0.5rem; overflow-x: auto; }\n\
+         .equation-summary-meta { position: relative; z-index: 2; display: flex; flex-wrap: wrap; gap: 0.35rem 0.45rem; align-items: center; margin-top: 0.35rem; }\n\
+         .equation-summary-chip { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.2rem 0.45rem; border: 1px solid var(--table-border-color); border-radius: 999px; font-size: 0.82rem; line-height: 1.2; background: rgba(255,255,255,0.02); }\n\
+         .equation-summary-chip-label { opacity: 0.75; font-weight: 500; }\n\
+         .equation-summary-chip-value { overflow-wrap: anywhere; }\n\
+         .equation-summary-chip-value code { white-space: nowrap; }\n\
+         .equation-summary-targets { display: flex; flex-wrap: wrap; gap: 0.25rem; }\n\
+         .equation-summary-targets code { display: inline-block; padding: 0.05rem 0.35rem; border-radius: 8px; background: rgba(255,255,255,0.07); }\n\
+         @media (min-width: 1200px) { .equation-summary-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.35rem; } }\n\
+         @media (max-width: 900px) { .equation-summary-card { padding: 1rem; } .equation-summary-title { font-size: 1.12rem; } .equation-summary-latex { font-size: 1.3rem; } }\n\
          </style>\n",
     );
     md.push_str("<div class=\"equation-summary-cards\">\n");
     for row in rows {
         md.push_str("<article class=\"equation-summary-card\">\n");
+        md.push_str(&format!(
+            "<a class=\"equation-summary-card-link\" href=\"{}\" aria-label=\"Open {}\"></a>\n",
+            row.link, row.name
+        ));
+        md.push_str("<div class=\"equation-summary-header\">\n");
         md.push_str(&format!(
             "<h3 class=\"equation-summary-title\"><a href=\"{}\">{}</a></h3>\n",
             row.link, row.name
@@ -3824,31 +3868,34 @@ fn render_category_equation_summary_table(cat: &CategoryPresentation) -> String 
             "<div class=\"equation-summary-path\"><code>{}</code></div>\n",
             row.path_id
         ));
+        md.push_str("</div>\n");
         md.push_str(&format!(
             "<div class=\"equation-summary-latex\">\\({}\\)</div>\n",
             row.latex
         ));
         md.push_str("<div class=\"equation-summary-meta\">\n");
-        md.push_str("<div class=\"equation-summary-meta-label\">Targets</div>");
         md.push_str(&format!(
-            "<div class=\"equation-summary-meta-value\">{}</div>",
+            "<div class=\"equation-summary-chip\"><span class=\"equation-summary-chip-label\">Targets</span><span class=\"equation-summary-chip-value equation-summary-targets\">{}</span></div>",
             row.targets
         ));
-        md.push_str("<div class=\"equation-summary-meta-label\">Default</div>");
         md.push_str(&format!(
-            "<div class=\"equation-summary-meta-value\"><code>{}</code></div>",
+            "<div class=\"equation-summary-chip\"><span class=\"equation-summary-chip-label\">Default</span><span class=\"equation-summary-chip-value\"><code>{}</code></span></div>",
             row.default_target
         ));
-        md.push_str("<div class=\"equation-summary-meta-label\">Branches</div>");
-        md.push_str(&format!(
-            "<div class=\"equation-summary-meta-value\">{}</div>",
-            row.branches
-        ));
-        md.push_str("<div class=\"equation-summary-meta-label\">Subcategory</div>");
-        md.push_str(&format!(
-            "<div class=\"equation-summary-meta-value\">{}</div>",
-            row.subcategory
-        ));
+        if row.branches != "-" {
+            md.push_str(&format!(
+                "<div class=\"equation-summary-chip\"><span class=\"equation-summary-chip-label\">Branches</span><span class=\"equation-summary-chip-value\">{}</span></div>",
+                row.branches
+            ));
+        }
+        if include_subcategory {
+            if let Some(subcategory) = row.subcategory {
+                md.push_str(&format!(
+                    "<div class=\"equation-summary-chip\"><span class=\"equation-summary-chip-label\">Subcategory</span><span class=\"equation-summary-chip-value\">{}</span></div>",
+                    subcategory
+                ));
+            }
+        }
         md.push_str("\n</div>\n</article>\n");
     }
     md.push_str("</div>\n");
@@ -3884,6 +3931,10 @@ fn render_subcategory_index(cat: &CategoryPresentation, sub: &SubcategoryPresent
         title_case(&cat.name),
         title_case(&sub.name)
     ));
+    md.push_str("## Equation Summary\n\n");
+    md.push_str(&render_subcategory_equation_summary_cards(sub));
+    md.push('\n');
+    md.push_str("## Browse\n\n");
     for eq in &sub.equations {
         md.push_str(&format!("- [{}](./{}.md)\n", eq.page.name, eq.slug));
     }
