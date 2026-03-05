@@ -90,11 +90,17 @@ pub enum WorkbookRowKind {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TextRowContent {
     pub text: String,
+    #[serde(default)]
+    pub header: bool,
+    #[serde(default)]
+    pub mono: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MarkdownRowContent {
     pub markdown: String,
+    #[serde(default)]
+    pub preview: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -916,6 +922,8 @@ mod tests {
             freeze: false,
             kind: WorkbookRowKind::Text(TextRowContent {
                 text: "hello".to_string(),
+                header: false,
+                mono: false,
             }),
         });
         save_workbook_dir(&doc).expect("save");
@@ -1153,11 +1161,73 @@ mod tests {
             freeze: true,
             kind: WorkbookRowKind::Text(TextRowContent {
                 text: "hello".to_string(),
+                header: false,
+                mono: false,
             }),
         });
         save_workbook_dir(&doc).expect("save");
         let loaded = load_workbook_dir(dir.path()).expect("load");
         assert!(loaded.tabs[0].rows[0].collapsed);
         assert!(loaded.tabs[0].rows[0].freeze);
+    }
+
+    #[test]
+    fn text_row_without_key_is_valid() {
+        let dir = tempdir().expect("temp");
+        let mut doc = sample_doc(dir.path());
+        doc.tabs[0].rows.push(WorkbookRow {
+            id: "txt1".to_string(),
+            key: None,
+            title: None,
+            collapsed: false,
+            freeze: false,
+            kind: WorkbookRowKind::Text(TextRowContent {
+                text: "notes".to_string(),
+                header: false,
+                mono: false,
+            }),
+        });
+        let validation = validate_workbook(&doc);
+        assert!(validation.ok, "{:?}", validation.messages);
+    }
+
+    #[test]
+    fn row_order_roundtrip_persists() {
+        let dir = tempdir().expect("temp");
+        let mut doc = sample_doc(dir.path());
+        doc.tabs[0].rows = vec![
+            WorkbookRow {
+                id: "r2".to_string(),
+                key: Some("b".to_string()),
+                title: None,
+                collapsed: false,
+                freeze: false,
+                kind: WorkbookRowKind::Text(TextRowContent {
+                    text: "b".to_string(),
+                    header: false,
+                    mono: false,
+                }),
+            },
+            WorkbookRow {
+                id: "r1".to_string(),
+                key: Some("a".to_string()),
+                title: None,
+                collapsed: false,
+                freeze: false,
+                kind: WorkbookRowKind::Text(TextRowContent {
+                    text: "a".to_string(),
+                    header: false,
+                    mono: false,
+                }),
+            },
+        ];
+        save_workbook_dir(&doc).expect("save");
+        let loaded = load_workbook_dir(dir.path()).expect("load");
+        let ids = loaded.tabs[0]
+            .rows
+            .iter()
+            .map(|r| r.id.as_str())
+            .collect::<Vec<_>>();
+        assert_eq!(ids, vec!["r2", "r1"]);
     }
 }

@@ -781,3 +781,17 @@ No workbook math is evaluated in the UI layer.
 - `tf-cli workbook validate <dir>`
 - `tf-cli workbook run <dir> [--tab ...] [--format json|csv] [--out-dir ...]`
 - `tf-cli workbook rename <dir> <old_key> <new_key>`
+
+### Workbook UI principles
+
+- Workbook rows are cell-like cards: primary feedback is shown on each row, not only in global panels.
+- Text/markdown rows are content-first and may omit keys; keys are optional for referenceable outputs.
+- Result/status on each row must remain visible and actionable (`ok`, `invalid`, `incomplete`, `error`).
+- Global execution summaries are secondary and primarily for tab-level rollups/navigation.
+
+### Egui ID stability invariant
+
+- Workbook row UI must always scope widgets by immutable row ID:
+  - row scope: `ui.push_id(row.id, ..)`
+  - repeated field scope: `ui.push_id((row.id, field_key), ..)` or equivalent stable ID source
+- Never key repeated widgets by list index (indices change with reorder and can cause ID collisions).
