@@ -101,6 +101,13 @@ pub fn handle_invoke(req: InvokeRequest) -> InvokeResponse {
         "device.oblique_shock_calc.path_text" => {
             invoke_oblique_shock_calc_path_text(&op, request_id, &args)
         }
+        "device.conical_shock_calc" => invoke_conical_shock_calc(&op, request_id, &args),
+        "device.conical_shock_calc.value" => {
+            invoke_conical_shock_calc_value(&op, request_id, &args)
+        }
+        "device.conical_shock_calc.path_text" => {
+            invoke_conical_shock_calc_path_text(&op, request_id, &args)
+        }
         "device.fanno_flow_calc" => invoke_fanno_flow_calc(&op, request_id, &args),
         "device.fanno_flow_calc.value" => invoke_fanno_flow_calc_value(&op, request_id, &args),
         "device.fanno_flow_calc.pivot_mach" => {
@@ -2255,6 +2262,193 @@ fn invoke_oblique_shock_calc_path_text(
             op,
             request_id,
             "device_oblique_shock_calc_failed",
+            e.to_string(),
+            None,
+            None,
+        ),
+    }
+}
+
+struct ConicalShockInvokeRequest {
+    req: crate::devices::ConicalShockCalcRequest,
+    output_angle_deg: bool,
+}
+
+fn conical_shock_request_from_args(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> std::result::Result<ConicalShockInvokeRequest, InvokeResponse> {
+    let m1 = req_f64(args, "m1").map_err(|e| {
+        InvokeResponse::err(op, request_id.clone(), "missing_arg", e, Some("m1"), None)
+    })?;
+    let gamma = req_f64(args, "gamma").map_err(|e| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("gamma"),
+            None,
+        )
+    })?;
+    let input_kind_raw = req_str(args, "input_kind").map_err(|e| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("input_kind"),
+            None,
+        )
+    })?;
+    let input_value_raw = req_f64(args, "input_value").map_err(|e| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("input_value"),
+            None,
+        )
+    })?;
+    let target_kind_raw = req_str(args, "target_kind").map_err(|e| {
+        InvokeResponse::err(
+            op,
+            request_id.clone(),
+            "missing_arg",
+            e,
+            Some("target_kind"),
+            None,
+        )
+    })?;
+
+    let input_kind =
+        crate::devices::conical_shock::parse_input_kind(input_kind_raw, input_value_raw)
+            .ok_or_else(|| {
+                InvokeResponse::err(
+                    op,
+                    request_id.clone(),
+                    "invalid_arg",
+                    format!("unsupported input_kind '{input_kind_raw}'"),
+                    Some("input_kind"),
+                    None,
+                )
+            })?;
+    let input_value =
+        crate::devices::conical_shock::input_value_to_si(input_kind_raw, input_value_raw);
+    let (target_kind, output_angle_deg) =
+        crate::devices::conical_shock::parse_output_kind(target_kind_raw).ok_or_else(|| {
+            InvokeResponse::err(
+                op,
+                request_id.clone(),
+                "invalid_arg",
+                format!("unsupported target_kind '{target_kind_raw}'"),
+                Some("target_kind"),
+                None,
+            )
+        })?;
+    let branch = opt_str(args, "branch").and_then(crate::devices::conical_shock::parse_branch);
+
+    Ok(ConicalShockInvokeRequest {
+        req: crate::devices::ConicalShockCalcRequest {
+            gamma,
+            m1,
+            input_kind,
+            input_value,
+            target_kind,
+            branch,
+        },
+        output_angle_deg,
+    })
+}
+
+fn invoke_conical_shock_calc(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+    let invoke_req = match conical_shock_request_from_args(op, request_id.clone(), args) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    match crate::devices::conical_shock_calc_from_request(invoke_req.req) {
+        Ok(r) => InvokeResponse::ok(
+            op,
+            request_id,
+            json!({
+                "value": if invoke_req.output_angle_deg { r.value_si.to_degrees() } else { r.value_si },
+                "value_unit": if invoke_req.output_angle_deg { "deg" } else { "si" },
+                "wave_angle_deg": r.wave_angle_rad.to_degrees(),
+                "cone_angle_deg": r.cone_angle_rad.to_degrees(),
+                "shock_turn_angle_deg": r.shock_turn_angle_rad.to_degrees(),
+                "mc": r.cone_surface_mach,
+                "p2_p1": r.p2_p1,
+                "rho2_rho1": r.rho2_rho1,
+                "t2_t1": r.t2_t1,
+                "p02_p01": r.p02_p01,
+                "path": r.path.iter().map(|s| json!({
+                    "equation_path_id": s.equation_path_id,
+                    "solved_for": s.solved_for,
+                    "method": s.method,
+                    "branch": s.branch,
+                    "inputs_used": s.inputs_used.iter().map(|(k,v)| json!({"key":k, "value": v})).collect::<Vec<_>>()
+                })).collect::<Vec<_>>(),
+                "path_text": r.path_text(),
+                "warnings": r.warnings,
+            }),
+        ),
+        Err(e) => InvokeResponse::err(
+            op,
+            request_id,
+            "device_conical_shock_calc_failed",
+            e.to_string(),
+            None,
+            None,
+        ),
+    }
+}
+
+fn invoke_conical_shock_calc_value(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
+    let invoke_req = match conical_shock_request_from_args(op, request_id.clone(), args) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    match crate::devices::conical_shock_calc_from_request(invoke_req.req) {
+        Ok(r) => {
+            let v = if invoke_req.output_angle_deg {
+                r.value_si.to_degrees()
+            } else {
+                r.value_si
+            };
+            InvokeResponse::ok(op, request_id, json!(v))
+        }
+        Err(e) => InvokeResponse::err(
+            op,
+            request_id,
+            "device_conical_shock_calc_failed",
+            e.to_string(),
+            None,
+            None,
+        ),
+    }
+}
+
+fn invoke_conical_shock_calc_path_text(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
+    let invoke_req = match conical_shock_request_from_args(op, request_id.clone(), args) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    match crate::devices::conical_shock_calc_from_request(invoke_req.req) {
+        Ok(r) => InvokeResponse::ok(op, request_id, json!(r.path_text())),
+        Err(e) => InvokeResponse::err(
+            op,
+            request_id,
+            "device_conical_shock_calc_failed",
             e.to_string(),
             None,
             None,

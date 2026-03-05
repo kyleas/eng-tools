@@ -26,6 +26,14 @@ Devices/components compose multiple atomic equations into higher-level engineeri
 - Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01
 - Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01
 
+## Conical Shock Calculator
+
+- Key: `conical_shock_calc`
+- Calculator-style compressible device for Taylor-Maccoll conical-shock workflows with explicit weak/strong branch handling.
+- Route: `devices/conical_shock_calc.md`
+- Input forms: (M1, cone_angle), (M1, wave_angle)
+- Taylor-Maccoll integrated conical-flow state resolution
+
 ## Nozzle Flow Calculator
 
 - Key: `nozzle_flow_calc`

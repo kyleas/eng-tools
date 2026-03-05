@@ -199,6 +199,18 @@
       "description": "Run oblique-shock calculator device and return compact path trace text"
     },
     {
+      "op": "device.conical_shock_calc",
+      "description": "Run conical-shock calculator device and return value+state+path diagnostics"
+    },
+    {
+      "op": "device.conical_shock_calc.value",
+      "description": "Run conical-shock calculator device and return scalar output value"
+    },
+    {
+      "op": "device.conical_shock_calc.path_text",
+      "description": "Run conical-shock calculator device and return compact path trace text"
+    },
+    {
       "op": "device.fanno_flow_calc",
       "description": "Run Fanno-flow calculator device and return value+pivot+path diagnostics"
     },

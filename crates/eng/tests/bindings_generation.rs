@@ -163,6 +163,11 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(py_devices.contains("def nozzle_flow_path_text("));
     assert!(py_devices.contains("def nozzle_flow_from_m_to_a_astar("));
     assert!(py_devices.contains("def nozzle_flow_from_a_astar_to_m("));
+    assert!(py_devices.contains("def conical_shock_calc("));
+    assert!(py_devices.contains("def conical_shock_path_text("));
+    assert!(py_devices.contains("def conical_shock_from_m1_cone_deg_to_wave_deg("));
+    assert!(py_devices.contains("def conical_shock_from_m1_cone_deg_to_mc("));
+    assert!(py_devices.contains("def conical_shock_from_m1_wave_deg_to_cone_deg("));
 
     let py_pm = fs::read_to_string(
         tmp.path()

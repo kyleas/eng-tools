@@ -1,5 +1,86 @@
 from ._runtime import invoke
 
+def conical_shock_calc(m1, input_kind, input_value, target_kind, gamma, branch=None):
+    """Conical shock calculator: (M1 + cone/wave angle) -> target with Taylor-Maccoll integration
+
+Args:
+  m1: Upstream Mach number M1
+  input_kind: Input kind (cone_angle_deg or wave_angle_deg)
+  input_value: Input angle value in degrees
+  target_kind: Target kind (wave_angle_deg, cone_angle_deg, shock_turn_angle_deg, mc, p2_p1, rho2_rho1, t2_t1, p02_p01)
+  gamma: Specific heat ratio
+  branch: Weak/strong branch for cone-angle inversion paths
+Returns:
+  f64
+"""
+    return invoke("device.conical_shock_calc.value", {"m1": m1, "input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+def conical_shock_from_m1_cone_deg_to_mc(m1, input_value, gamma, branch=None):
+    """Convenience conical-shock path: (M1, cone_angle_deg, branch) -> cone-surface Mach
+
+Args:
+  m1: Upstream Mach number M1
+  input_value: Cone angle in degrees
+  gamma: Specific heat ratio
+  branch: Weak or strong branch
+Returns:
+  f64
+"""
+    return invoke("device.conical_shock_calc.value", {"input_kind": "cone_angle_deg", "target_kind": "mc", "m1": m1, "input_value": input_value, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+def conical_shock_from_m1_cone_deg_to_p2_p1(m1, input_value, gamma, branch=None):
+    """Convenience conical-shock path: (M1, cone_angle_deg, branch) -> p2/p1
+
+Args:
+  m1: Upstream Mach number M1
+  input_value: Cone angle in degrees
+  gamma: Specific heat ratio
+  branch: Weak or strong branch
+Returns:
+  f64
+"""
+    return invoke("device.conical_shock_calc.value", {"input_kind": "cone_angle_deg", "target_kind": "p2_p1", "m1": m1, "input_value": input_value, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+def conical_shock_from_m1_cone_deg_to_wave_deg(m1, input_value, gamma, branch=None):
+    """Convenience conical-shock path: (M1, cone_angle_deg, branch) -> wave_angle_deg
+
+Args:
+  m1: Upstream Mach number M1
+  input_value: Cone angle in degrees
+  gamma: Specific heat ratio
+  branch: Weak or strong branch
+Returns:
+  f64
+"""
+    return invoke("device.conical_shock_calc.value", {"input_kind": "cone_angle_deg", "target_kind": "wave_angle_deg", "m1": m1, "input_value": input_value, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+def conical_shock_from_m1_wave_deg_to_cone_deg(m1, input_value, gamma):
+    """Convenience conical-shock path: (M1, wave_angle_deg) -> cone_angle_deg
+
+Args:
+  m1: Upstream Mach number M1
+  input_value: Input angle in degrees
+  gamma: Specific heat ratio
+Returns:
+  f64
+"""
+    return invoke("device.conical_shock_calc.value", {"input_kind": "wave_angle_deg", "target_kind": "cone_angle_deg", "m1": m1, "input_value": input_value, "gamma": gamma})
+
+def conical_shock_path_text(m1, input_kind, input_value, target_kind, gamma, branch=None):
+    """Conical shock calculator helper: compact step trace text
+
+Args:
+  m1: Upstream Mach number M1
+  input_kind: Input kind (cone_angle_deg or wave_angle_deg)
+  input_value: Input angle value in degrees
+  target_kind: Target kind (wave_angle_deg, cone_angle_deg, shock_turn_angle_deg, mc, p2_p1, rho2_rho1, t2_t1, p02_p01)
+  gamma: Specific heat ratio
+  branch: Weak/strong branch for cone-angle inversion paths
+Returns:
+  str
+"""
+    return invoke("device.conical_shock_calc.path_text", {"m1": m1, "input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
 def fanno_flow_calc(input_kind, input_value, target_kind, gamma, branch=None):
     """Fanno-flow calculator: input kind -> target kind through Mach pivot
 

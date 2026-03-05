@@ -69,6 +69,17 @@ fn unified_mdbook_export_api_writes_book_structure() {
     assert!(nozzle_page.contains("ENG_NOZZLE_FLOW("));
     assert!(nozzle_page.contains("ENG_NOZZLE_FLOW_FROM_A_ASTAR_TO_M("));
 
+    let conical_page = std::fs::read_to_string(
+        book_root
+            .join("src")
+            .join("devices")
+            .join("conical_shock_calc.md"),
+    )
+    .expect("read generated conical-shock device page");
+    assert!(conical_page.contains("# Conical Shock Calculator"));
+    assert!(conical_page.contains("ENG_CONICAL_SHOCK("));
+    assert!(conical_page.contains("ENG_CONICAL_SHOCK_FROM_M1_CONE_DEG_TO_WAVE_DEG("));
+
     let area_mach = std::fs::read_to_string(
         book_root
             .join("src")

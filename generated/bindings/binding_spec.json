@@ -26,6 +26,234 @@
       "pyxll_example": "=ENG_CONST(\"g0\")"
     },
     {
+      "id": "device.conical_shock_calc",
+      "entity": "device",
+      "source": "conical_shock_calc",
+      "python_module": "devices",
+      "python_name": "conical_shock_calc",
+      "excel_name": "ENG_CONICAL_SHOCK",
+      "op": "device.conical_shock_calc.value",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "m1",
+          "description": "Upstream Mach number M1"
+        },
+        {
+          "name": "input_kind",
+          "description": "Input kind (cone_angle_deg or wave_angle_deg)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input angle value in degrees"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (wave_angle_deg, cone_angle_deg, shock_turn_angle_deg, mc, p2_p1, rho2_rho1, t2_t1, p02_p01)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Weak/strong branch for cone-angle inversion paths"
+        }
+      ],
+      "returns": "f64",
+      "help": "Conical shock calculator: (M1 + cone/wave angle) -> target with Taylor-Maccoll integration",
+      "rust_example": "eng::devices::conical_shock_calc().solve()?",
+      "python_example": "engpy.devices.conical_shock_calc(2.2, \"cone_angle_deg\", 12.0, \"wave_angle_deg\", 1.4, \"weak\")",
+      "xloil_example": "=ENG_CONICAL_SHOCK(2.2,\"cone_angle_deg\",12.0,\"wave_angle_deg\",1.4,\"weak\")",
+      "pyxll_example": "=ENG_CONICAL_SHOCK(2.2,\"cone_angle_deg\",12.0,\"wave_angle_deg\",1.4,\"weak\")"
+    },
+    {
+      "id": "device.conical_shock_calc.from_m1_cone.to_mc",
+      "entity": "device",
+      "source": "conical_shock_calc",
+      "python_module": "devices",
+      "python_name": "conical_shock_from_m1_cone_deg_to_mc",
+      "excel_name": "ENG_CONICAL_SHOCK_FROM_M1_CONE_DEG_TO_MC",
+      "op": "device.conical_shock_calc.value",
+      "fixed_args": {
+        "input_kind": "cone_angle_deg",
+        "target_kind": "mc"
+      },
+      "args": [
+        {
+          "name": "m1",
+          "description": "Upstream Mach number M1"
+        },
+        {
+          "name": "input_value",
+          "description": "Cone angle in degrees"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Weak or strong branch"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience conical-shock path: (M1, cone_angle_deg, branch) -> cone-surface Mach",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.conical_shock_from_m1_cone_deg_to_mc(2.2, 12.0, 1.4, \"weak\")",
+      "xloil_example": "=ENG_CONICAL_SHOCK_FROM_M1_CONE_DEG_TO_MC(2.2,12.0,1.4,\"weak\")",
+      "pyxll_example": "=ENG_CONICAL_SHOCK_FROM_M1_CONE_DEG_TO_MC(2.2,12.0,1.4,\"weak\")"
+    },
+    {
+      "id": "device.conical_shock_calc.from_m1_cone.to_p2_p1",
+      "entity": "device",
+      "source": "conical_shock_calc",
+      "python_module": "devices",
+      "python_name": "conical_shock_from_m1_cone_deg_to_p2_p1",
+      "excel_name": "ENG_CONICAL_SHOCK_FROM_M1_CONE_DEG_TO_P2_P1",
+      "op": "device.conical_shock_calc.value",
+      "fixed_args": {
+        "input_kind": "cone_angle_deg",
+        "target_kind": "p2_p1"
+      },
+      "args": [
+        {
+          "name": "m1",
+          "description": "Upstream Mach number M1"
+        },
+        {
+          "name": "input_value",
+          "description": "Cone angle in degrees"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Weak or strong branch"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience conical-shock path: (M1, cone_angle_deg, branch) -> p2/p1",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.conical_shock_from_m1_cone_deg_to_p2_p1(2.2, 12.0, 1.4, \"weak\")",
+      "xloil_example": "=ENG_CONICAL_SHOCK_FROM_M1_CONE_DEG_TO_P2_P1(2.2,12.0,1.4,\"weak\")",
+      "pyxll_example": "=ENG_CONICAL_SHOCK_FROM_M1_CONE_DEG_TO_P2_P1(2.2,12.0,1.4,\"weak\")"
+    },
+    {
+      "id": "device.conical_shock_calc.from_m1_cone.to_wave",
+      "entity": "device",
+      "source": "conical_shock_calc",
+      "python_module": "devices",
+      "python_name": "conical_shock_from_m1_cone_deg_to_wave_deg",
+      "excel_name": "ENG_CONICAL_SHOCK_FROM_M1_CONE_DEG_TO_WAVE_DEG",
+      "op": "device.conical_shock_calc.value",
+      "fixed_args": {
+        "input_kind": "cone_angle_deg",
+        "target_kind": "wave_angle_deg"
+      },
+      "args": [
+        {
+          "name": "m1",
+          "description": "Upstream Mach number M1"
+        },
+        {
+          "name": "input_value",
+          "description": "Cone angle in degrees"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Weak or strong branch"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience conical-shock path: (M1, cone_angle_deg, branch) -> wave_angle_deg",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.conical_shock_from_m1_cone_deg_to_wave_deg(2.2, 12.0, 1.4, \"weak\")",
+      "xloil_example": "=ENG_CONICAL_SHOCK_FROM_M1_CONE_DEG_TO_WAVE_DEG(2.2,12.0,1.4,\"weak\")",
+      "pyxll_example": "=ENG_CONICAL_SHOCK_FROM_M1_CONE_DEG_TO_WAVE_DEG(2.2,12.0,1.4,\"weak\")"
+    },
+    {
+      "id": "device.conical_shock_calc.from_m1_wave.to_cone",
+      "entity": "device",
+      "source": "conical_shock_calc",
+      "python_module": "devices",
+      "python_name": "conical_shock_from_m1_wave_deg_to_cone_deg",
+      "excel_name": "ENG_CONICAL_SHOCK_FROM_M1_WAVE_DEG_TO_CONE_DEG",
+      "op": "device.conical_shock_calc.value",
+      "fixed_args": {
+        "input_kind": "wave_angle_deg",
+        "target_kind": "cone_angle_deg"
+      },
+      "args": [
+        {
+          "name": "m1",
+          "description": "Upstream Mach number M1"
+        },
+        {
+          "name": "input_value",
+          "description": "Input angle in degrees"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience conical-shock path: (M1, wave_angle_deg) -> cone_angle_deg",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.conical_shock_from_m1_wave_deg_to_cone_deg(2.2, 36.0, 1.4)",
+      "xloil_example": "=ENG_CONICAL_SHOCK_FROM_M1_WAVE_DEG_TO_CONE_DEG(2.2,36.0,1.4)",
+      "pyxll_example": "=ENG_CONICAL_SHOCK_FROM_M1_WAVE_DEG_TO_CONE_DEG(2.2,36.0,1.4)"
+    },
+    {
+      "id": "device.conical_shock_calc.path_text",
+      "entity": "device",
+      "source": "conical_shock_calc",
+      "python_module": "devices",
+      "python_name": "conical_shock_path_text",
+      "excel_name": "ENG_CONICAL_SHOCK_PATH_TEXT",
+      "op": "device.conical_shock_calc.path_text",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "m1",
+          "description": "Upstream Mach number M1"
+        },
+        {
+          "name": "input_kind",
+          "description": "Input kind (cone_angle_deg or wave_angle_deg)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input angle value in degrees"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (wave_angle_deg, cone_angle_deg, shock_turn_angle_deg, mc, p2_p1, rho2_rho1, t2_t1, p02_p01)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Weak/strong branch for cone-angle inversion paths"
+        }
+      ],
+      "returns": "str",
+      "help": "Conical shock calculator helper: compact step trace text",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.conical_shock_path_text(2.2, \"cone_angle_deg\", 12.0, \"p2_p1\", 1.4, \"weak\")",
+      "xloil_example": "=ENG_CONICAL_SHOCK_PATH_TEXT(2.2,\"cone_angle_deg\",12.0,\"p2_p1\",1.4,\"weak\")",
+      "pyxll_example": "=ENG_CONICAL_SHOCK_PATH_TEXT(2.2,\"cone_angle_deg\",12.0,\"p2_p1\",1.4,\"weak\")"
+    },
+    {
       "id": "device.fanno_flow_calc",
       "entity": "device",
       "source": "fanno_flow_calc",

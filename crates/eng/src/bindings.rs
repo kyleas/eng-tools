@@ -43,6 +43,9 @@ pub const INVOKE_SUPPORTED_OPS: &[&str] = &[
     "device.oblique_shock_calc",
     "device.oblique_shock_calc.value",
     "device.oblique_shock_calc.path_text",
+    "device.conical_shock_calc",
+    "device.conical_shock_calc.value",
+    "device.conical_shock_calc.path_text",
     "device.fanno_flow_calc",
     "device.fanno_flow_calc.value",
     "device.fanno_flow_calc.pivot_mach",
@@ -310,6 +313,17 @@ pub fn invoke_protocol_spec() -> InvokeProtocolSpec {
                     }
                     "device.oblique_shock_calc.path_text" => {
                         "Run oblique-shock calculator device and return compact path trace text"
+                            .to_string()
+                    }
+                    "device.conical_shock_calc" => {
+                        "Run conical-shock calculator device and return value+state+path diagnostics".to_string()
+                    }
+                    "device.conical_shock_calc.value" => {
+                        "Run conical-shock calculator device and return scalar output value"
+                            .to_string()
+                    }
+                    "device.conical_shock_calc.path_text" => {
+                        "Run conical-shock calculator device and return compact path trace text"
                             .to_string()
                     }
                     "device.fanno_flow_calc" => {

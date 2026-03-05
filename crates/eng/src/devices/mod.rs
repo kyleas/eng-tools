@@ -1,3 +1,4 @@
+pub mod conical_shock;
 pub mod fanno_flow;
 pub mod framework;
 pub mod isentropic;
@@ -7,6 +8,11 @@ pub mod oblique_shock;
 pub mod pipe_loss;
 pub mod rayleigh;
 
+pub use conical_shock::{
+    ConicalShockBranch, ConicalShockCalcError, ConicalShockCalcRequest, ConicalShockCalcResponse,
+    ConicalShockCalcStep, ConicalShockCalculatorDevice, ConicalShockInputKind,
+    ConicalShockOutputKind, calc as conical_shock_calc_from_request, conical_shock_calc,
+};
 pub use fanno_flow::{
     FannoFlowBranch, FannoFlowCalcError, FannoFlowCalcRequest, FannoFlowCalcResponse,
     FannoFlowCalculatorDevice, FannoFlowInputKind, FannoFlowOutputKind,
@@ -83,6 +89,7 @@ pub fn generation_specs() -> Vec<DeviceGenerationSpec> {
         pipe_loss::generation_spec(),
         isentropic::generation_spec(),
         normal_shock::generation_spec(),
+        conical_shock::generation_spec(),
         nozzle_flow::generation_spec(),
         oblique_shock::generation_spec(),
         fanno_flow::generation_spec(),

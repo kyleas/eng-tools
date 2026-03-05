@@ -396,6 +396,52 @@ fn invoke_oblique_shock_calc_requires_branch_for_theta_input() {
 }
 
 #[test]
+fn invoke_conical_shock_calc_supports_wave_to_cone() {
+    let req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "device.conical_shock_calc",
+        "args": {
+            "m1": 2.2,
+            "input_kind": "wave_angle_deg",
+            "input_value": 38.0,
+            "target_kind": "cone_angle_deg",
+            "gamma": 1.4
+        }
+    });
+    let resp = run_invoke(req);
+    assert_eq!(resp["ok"], true, "response: {resp}");
+    let cone = resp["value"]["cone_angle_deg"].as_f64().unwrap_or(0.0);
+    let mc = resp["value"]["mc"].as_f64().unwrap_or(0.0);
+    assert!(cone > 0.0 && cone < 38.0, "cone={cone}");
+    assert!(mc > 0.5, "mc={mc}");
+}
+
+#[test]
+fn invoke_conical_shock_calc_requires_branch_for_cone_input() {
+    let req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "device.conical_shock_calc.value",
+        "args": {
+            "m1": 2.2,
+            "input_kind": "cone_angle_deg",
+            "input_value": 12.0,
+            "target_kind": "wave_angle_deg",
+            "gamma": 1.4
+        }
+    });
+    let resp = run_invoke(req);
+    assert_eq!(resp["ok"], false, "response: {resp}");
+    assert_eq!(resp["error"]["code"], "device_conical_shock_calc_failed");
+    assert!(
+        resp["error"]["message"]
+            .as_str()
+            .unwrap_or("")
+            .contains("branch is required"),
+        "expected branch-required guidance"
+    );
+}
+
+#[test]
 fn invoke_fanno_flow_calc_supports_branch_sensitive_inverse_paths() {
     let sub_req = json!({
         "protocol_version": "eng-invoke.v1",

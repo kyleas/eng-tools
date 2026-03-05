@@ -49,6 +49,24 @@
       "route": "devices/normal_shock_calc.md"
     },
     {
+      "key": "conical_shock_calc",
+      "name": "Conical Shock Calculator",
+      "summary": "Calculator-style compressible device for Taylor-Maccoll conical-shock workflows with explicit weak/strong branch handling.",
+      "supported_modes": [
+        "Input forms: (M1, cone_angle), (M1, wave_angle)",
+        "Taylor-Maccoll integrated conical-flow state resolution"
+      ],
+      "outputs": [
+        "value_si",
+        "wave_angle_rad",
+        "cone_angle_rad",
+        "shock_turn_angle_rad",
+        "cone_surface_mach",
+        "path diagnostics"
+      ],
+      "route": "devices/conical_shock_calc.md"
+    },
+    {
       "key": "nozzle_flow_calc",
       "name": "Nozzle Flow Calculator",
       "summary": "Calculator-style quasi-1D nozzle device: solve isentropic nozzle input kinds to target kinds through Mach pivot orchestration.",
