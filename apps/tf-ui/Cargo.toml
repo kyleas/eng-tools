@@ -20,6 +20,7 @@ uom = { workspace = true }
 uuid = { workspace = true }
 image = { workspace = true }
 printpdf = { workspace = true }
+rfd = "0.15"
 
 tf-core = { workspace = true }
 tf-graph = { workspace = true }

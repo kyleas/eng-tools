@@ -70,6 +70,8 @@ pub struct WorkbookRow {
     pub title: Option<String>,
     #[serde(default)]
     pub collapsed: bool,
+    #[serde(default)]
+    pub freeze: bool,
     #[serde(flatten)]
     pub kind: WorkbookRowKind,
 }
@@ -525,6 +527,12 @@ fn execute_row(
         result: None,
     };
 
+    if row.freeze {
+        out.messages
+            .push("row is frozen; execution skipped".to_string());
+        return Ok(out);
+    }
+
     match &row.kind {
         WorkbookRowKind::Text(c) => {
             out.state = WorkbookRowState::Ok;
@@ -905,6 +913,7 @@ mod tests {
             key: Some("note".to_string()),
             title: None,
             collapsed: false,
+            freeze: false,
             kind: WorkbookRowKind::Text(TextRowContent {
                 text: "hello".to_string(),
             }),
@@ -923,6 +932,7 @@ mod tests {
             key: Some("eq".to_string()),
             title: None,
             collapsed: false,
+            freeze: false,
             kind: WorkbookRowKind::EquationSolve(EquationSolveRowContent {
                 path_id: "structures.hoop_stress".to_string(),
                 target: None,
@@ -948,6 +958,7 @@ mod tests {
                 key: Some("p".to_string()),
                 title: None,
                 collapsed: false,
+                freeze: false,
                 kind: WorkbookRowKind::Constant(ConstantRowContent {
                     value: "500 psia".to_string(),
                     dimension_hint: None,
@@ -958,6 +969,7 @@ mod tests {
                 key: Some("sigma".to_string()),
                 title: None,
                 collapsed: false,
+                freeze: false,
                 kind: WorkbookRowKind::EquationSolve(EquationSolveRowContent {
                     path_id: "structures.hoop_stress".to_string(),
                     target: None,
@@ -986,6 +998,7 @@ mod tests {
                 key: Some("a".to_string()),
                 title: None,
                 collapsed: false,
+                freeze: false,
                 kind: WorkbookRowKind::EquationSolve(EquationSolveRowContent {
                     path_id: "structures.hoop_stress".to_string(),
                     target: Some("sigma_h".to_string()),
@@ -1002,6 +1015,7 @@ mod tests {
                 key: Some("b".to_string()),
                 title: None,
                 collapsed: false,
+                freeze: false,
                 kind: WorkbookRowKind::EquationSolve(EquationSolveRowContent {
                     path_id: "structures.hoop_stress".to_string(),
                     target: Some("sigma_h".to_string()),
@@ -1029,6 +1043,7 @@ mod tests {
                 key: Some("p".to_string()),
                 title: None,
                 collapsed: false,
+                freeze: false,
                 kind: WorkbookRowKind::Constant(ConstantRowContent {
                     value: "500 psia".to_string(),
                     dimension_hint: Some("pressure".to_string()),
@@ -1039,6 +1054,7 @@ mod tests {
                 key: Some("sigma".to_string()),
                 title: None,
                 collapsed: false,
+                freeze: false,
                 kind: WorkbookRowKind::EquationSolve(EquationSolveRowContent {
                     path_id: "structures.hoop_stress".to_string(),
                     target: None,
@@ -1055,6 +1071,7 @@ mod tests {
                 key: Some("study".to_string()),
                 title: None,
                 collapsed: false,
+                freeze: false,
                 kind: WorkbookRowKind::Study(StudyRowContent {
                     kind: StudyTargetKind::Device,
                     target_id: "normal_shock_calc".to_string(),
@@ -1077,6 +1094,7 @@ mod tests {
                 key: Some("plot".to_string()),
                 title: None,
                 collapsed: false,
+                freeze: false,
                 kind: WorkbookRowKind::Plot(PlotRowContent {
                     source_row: "ref:study".to_string(),
                     x: "input_value".to_string(),
@@ -1093,5 +1111,53 @@ mod tests {
         assert!(matches!(rows[1].state, WorkbookRowState::Ok));
         assert!(matches!(rows[2].result, Some(WorkbookRowResult::Study(_))));
         assert!(matches!(rows[3].result, Some(WorkbookRowResult::Plot(_))));
+    }
+
+    #[test]
+    fn plot_missing_source_is_reported() {
+        let dir = tempdir().expect("temp");
+        let mut doc = sample_doc(dir.path());
+        doc.tabs[0].rows.push(WorkbookRow {
+            id: "pl1".to_string(),
+            key: Some("plot".to_string()),
+            title: None,
+            collapsed: false,
+            freeze: false,
+            kind: WorkbookRowKind::Plot(PlotRowContent {
+                source_row: "ref:missing".to_string(),
+                x: "x".to_string(),
+                y: "y".to_string(),
+                title: None,
+                x_label: None,
+                y_label: None,
+            }),
+        });
+        let v = validate_workbook(&doc);
+        assert!(!v.ok);
+        assert!(
+            v.messages
+                .iter()
+                .any(|m| m.contains("unknown key 'missing'"))
+        );
+    }
+
+    #[test]
+    fn collapsed_and_freeze_roundtrip_persisted() {
+        let dir = tempdir().expect("temp");
+        let mut doc = sample_doc(dir.path());
+        doc.tabs[0].rows.push(WorkbookRow {
+            id: "r1".to_string(),
+            key: Some("k".to_string()),
+            title: None,
+            collapsed: true,
+            freeze: true,
+            kind: WorkbookRowKind::Text(TextRowContent {
+                text: "hello".to_string(),
+            }),
+        });
+        save_workbook_dir(&doc).expect("save");
+        let loaded = load_workbook_dir(dir.path()).expect("load");
+        assert!(loaded.tabs[0].rows[0].collapsed);
+        assert!(loaded.tabs[0].rows[0].freeze);
     }
 }
