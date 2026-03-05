@@ -1,10 +1,11 @@
 use std::collections::{BTreeMap, HashMap};
 use std::path::Path;
 
+use egui_dnd::{DragDropConfig, dnd};
 use tf_eng::{StudyTargetDescriptor, StudyTargetKind, list_study_targets};
 use tf_workbook::{
-    ConstantRowContent, EquationSolveRowContent, MarkdownRowContent, PlotRowContent,
-    StudyRowContent, TextRowContent, WorkbookDocument, WorkbookRow, WorkbookRowExecution,
+    ConstantRowContent, EquationSolveRowContent, NarrativeRenderMode, NarrativeRowContent,
+    PlotRowContent, StudyRowContent, WorkbookDocument, WorkbookRow, WorkbookRowExecution,
     WorkbookRowKind, WorkbookRunResult, WorkbookSweepAxis, WorkbookTab, create_workbook_skeleton,
     execute_workbook, load_workbook_dir, save_workbook_dir,
 };
@@ -20,7 +21,6 @@ pub struct WorkbookView {
     show_execution_results: bool,
     last_error: Option<String>,
     focus_row_id: Option<String>,
-    dragging_row_id: Option<String>,
     picker_queries: HashMap<String, String>,
     targets: Vec<StudyTargetDescriptor>,
 }
@@ -56,7 +56,6 @@ impl Default for WorkbookView {
             show_execution_results: false,
             last_error: None,
             focus_row_id: None,
-            dragging_row_id: None,
             picker_queries: HashMap::new(),
             targets: list_study_targets().unwrap_or_default(),
         }
@@ -100,21 +99,32 @@ impl WorkbookView {
             let targets = self.targets.clone();
             let focus_row_id = self.focus_row_id.clone();
             if let Some(tab) = doc.tabs.get_mut(self.selected_tab) {
-                let outcome = Self::show_tab_editor(
-                    ui,
-                    tab,
-                    run_tab,
-                    &targets,
-                    &mut self.dragging_row_id,
-                    &mut self.picker_queries,
-                    focus_row_id.as_deref(),
-                );
-                if outcome.changed {
+                let add_outcome = Self::show_add_toolbar(ui, tab, &targets);
+                if add_outcome.changed {
                     self.last_error = None;
-                    if self.auto_run && outcome.changed_unfrozen {
+                    if self.auto_run && add_outcome.changed_unfrozen {
                         run_after = true;
                     }
                 }
+                ui.separator();
+                egui::ScrollArea::vertical()
+                    .id_salt("workbook_rows_scroll")
+                    .show(ui, |ui| {
+                        let outcome = Self::show_tab_editor(
+                            ui,
+                            tab,
+                            run_tab,
+                            &targets,
+                            &mut self.picker_queries,
+                            focus_row_id.as_deref(),
+                        );
+                        if outcome.changed {
+                            self.last_error = None;
+                            if self.auto_run && outcome.changed_unfrozen {
+                                run_after = true;
+                            }
+                        }
+                    });
             }
             self.focus_row_id = None;
         }
@@ -139,31 +149,32 @@ impl WorkbookView {
                 }
             }
 
-            if ui.button("Create").clicked()
-                && let Some(parent) = rfd::FileDialog::new().pick_folder()
-            {
-                let name = if self.new_workbook_name.trim().is_empty() {
-                    "engineering_workbook.engwb".to_string()
-                } else {
-                    self.new_workbook_name.clone()
-                };
-                let folder = parent.join(name);
-                match create_workbook_skeleton(&folder, "Engineering Workbook") {
-                    Ok(doc) => {
-                        self.workbook_path = folder.to_string_lossy().to_string();
-                        self.workbook = Some(doc);
-                        self.selected_tab = 0;
-                        self.last_error = None;
+            if ui.button("Create").clicked() {
+                if let Some(parent) = rfd::FileDialog::new().pick_folder() {
+                    let name = if self.new_workbook_name.trim().is_empty() {
+                        "engineering_workbook.engwb".to_string()
+                    } else {
+                        self.new_workbook_name.clone()
+                    };
+                    let folder = parent.join(name);
+                    match create_workbook_skeleton(&folder, "Engineering Workbook") {
+                        Ok(doc) => {
+                            self.workbook_path = folder.to_string_lossy().to_string();
+                            self.workbook = Some(doc);
+                            self.selected_tab = 0;
+                            self.last_error = None;
+                        }
+                        Err(e) => self.last_error = Some(e.to_string()),
                     }
-                    Err(e) => self.last_error = Some(e.to_string()),
                 }
             }
 
-            if ui.button("Save").clicked()
-                && let Some(doc) = &self.workbook
-                && let Err(e) = save_workbook_dir(doc)
-            {
-                self.last_error = Some(e.to_string());
+            if ui.button("Save").clicked() {
+                if let Some(doc) = &self.workbook {
+                    if let Err(e) = save_workbook_dir(doc) {
+                        self.last_error = Some(e.to_string());
+                    }
+                }
             }
 
             if ui.button("Run").clicked() {
@@ -194,39 +205,22 @@ impl WorkbookView {
         }
     }
 
-    fn show_tab_editor(
+    fn show_add_toolbar(
         ui: &mut egui::Ui,
         tab: &mut WorkbookTab,
-        run_tab: Option<&tf_workbook::WorkbookTabExecution>,
         targets: &[StudyTargetDescriptor],
-        dragging_row_id: &mut Option<String>,
-        picker_queries: &mut HashMap<String, String>,
-        focus_row_id: Option<&str>,
     ) -> EditOutcome {
         let mut outcome = EditOutcome::default();
-
-        ui.separator();
-        ui.horizontal(|ui| {
+        ui.horizontal_wrapped(|ui| {
             ui.heading(format!("Tab: {}", tab.name));
-            if ui.button("Add text").clicked() {
+            if ui.button("Add narrative").clicked() {
                 tab.rows.push(new_row(
-                    WorkbookRowKind::Text(TextRowContent {
-                        text: String::new(),
-                        header: false,
-                        mono: false,
+                    WorkbookRowKind::Narrative(NarrativeRowContent {
+                        content: String::new(),
+                        render_mode: NarrativeRenderMode::Plain,
+                        style: Default::default(),
                     }),
                     false,
-                ));
-                outcome.changed = true;
-                outcome.changed_unfrozen = true;
-            }
-            if ui.button("Add markdown").clicked() {
-                tab.rows.push(new_row(
-                    WorkbookRowKind::Markdown(MarkdownRowContent {
-                        markdown: String::new(),
-                        preview: false,
-                    }),
-                    true,
                 ));
                 outcome.changed = true;
                 outcome.changed_unfrozen = true;
@@ -290,7 +284,18 @@ impl WorkbookView {
                 outcome.changed_unfrozen = true;
             }
         });
+        outcome
+    }
 
+    fn show_tab_editor(
+        ui: &mut egui::Ui,
+        tab: &mut WorkbookTab,
+        run_tab: Option<&tf_workbook::WorkbookTabExecution>,
+        targets: &[StudyTargetDescriptor],
+        picker_queries: &mut HashMap<String, String>,
+        focus_row_id: Option<&str>,
+    ) -> EditOutcome {
+        let mut outcome = EditOutcome::default();
         let row_exec_map = run_tab
             .map(|t| {
                 t.rows
@@ -300,231 +305,223 @@ impl WorkbookView {
             })
             .unwrap_or_default();
 
-        let mut remove_idx = None;
-        let mut reorder: Option<(usize, usize)> = None;
-        let mut drag_drop_insert_index: Option<usize> = None;
-        for i in 0..tab.rows.len() {
-            let can_move_down = i + 1 < tab.rows.len();
-            let mut duplicate = false;
-            let mut row_changed = false;
-            let plot_source_options = tab
-                .rows
-                .iter()
-                .take(i)
-                .filter(|r| matches!(r.kind, WorkbookRowKind::Study(_)) && r.key.is_some())
-                .map(|r| {
-                    let key = r.key.as_deref().unwrap_or_default();
-                    PlotSourceOption {
-                        ref_value: format!("ref:{}", key),
-                        label: key.to_string(),
-                    }
-                })
-                .collect::<Vec<_>>();
-            let valid_keys = tab
-                .rows
-                .iter()
-                .filter_map(|r| r.key.clone())
-                .collect::<Vec<_>>();
-            let row = &mut tab.rows[i];
-            let exec = row_exec_map.get(&row.id);
-            let collapsed = row.collapsed;
-            let frozen_before = row.freeze;
+        let mut remove_id: Option<String> = None;
+        let mut duplicate_id: Option<String> = None;
+        let mut row_changed_ids: Vec<String> = Vec::new();
+        let before_order = tab.rows.iter().map(|r| r.id.clone()).collect::<Vec<_>>();
+        let key_snapshot = tab
+            .rows
+            .iter()
+            .map(|r| {
+                (
+                    r.id.clone(),
+                    r.key.clone(),
+                    matches!(r.kind, WorkbookRowKind::Study(_)),
+                )
+            })
+            .collect::<Vec<_>>();
 
-            let group_response = ui.push_id(row.id.clone(), |ui| {
-                ui.group(|ui| {
-                    ui.horizontal(|ui| {
-                        let drag_resp = ui.add(
-                            egui::Label::new(egui::RichText::new("⋮⋮").strong())
-                                .sense(egui::Sense::drag()),
-                        );
-                        if drag_resp.drag_started() {
-                            *dragging_row_id = Some(row.id.clone());
-                        }
-                        let chevron = if collapsed { "▸" } else { "▾" };
-                        if ui.button(chevron).clicked() {
-                            row.collapsed = !row.collapsed;
-                            outcome.changed = true;
-                            row_changed = true;
-                        }
-                        ui.label(egui::RichText::new(row_header_title(row, targets)).strong());
-                        ui.small(row_type_badge(&row.kind));
-                        ui.colored_label(
-                            status_color(exec),
-                            exec.map(|e| format!("{:?}", e.state))
-                                .unwrap_or_else(|| "not-run".to_string()),
-                        );
-                        if let Some(preview) = output_preview(exec) {
-                            ui.small(preview);
-                        }
-                        ui.separator();
-                        ui.label("⋮⋮");
-                        if i > 0 && ui.small_button("up").clicked() {
-                            reorder = Some((i, i - 1));
-                        }
-                        if can_move_down && ui.small_button("dn").clicked() {
-                            reorder = Some((i, i + 1));
-                        }
-                        if ui.small_button("dup").clicked() {
-                            duplicate = true;
-                        }
-                        if ui.small_button("del").clicked() {
-                            remove_idx = Some(i);
-                        }
-                    });
-
-                    if !row.collapsed {
-                        ui.separator();
+        let mut row_order = before_order.clone();
+        dnd(ui, ("workbook_rows", &tab.file))
+            .with_mouse_config(DragDropConfig::mouse())
+            .show_vec(&mut row_order, |ui, row_id, handle, _state| {
+                let Some(row_idx) = tab.rows.iter().position(|r| r.id == *row_id) else {
+                    return;
+                };
+                let row = &mut tab.rows[row_idx];
+                let exec = row_exec_map.get(&row.id);
+                let frozen_before = row.freeze;
+                let row_scope_id = row.id.clone();
+                ui.push_id(row_scope_id, |ui| {
+                    egui::Frame::group(ui.style().as_ref()).show(ui, |ui| {
                         ui.horizontal(|ui| {
-                            ui.checkbox(&mut row.freeze, "freeze");
-                            if row.freeze != frozen_before {
-                                outcome.changed = true;
-                                row_changed = true;
+                            handle.ui(ui, |ui| {
+                                ui.label("⋮⋮");
+                            });
+                            let chevron = if row.collapsed { "▸" } else { "▾" };
+                            if ui.button(chevron).clicked() {
+                                row.collapsed = !row.collapsed;
+                                row_changed_ids.push(row.id.clone());
                             }
+                            ui.label(row_header_title(row, targets));
+                            ui.small(row_type_badge(&row.kind));
+                            ui.colored_label(
+                                status_color(exec),
+                                exec.map(|e| format!("{:?}", e.state))
+                                    .unwrap_or_else(|| "not-run".to_string()),
+                            );
+                            if let Some(preview) = output_preview(exec) {
+                                ui.small(preview);
+                            }
+                            ui.with_layout(
+                                egui::Layout::right_to_left(egui::Align::Center),
+                                |ui| {
+                                    if ui.small_button("del").clicked() {
+                                        remove_id = Some(row.id.clone());
+                                    }
+                                    if ui.small_button("dup").clicked() {
+                                        duplicate_id = Some(row.id.clone());
+                                    }
+                                    ui.checkbox(&mut row.freeze, "freeze");
+                                },
+                            );
                         });
 
-                        match &mut row.kind {
-                            WorkbookRowKind::Text(c) => {
-                                row_changed |= Self::render_text_row(ui, c);
-                            }
-                            WorkbookRowKind::Markdown(c) => {
-                                row_changed |= Self::render_markdown_row(ui, c);
-                            }
-                            WorkbookRowKind::Constant(c) => {
-                                row_changed |= Self::render_constant_row(ui, c);
-                            }
-                            WorkbookRowKind::EquationSolve(c) => {
-                                row_changed |= Self::render_equation_row(
-                                    ui,
-                                    row.id.as_str(),
-                                    c,
-                                    targets,
-                                    picker_queries,
-                                );
-                            }
-                            WorkbookRowKind::Study(c) => {
-                                row_changed |= Self::render_study_row(
-                                    ui,
-                                    row.id.as_str(),
-                                    c,
-                                    targets,
-                                    picker_queries,
-                                );
-                            }
-                            WorkbookRowKind::Plot(c) => {
-                                row_changed |= Self::render_plot_row(
-                                    ui,
-                                    row.id.as_str(),
-                                    c,
-                                    &plot_source_options,
-                                    &valid_keys,
-                                    picker_queries,
-                                );
-                            }
+                        if focus_row_id == Some(row.id.as_str()) {
+                            ui.scroll_to_cursor(Some(egui::Align::Center));
                         }
-                        if matches!(
-                            row.kind,
-                            WorkbookRowKind::Text(_)
-                                | WorkbookRowKind::Markdown(_)
-                                | WorkbookRowKind::Constant(_)
-                        ) {
+
+                        if !row.collapsed {
+                            ui.separator();
+                            let mut row_changed = match &mut row.kind {
+                                WorkbookRowKind::Narrative(c) => Self::render_narrative_row(ui, c),
+                                WorkbookRowKind::Constant(c) => Self::render_constant_row(ui, c),
+                                WorkbookRowKind::EquationSolve(c) => Self::render_equation_row(
+                                    ui,
+                                    row.id.as_str(),
+                                    c,
+                                    targets,
+                                    picker_queries,
+                                ),
+                                WorkbookRowKind::Study(c) => Self::render_study_row(
+                                    ui,
+                                    row.id.as_str(),
+                                    c,
+                                    targets,
+                                    picker_queries,
+                                ),
+                                WorkbookRowKind::Plot(c) => {
+                                    let source_options = key_snapshot
+                                        .iter()
+                                        .filter(|(id, key, is_study)| {
+                                            id != &row.id && key.is_some() && *is_study
+                                        })
+                                        .map(|(_, key, _)| {
+                                            let key = key.as_deref().unwrap_or_default();
+                                            PlotSourceOption {
+                                                ref_value: format!("ref:{}", key),
+                                                label: key.to_string(),
+                                            }
+                                        })
+                                        .collect::<Vec<_>>();
+                                    let valid_keys = key_snapshot
+                                        .iter()
+                                        .filter_map(|(_, key, _)| key.clone())
+                                        .collect::<Vec<_>>();
+                                    Self::render_plot_row(
+                                        ui,
+                                        row.id.as_str(),
+                                        c,
+                                        &source_options,
+                                        &valid_keys,
+                                        picker_queries,
+                                    )
+                                }
+                                WorkbookRowKind::Text(c) => {
+                                    let mut n = NarrativeRowContent {
+                                        content: c.text.clone(),
+                                        render_mode: NarrativeRenderMode::Plain,
+                                        style: Default::default(),
+                                    };
+                                    let changed = Self::render_narrative_row(ui, &mut n);
+                                    if changed {
+                                        c.text = n.content;
+                                    }
+                                    changed
+                                }
+                                WorkbookRowKind::Markdown(c) => {
+                                    let mut n = NarrativeRowContent {
+                                        content: c.markdown.clone(),
+                                        render_mode: NarrativeRenderMode::Markdown,
+                                        style: Default::default(),
+                                    };
+                                    let changed = Self::render_narrative_row(ui, &mut n);
+                                    if changed {
+                                        c.markdown = n.content;
+                                    }
+                                    changed
+                                }
+                            };
+                            if row.freeze != frozen_before {
+                                row_changed = true;
+                            }
+                            if row_changed {
+                                row_changed_ids.push(row.id.clone());
+                            }
                             ui.collapsing("Advanced", |ui| {
                                 ui.horizontal(|ui| {
                                     ui.label("Key (optional)");
-                                    row_changed |= ui
+                                    if ui
                                         .text_edit_singleline(
                                             row.key.get_or_insert_with(String::new),
                                         )
-                                        .changed();
+                                        .changed()
+                                    {
+                                        row_changed_ids.push(row.id.clone());
+                                    }
                                 });
                                 ui.horizontal(|ui| {
                                     ui.label("Title (optional)");
-                                    row_changed |= ui
+                                    if ui
                                         .text_edit_singleline(
                                             row.title.get_or_insert_with(String::new),
                                         )
-                                        .changed();
+                                        .changed()
+                                    {
+                                        row_changed_ids.push(row.id.clone());
+                                    }
                                 });
                             });
+                            Self::render_row_result(ui, exec);
                         }
-                        Self::render_row_result(ui, exec);
-                    }
+                    });
+                    ui.add_space(8.0);
                 });
             });
-            if focus_row_id == Some(row.id.as_str()) {
-                ui.scroll_to_rect(group_response.response.rect, None);
-            }
-            if let Some(drag_row) = dragging_row_id.as_deref()
-                && drag_row != row.id
-                && group_response.response.hovered()
-            {
-                let pointer_y = ui
-                    .input(|inp| inp.pointer.hover_pos().map(|p| p.y))
-                    .unwrap_or(group_response.response.rect.center().y);
-                let insert_idx = if pointer_y > group_response.response.rect.center().y {
-                    i + 1
-                } else {
-                    i
-                };
-                drag_drop_insert_index = Some(insert_idx);
-                let y = if pointer_y > group_response.response.rect.center().y {
-                    group_response.response.rect.bottom()
-                } else {
-                    group_response.response.rect.top()
-                };
-                ui.painter().line_segment(
-                    [
-                        egui::pos2(group_response.response.rect.left(), y),
-                        egui::pos2(group_response.response.rect.right(), y),
-                    ],
-                    egui::Stroke::new(2.0, egui::Color32::LIGHT_BLUE),
-                );
-            }
-            if row_changed {
-                outcome.changed = true;
-                if !row.freeze {
-                    outcome.changed_unfrozen = true;
+
+        if row_order != before_order {
+            let mut by_id = tab
+                .rows
+                .drain(..)
+                .map(|r| (r.id.clone(), r))
+                .collect::<HashMap<_, _>>();
+            let mut reordered = Vec::with_capacity(row_order.len());
+            for id in &row_order {
+                if let Some(row) = by_id.remove(id) {
+                    reordered.push(row);
                 }
             }
-            if row.freeze != frozen_before {
-                outcome.changed = true;
-                if !row.freeze {
-                    outcome.changed_unfrozen = true;
-                }
-            }
-            if duplicate {
-                let mut copy = tab.rows[i].clone();
+            tab.rows = reordered;
+        }
+        let after_order = row_order;
+        if after_order != before_order {
+            outcome.changed = true;
+            outcome.changed_unfrozen = true;
+        }
+
+        if let Some(id) = duplicate_id {
+            if let Some(idx) = tab.rows.iter().position(|r| r.id == id) {
+                let mut copy = tab.rows[idx].clone();
                 copy.id = Uuid::new_v4().to_string();
                 copy.collapsed = true;
-                tab.rows.insert(i + 1, copy);
-                outcome.changed = true;
-                outcome.changed_unfrozen = true;
-                break;
-            }
-            ui.add_space(6.0);
-        }
-
-        if ui.input(|inp| inp.pointer.any_released()) {
-            if let Some(dragged) = dragging_row_id.clone()
-                && let Some(insert_idx) = drag_drop_insert_index
-                && reorder_rows_by_id(&mut tab.rows, &dragged, insert_idx)
-            {
+                tab.rows.insert(idx + 1, copy);
                 outcome.changed = true;
                 outcome.changed_unfrozen = true;
             }
-            *dragging_row_id = None;
         }
-
-        if let Some((a, b)) = reorder {
-            tab.rows.swap(a, b);
+        if let Some(id) = remove_id {
+            if let Some(idx) = tab.rows.iter().position(|r| r.id == id) {
+                tab.rows.remove(idx);
+                outcome.changed = true;
+                outcome.changed_unfrozen = true;
+            }
+        }
+        if !row_changed_ids.is_empty() {
             outcome.changed = true;
-            outcome.changed_unfrozen = true;
+            if tab.rows.iter().any(|r| !r.freeze) {
+                outcome.changed_unfrozen = true;
+            }
         }
-        if let Some(i) = remove_idx {
-            tab.rows.remove(i);
-            outcome.changed = true;
-            outcome.changed_unfrozen = true;
-        }
-
         outcome
     }
 
@@ -849,10 +846,10 @@ impl WorkbookView {
             changed |= ui.text_edit_singleline(&mut c.source_row).changed();
         });
 
-        if let Some(k) = parse_ref_key(&c.source_row)
-            && !valid_keys.iter().any(|existing| existing == k)
-        {
-            ui.colored_label(egui::Color32::RED, format!("unknown source key '{}'", k));
+        if let Some(k) = parse_ref_key(&c.source_row) {
+            if !valid_keys.iter().any(|existing| existing == k) {
+                ui.colored_label(egui::Color32::RED, format!("unknown source key '{}'", k));
+            }
         }
 
         ui.horizontal(|ui| {
@@ -871,34 +868,36 @@ impl WorkbookView {
         changed
     }
 
-    fn render_text_row(ui: &mut egui::Ui, c: &mut TextRowContent) -> bool {
+    fn render_narrative_row(ui: &mut egui::Ui, c: &mut NarrativeRowContent) -> bool {
         let mut changed = false;
-        ui.horizontal(|ui| {
-            ui.checkbox(&mut c.header, "Header");
-            ui.checkbox(&mut c.mono, "Mono");
+        ui.horizontal_wrapped(|ui| {
+            ui.label("Mode");
+            changed |= ui
+                .selectable_value(&mut c.render_mode, NarrativeRenderMode::Plain, "plain")
+                .changed();
+            changed |= ui
+                .selectable_value(
+                    &mut c.render_mode,
+                    NarrativeRenderMode::Markdown,
+                    "markdown",
+                )
+                .changed();
+            ui.separator();
+            changed |= ui.checkbox(&mut c.style.header, "Header").changed();
+            changed |= ui.checkbox(&mut c.style.mono, "Mono").changed();
+            changed |= ui.checkbox(&mut c.style.muted, "Muted").changed();
         });
-        let mut edit = egui::TextEdit::multiline(&mut c.text)
-            .desired_rows(8)
+        let mut edit = egui::TextEdit::multiline(&mut c.content)
+            .desired_rows(10)
             .lock_focus(true);
-        if c.mono {
+        if c.style.mono {
             edit = edit.code_editor();
         }
         changed |= ui.add(edit).changed();
-        if c.header && !c.text.trim().is_empty() {
-            ui.label(egui::RichText::new(c.text.trim()).heading());
-        }
-        changed
-    }
-
-    fn render_markdown_row(ui: &mut egui::Ui, c: &mut MarkdownRowContent) -> bool {
-        let mut changed = false;
-        ui.horizontal(|ui| {
-            ui.checkbox(&mut c.preview, "Preview");
-        });
-        if c.preview {
-            ui.label(c.markdown.clone());
-        } else {
-            changed |= ui.text_edit_multiline(&mut c.markdown).changed();
+        if c.render_mode == NarrativeRenderMode::Markdown {
+            ui.separator();
+            ui.label(egui::RichText::new("Preview").italics());
+            render_markdown_preview(ui, &c.content, c.style.header, c.style.muted);
         }
         changed
     }
@@ -953,6 +952,9 @@ impl WorkbookView {
                         }
                         tf_workbook::WorkbookRowResult::Plot(p) => {
                             ui.label(format!("series: {}", p.series.len()));
+                        }
+                        tf_workbook::WorkbookRowResult::Narrative { content, .. } => {
+                            ui.small(content);
                         }
                         tf_workbook::WorkbookRowResult::Text { text } => {
                             ui.label(text);
@@ -1054,10 +1056,46 @@ fn new_row(kind: WorkbookRowKind, collapsed: bool) -> WorkbookRow {
     }
 }
 
+fn render_markdown_preview(ui: &mut egui::Ui, markdown: &str, header: bool, muted: bool) {
+    let mut in_code = false;
+    for line in markdown.lines() {
+        let trimmed = line.trim_end();
+        if trimmed.starts_with("```") {
+            in_code = !in_code;
+            continue;
+        }
+        if in_code {
+            ui.label(egui::RichText::new(trimmed).monospace());
+            continue;
+        }
+        if let Some(rest) = trimmed.strip_prefix("### ") {
+            ui.label(egui::RichText::new(rest).strong());
+            continue;
+        }
+        if let Some(rest) = trimmed.strip_prefix("## ") {
+            ui.label(egui::RichText::new(rest).size(18.0).strong());
+            continue;
+        }
+        if let Some(rest) = trimmed.strip_prefix("# ") {
+            ui.label(egui::RichText::new(rest).size(20.0).strong());
+            continue;
+        }
+        let mut rich = egui::RichText::new(trimmed);
+        if header {
+            rich = rich.size(18.0).strong();
+        }
+        if muted {
+            rich = rich.color(egui::Color32::GRAY);
+        }
+        ui.label(rich);
+    }
+}
+
 fn row_type_badge(kind: &WorkbookRowKind) -> &'static str {
     match kind {
-        WorkbookRowKind::Text(_) => "text",
-        WorkbookRowKind::Markdown(_) => "markdown",
+        WorkbookRowKind::Narrative(_) | WorkbookRowKind::Text(_) | WorkbookRowKind::Markdown(_) => {
+            "narrative"
+        }
         WorkbookRowKind::Constant(_) => "constant",
         WorkbookRowKind::EquationSolve(_) => "equation",
         WorkbookRowKind::Study(_) => "study",
@@ -1066,19 +1104,21 @@ fn row_type_badge(kind: &WorkbookRowKind) -> &'static str {
 }
 
 fn row_header_title(row: &WorkbookRow, targets: &[StudyTargetDescriptor]) -> String {
-    if let Some(title) = &row.title
-        && !title.trim().is_empty()
-    {
-        return title.clone();
+    if let Some(key) = &row.key {
+        if !key.trim().is_empty() {
+            return key.clone();
+        }
+    }
+    if let Some(title) = &row.title {
+        if !title.trim().is_empty() {
+            return title.clone();
+        }
     }
     match &row.kind {
-        WorkbookRowKind::Text(_) => "Text".to_string(),
-        WorkbookRowKind::Markdown(_) => "Markdown".to_string(),
-        WorkbookRowKind::Constant(_) => row
-            .key
-            .clone()
-            .filter(|k| !k.trim().is_empty())
-            .unwrap_or_else(|| "Constant".to_string()),
+        WorkbookRowKind::Narrative(_) | WorkbookRowKind::Text(_) | WorkbookRowKind::Markdown(_) => {
+            "Narrative".to_string()
+        }
+        WorkbookRowKind::Constant(_) => "Constant".to_string(),
         WorkbookRowKind::EquationSolve(c) => targets
             .iter()
             .find(|t| t.kind == StudyTargetKind::Equation && t.id == c.path_id)
@@ -1206,31 +1246,21 @@ fn filter_option_items<'a>(items: &'a [OptionItem], query: &str) -> Vec<&'a Opti
 
 fn parse_ref_key(expr: &str) -> Option<&str> {
     let t = expr.trim();
-    if let Some(k) = t.strip_prefix("ref:")
-        && !k.trim().is_empty()
-    {
-        return Some(k.trim());
+    if let Some(k) = t.strip_prefix("ref:") {
+        if !k.trim().is_empty() {
+            return Some(k.trim());
+        }
     }
-    if let Some(k) = t.strip_prefix('@')
-        && !k.trim().is_empty()
-    {
-        return Some(k.trim());
+    if let Some(k) = t.strip_prefix('@') {
+        if !k.trim().is_empty() {
+            return Some(k.trim());
+        }
     }
     None
 }
 
 fn row_field_id(row_id: &str, field_key: &str) -> egui::Id {
     egui::Id::new(("workbook_row_field", row_id, field_key))
-}
-
-fn reorder_rows_by_id(rows: &mut Vec<WorkbookRow>, row_id: &str, insert_index: usize) -> bool {
-    let Some(src) = rows.iter().position(|r| r.id == row_id) else {
-        return false;
-    };
-    let row = rows.remove(src);
-    let idx = insert_index.min(rows.len());
-    rows.insert(idx, row);
-    true
 }
 
 #[cfg(test)]
@@ -1268,47 +1298,17 @@ mod tests {
     }
 
     #[test]
-    fn reorder_rows_by_id_moves_row_to_insert_position() {
-        let mut rows = vec![
-            WorkbookRow {
-                id: "a".to_string(),
-                key: None,
-                title: None,
-                collapsed: false,
-                freeze: false,
-                kind: WorkbookRowKind::Text(TextRowContent {
-                    text: "a".to_string(),
-                    header: false,
-                    mono: false,
-                }),
-            },
-            WorkbookRow {
-                id: "b".to_string(),
-                key: None,
-                title: None,
-                collapsed: false,
-                freeze: false,
-                kind: WorkbookRowKind::Text(TextRowContent {
-                    text: "b".to_string(),
-                    header: false,
-                    mono: false,
-                }),
-            },
-            WorkbookRow {
-                id: "c".to_string(),
-                key: None,
-                title: None,
-                collapsed: false,
-                freeze: false,
-                kind: WorkbookRowKind::Text(TextRowContent {
-                    text: "c".to_string(),
-                    header: false,
-                    mono: false,
-                }),
-            },
-        ];
-        assert!(reorder_rows_by_id(&mut rows, "a", 3));
-        let ids = rows.iter().map(|r| r.id.clone()).collect::<Vec<_>>();
-        assert_eq!(ids, vec!["b", "c", "a"]);
+    fn duplicate_rows_must_receive_new_ids() {
+        let row_a = new_row(
+            WorkbookRowKind::Narrative(NarrativeRowContent {
+                content: "a".to_string(),
+                render_mode: NarrativeRenderMode::Plain,
+                style: Default::default(),
+            }),
+            false,
+        );
+        let mut row_b = row_a.clone();
+        row_b.id = Uuid::new_v4().to_string();
+        assert_ne!(row_a.id, row_b.id);
     }
 }

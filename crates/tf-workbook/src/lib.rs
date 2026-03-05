@@ -63,6 +63,30 @@ pub struct WorkbookTab {
     pub rows: Vec<WorkbookRow>,
 }
 
+fn normalize_row_kind(kind: WorkbookRowKind) -> WorkbookRowKind {
+    match kind {
+        WorkbookRowKind::Text(c) => WorkbookRowKind::Narrative(NarrativeRowContent {
+            content: c.text,
+            render_mode: NarrativeRenderMode::Plain,
+            style: NarrativeStyle {
+                header: c.header,
+                mono: c.mono,
+                muted: false,
+            },
+        }),
+        WorkbookRowKind::Markdown(c) => WorkbookRowKind::Narrative(NarrativeRowContent {
+            content: c.markdown,
+            render_mode: NarrativeRenderMode::Markdown,
+            style: NarrativeStyle {
+                header: false,
+                mono: false,
+                muted: false,
+            },
+        }),
+        other => other,
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WorkbookRow {
     pub id: String,
@@ -79,12 +103,42 @@ pub struct WorkbookRow {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", content = "content", rename_all = "snake_case")]
 pub enum WorkbookRowKind {
+    Narrative(NarrativeRowContent),
+    #[serde(alias = "narrative_legacy_text")]
     Text(TextRowContent),
+    #[serde(alias = "narrative_legacy_markdown")]
     Markdown(MarkdownRowContent),
     Constant(ConstantRowContent),
     EquationSolve(EquationSolveRowContent),
     Study(StudyRowContent),
     Plot(PlotRowContent),
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum NarrativeRenderMode {
+    #[default]
+    Plain,
+    Markdown,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct NarrativeStyle {
+    #[serde(default)]
+    pub header: bool,
+    #[serde(default)]
+    pub mono: bool,
+    #[serde(default)]
+    pub muted: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NarrativeRowContent {
+    pub content: String,
+    #[serde(default)]
+    pub render_mode: NarrativeRenderMode,
+    #[serde(default)]
+    pub style: NarrativeStyle,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -186,8 +240,17 @@ pub struct WorkbookRowExecution {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "kind", content = "data", rename_all = "snake_case")]
 pub enum WorkbookRowResult {
-    Text { text: String },
-    Markdown { markdown: String },
+    Narrative {
+        content: String,
+        render_mode: NarrativeRenderMode,
+        style: NarrativeStyle,
+    },
+    Text {
+        text: String,
+    },
+    Markdown {
+        markdown: String,
+    },
     Constant(ConstantRowResult),
     Equation(EquationRowResult),
     Study(StudyResult),
@@ -300,7 +363,10 @@ pub fn load_workbook_dir(dir: &Path) -> Result<WorkbookDocument, WorkbookError> 
     let mut tabs = Vec::new();
     for entry in &manifest.tabs {
         let tab_path = dir.join("tabs").join(&entry.file);
-        let tab_file: WorkbookTabFile = serde_yaml::from_str(&fs::read_to_string(tab_path)?)?;
+        let mut tab_file: WorkbookTabFile = serde_yaml::from_str(&fs::read_to_string(tab_path)?)?;
+        for row in &mut tab_file.rows {
+            row.kind = normalize_row_kind(row.kind.clone());
+        }
         tabs.push(WorkbookTab {
             name: entry.name.clone(),
             file: entry.file.clone(),
@@ -326,9 +392,16 @@ pub fn save_workbook_dir(doc: &WorkbookDocument) -> Result<(), WorkbookError> {
     )?;
 
     for tab in &doc.tabs {
-        let f = WorkbookTabFile {
-            rows: tab.rows.clone(),
-        };
+        let rows = tab
+            .rows
+            .iter()
+            .cloned()
+            .map(|mut r| {
+                r.kind = normalize_row_kind(r.kind);
+                r
+            })
+            .collect::<Vec<_>>();
+        let f = WorkbookTabFile { rows };
         fs::write(
             doc.root_dir.join("tabs").join(&tab.file),
             serde_yaml::to_string(&f)?,
@@ -453,11 +526,10 @@ pub fn execute_workbook(
 
     let mut tabs = Vec::new();
     for tab in &doc.tabs {
-        if let Some(sel) = selected_tab
-            && sel != tab.name
-            && sel != tab.file
-        {
-            continue;
+        if let Some(sel) = selected_tab {
+            if sel != tab.name && sel != tab.file {
+                continue;
+            }
         }
         let mut rows = Vec::new();
         for row in &tab.rows {
@@ -540,6 +612,14 @@ fn execute_row(
     }
 
     match &row.kind {
+        WorkbookRowKind::Narrative(c) => {
+            out.state = WorkbookRowState::Ok;
+            out.result = Some(WorkbookRowResult::Narrative {
+                content: c.content.clone(),
+                render_mode: c.render_mode.clone(),
+                style: c.style.clone(),
+            });
+        }
         WorkbookRowKind::Text(c) => {
             out.state = WorkbookRowState::Ok;
             out.result = Some(WorkbookRowResult::Text {
@@ -929,6 +1009,10 @@ mod tests {
         save_workbook_dir(&doc).expect("save");
         let loaded = load_workbook_dir(dir.path()).expect("load");
         assert_eq!(loaded.tabs[0].rows.len(), 1);
+        assert!(matches!(
+            loaded.tabs[0].rows[0].kind,
+            WorkbookRowKind::Narrative(_)
+        ));
     }
 
     #[test]
@@ -1229,5 +1313,30 @@ mod tests {
             .map(|r| r.id.as_str())
             .collect::<Vec<_>>();
         assert_eq!(ids, vec!["r2", "r1"]);
+    }
+
+    #[test]
+    fn markdown_legacy_rows_normalize_to_narrative() {
+        let dir = tempdir().expect("temp");
+        let mut doc = sample_doc(dir.path());
+        doc.tabs[0].rows.push(WorkbookRow {
+            id: "m1".to_string(),
+            key: None,
+            title: None,
+            collapsed: false,
+            freeze: false,
+            kind: WorkbookRowKind::Markdown(MarkdownRowContent {
+                markdown: "# heading".to_string(),
+                preview: true,
+            }),
+        });
+        save_workbook_dir(&doc).expect("save");
+        let loaded = load_workbook_dir(dir.path()).expect("load");
+        match &loaded.tabs[0].rows[0].kind {
+            WorkbookRowKind::Narrative(n) => {
+                assert_eq!(n.render_mode, NarrativeRenderMode::Markdown);
+            }
+            other => panic!("expected narrative, got {other:?}"),
+        }
     }
 }

@@ -21,6 +21,7 @@ uuid = { workspace = true }
 image = { workspace = true }
 printpdf = { workspace = true }
 rfd = "0.15"
+egui_dnd = "0.10"
 
 tf-core = { workspace = true }
 tf-graph = { workspace = true }
