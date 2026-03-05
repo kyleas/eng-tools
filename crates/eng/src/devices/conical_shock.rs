@@ -1,6 +1,11 @@
 use equations::{SolveMethod, compressible, eq};
 use thiserror::Error;
 
+use crate::solve::{
+    numeric::bisect_by_sign_change,
+    ode::{OdeSolveError, rk4_step_2},
+};
+
 use super::{DeviceBindingArgSpec, DeviceBindingFunctionSpec, DeviceGenerationSpec};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -618,7 +623,10 @@ fn integrate_taylor_maccoll_from_wave(
         let prev_theta = theta;
         let prev_vr = vr;
         let prev_vt = vt;
-        let (next_vr, next_vt) = rk4_step(theta, vr, vt, h, gamma)?;
+        let (next_vr, next_vt) = rk4_step_2(theta, vr, vt, h, |x, y1, y2| {
+            taylor_maccoll_rhs(x, y1, y2, gamma)
+        })
+        .map_err(map_ode_error)?;
         theta += h;
         vr = next_vr;
         vt = next_vt;
@@ -672,7 +680,10 @@ fn integrate_taylor_maccoll_to_cone(
             break;
         }
         let h = -step_mag.min(theta - cone);
-        let (next_vr, next_vt) = rk4_step(theta, vr, vt, h, gamma)?;
+        let (next_vr, next_vt) = rk4_step_2(theta, vr, vt, h, |x, y1, y2| {
+            taylor_maccoll_rhs(x, y1, y2, gamma)
+        })
+        .map_err(map_ode_error)?;
         theta += h;
         vr = next_vr;
         vt = next_vt;
@@ -724,7 +735,12 @@ fn solve_wave_from_cone(m1: f64, cone: f64, gamma: f64, branch: ConicalShockBran
         } else if r.abs() < 1e-8 {
             roots.push(beta);
         } else if prev_r * r < 0.0 {
-            roots.push(bisect_beta_root(&residual, prev_beta, beta)?);
+            let out = bisect_by_sign_change(prev_beta, beta, 1e-12, 120, |x| residual(x)).map_err(
+                |err| ConicalShockCalcError::NoAttachedSolution {
+                    reason: format!("beta bracket solve failed: {err:?}"),
+                },
+            )?;
+            roots.push(out.root);
         }
         prev_beta = beta;
         prev_r = r;
@@ -741,39 +757,6 @@ fn solve_wave_from_cone(m1: f64, cone: f64, gamma: f64, branch: ConicalShockBran
         ConicalShockBranch::Weak => Ok(roots[0]),
         ConicalShockBranch::Strong => Ok(*roots.last().expect("non-empty roots")),
     }
-}
-
-fn bisect_beta_root<F>(residual: &F, mut lo: f64, mut hi: f64) -> Result<f64>
-where
-    F: Fn(f64) -> Result<f64>,
-{
-    let mut flo = residual(lo)?;
-    let fhi = residual(hi)?;
-    if flo.abs() < 1e-12 {
-        return Ok(lo);
-    }
-    if fhi.abs() < 1e-12 {
-        return Ok(hi);
-    }
-    if flo * fhi > 0.0 {
-        return Err(ConicalShockCalcError::NoAttachedSolution {
-            reason: "beta bracket does not contain a sign change".to_string(),
-        });
-    }
-    for _ in 0..120 {
-        let mid = 0.5 * (lo + hi);
-        let fmid = residual(mid)?;
-        if fmid.abs() < 1e-12 {
-            return Ok(mid);
-        }
-        if flo * fmid <= 0.0 {
-            hi = mid;
-        } else {
-            lo = mid;
-            flo = fmid;
-        }
-    }
-    Ok(0.5 * (lo + hi))
 }
 
 fn simple_shock_jump(m1: f64, wave: f64, gamma: f64) -> Result<ShockJumpState> {
@@ -836,32 +819,6 @@ fn simple_shock_jump(m1: f64, wave: f64, gamma: f64) -> Result<ShockJumpState> {
     })
 }
 
-fn rk4_step(theta: f64, vr: f64, vt: f64, h: f64, gamma: f64) -> Result<(f64, f64)> {
-    let (k1r, k1t) = taylor_maccoll_rhs(theta, vr, vt, gamma)?;
-    let (k2r, k2t) = taylor_maccoll_rhs(
-        theta + 0.5 * h,
-        vr + 0.5 * h * k1r,
-        vt + 0.5 * h * k1t,
-        gamma,
-    )?;
-    let (k3r, k3t) = taylor_maccoll_rhs(
-        theta + 0.5 * h,
-        vr + 0.5 * h * k2r,
-        vt + 0.5 * h * k2t,
-        gamma,
-    )?;
-    let (k4r, k4t) = taylor_maccoll_rhs(theta + h, vr + h * k3r, vt + h * k3t, gamma)?;
-
-    let next_vr = vr + (h / 6.0) * (k1r + 2.0 * k2r + 2.0 * k3r + k4r);
-    let next_vt = vt + (h / 6.0) * (k1t + 2.0 * k2t + 2.0 * k3t + k4t);
-    if !next_vr.is_finite() || !next_vt.is_finite() {
-        return Err(ConicalShockCalcError::NumericalFailure {
-            reason: "non-finite state in Taylor-Maccoll integration".to_string(),
-        });
-    }
-    Ok((next_vr, next_vt))
-}
-
 fn taylor_maccoll_rhs(theta: f64, vr: f64, vt: f64, gamma: f64) -> Result<(f64, f64)> {
     if theta <= 0.0 || theta >= std::f64::consts::PI {
         return Err(ConicalShockCalcError::NumericalFailure {
@@ -884,6 +841,15 @@ fn taylor_maccoll_rhs(theta: f64, vr: f64, vt: f64, gamma: f64) -> Result<(f64, 
         });
     }
     Ok((vt, numer / denom))
+}
+
+fn map_ode_error(err: OdeSolveError<ConicalShockCalcError>) -> ConicalShockCalcError {
+    match err {
+        OdeSolveError::Rhs(source) => source,
+        OdeSolveError::NonFiniteState { .. } => ConicalShockCalcError::NumericalFailure {
+            reason: "non-finite state in Taylor-Maccoll integration".to_string(),
+        },
+    }
 }
 
 fn velocity_prime_from_mach(m: f64, gamma: f64) -> Result<f64> {

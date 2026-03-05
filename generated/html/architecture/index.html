@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5b9549b2.js";
+            window.path_to_searchindex_js = "../searchindex-472b5b40.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-d88f3c2f.js"></script>
+        <script src="../toc-46165df7.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,6 +183,7 @@
 <li><strong>Atomic Equation</strong>: one physical relation with scalar-first solve behavior and equation-level tests/docs.</li>
 <li><strong>Equation Family / Variants</strong>: one canonical law with multiple discoverable forms without duplicating solver logic.</li>
 <li><strong>Component Model</strong>: multi-equation iterative engineering model using contexts (fluid/material) as needed.</li>
+<li><strong>Solve Workflow Layer</strong>: reusable numeric roots/ODE wrappers plus station/workflow chaining and provenance.</li>
 <li><strong>Solve Graph / Chaining</strong>: node/edge orchestration connecting equations, components, constants, and property sources.</li>
 <li><strong>External Bindings</strong>: generated Python/Excel surfaces over Rust-owned implementations.</li>
 </ol>
@@ -196,6 +197,7 @@
 <tr><td><code>AtomicEquation</code></td><td><code>Equations</code></td><td>equation registry + normalization + validation; scalar solve behavior + diagnostics; equation-level docs/examples/export fragments</td><td>multi-step component orchestration; top-level graph execution engine; excel/python runtime implementations</td></tr>
 <tr><td><code>EquationFamily</code></td><td><code>Equations</code></td><td>canonical law identity + variant metadata; variant discovery/docs/search surfaces; family-to-atomic mapping</td><td>component iterative strategies; graph scheduling; external binding runtimes</td></tr>
 <tr><td><code>ComponentModel</code></td><td><code>Eng</code></td><td>multi-equation orchestration; iteration policy and convergence strategy; context-aware model IO surfaces</td><td>single-relation canonical equations; global graph scheduling; backend-native fluid/material implementations</td></tr>
+<tr><td><code>SolveWorkflow</code></td><td><code>Eng</code></td><td>shared numeric solve wrappers (root/convergence reporting); shared ODE integration interfaces for engineering models; station/workflow chaining and provenance tracing</td><td>atomic equation definitions; device-specific engineering semantics; binding-generation policy</td></tr>
 <tr><td><code>SolveGraph</code></td><td><code>Eng</code></td><td>node/edge orchestration across equations/components; dependency ordering and graph solve execution; cross-domain chained workflows</td><td>atomic equation definitions; fluid/material property backends; binding runtime logic</td></tr>
 <tr><td><code>ExternalBinding</code></td><td><code>Eng</code></td><td>python/excel surface generation spec; binding package metadata + naming rules; catalog-driven API exposure policy</td><td>core numeric implementations; domain registry truth; independent duplicate logic</td></tr>
 </tbody>
@@ -240,6 +242,19 @@
 <li>new atomic law definitions</li>
 <li>general graph planner</li>
 <li>binding-generation policy</li>
+</ul>
+<h3 id="solveworkflow"><a class="header" href="#solveworkflow"><code>SolveWorkflow</code></a></h3>
+<p>Belongs here:</p>
+<ul>
+<li>reusable root/ODE numeric utilities with convergence metadata</li>
+<li>ordered step/station workflow execution scaffolding</li>
+<li>cross-step provenance, warnings, and structured failure propagation</li>
+</ul>
+<p>Does not belong here:</p>
+<ul>
+<li>new equation physics definitions</li>
+<li>device-specific binding naming decisions</li>
+<li>full arbitrary graph optimization/planning</li>
 </ul>
 <h3 id="solvegraph"><a class="header" href="#solvegraph"><code>SolveGraph</code></a></h3>
 <p>Belongs here:</p>

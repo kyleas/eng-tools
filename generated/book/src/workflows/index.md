@@ -157,3 +157,18 @@ let sy = state.property("yield_strength")?;
         .solve_delta_p()?;
 }
 ```
+
+## 11. Solve Layer Workflow: Nozzle -> Normal Shock Station Chain
+
+```rust
+use eng::devices::NozzleFlowBranch;
+use eng::solve::{NozzleShockWorkflowRequest, run_nozzle_normal_shock_workflow};
+
+let out = run_nozzle_normal_shock_workflow(NozzleShockWorkflowRequest {
+    gamma: 1.4,
+    area_ratio: 2.0,
+    nozzle_branch: NozzleFlowBranch::Supersonic,
+})?;
+println!("M_pre={}, M_post={}", out.pre_shock_mach, out.post_shock_mach);
+println!("trace={}", out.path_text());
+```

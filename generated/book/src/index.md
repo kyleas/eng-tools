@@ -9,6 +9,8 @@ Docs are the primary user interface for this library. Every core workflow exampl
 - [Units & Quantities](units_quantities/index.md)
 - [Examples & Workflows](workflows/index.md)
 
+- [Engineering Solve Layer](solve/index.md)
+
 - [Bindings (Python/Excel)](bindings/index.md)
 
 ## Domain Guides

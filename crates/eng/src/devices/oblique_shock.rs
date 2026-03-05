@@ -1,6 +1,8 @@
 use equations::{SolveMethod, compressible, eq};
 use thiserror::Error;
 
+use crate::solve::numeric::find_roots_by_scan_bisection;
+
 use super::{DeviceBindingArgSpec, DeviceBindingFunctionSpec, DeviceGenerationSpec};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -545,60 +547,14 @@ fn solve_beta_from_theta(
             .value_si)
     }
 
-    fn bisect_root(m1: f64, gamma: f64, theta: f64, mut lo: f64, mut hi: f64) -> Result<f64> {
-        let mut flo = theta_at_beta(m1, gamma, lo)? - theta;
-        let fhi = theta_at_beta(m1, gamma, hi)? - theta;
-        if flo.abs() < 1e-12 {
-            return Ok(lo);
-        }
-        if fhi.abs() < 1e-12 {
-            return Ok(hi);
-        }
-        if flo * fhi > 0.0 {
-            return Err(ObliqueShockCalcError::NoAttachedSolution {
-                reason: "theta-beta bracket does not contain a sign change".to_string(),
-            });
-        }
-        for _ in 0..120 {
-            let mid = 0.5 * (lo + hi);
-            let fmid = theta_at_beta(m1, gamma, mid)? - theta;
-            if fmid.abs() < 1e-12 {
-                return Ok(mid);
-            }
-            if flo * fmid <= 0.0 {
-                hi = mid;
-            } else {
-                lo = mid;
-                flo = fmid;
-            }
-        }
-        Ok(0.5 * (lo + hi))
-    }
-
     let beta_min = (1.0 / m1).asin() + 1e-6;
     let beta_max = std::f64::consts::FRAC_PI_2 - 1e-6;
-    let steps = 600usize;
-    let mut roots = Vec::<f64>::new();
-
-    let mut prev_beta = beta_min;
-    let mut prev_f = theta_at_beta(m1, gamma, prev_beta)? - theta;
-    for i in 1..=steps {
-        let frac = (i as f64) / (steps as f64);
-        let beta = beta_min + (beta_max - beta_min) * frac;
-        let f = theta_at_beta(m1, gamma, beta)? - theta;
-        if prev_f.abs() < 1e-12 {
-            roots.push(prev_beta);
-        } else if f.abs() < 1e-12 {
-            roots.push(beta);
-        } else if prev_f * f < 0.0 {
-            roots.push(bisect_root(m1, gamma, theta, prev_beta, beta)?);
-        }
-        prev_beta = beta;
-        prev_f = f;
-    }
-
-    roots.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
-    roots.dedup_by(|a, b| (*a - *b).abs() < 1e-7);
+    let (roots, _) = find_roots_by_scan_bisection(beta_min, beta_max, 600, 1e-12, 1e-7, |beta| {
+        Ok::<f64, ObliqueShockCalcError>(theta_at_beta(m1, gamma, beta)? - theta)
+    })
+    .map_err(|err| ObliqueShockCalcError::NoAttachedSolution {
+        reason: format!("theta-beta solve failed: {err:?}"),
+    })?;
     if roots.is_empty() {
         return Err(ObliqueShockCalcError::NoAttachedSolution {
             reason: "no attached oblique-shock beta solution for given M1/theta".to_string(),

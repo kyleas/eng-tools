@@ -7,8 +7,9 @@ This chapter defines strict ownership boundaries for work after atomic equations
 1. **Atomic Equation**: one physical relation with scalar-first solve behavior and equation-level tests/docs.
 2. **Equation Family / Variants**: one canonical law with multiple discoverable forms without duplicating solver logic.
 3. **Component Model**: multi-equation iterative engineering model using contexts (fluid/material) as needed.
-4. **Solve Graph / Chaining**: node/edge orchestration connecting equations, components, constants, and property sources.
-5. **External Bindings**: generated Python/Excel surfaces over Rust-owned implementations.
+4. **Solve Workflow Layer**: reusable numeric roots/ODE wrappers plus station/workflow chaining and provenance.
+5. **Solve Graph / Chaining**: node/edge orchestration connecting equations, components, constants, and property sources.
+6. **External Bindings**: generated Python/Excel surfaces over Rust-owned implementations.
 
 ## Ownership Map
 
@@ -17,6 +18,7 @@ This chapter defines strict ownership boundaries for work after atomic equations
 | `AtomicEquation` | `Equations` | equation registry + normalization + validation; scalar solve behavior + diagnostics; equation-level docs/examples/export fragments | multi-step component orchestration; top-level graph execution engine; excel/python runtime implementations |
 | `EquationFamily` | `Equations` | canonical law identity + variant metadata; variant discovery/docs/search surfaces; family-to-atomic mapping | component iterative strategies; graph scheduling; external binding runtimes |
 | `ComponentModel` | `Eng` | multi-equation orchestration; iteration policy and convergence strategy; context-aware model IO surfaces | single-relation canonical equations; global graph scheduling; backend-native fluid/material implementations |
+| `SolveWorkflow` | `Eng` | shared numeric solve wrappers (root/convergence reporting); shared ODE integration interfaces for engineering models; station/workflow chaining and provenance tracing | atomic equation definitions; device-specific engineering semantics; binding-generation policy |
 | `SolveGraph` | `Eng` | node/edge orchestration across equations/components; dependency ordering and graph solve execution; cross-domain chained workflows | atomic equation definitions; fluid/material property backends; binding runtime logic |
 | `ExternalBinding` | `Eng` | python/excel surface generation spec; binding package metadata + naming rules; catalog-driven API exposure policy | core numeric implementations; domain registry truth; independent duplicate logic |
 
@@ -57,6 +59,18 @@ Does not belong here:
 - new atomic law definitions
 - general graph planner
 - binding-generation policy
+
+### `SolveWorkflow`
+
+Belongs here:
+- reusable root/ODE numeric utilities with convergence metadata
+- ordered step/station workflow execution scaffolding
+- cross-step provenance, warnings, and structured failure propagation
+
+Does not belong here:
+- new equation physics definitions
+- device-specific binding naming decisions
+- full arbitrary graph optimization/planning
 
 ### `SolveGraph`
 

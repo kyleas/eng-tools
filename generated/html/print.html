@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-5b9549b2.js";
+            window.path_to_searchindex_js = "searchindex-472b5b40.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-d88f3c2f.js"></script>
+        <script src="toc-46165df7.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -192,6 +192,9 @@
 </li>
 <li>
 <p><a href="#examples--workflows">Examples &amp; Workflows</a></p>
+</li>
+<li>
+<p><a href="#engineering-solve-layer">Engineering Solve Layer</a></p>
 </li>
 <li>
 <p><a href="#bindings-python-and-excel">Bindings (Python/Excel)</a></p>
@@ -493,6 +496,55 @@ let sy = state.property("yield_strength")?;
         .solve_delta_p()?;
 }
 <span class="boring">}</span></code></pre>
+<h2 id="11-solve-layer-workflow-nozzle---normal-shock-station-chain"><a class="header" href="#11-solve-layer-workflow-nozzle---normal-shock-station-chain">11. Solve Layer Workflow: Nozzle -&gt; Normal Shock Station Chain</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use eng::devices::NozzleFlowBranch;
+use eng::solve::{NozzleShockWorkflowRequest, run_nozzle_normal_shock_workflow};
+
+let out = run_nozzle_normal_shock_workflow(NozzleShockWorkflowRequest {
+    gamma: 1.4,
+    area_ratio: 2.0,
+    nozzle_branch: NozzleFlowBranch::Supersonic,
+})?;
+println!("M_pre={}, M_post={}", out.pre_shock_mach, out.post_shock_mach);
+println!("trace={}", out.path_text());
+<span class="boring">}</span></code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="engineering-solve-layer"><a class="header" href="#engineering-solve-layer">Engineering Solve Layer</a></h1>
+<p><code>eng::solve</code> is the canonical home for reusable multi-step solve/workflow infrastructure.</p>
+<h2 id="ownership-scope"><a class="header" href="#ownership-scope">Ownership Scope</a></h2>
+<ul>
+<li>Shared numeric root solve wrappers with convergence diagnostics</li>
+<li>Shared ODE step wrappers for engineering integrations</li>
+<li>Station/state chaining and step provenance records</li>
+<li>Workflow-level warnings and structured errors</li>
+</ul>
+<h2 id="out-of-scope"><a class="header" href="#out-of-scope">Out of Scope</a></h2>
+<ul>
+<li>Atomic equation definitions (stay in YAML/registry)</li>
+<li>Device-specific binding naming/polish logic</li>
+<li>Full arbitrary graph optimization engines</li>
+</ul>
+<h2 id="rust-example"><a class="header" href="#rust-example">Rust Example</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use eng::devices::NozzleFlowBranch;
+use eng::solve::{NozzleShockWorkflowRequest, run_nozzle_normal_shock_workflow};
+
+let chain = run_nozzle_normal_shock_workflow(NozzleShockWorkflowRequest {
+    gamma: 1.4,
+    area_ratio: 2.0,
+    nozzle_branch: NozzleFlowBranch::Supersonic,
+})?;
+println!("station trace: {}", chain.path_text());
+<span class="boring">}</span></code></pre>
+<h2 id="standardized-numeric-homes"><a class="header" href="#standardized-numeric-homes">Standardized Numeric Homes</a></h2>
+<ul>
+<li><code>eng::solve::numeric</code>: bracketed root solve and scan+bisect helpers.</li>
+<li><code>eng::solve::ode</code>: reusable RK4 stepping wrapper.</li>
+</ul>
+<p>Conical-shock Taylor-Maccoll stepping and branch-sensitive oblique/conical inversions use this layer.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="bindings-python-and-excel"><a class="header" href="#bindings-python-and-excel">Bindings (Python and Excel)</a></h1>
 <p>Rust remains the authoritative implementation. Generated Python and Excel bindings are thin adapters over the same public binding model.</p>
@@ -871,6 +923,7 @@ variants:
 <li><strong>Atomic Equation</strong>: one physical relation with scalar-first solve behavior and equation-level tests/docs.</li>
 <li><strong>Equation Family / Variants</strong>: one canonical law with multiple discoverable forms without duplicating solver logic.</li>
 <li><strong>Component Model</strong>: multi-equation iterative engineering model using contexts (fluid/material) as needed.</li>
+<li><strong>Solve Workflow Layer</strong>: reusable numeric roots/ODE wrappers plus station/workflow chaining and provenance.</li>
 <li><strong>Solve Graph / Chaining</strong>: node/edge orchestration connecting equations, components, constants, and property sources.</li>
 <li><strong>External Bindings</strong>: generated Python/Excel surfaces over Rust-owned implementations.</li>
 </ol>
@@ -884,6 +937,7 @@ variants:
 <tr><td><code>AtomicEquation</code></td><td><code>Equations</code></td><td>equation registry + normalization + validation; scalar solve behavior + diagnostics; equation-level docs/examples/export fragments</td><td>multi-step component orchestration; top-level graph execution engine; excel/python runtime implementations</td></tr>
 <tr><td><code>EquationFamily</code></td><td><code>Equations</code></td><td>canonical law identity + variant metadata; variant discovery/docs/search surfaces; family-to-atomic mapping</td><td>component iterative strategies; graph scheduling; external binding runtimes</td></tr>
 <tr><td><code>ComponentModel</code></td><td><code>Eng</code></td><td>multi-equation orchestration; iteration policy and convergence strategy; context-aware model IO surfaces</td><td>single-relation canonical equations; global graph scheduling; backend-native fluid/material implementations</td></tr>
+<tr><td><code>SolveWorkflow</code></td><td><code>Eng</code></td><td>shared numeric solve wrappers (root/convergence reporting); shared ODE integration interfaces for engineering models; station/workflow chaining and provenance tracing</td><td>atomic equation definitions; device-specific engineering semantics; binding-generation policy</td></tr>
 <tr><td><code>SolveGraph</code></td><td><code>Eng</code></td><td>node/edge orchestration across equations/components; dependency ordering and graph solve execution; cross-domain chained workflows</td><td>atomic equation definitions; fluid/material property backends; binding runtime logic</td></tr>
 <tr><td><code>ExternalBinding</code></td><td><code>Eng</code></td><td>python/excel surface generation spec; binding package metadata + naming rules; catalog-driven API exposure policy</td><td>core numeric implementations; domain registry truth; independent duplicate logic</td></tr>
 </tbody>
@@ -928,6 +982,19 @@ variants:
 <li>new atomic law definitions</li>
 <li>general graph planner</li>
 <li>binding-generation policy</li>
+</ul>
+<h3 id="solveworkflow"><a class="header" href="#solveworkflow"><code>SolveWorkflow</code></a></h3>
+<p>Belongs here:</p>
+<ul>
+<li>reusable root/ODE numeric utilities with convergence metadata</li>
+<li>ordered step/station workflow execution scaffolding</li>
+<li>cross-step provenance, warnings, and structured failure propagation</li>
+</ul>
+<p>Does not belong here:</p>
+<ul>
+<li>new equation physics definitions</li>
+<li>device-specific binding naming decisions</li>
+<li>full arbitrary graph optimization/planning</li>
 </ul>
 <h3 id="solvegraph"><a class="header" href="#solvegraph"><code>SolveGraph</code></a></h3>
 <p>Belongs here:</p>

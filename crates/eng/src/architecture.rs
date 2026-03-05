@@ -5,6 +5,7 @@ pub enum ArchitectureLayer {
     AtomicEquation,
     EquationFamily,
     ComponentModel,
+    SolveWorkflow,
     SolveGraph,
     ExternalBinding,
 }
@@ -136,6 +137,20 @@ pub fn ownership_rules() -> Vec<OwnershipRule> {
             ],
         },
         OwnershipRule {
+            layer: ArchitectureLayer::SolveWorkflow,
+            owner: LayerOwner::Eng,
+            owns: vec![
+                "shared numeric solve wrappers (root/convergence reporting)",
+                "shared ODE integration interfaces for engineering models",
+                "station/workflow chaining and provenance tracing",
+            ],
+            does_not_own: vec![
+                "atomic equation definitions",
+                "device-specific engineering semantics",
+                "binding-generation policy",
+            ],
+        },
+        OwnershipRule {
             layer: ArchitectureLayer::SolveGraph,
             owner: LayerOwner::Eng,
             owns: vec![
@@ -205,6 +220,19 @@ pub fn boundary_rules() -> Vec<LayerBoundaryRule> {
                 "new atomic law definitions",
                 "general graph planner",
                 "binding-generation policy",
+            ],
+        },
+        LayerBoundaryRule {
+            layer: ArchitectureLayer::SolveWorkflow,
+            belongs_here: vec![
+                "reusable root/ODE numeric utilities with convergence metadata",
+                "ordered step/station workflow execution scaffolding",
+                "cross-step provenance, warnings, and structured failure propagation",
+            ],
+            does_not_belong_here: vec![
+                "new equation physics definitions",
+                "device-specific binding naming decisions",
+                "full arbitrary graph optimization/planning",
             ],
         },
         LayerBoundaryRule {
@@ -350,8 +378,8 @@ mod tests {
     #[test]
     fn architecture_spec_has_all_layers() {
         let spec = architecture_spec();
-        assert_eq!(spec.ownership.len(), 5);
-        assert_eq!(spec.boundaries.len(), 5);
+        assert_eq!(spec.ownership.len(), 6);
+        assert_eq!(spec.boundaries.len(), 6);
         assert_eq!(spec.family_prototype.key, "ideal_gas");
         assert_eq!(spec.component_prototype.key, "two_orifice");
     }

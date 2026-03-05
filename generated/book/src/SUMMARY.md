@@ -5,6 +5,7 @@
 - [Input Styles](input_styles/index.md)
 - [Units & Quantities](units_quantities/index.md)
 - [Examples & Workflows](workflows/index.md)
+- [Engineering Solve Layer](solve/index.md)
 - [Bindings (Python/Excel)](bindings/index.md)
 - [Devices Guide](devices/guide.md)
 - [YAML Authoring](yaml_authoring/index.md)

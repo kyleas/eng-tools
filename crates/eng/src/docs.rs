@@ -2607,6 +2607,7 @@ mathjax-support = true
         &render_architecture_page(),
     )?;
     write_text(src.join("workflows/index.md"), &render_workflows())?;
+    write_text(src.join("solve/index.md"), &render_solve_layer_page())?;
     write_text(src.join("bindings/index.md"), &render_bindings_guide())?;
     write_text(
         src.join("yaml_authoring/index.md"),
@@ -2716,6 +2717,7 @@ fn render_home(c: &UnifiedDocsContribution) -> String {
     md.push_str("- [Input Styles](input_styles/index.md)\n");
     md.push_str("- [Units & Quantities](units_quantities/index.md)\n");
     md.push_str("- [Examples & Workflows](workflows/index.md)\n\n");
+    md.push_str("- [Engineering Solve Layer](solve/index.md)\n\n");
     md.push_str("- [Bindings (Python/Excel)](bindings/index.md)\n\n");
     md.push_str("## Domain Guides\n\n");
     md.push_str("- [Equations Guide](equations/guide.md)\n");
@@ -2978,8 +2980,9 @@ fn render_architecture_page() -> String {
     md.push_str("1. **Atomic Equation**: one physical relation with scalar-first solve behavior and equation-level tests/docs.\n");
     md.push_str("2. **Equation Family / Variants**: one canonical law with multiple discoverable forms without duplicating solver logic.\n");
     md.push_str("3. **Component Model**: multi-equation iterative engineering model using contexts (fluid/material) as needed.\n");
-    md.push_str("4. **Solve Graph / Chaining**: node/edge orchestration connecting equations, components, constants, and property sources.\n");
-    md.push_str("5. **External Bindings**: generated Python/Excel surfaces over Rust-owned implementations.\n\n");
+    md.push_str("4. **Solve Workflow Layer**: reusable numeric roots/ODE wrappers plus station/workflow chaining and provenance.\n");
+    md.push_str("5. **Solve Graph / Chaining**: node/edge orchestration connecting equations, components, constants, and property sources.\n");
+    md.push_str("6. **External Bindings**: generated Python/Excel surfaces over Rust-owned implementations.\n\n");
 
     md.push_str("## Ownership Map\n\n");
     md.push_str("| Layer | Owner | Owns | Does not own |\n");
@@ -3122,7 +3125,52 @@ fn render_workflows() -> String {
         "## 10. Device Workflow: Pipe Pressure Drop (Colebrook + Fluid Context)\n\n```rust\n",
     );
     md.push_str(SNIPPET_DEVICE_PIPE_LOSS_COLEBROOK_FLUID.trim());
-    md.push_str("\n```\n");
+    md.push_str("\n```\n\n");
+    md.push_str("## 11. Solve Layer Workflow: Nozzle -> Normal Shock Station Chain\n\n```rust\n");
+    md.push_str("use eng::devices::NozzleFlowBranch;\n");
+    md.push_str(
+        "use eng::solve::{NozzleShockWorkflowRequest, run_nozzle_normal_shock_workflow};\n\n",
+    );
+    md.push_str("let out = run_nozzle_normal_shock_workflow(NozzleShockWorkflowRequest {\n");
+    md.push_str("    gamma: 1.4,\n");
+    md.push_str("    area_ratio: 2.0,\n");
+    md.push_str("    nozzle_branch: NozzleFlowBranch::Supersonic,\n");
+    md.push_str("})?;\n");
+    md.push_str("println!(\"M_pre={}, M_post={}\", out.pre_shock_mach, out.post_shock_mach);\n");
+    md.push_str("println!(\"trace={}\", out.path_text());\n");
+    md.push_str("```\n");
+    md
+}
+
+fn render_solve_layer_page() -> String {
+    let mut md = String::new();
+    md.push_str("# Engineering Solve Layer\n\n");
+    md.push_str("`eng::solve` is the canonical home for reusable multi-step solve/workflow infrastructure.\n\n");
+    md.push_str("## Ownership Scope\n\n");
+    md.push_str("- Shared numeric root solve wrappers with convergence diagnostics\n");
+    md.push_str("- Shared ODE step wrappers for engineering integrations\n");
+    md.push_str("- Station/state chaining and step provenance records\n");
+    md.push_str("- Workflow-level warnings and structured errors\n\n");
+    md.push_str("## Out of Scope\n\n");
+    md.push_str("- Atomic equation definitions (stay in YAML/registry)\n");
+    md.push_str("- Device-specific binding naming/polish logic\n");
+    md.push_str("- Full arbitrary graph optimization engines\n\n");
+    md.push_str("## Rust Example\n\n```rust\n");
+    md.push_str("use eng::devices::NozzleFlowBranch;\n");
+    md.push_str(
+        "use eng::solve::{NozzleShockWorkflowRequest, run_nozzle_normal_shock_workflow};\n\n",
+    );
+    md.push_str("let chain = run_nozzle_normal_shock_workflow(NozzleShockWorkflowRequest {\n");
+    md.push_str("    gamma: 1.4,\n");
+    md.push_str("    area_ratio: 2.0,\n");
+    md.push_str("    nozzle_branch: NozzleFlowBranch::Supersonic,\n");
+    md.push_str("})?;\n");
+    md.push_str("println!(\"station trace: {}\", chain.path_text());\n");
+    md.push_str("```\n\n");
+    md.push_str("## Standardized Numeric Homes\n\n");
+    md.push_str("- `eng::solve::numeric`: bracketed root solve and scan+bisect helpers.\n");
+    md.push_str("- `eng::solve::ode`: reusable RK4 stepping wrapper.\n\n");
+    md.push_str("Conical-shock Taylor-Maccoll stepping and branch-sensitive oblique/conical inversions use this layer.\n");
     md
 }
 
@@ -4027,6 +4075,7 @@ fn render_summary(c: &UnifiedDocsContribution) -> String {
     s.push_str("- [Input Styles](input_styles/index.md)\n");
     s.push_str("- [Units & Quantities](units_quantities/index.md)\n");
     s.push_str("- [Examples & Workflows](workflows/index.md)\n");
+    s.push_str("- [Engineering Solve Layer](solve/index.md)\n");
     s.push_str("- [Bindings (Python/Excel)](bindings/index.md)\n");
     s.push_str("- [Devices Guide](devices/guide.md)\n");
     s.push_str("- [YAML Authoring](yaml_authoring/index.md)\n");

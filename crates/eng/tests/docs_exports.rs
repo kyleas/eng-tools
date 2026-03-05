@@ -39,6 +39,13 @@ fn unified_mdbook_export_api_writes_book_structure() {
     assert!(
         book_root
             .join("src")
+            .join("solve")
+            .join("index.md")
+            .exists()
+    );
+    assert!(
+        book_root
+            .join("src")
             .join("architecture")
             .join("index.md")
             .exists()
@@ -130,6 +137,11 @@ fn unified_mdbook_export_api_writes_book_structure() {
         book_toml.contains("mathjax-support = true"),
         "MathJax support must stay enabled"
     );
+
+    let solve_page = std::fs::read_to_string(book_root.join("src").join("solve").join("index.md"))
+        .expect("read solve layer page");
+    assert!(solve_page.contains("eng::solve"));
+    assert!(solve_page.contains("run_nozzle_normal_shock_workflow"));
 }
 
 #[test]

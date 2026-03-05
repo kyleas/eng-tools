@@ -47,6 +47,20 @@
         ]
       },
       {
+        "layer": "SolveWorkflow",
+        "owner": "Eng",
+        "owns": [
+          "shared numeric solve wrappers (root/convergence reporting)",
+          "shared ODE integration interfaces for engineering models",
+          "station/workflow chaining and provenance tracing"
+        ],
+        "does_not_own": [
+          "atomic equation definitions",
+          "device-specific engineering semantics",
+          "binding-generation policy"
+        ]
+      },
+      {
         "layer": "SolveGraph",
         "owner": "Eng",
         "owns": [
@@ -113,6 +127,19 @@
           "new atomic law definitions",
           "general graph planner",
           "binding-generation policy"
+        ]
+      },
+      {
+        "layer": "SolveWorkflow",
+        "belongs_here": [
+          "reusable root/ODE numeric utilities with convergence metadata",
+          "ordered step/station workflow execution scaffolding",
+          "cross-step provenance, warnings, and structured failure propagation"
+        ],
+        "does_not_belong_here": [
+          "new equation physics definitions",
+          "device-specific binding naming decisions",
+          "full arbitrary graph optimization/planning"
         ]
       },
       {
