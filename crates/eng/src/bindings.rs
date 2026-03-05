@@ -58,7 +58,10 @@ pub const INVOKE_SUPPORTED_OPS: &[&str] = &[
     "device.nozzle_flow_calc.value",
     "device.nozzle_flow_calc.pivot_mach",
     "device.nozzle_flow_calc.path_text",
+    "workflow.nozzle_normal_shock.eval",
     "study.equation.sweep",
+    "study.device.sweep",
+    "study.workflow.sweep",
     "study.device.isentropic_m_to_p_p0.table",
     "study.device.nozzle_flow.table",
     "study.device.normal_shock.table",
@@ -379,9 +382,18 @@ pub fn invoke_protocol_spec() -> InvokeProtocolSpec {
                         "Run nozzle-flow calculator device and return compact path trace text"
                             .to_string()
                     }
+                    "workflow.nozzle_normal_shock.eval" => {
+                        "Evaluate one nozzle+normal-shock workflow sample and return outputs+path diagnostics".to_string()
+                    }
                     "study.equation.sweep" => {
                         "Run 1D equation parameter sweep and return diagnostics-aware table"
                             .to_string()
+                    }
+                    "study.device.sweep" => {
+                        "Run generic 1D device parameter sweep from device metadata".to_string()
+                    }
+                    "study.workflow.sweep" => {
+                        "Run generic 1D workflow parameter sweep from workflow metadata".to_string()
                     }
                     "study.device.isentropic_m_to_p_p0.table" => {
                         "Run 1D study table for isentropic device Mach->p/p0".to_string()

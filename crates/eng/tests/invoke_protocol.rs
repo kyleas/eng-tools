@@ -366,7 +366,7 @@ fn invoke_study_device_tables_work() {
     });
     let resp = run_invoke(req);
     assert_eq!(resp["ok"], true, "response: {resp}");
-    assert_eq!(resp["value"]["study_id"], "study.nozzle_flow.area_ratio");
+    assert_eq!(resp["value"]["study_id"], "device_sweep");
     assert!(resp["value"]["rows"].is_array());
 }
 
@@ -385,9 +385,7 @@ fn invoke_study_workflow_table_exposes_path_summary() {
     });
     let resp = run_invoke(req);
     assert_eq!(resp["ok"], true, "response: {resp}");
-    let rows = resp["value"]["rows"]
-        .as_array()
-        .expect("rows array");
+    let rows = resp["value"]["rows"].as_array().expect("rows array");
     assert!(!rows.is_empty());
     assert!(
         rows[0]["path_summary"]
@@ -395,6 +393,53 @@ fn invoke_study_workflow_table_exposes_path_summary() {
             .unwrap_or("")
             .contains("device.")
     );
+}
+
+#[test]
+fn invoke_generic_device_sweep_works_without_device_specific_study_op() {
+    let req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "study.device.sweep",
+        "args": {
+            "device_key": "normal_shock_calc",
+            "sweep_arg": "input_value",
+            "start": 1.2,
+            "end": 2.0,
+            "count": 4,
+            "fixed_args": {
+                "input_kind": "m1",
+                "target_kind": "m2",
+                "gamma": 1.4
+            },
+            "outputs": ["value", "pivot", "path_text"]
+        }
+    });
+    let resp = run_invoke(req);
+    assert_eq!(resp["ok"], true, "response: {resp}");
+    assert_eq!(resp["value"]["study_id"], "device_sweep");
+    assert_eq!(resp["value"]["axis_name"], "input_value");
+    assert!(resp["value"]["rows"].as_array().expect("rows").len() >= 2);
+}
+
+#[test]
+fn invoke_generic_workflow_sweep_works_without_workflow_specific_study_runner() {
+    let req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "study.workflow.sweep",
+        "args": {
+            "workflow_key": "nozzle_normal_shock_chain",
+            "sweep_arg": "area_ratio",
+            "start": 1.4,
+            "end": 2.0,
+            "count": 3,
+            "fixed_args": {"gamma": 1.4, "branch": "supersonic"}
+        }
+    });
+    let resp = run_invoke(req);
+    assert_eq!(resp["ok"], true, "response: {resp}");
+    let rows = resp["value"]["rows"].as_array().expect("rows array");
+    assert!(!rows.is_empty());
+    assert_eq!(resp["value"]["study_id"], "workflow_sweep");
 }
 
 #[test]

@@ -92,6 +92,8 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(xloil_text.contains("ENG_NOZZLE_FLOW_FROM_A_ASTAR_TO_M"));
     assert!(xloil_text.contains("ENG_NOZZLE_FLOW_FROM_M_TO_P_P0"));
     assert!(xloil_text.contains("ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE"));
+    assert!(xloil_text.contains("ENG_STUDY_DEVICE_TABLE"));
+    assert!(xloil_text.contains("ENG_STUDY_WORKFLOW_TABLE"));
     assert!(xloil_text.contains("ENG_STUDY_NOZZLE_FLOW_TABLE"));
     assert!(xloil_text.contains("ENG_STUDY_NORMAL_SHOCK_TABLE"));
     assert!(xloil_text.contains("ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE"));
@@ -140,6 +142,8 @@ fn generated_binding_artifacts_exist_and_are_populated() {
     assert!(pyxll_text.contains("ENG_COMPRESSIBLE_PRANDTL_MEYER_NU"));
     assert!(pyxll_text.contains("ENG_COMPRESSIBLE_PRANDTL_MEYER_M"));
     assert!(pyxll_text.contains("ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE"));
+    assert!(pyxll_text.contains("ENG_STUDY_DEVICE_TABLE"));
+    assert!(pyxll_text.contains("ENG_STUDY_WORKFLOW_TABLE"));
     assert!(pyxll_text.contains("ENG_STUDY_NOZZLE_FLOW_TABLE"));
     assert!(pyxll_text.contains("ENG_STUDY_NORMAL_SHOCK_TABLE"));
     assert!(pyxll_text.contains("ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE"));
@@ -181,6 +185,8 @@ fn generated_binding_artifacts_exist_and_are_populated() {
 
     let py_study_text = fs::read_to_string(py_study).expect("read generated python study module");
     assert!(py_study_text.contains("def equation_sweep_table("));
+    assert!(py_study_text.contains("def device_table("));
+    assert!(py_study_text.contains("def workflow_table("));
     assert!(py_study_text.contains("def isentropic_m_to_p_p0_table("));
     assert!(py_study_text.contains("def nozzle_flow_table("));
     assert!(py_study_text.contains("def normal_shock_table("));

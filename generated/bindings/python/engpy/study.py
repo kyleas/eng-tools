@@ -41,6 +41,22 @@ Returns:
 """
     return invoke("study.device.nozzle_flow.table", {**({"gamma": gamma} if gamma is not None else {}), **({"start": start} if start is not None else {}), **({"end": end} if end is not None else {}), **({"count": count} if count is not None else {}), **({"branch": branch} if branch is not None else {})})
 
+def device_table(device_key=None, sweep_arg=None, start=None, end=None, count=None, fixed_args=None, outputs=None):
+    """Generic metadata-driven device study table
+
+Args:
+  device_key: Device key (for example nozzle_flow_calc)
+  sweep_arg: Numeric argument name to sweep
+  start: Sweep start
+  end: Sweep end
+  count: Sample count
+  fixed_args: JSON object string for fixed args
+  outputs: Optional output list string (comma separated: value,pivot,path_text)
+Returns:
+  dict(table, spill)
+"""
+    return invoke("study.device.sweep", {**({"device_key": device_key} if device_key is not None else {}), **({"sweep_arg": sweep_arg} if sweep_arg is not None else {}), **({"start": start} if start is not None else {}), **({"end": end} if end is not None else {}), **({"count": count} if count is not None else {}), **({"fixed_args": fixed_args} if fixed_args is not None else {}), **({"outputs": outputs} if outputs is not None else {})})
+
 def equation_sweep_table(path_id=None, target=None, sweep_variable=None, start=None, end=None, count=None, spacing=None, branch=None):
     """Generic equation study sweep table (1D axis)
 
@@ -71,4 +87,19 @@ Returns:
   dict(table, spill)
 """
     return invoke("study.workflow.nozzle_normal_shock.table", {**({"gamma": gamma} if gamma is not None else {}), **({"start": start} if start is not None else {}), **({"end": end} if end is not None else {}), **({"count": count} if count is not None else {}), **({"branch": branch} if branch is not None else {})})
+
+def workflow_table(workflow_key=None, sweep_arg=None, start=None, end=None, count=None, fixed_args=None):
+    """Generic workflow-chain study table
+
+Args:
+  workflow_key: Workflow key (for example nozzle_normal_shock_chain)
+  sweep_arg: Numeric argument name to sweep
+  start: Sweep start
+  end: Sweep end
+  count: Sample count
+  fixed_args: JSON object string for fixed args
+Returns:
+  dict(table, spill)
+"""
+    return invoke("study.workflow.sweep", {**({"workflow_key": workflow_key} if workflow_key is not None else {}), **({"sweep_arg": sweep_arg} if sweep_arg is not None else {}), **({"start": start} if start is not None else {}), **({"end": end} if end is not None else {}), **({"count": count} if count is not None else {}), **({"fixed_args": fixed_args} if fixed_args is not None else {})})
 

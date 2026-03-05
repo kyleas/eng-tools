@@ -42,6 +42,32 @@ pub struct WorkflowRun {
     pub warnings: Vec<String>,
 }
 
+#[derive(Debug, Clone)]
+pub struct WorkflowStudySpecEntry {
+    pub key: &'static str,
+    pub name: &'static str,
+    pub summary: &'static str,
+    pub eval_op: &'static str,
+    pub default_sweep_arg: &'static str,
+    pub default_columns: &'static [&'static str],
+}
+
+pub fn studyable_workflows() -> Vec<WorkflowStudySpecEntry> {
+    vec![WorkflowStudySpecEntry {
+        key: "nozzle_normal_shock_chain",
+        name: "Nozzle + Normal Shock Chain",
+        summary: "Chained station workflow: nozzle area-ratio solve followed by normal-shock propagation.",
+        eval_op: "workflow.nozzle_normal_shock.eval",
+        default_sweep_arg: "area_ratio",
+        default_columns: &[
+            "pre_shock_mach",
+            "post_shock_mach",
+            "shock_pressure_ratio",
+            "s1_mach_provenance",
+        ],
+    }]
+}
+
 impl WorkflowRun {
     pub fn station(&self, name: &str) -> Option<&StationState> {
         self.stations.iter().find(|s| s.name == name)

@@ -1642,6 +1642,95 @@ fn build_binding_manifest(c: &UnifiedDocsContribution) -> BindingManifest {
         pyxll_example: "=ENG_STUDY_EQUATION_TABLE(\"compressible.isentropic_pressure_ratio\",\"p_p0\",\"M\",0.2,3,20,\"linear\",\"\")".to_string(),
     });
     functions.push(BindingFunction {
+        id: "study.device.sweep".to_string(),
+        entity: "study".to_string(),
+        source: "devices".to_string(),
+        python_module: "study".to_string(),
+        python_name: "device_table".to_string(),
+        excel_name: "ENG_STUDY_DEVICE_TABLE".to_string(),
+        op: "study.device.sweep".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![
+            BindingArg {
+                name: "device_key".to_string(),
+                description: "Device key (for example nozzle_flow_calc)".to_string(),
+            },
+            BindingArg {
+                name: "sweep_arg".to_string(),
+                description: "Numeric argument name to sweep".to_string(),
+            },
+            BindingArg {
+                name: "start".to_string(),
+                description: "Sweep start".to_string(),
+            },
+            BindingArg {
+                name: "end".to_string(),
+                description: "Sweep end".to_string(),
+            },
+            BindingArg {
+                name: "count".to_string(),
+                description: "Sample count".to_string(),
+            },
+            BindingArg {
+                name: "fixed_args".to_string(),
+                description: "JSON object string for fixed args".to_string(),
+            },
+            BindingArg {
+                name: "outputs".to_string(),
+                description: "Optional output list string (comma separated: value,pivot,path_text)"
+                    .to_string(),
+            },
+        ],
+        returns: "dict(table, spill)".to_string(),
+        help: "Generic metadata-driven device study table".to_string(),
+        rust_example: "eng::solve::run_device_study(...)".to_string(),
+        python_example: "engpy.study.device_table(device_key=\"nozzle_flow_calc\", sweep_arg=\"input_value\", start=1.2, end=3.0, count=10, fixed_args={\"input_kind\":\"area_ratio\",\"target_kind\":\"mach\",\"gamma\":1.4,\"branch\":\"supersonic\"})".to_string(),
+        xloil_example: "=ENG_STUDY_DEVICE_TABLE(\"nozzle_flow_calc\",\"input_value\",1.2,3,10,\"{\"\"input_kind\"\":\"\"area_ratio\"\",\"\"target_kind\"\":\"\"mach\"\",\"\"gamma\"\":1.4,\"\"branch\"\":\"\"supersonic\"\"}\",\"value,pivot,path_text\")".to_string(),
+        pyxll_example: "=ENG_STUDY_DEVICE_TABLE(\"nozzle_flow_calc\",\"input_value\",1.2,3,10,\"{\"\"input_kind\"\":\"\"area_ratio\"\",\"\"target_kind\"\":\"\"mach\"\",\"\"gamma\"\":1.4,\"\"branch\"\":\"\"supersonic\"\"}\",\"value,pivot,path_text\")".to_string(),
+    });
+    functions.push(BindingFunction {
+        id: "study.workflow.sweep".to_string(),
+        entity: "study".to_string(),
+        source: "workflows".to_string(),
+        python_module: "study".to_string(),
+        python_name: "workflow_table".to_string(),
+        excel_name: "ENG_STUDY_WORKFLOW_TABLE".to_string(),
+        op: "study.workflow.sweep".to_string(),
+        fixed_args: BTreeMap::new(),
+        args: vec![
+            BindingArg {
+                name: "workflow_key".to_string(),
+                description: "Workflow key (for example nozzle_normal_shock_chain)".to_string(),
+            },
+            BindingArg {
+                name: "sweep_arg".to_string(),
+                description: "Numeric argument name to sweep".to_string(),
+            },
+            BindingArg {
+                name: "start".to_string(),
+                description: "Sweep start".to_string(),
+            },
+            BindingArg {
+                name: "end".to_string(),
+                description: "Sweep end".to_string(),
+            },
+            BindingArg {
+                name: "count".to_string(),
+                description: "Sample count".to_string(),
+            },
+            BindingArg {
+                name: "fixed_args".to_string(),
+                description: "JSON object string for fixed args".to_string(),
+            },
+        ],
+        returns: "dict(table, spill)".to_string(),
+        help: "Generic workflow-chain study table".to_string(),
+        rust_example: "eng::solve::run_workflow_study(...)".to_string(),
+        python_example: "engpy.study.workflow_table(workflow_key=\"nozzle_normal_shock_chain\", sweep_arg=\"area_ratio\", start=1.2, end=3.0, count=12, fixed_args={\"gamma\":1.4,\"branch\":\"supersonic\"})".to_string(),
+        xloil_example: "=ENG_STUDY_WORKFLOW_TABLE(\"nozzle_normal_shock_chain\",\"area_ratio\",1.2,3,12,\"{\"\"gamma\"\":1.4,\"\"branch\"\":\"\"supersonic\"\"}\")".to_string(),
+        pyxll_example: "=ENG_STUDY_WORKFLOW_TABLE(\"nozzle_normal_shock_chain\",\"area_ratio\",1.2,3,12,\"{\"\"gamma\"\":1.4,\"\"branch\"\":\"\"supersonic\"\"}\")".to_string(),
+    });
+    functions.push(BindingFunction {
         id: "study.device.isentropic_m_to_p_p0.table".to_string(),
         entity: "study".to_string(),
         source: "device.isentropic_calc".to_string(),
@@ -3444,29 +3533,48 @@ fn render_studies_page() -> String {
     md.push_str("    branch: None,\n");
     md.push_str("}, SweepAxis::linspace(0.2, 3.0, 21));\n");
     md.push_str("```\n\n");
-    md.push_str("## Rust: Device Study\n\n");
+    md.push_str("## Rust: Device Study (Generic by Device Key)\n\n");
     md.push_str("```rust\n");
-    md.push_str("use eng::devices::NozzleFlowBranch;\n");
-    md.push_str("use eng::solve::{SweepAxis, study_nozzle_flow_area_ratio};\n\n");
-    md.push_str("let table = study_nozzle_flow_area_ratio(\n");
-    md.push_str("    1.4,\n");
-    md.push_str("    SweepAxis::linspace(1.2, 3.0, 20),\n");
-    md.push_str("    NozzleFlowBranch::Supersonic,\n");
-    md.push_str(");\n");
+    md.push_str("use serde_json::{Map, json};\n");
+    md.push_str("use eng::solve::{DeviceStudySpec, SweepAxis, run_device_study};\n\n");
+    md.push_str("let mut fixed = Map::new();\n");
+    md.push_str("fixed.insert(\"input_kind\".to_string(), json!(\"area_ratio\"));\n");
+    md.push_str("fixed.insert(\"target_kind\".to_string(), json!(\"mach\"));\n");
+    md.push_str("fixed.insert(\"gamma\".to_string(), json!(1.4));\n");
+    md.push_str("fixed.insert(\"branch\".to_string(), json!(\"supersonic\"));\n");
+    md.push_str("let table = run_device_study(&DeviceStudySpec {\n");
+    md.push_str("    device_key: \"nozzle_flow_calc\".to_string(),\n");
+    md.push_str("    sweep_arg: \"input_value\".to_string(),\n");
+    md.push_str("    axis: SweepAxis::linspace(1.2, 3.0, 20),\n");
+    md.push_str("    fixed_args: fixed,\n");
+    md.push_str("    requested_outputs: vec![\"value\".to_string(), \"pivot\".to_string(), \"path_text\".to_string()],\n");
+    md.push_str("})?;\n");
     md.push_str("```\n\n");
-    md.push_str("## Rust: Workflow-Chain Study\n\n");
+    md.push_str("## Rust: Workflow-Chain Study (Generic by Workflow Key)\n\n");
     md.push_str("```rust\n");
-    md.push_str("use eng::devices::NozzleFlowBranch;\n");
-    md.push_str("use eng::solve::{SweepAxis, study_nozzle_normal_shock_workflow};\n\n");
-    md.push_str("let table = study_nozzle_normal_shock_workflow(\n");
-    md.push_str("    1.4,\n");
-    md.push_str("    SweepAxis::linspace(1.2, 3.0, 20),\n");
-    md.push_str("    NozzleFlowBranch::Supersonic,\n");
-    md.push_str(");\n");
+    md.push_str("use serde_json::{Map, json};\n");
+    md.push_str("use eng::solve::{WorkflowStudySpec, SweepAxis, run_workflow_study};\n\n");
+    md.push_str("let mut fixed = Map::new();\n");
+    md.push_str("fixed.insert(\"gamma\".to_string(), json!(1.4));\n");
+    md.push_str("fixed.insert(\"branch\".to_string(), json!(\"supersonic\"));\n");
+    md.push_str("let table = run_workflow_study(&WorkflowStudySpec {\n");
+    md.push_str("    workflow_key: \"nozzle_normal_shock_chain\".to_string(),\n");
+    md.push_str("    sweep_arg: \"area_ratio\".to_string(),\n");
+    md.push_str("    axis: SweepAxis::linspace(1.2, 3.0, 20),\n");
+    md.push_str("    fixed_args: fixed,\n");
+    md.push_str("})?;\n");
     md.push_str("```\n\n");
-    md.push_str("## Python / Excel (Targeted v1)\n\n");
+    md.push_str("## Python / Excel\n\n");
     md.push_str("- Python module: `engpy.study`\n");
+    md.push_str("- Generic helpers:\n");
+    md.push_str("  - `engpy.study.equation_sweep_table(...)`\n");
+    md.push_str("  - `engpy.study.device_table(...)`\n");
+    md.push_str("  - `engpy.study.workflow_table(...)`\n");
     md.push_str("- Excel spill-table helpers:\n");
+    md.push_str("  - `ENG_STUDY_EQUATION_TABLE(...)`\n");
+    md.push_str("  - `ENG_STUDY_DEVICE_TABLE(...)`\n");
+    md.push_str("  - `ENG_STUDY_WORKFLOW_TABLE(...)`\n");
+    md.push_str("- Optional named convenience wrappers:\n");
     md.push_str("  - `ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE(...)`\n");
     md.push_str("  - `ENG_STUDY_NOZZLE_FLOW_TABLE(...)`\n");
     md.push_str("  - `ENG_STUDY_NORMAL_SHOCK_TABLE(...)`\n");
@@ -3545,6 +3653,8 @@ fn render_bindings_guide() -> String {
     md.push_str("  - `engpy.helpers.format_value(value, in_unit, out_unit)`\n");
     md.push_str("  - `engpy.helpers.meta_get(entity, key, field)`\n");
     md.push_str("  - `engpy.study.equation_sweep_table(...)`\n");
+    md.push_str("  - `engpy.study.device_table(...)`\n");
+    md.push_str("  - `engpy.study.workflow_table(...)`\n");
     md.push_str("  - `engpy.study.isentropic_m_to_p_p0_table(...)`\n");
     md.push_str("  - `engpy.study.nozzle_flow_table(...)`\n");
     md.push_str("  - `engpy.study.normal_shock_table(...)`\n");
@@ -3562,6 +3672,10 @@ fn render_bindings_guide() -> String {
     md.push_str("  - `ENG_EQUATION_DESCRIPTION(path_id)`\n");
     md.push_str("  - `ENG_EQUATION_FAMILY(path_id)`\n");
     md.push_str("  - `ENG_EQUATION_DEFAULT_UNIT(path_id, variable)`\n\n");
+    md.push_str("  - `ENG_STUDY_EQUATION_TABLE(path_id, target, sweep_variable, start, end, count, [spacing], [branch])`\n");
+    md.push_str("  - `ENG_STUDY_DEVICE_TABLE(device_key, sweep_arg, start, end, count, fixed_args_json, [outputs_csv])`\n");
+    md.push_str("  - `ENG_STUDY_WORKFLOW_TABLE(workflow_key, sweep_arg, start, end, count, fixed_args_json)`\n\n");
+    md.push_str("  - Convenience wrappers:\n");
     md.push_str("  - `ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE(gamma, start, end, count, [branch])`\n");
     md.push_str("  - `ENG_STUDY_NOZZLE_FLOW_TABLE(gamma, start, end, count, branch)`\n");
     md.push_str("  - `ENG_STUDY_NORMAL_SHOCK_TABLE(gamma, start, end, count)`\n");

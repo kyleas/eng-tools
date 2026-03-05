@@ -9,11 +9,14 @@ pub use numeric::{
 };
 pub use ode::{OdeSolveError, rk4_step_2};
 pub use study::{
-    EquationStudySpec, StudyCell, StudyEval, StudyRow, StudySampleStatus, StudyTable, SweepAxis,
-    run_equation_study, run_study_1d, study_isentropic_m_to_p_p0, study_normal_shock_m1,
-    study_nozzle_flow_area_ratio, study_nozzle_normal_shock_workflow,
+    DeviceStudySpec, EquationStudySpec, StudyCell, StudyEval, StudyRow, StudySampleStatus,
+    StudyTable, StudyableDeviceSpec, SweepAxis, WorkflowStudySpec, run_device_study,
+    run_equation_study, run_study_1d, run_workflow_study, study_isentropic_m_to_p_p0,
+    study_normal_shock_m1, study_nozzle_flow_area_ratio, study_nozzle_normal_shock_workflow,
+    studyable_devices,
 };
 pub use workflow::{
     NozzleShockWorkflowRequest, NozzleShockWorkflowResult, QuantityProvenance, QuantityRecord,
-    StationState, WorkflowError, WorkflowRun, WorkflowStepTrace, run_nozzle_normal_shock_workflow,
+    StationState, WorkflowError, WorkflowRun, WorkflowStepTrace, WorkflowStudySpecEntry,
+    run_nozzle_normal_shock_workflow, studyable_workflows,
 };

@@ -1,15 +1,9 @@
 use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
+use serde_json::{Map, Value, json};
 
-use crate::devices::{
-    IsentropicBranch, IsentropicInputKind, IsentropicOutputKind, NormalShockInputKind,
-    NormalShockOutputKind, NozzleFlowBranch, NozzleFlowInputKind, NozzleFlowOutputKind,
-    isentropic_calc, normal_shock_calc, nozzle_flow_calc,
-};
-use crate::solve::{
-    NozzleShockWorkflowRequest, QuantityProvenance, run_nozzle_normal_shock_workflow,
-};
+use crate::devices::{IsentropicBranch, NozzleFlowBranch};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum SweepAxis {
@@ -273,36 +267,319 @@ pub fn run_equation_study(spec: &EquationStudySpec, axis: SweepAxis) -> StudyTab
     )
 }
 
+#[derive(Debug, Clone)]
+pub struct DeviceStudySpec {
+    pub device_key: String,
+    pub sweep_arg: String,
+    pub axis: SweepAxis,
+    pub fixed_args: Map<String, Value>,
+    pub requested_outputs: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct WorkflowStudySpec {
+    pub workflow_key: String,
+    pub sweep_arg: String,
+    pub axis: SweepAxis,
+    pub fixed_args: Map<String, Value>,
+}
+
+#[derive(Debug, Clone)]
+pub struct StudyableDeviceSpec {
+    pub device_key: String,
+    pub main_op: String,
+    pub value_op: String,
+    pub path_op: Option<String>,
+    pub pivot_op: Option<String>,
+}
+
+pub fn studyable_devices() -> Vec<StudyableDeviceSpec> {
+    crate::devices::generation_specs()
+        .into_iter()
+        .filter_map(|spec| {
+            let mut main_op: Option<String> = None;
+            let mut value_op: Option<String> = None;
+            let mut path_op: Option<String> = None;
+            let mut pivot_op: Option<String> = None;
+            for bf in spec.binding_functions {
+                if bf.id == format!("device.{}", spec.key) {
+                    main_op = Some(format!("device.{}", spec.key));
+                    value_op = Some(bf.op.to_string());
+                } else if bf.id.ends_with(".path_text") {
+                    path_op = Some(bf.op.to_string());
+                } else if bf.id.ends_with(".pivot") {
+                    pivot_op = Some(bf.op.to_string());
+                } else if bf.id.starts_with(&format!("device.{}.", spec.key))
+                    && value_op.is_none()
+                    && bf.returns == "f64"
+                {
+                    // Non-calculator devices can still be studyable when they expose
+                    // one numeric binding operation.
+                    value_op = Some(bf.op.to_string());
+                }
+            }
+            value_op.map(|op| StudyableDeviceSpec {
+                device_key: spec.key.to_string(),
+                main_op: main_op.unwrap_or_else(|| format!("device.{}", spec.key)),
+                value_op: op,
+                path_op,
+                pivot_op,
+            })
+        })
+        .collect()
+}
+
+pub fn run_device_study(spec: &DeviceStudySpec) -> Result<StudyTable, String> {
+    let Some(device_spec) = studyable_devices()
+        .into_iter()
+        .find(|d| d.device_key == spec.device_key)
+    else {
+        return Err(format!(
+            "unknown or non-studyable device '{}'",
+            spec.device_key
+        ));
+    };
+    let mut columns = if spec.requested_outputs.is_empty() {
+        vec!["value".to_string()]
+    } else {
+        spec.requested_outputs.clone()
+    };
+    if columns.iter().any(|c| c == "path_text") {
+        columns.retain(|c| c != "path_text");
+    }
+
+    Ok(run_study_1d(
+        "device_sweep",
+        &spec.sweep_arg,
+        spec.axis.clone(),
+        columns,
+        |sample| {
+            let mut args = spec.fixed_args.clone();
+            args.insert(spec.sweep_arg.clone(), json!(sample));
+            let needs_main_response = spec
+                .requested_outputs
+                .iter()
+                .any(|c| !matches!(c.as_str(), "value" | "result" | "pivot" | "path_text"));
+            let main_response = if needs_main_response {
+                Some(invoke_value(&device_spec.main_op, &args)?)
+            } else {
+                None
+            };
+
+            let mut outputs = BTreeMap::new();
+            let mut warnings = Vec::new();
+            let mut path_summary = None;
+
+            if spec
+                .requested_outputs
+                .iter()
+                .any(|c| c == "value" || c == "result")
+            {
+                let v = invoke_value(&device_spec.value_op, &args)?;
+                let n = v
+                    .as_f64()
+                    .ok_or_else(|| "device value op did not return numeric scalar".to_string())?;
+                outputs.insert("value".to_string(), n);
+            }
+
+            if spec.requested_outputs.iter().any(|c| c == "pivot") {
+                if let Some(op) = &device_spec.pivot_op {
+                    let v = invoke_value(op, &args)?;
+                    if let Some(n) = v.as_f64() {
+                        outputs.insert("pivot".to_string(), n);
+                    } else {
+                        warnings.push("pivot op returned non-numeric value".to_string());
+                    }
+                } else {
+                    warnings.push("pivot output requested but pivot op not available".to_string());
+                }
+            }
+
+            if spec.requested_outputs.iter().any(|c| c == "path_text") {
+                if let Some(op) = &device_spec.path_op {
+                    let v = invoke_value(op, &args)?;
+                    path_summary = v.as_str().map(|s| s.to_string());
+                } else {
+                    warnings.push(
+                        "path_text requested but path diagnostics op not available".to_string(),
+                    );
+                }
+            }
+
+            for c in &spec.requested_outputs {
+                if matches!(c.as_str(), "value" | "result" | "pivot" | "path_text") {
+                    continue;
+                }
+                if let Some(v) = main_response.as_ref().and_then(|v| select_json(v, c)) {
+                    if let Some(n) = v.as_f64() {
+                        outputs.insert(c.clone(), n);
+                    } else {
+                        warnings.push(format!(
+                            "requested output '{c}' is non-numeric in device response"
+                        ));
+                    }
+                } else {
+                    warnings.push(format!("requested output '{c}' missing in device response"));
+                }
+            }
+
+            Ok(StudyEval {
+                outputs,
+                warnings,
+                path_summary,
+            })
+        },
+    ))
+}
+
+pub fn run_workflow_study(spec: &WorkflowStudySpec) -> Result<StudyTable, String> {
+    let workflow = crate::solve::workflow::studyable_workflows()
+        .into_iter()
+        .find(|w| w.key == spec.workflow_key)
+        .ok_or_else(|| format!("unknown workflow '{}'", spec.workflow_key))?;
+    let mut args = spec.fixed_args.clone();
+    let axis = spec.axis.samples();
+    let mut rows = Vec::new();
+    for (i, sample) in axis.into_iter().enumerate() {
+        args.insert(spec.sweep_arg.clone(), json!(sample));
+        let resp = invoke_response(workflow.eval_op, &args)?;
+        let outputs_obj = resp
+            .get("outputs")
+            .and_then(Value::as_object)
+            .ok_or_else(|| "workflow eval op did not return outputs object".to_string())?;
+        let mut outputs = BTreeMap::new();
+        for col in workflow.default_columns {
+            if let Some(v) = outputs_obj.get(*col).and_then(Value::as_f64) {
+                outputs.insert((*col).to_string(), v);
+            }
+        }
+        let warnings = resp
+            .get("warnings")
+            .and_then(Value::as_array)
+            .map(|arr| {
+                arr.iter()
+                    .filter_map(Value::as_str)
+                    .map(|s| s.to_string())
+                    .collect::<Vec<_>>()
+            })
+            .unwrap_or_default();
+        let path_summary = resp
+            .get("path_text")
+            .and_then(Value::as_str)
+            .map(|s| s.to_string());
+        let row = StudyRow {
+            sample_index: i,
+            sample_value: sample,
+            status: StudySampleStatus::Ok,
+            outputs,
+            warnings,
+            path_summary,
+            error: None,
+        };
+        rows.push(StudyRow {
+            sample_index: i,
+            sample_value: sample,
+            ..row
+        });
+    }
+    Ok(StudyTable {
+        study_id: "workflow_sweep".to_string(),
+        axis_name: spec.sweep_arg.clone(),
+        column_order: workflow
+            .default_columns
+            .iter()
+            .map(|s| s.to_string())
+            .collect(),
+        rows,
+    })
+}
+
+fn invoke_value(op: &str, args: &Map<String, Value>) -> Result<Value, String> {
+    let resp = invoke_response(op, args)?;
+    Ok(resp)
+}
+
+fn invoke_response(op: &str, args: &Map<String, Value>) -> Result<Value, String> {
+    let req = crate::bindings::InvokeRequest {
+        protocol_version: crate::bindings::INVOKE_PROTOCOL_VERSION.to_string(),
+        op: op.to_string(),
+        request_id: None,
+        args: Value::Object(args.clone()),
+    };
+    let resp = crate::invoke::handle_invoke(req);
+    if !resp.ok {
+        let err = resp
+            .error
+            .map(|e| format!("[{}] {}", e.code, e.message))
+            .unwrap_or_else(|| "unknown invoke error".to_string());
+        return Err(err);
+    }
+    resp.value
+        .ok_or_else(|| "missing invoke response value".to_string())
+}
+
+fn select_json<'a>(value: &'a Value, selector: &str) -> Option<&'a Value> {
+    let mut cur = value;
+    for part in selector.split('.') {
+        if part.is_empty() {
+            return None;
+        }
+        cur = cur.get(part)?;
+    }
+    Some(cur)
+}
+
+fn isentropic_branch_key(branch: IsentropicBranch) -> &'static str {
+    match branch {
+        IsentropicBranch::Subsonic => "subsonic",
+        IsentropicBranch::Supersonic => "supersonic",
+    }
+}
+
+fn nozzle_branch_key(branch: NozzleFlowBranch) -> &'static str {
+    match branch {
+        NozzleFlowBranch::Subsonic => "subsonic",
+        NozzleFlowBranch::Supersonic => "supersonic",
+    }
+}
+
 pub fn study_isentropic_m_to_p_p0(
     gamma: f64,
     axis: SweepAxis,
     branch: Option<IsentropicBranch>,
 ) -> StudyTable {
-    run_study_1d(
-        "study.isentropic.m_to_p_p0",
-        "mach",
+    let mut fixed_args = Map::new();
+    fixed_args.insert("input_kind".to_string(), json!("mach"));
+    fixed_args.insert("target_kind".to_string(), json!("pressure_ratio"));
+    fixed_args.insert("gamma".to_string(), json!(gamma));
+    if let Some(b) = branch {
+        fixed_args.insert("branch".to_string(), json!(isentropic_branch_key(b)));
+    }
+    let spec = DeviceStudySpec {
+        device_key: "isentropic_calc".to_string(),
+        sweep_arg: "input_value".to_string(),
         axis,
-        vec!["pressure_ratio".to_string(), "pivot_mach".to_string()],
-        move |mach| {
-            let mut dev = isentropic_calc()
-                .gamma(gamma)
-                .input(IsentropicInputKind::Mach, mach)
-                .target(IsentropicOutputKind::PressureRatio);
-            if let Some(b) = branch {
-                dev = dev.branch(b);
-            }
-            let r = dev.solve().map_err(|e| e.to_string())?;
-            let mut out = BTreeMap::new();
-            out.insert("pressure_ratio".to_string(), r.value_si);
-            out.insert("pivot_mach".to_string(), r.pivot_mach);
-            let path_text = r.path_text();
-            Ok(StudyEval {
-                outputs: out,
-                warnings: r.warnings,
-                path_summary: Some(path_text),
-            })
-        },
-    )
+        fixed_args,
+        requested_outputs: vec![
+            "value".to_string(),
+            "pivot".to_string(),
+            "path_text".to_string(),
+        ],
+    };
+    run_device_study(&spec).unwrap_or_else(|err| StudyTable {
+        study_id: "study.isentropic.m_to_p_p0".to_string(),
+        axis_name: "input_value".to_string(),
+        column_order: vec!["value".to_string(), "pivot".to_string()],
+        rows: vec![StudyRow {
+            sample_index: 0,
+            sample_value: f64::NAN,
+            status: StudySampleStatus::Failed,
+            outputs: BTreeMap::new(),
+            warnings: Vec::new(),
+            path_summary: None,
+            error: Some(err),
+        }],
+    })
 }
 
 pub fn study_nozzle_flow_area_ratio(
@@ -310,78 +587,68 @@ pub fn study_nozzle_flow_area_ratio(
     axis: SweepAxis,
     branch: NozzleFlowBranch,
 ) -> StudyTable {
-    run_study_1d(
-        "study.nozzle_flow.area_ratio",
-        "area_ratio",
+    let mut fixed_args = Map::new();
+    fixed_args.insert("input_kind".to_string(), json!("area_ratio"));
+    fixed_args.insert("target_kind".to_string(), json!("mach"));
+    fixed_args.insert("gamma".to_string(), json!(gamma));
+    fixed_args.insert("branch".to_string(), json!(nozzle_branch_key(branch)));
+    let spec = DeviceStudySpec {
+        device_key: "nozzle_flow_calc".to_string(),
+        sweep_arg: "input_value".to_string(),
         axis,
-        vec![
-            "mach".to_string(),
-            "pressure_ratio".to_string(),
-            "pivot_mach".to_string(),
+        fixed_args,
+        requested_outputs: vec![
+            "value".to_string(),
+            "pivot".to_string(),
+            "path_text".to_string(),
         ],
-        move |area_ratio| {
-            let m = nozzle_flow_calc()
-                .gamma(gamma)
-                .input(NozzleFlowInputKind::AreaRatio, area_ratio)
-                .target(NozzleFlowOutputKind::Mach)
-                .branch(branch)
-                .solve()
-                .map_err(|e| e.to_string())?;
-            let p = nozzle_flow_calc()
-                .gamma(gamma)
-                .input(NozzleFlowInputKind::Mach, m.pivot_mach)
-                .target(NozzleFlowOutputKind::PressureRatio)
-                .solve()
-                .map_err(|e| e.to_string())?;
-            let mut out = BTreeMap::new();
-            out.insert("mach".to_string(), m.value_si);
-            out.insert("pressure_ratio".to_string(), p.value_si);
-            out.insert("pivot_mach".to_string(), m.pivot_mach);
-            let path_text = format!("{} | {}", m.path_text(), p.path_text());
-            Ok(StudyEval {
-                outputs: out,
-                warnings: m.warnings,
-                path_summary: Some(path_text),
-            })
-        },
-    )
+    };
+    run_device_study(&spec).unwrap_or_else(|err| StudyTable {
+        study_id: "study.nozzle_flow.area_ratio".to_string(),
+        axis_name: "input_value".to_string(),
+        column_order: vec!["value".to_string(), "pivot".to_string()],
+        rows: vec![StudyRow {
+            sample_index: 0,
+            sample_value: f64::NAN,
+            status: StudySampleStatus::Failed,
+            outputs: BTreeMap::new(),
+            warnings: Vec::new(),
+            path_summary: None,
+            error: Some(err),
+        }],
+    })
 }
 
 pub fn study_normal_shock_m1(gamma: f64, axis: SweepAxis) -> StudyTable {
-    run_study_1d(
-        "study.normal_shock.m1",
-        "m1",
+    let mut fixed_args = Map::new();
+    fixed_args.insert("input_kind".to_string(), json!("m1"));
+    fixed_args.insert("target_kind".to_string(), json!("m2"));
+    fixed_args.insert("gamma".to_string(), json!(gamma));
+    let spec = DeviceStudySpec {
+        device_key: "normal_shock_calc".to_string(),
+        sweep_arg: "input_value".to_string(),
         axis,
-        vec![
-            "m2".to_string(),
-            "pressure_ratio".to_string(),
-            "pivot_m1".to_string(),
+        fixed_args,
+        requested_outputs: vec![
+            "value".to_string(),
+            "pivot".to_string(),
+            "path_text".to_string(),
         ],
-        move |m1| {
-            let m2 = normal_shock_calc()
-                .gamma(gamma)
-                .input(NormalShockInputKind::M1, m1)
-                .target(NormalShockOutputKind::M2)
-                .solve()
-                .map_err(|e| e.to_string())?;
-            let p = normal_shock_calc()
-                .gamma(gamma)
-                .input(NormalShockInputKind::M1, m1)
-                .target(NormalShockOutputKind::PressureRatio)
-                .solve()
-                .map_err(|e| e.to_string())?;
-            let mut out = BTreeMap::new();
-            out.insert("m2".to_string(), m2.value_si);
-            out.insert("pressure_ratio".to_string(), p.value_si);
-            out.insert("pivot_m1".to_string(), m2.pivot_m1);
-            let path_text = format!("{} | {}", m2.path_text(), p.path_text());
-            Ok(StudyEval {
-                outputs: out,
-                warnings: m2.warnings,
-                path_summary: Some(path_text),
-            })
-        },
-    )
+    };
+    run_device_study(&spec).unwrap_or_else(|err| StudyTable {
+        study_id: "study.normal_shock.m1".to_string(),
+        axis_name: "input_value".to_string(),
+        column_order: vec!["value".to_string(), "pivot".to_string()],
+        rows: vec![StudyRow {
+            sample_index: 0,
+            sample_value: f64::NAN,
+            status: StudySampleStatus::Failed,
+            outputs: BTreeMap::new(),
+            warnings: Vec::new(),
+            path_summary: None,
+            error: Some(err),
+        }],
+    })
 }
 
 pub fn study_nozzle_normal_shock_workflow(
@@ -389,52 +656,38 @@ pub fn study_nozzle_normal_shock_workflow(
     axis: SweepAxis,
     nozzle_branch: NozzleFlowBranch,
 ) -> StudyTable {
-    run_study_1d(
-        "study.workflow.nozzle_normal_shock",
-        "area_ratio",
+    let mut fixed_args = Map::new();
+    fixed_args.insert("gamma".to_string(), json!(gamma));
+    fixed_args.insert(
+        "branch".to_string(),
+        json!(nozzle_branch_key(nozzle_branch)),
+    );
+    let spec = WorkflowStudySpec {
+        workflow_key: "nozzle_normal_shock_chain".to_string(),
+        sweep_arg: "area_ratio".to_string(),
         axis,
-        vec![
-            "pre_shock_mach".to_string(),
-            "post_shock_mach".to_string(),
-            "shock_pressure_ratio".to_string(),
-            "s1_mach_provenance".to_string(),
-        ],
-        move |area_ratio| {
-            let r = run_nozzle_normal_shock_workflow(NozzleShockWorkflowRequest {
-                gamma,
-                area_ratio,
-                nozzle_branch,
-            })
-            .map_err(|e| e.to_string())?;
-            let mut out = BTreeMap::new();
-            out.insert("pre_shock_mach".to_string(), r.pre_shock_mach);
-            out.insert("post_shock_mach".to_string(), r.post_shock_mach);
-            out.insert("shock_pressure_ratio".to_string(), r.shock_pressure_ratio);
-            let prov = r
-                .workflow
-                .station("s1_pre_shock")
-                .and_then(|s| s.quantities.get("mach"))
-                .map(|q| match q.provenance {
-                    QuantityProvenance::Input => 0.0,
-                    QuantityProvenance::Solved => 1.0,
-                    QuantityProvenance::Propagated => 2.0,
-                })
-                .unwrap_or(-1.0);
-            out.insert("s1_mach_provenance".to_string(), prov);
-            let path_text = r.path_text();
-            let warnings = r.workflow.warnings.clone();
-            Ok(StudyEval {
-                outputs: out,
-                warnings,
-                path_summary: Some(path_text),
-            })
-        },
-    )
+        fixed_args,
+    };
+    run_workflow_study(&spec).unwrap_or_else(|err| StudyTable {
+        study_id: "study.workflow.nozzle_normal_shock".to_string(),
+        axis_name: "area_ratio".to_string(),
+        column_order: vec![],
+        rows: vec![StudyRow {
+            sample_index: 0,
+            sample_value: f64::NAN,
+            status: StudySampleStatus::Failed,
+            outputs: BTreeMap::new(),
+            warnings: Vec::new(),
+            path_summary: None,
+            error: Some(err),
+        }],
+    })
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_json::json;
 
     #[test]
     fn sweep_axis_generators_are_stable() {
@@ -467,12 +720,67 @@ mod tests {
     }
 
     #[test]
+    fn studyable_devices_cover_registered_device_specs() {
+        let registered = crate::devices::generation_specs()
+            .into_iter()
+            .map(|s| s.key.to_string())
+            .collect::<std::collections::BTreeSet<_>>();
+        let studyable = studyable_devices()
+            .into_iter()
+            .map(|d| d.device_key)
+            .collect::<std::collections::BTreeSet<_>>();
+        assert_eq!(registered, studyable);
+    }
+
+    #[test]
+    fn generic_device_study_runner_handles_multiple_devices() {
+        let mut isen_args = serde_json::Map::new();
+        isen_args.insert("input_kind".to_string(), json!("mach"));
+        isen_args.insert("target_kind".to_string(), json!("pressure_ratio"));
+        isen_args.insert("gamma".to_string(), json!(1.4));
+        let isen = run_device_study(&DeviceStudySpec {
+            device_key: "isentropic_calc".to_string(),
+            sweep_arg: "input_value".to_string(),
+            axis: SweepAxis::values(vec![0.5, 1.5]),
+            fixed_args: isen_args,
+            requested_outputs: vec![
+                "value".to_string(),
+                "pivot".to_string(),
+                "path_text".to_string(),
+            ],
+        })
+        .expect("isentropic generic study should run");
+        assert_eq!(isen.rows.len(), 2);
+        assert!(matches!(isen.rows[0].status, StudySampleStatus::Ok));
+
+        let mut nshock_args = serde_json::Map::new();
+        nshock_args.insert("input_kind".to_string(), json!("m1"));
+        nshock_args.insert("target_kind".to_string(), json!("m2"));
+        nshock_args.insert("gamma".to_string(), json!(1.4));
+        let nshock = run_device_study(&DeviceStudySpec {
+            device_key: "normal_shock_calc".to_string(),
+            sweep_arg: "input_value".to_string(),
+            axis: SweepAxis::values(vec![1.5, 2.0]),
+            fixed_args: nshock_args,
+            requested_outputs: vec!["value".to_string(), "pivot".to_string()],
+        })
+        .expect("normal-shock generic study should run");
+        assert_eq!(nshock.rows.len(), 2);
+        assert!(matches!(nshock.rows[1].status, StudySampleStatus::Ok));
+    }
+
+    #[test]
     fn workflow_study_uses_solve_layer_chain() {
-        let table = study_nozzle_normal_shock_workflow(
-            1.4,
-            SweepAxis::values(vec![2.0]),
-            NozzleFlowBranch::Supersonic,
-        );
+        let mut fixed = serde_json::Map::new();
+        fixed.insert("gamma".to_string(), json!(1.4));
+        fixed.insert("branch".to_string(), json!("supersonic"));
+        let table = run_workflow_study(&WorkflowStudySpec {
+            workflow_key: "nozzle_normal_shock_chain".to_string(),
+            sweep_arg: "area_ratio".to_string(),
+            axis: SweepAxis::values(vec![2.0]),
+            fixed_args: fixed,
+        })
+        .expect("workflow study should run");
         assert_eq!(table.rows.len(), 1);
         assert!(matches!(table.rows[0].status, StudySampleStatus::Ok));
         assert!(

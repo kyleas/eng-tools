@@ -130,7 +130,12 @@ pub fn handle_invoke(req: InvokeRequest) -> InvokeResponse {
         "device.nozzle_flow_calc.path_text" => {
             invoke_nozzle_flow_calc_path_text(&op, request_id, &args)
         }
+        "workflow.nozzle_normal_shock.eval" => {
+            invoke_workflow_nozzle_normal_shock_eval(&op, request_id, &args)
+        }
         "study.equation.sweep" => invoke_study_equation_sweep(&op, request_id, &args),
+        "study.device.sweep" => invoke_study_device_sweep(&op, request_id, &args),
+        "study.workflow.sweep" => invoke_study_workflow_sweep(&op, request_id, &args),
         "study.device.isentropic_m_to_p_p0.table" => {
             invoke_study_isentropic_m_to_p_p0(&op, request_id, &args)
         }
@@ -3303,6 +3308,79 @@ fn parse_sweep_axis(
     Ok(axis)
 }
 
+fn invoke_workflow_nozzle_normal_shock_eval(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
+    let gamma = match req_f64(args, "gamma") {
+        Ok(v) => v,
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("gamma"), None);
+        }
+    };
+    let area_ratio = match req_f64(args, "area_ratio") {
+        Ok(v) => v,
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("area_ratio"), None);
+        }
+    };
+    let branch_raw = opt_str(args, "branch").unwrap_or("supersonic");
+    let branch = match crate::devices::nozzle_flow::parse_branch(branch_raw) {
+        Some(v) => v,
+        None => {
+            return InvokeResponse::err(
+                op,
+                request_id,
+                "invalid_arg_value",
+                format!("unsupported branch '{branch_raw}'"),
+                Some("branch"),
+                None,
+            );
+        }
+    };
+    let result = match crate::solve::run_nozzle_normal_shock_workflow(
+        crate::solve::NozzleShockWorkflowRequest {
+            gamma,
+            area_ratio,
+            nozzle_branch: branch,
+        },
+    ) {
+        Ok(v) => v,
+        Err(e) => {
+            return InvokeResponse::err(
+                op,
+                request_id,
+                "workflow_eval_failed",
+                e.to_string(),
+                None,
+                None,
+            );
+        }
+    };
+    let outputs = json!({
+        "pre_shock_mach": result.pre_shock_mach,
+        "post_shock_mach": result.post_shock_mach,
+        "shock_pressure_ratio": result.shock_pressure_ratio,
+        "s1_mach_provenance": result
+            .workflow
+            .station("s1_pre_shock")
+            .and_then(|s| s.quantities.get("mach"))
+            .map(|q| match q.provenance {
+                crate::solve::QuantityProvenance::Input => 0.0,
+                crate::solve::QuantityProvenance::Solved => 1.0,
+                crate::solve::QuantityProvenance::Propagated => 2.0,
+            })
+            .unwrap_or(-1.0),
+    });
+    let value = json!({
+        "outputs": outputs,
+        "path_text": result.path_text(),
+        "warnings": result.workflow.warnings,
+    });
+    InvokeResponse::ok(op, request_id, value)
+}
+
 fn invoke_study_equation_sweep(
     op: &str,
     request_id: Option<String>,
@@ -3365,6 +3443,120 @@ fn invoke_study_equation_sweep(
     study_response(op, request_id, args, table)
 }
 
+fn invoke_study_device_sweep(op: &str, request_id: Option<String>, args: &Value) -> InvokeResponse {
+    let device_key = match req_str(args, "device_key") {
+        Ok(v) => v.to_string(),
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("device_key"), None);
+        }
+    };
+    let sweep_arg = match req_str(args, "sweep_arg") {
+        Ok(v) => v.to_string(),
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("sweep_arg"), None);
+        }
+    };
+    let axis = match parse_sweep_axis(op, request_id.clone(), args, &sweep_arg) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    let fixed_args = match args.get("fixed_args") {
+        Some(Value::Object(v)) => v.clone(),
+        Some(_) => {
+            return InvokeResponse::err(
+                op,
+                request_id,
+                "invalid_arg_type",
+                "fixed_args must be an object",
+                Some("fixed_args"),
+                None,
+            );
+        }
+        None => Map::new(),
+    };
+    let requested_outputs = args
+        .get("outputs")
+        .and_then(Value::as_array)
+        .map(|arr| {
+            arr.iter()
+                .filter_map(Value::as_str)
+                .map(|s| s.to_string())
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_else(|| vec!["value".to_string(), "path_text".to_string()]);
+    let spec = crate::solve::DeviceStudySpec {
+        device_key,
+        sweep_arg,
+        axis,
+        fixed_args,
+        requested_outputs,
+    };
+    let table = match crate::solve::run_device_study(&spec) {
+        Ok(v) => v,
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "study_device_failed", e, None, None);
+        }
+    };
+    study_response(op, request_id, args, table)
+}
+
+fn invoke_study_workflow_sweep(
+    op: &str,
+    request_id: Option<String>,
+    args: &Value,
+) -> InvokeResponse {
+    let workflow_key = match req_str(args, "workflow_key") {
+        Ok(v) => v.to_string(),
+        Err(e) => {
+            return InvokeResponse::err(
+                op,
+                request_id,
+                "missing_arg",
+                e,
+                Some("workflow_key"),
+                None,
+            );
+        }
+    };
+    let sweep_arg = match req_str(args, "sweep_arg") {
+        Ok(v) => v.to_string(),
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "missing_arg", e, Some("sweep_arg"), None);
+        }
+    };
+    let axis = match parse_sweep_axis(op, request_id.clone(), args, &sweep_arg) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
+    let fixed_args = match args.get("fixed_args") {
+        Some(Value::Object(v)) => v.clone(),
+        Some(_) => {
+            return InvokeResponse::err(
+                op,
+                request_id,
+                "invalid_arg_type",
+                "fixed_args must be an object",
+                Some("fixed_args"),
+                None,
+            );
+        }
+        None => Map::new(),
+    };
+    let spec = crate::solve::WorkflowStudySpec {
+        workflow_key,
+        sweep_arg,
+        axis,
+        fixed_args,
+    };
+    let table = match crate::solve::run_workflow_study(&spec) {
+        Ok(v) => v,
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "study_workflow_failed", e, None, None);
+        }
+    };
+    study_response(op, request_id, args, table)
+}
+
 fn invoke_study_isentropic_m_to_p_p0(
     op: &str,
     request_id: Option<String>,
@@ -3380,23 +3572,30 @@ fn invoke_study_isentropic_m_to_p_p0(
         Ok(v) => v,
         Err(resp) => return resp,
     };
-    let branch = match opt_str(args, "branch") {
-        Some(s) if !s.trim().is_empty() => match crate::devices::isentropic::parse_branch(s) {
-            Some(v) => Some(v),
-            None => {
-                return InvokeResponse::err(
-                    op,
-                    request_id,
-                    "invalid_arg_value",
-                    format!("unsupported branch '{s}'"),
-                    Some("branch"),
-                    None,
-                );
-            }
-        },
-        _ => None,
+    let mut fixed_args = Map::new();
+    fixed_args.insert("input_kind".to_string(), json!("mach"));
+    fixed_args.insert("target_kind".to_string(), json!("pressure_ratio"));
+    fixed_args.insert("gamma".to_string(), json!(gamma));
+    if let Some(branch) = opt_str(args, "branch").filter(|s| !s.trim().is_empty()) {
+        fixed_args.insert("branch".to_string(), json!(branch));
+    }
+    let spec = crate::solve::DeviceStudySpec {
+        device_key: "isentropic_calc".to_string(),
+        sweep_arg: "input_value".to_string(),
+        axis,
+        fixed_args,
+        requested_outputs: vec![
+            "value".to_string(),
+            "pivot".to_string(),
+            "path_text".to_string(),
+        ],
     };
-    let table = crate::solve::study_isentropic_m_to_p_p0(gamma, axis, branch);
+    let table = match crate::solve::run_device_study(&spec) {
+        Ok(v) => v,
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "study_device_failed", e, None, None);
+        }
+    };
     study_response(op, request_id, args, table)
 }
 
@@ -3416,20 +3615,28 @@ fn invoke_study_nozzle_flow_table(
         Err(resp) => return resp,
     };
     let branch_raw = opt_str(args, "branch").unwrap_or("supersonic");
-    let branch = match crate::devices::nozzle_flow::parse_branch(branch_raw) {
-        Some(v) => v,
-        None => {
-            return InvokeResponse::err(
-                op,
-                request_id,
-                "invalid_arg_value",
-                format!("unsupported branch '{branch_raw}'"),
-                Some("branch"),
-                None,
-            );
+    let mut fixed_args = Map::new();
+    fixed_args.insert("input_kind".to_string(), json!("area_ratio"));
+    fixed_args.insert("target_kind".to_string(), json!("mach"));
+    fixed_args.insert("gamma".to_string(), json!(gamma));
+    fixed_args.insert("branch".to_string(), json!(branch_raw));
+    let spec = crate::solve::DeviceStudySpec {
+        device_key: "nozzle_flow_calc".to_string(),
+        sweep_arg: "input_value".to_string(),
+        axis,
+        fixed_args,
+        requested_outputs: vec![
+            "value".to_string(),
+            "pivot".to_string(),
+            "path_text".to_string(),
+        ],
+    };
+    let table = match crate::solve::run_device_study(&spec) {
+        Ok(v) => v,
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "study_device_failed", e, None, None);
         }
     };
-    let table = crate::solve::study_nozzle_flow_area_ratio(gamma, axis, branch);
     study_response(op, request_id, args, table)
 }
 
@@ -3448,7 +3655,27 @@ fn invoke_study_normal_shock_table(
         Ok(v) => v,
         Err(resp) => return resp,
     };
-    let table = crate::solve::study_normal_shock_m1(gamma, axis);
+    let mut fixed_args = Map::new();
+    fixed_args.insert("input_kind".to_string(), json!("m1"));
+    fixed_args.insert("target_kind".to_string(), json!("m2"));
+    fixed_args.insert("gamma".to_string(), json!(gamma));
+    let spec = crate::solve::DeviceStudySpec {
+        device_key: "normal_shock_calc".to_string(),
+        sweep_arg: "input_value".to_string(),
+        axis,
+        fixed_args,
+        requested_outputs: vec![
+            "value".to_string(),
+            "pivot".to_string(),
+            "path_text".to_string(),
+        ],
+    };
+    let table = match crate::solve::run_device_study(&spec) {
+        Ok(v) => v,
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "study_device_failed", e, None, None);
+        }
+    };
     study_response(op, request_id, args, table)
 }
 
@@ -3468,20 +3695,21 @@ fn invoke_study_nozzle_normal_shock_table(
         Err(resp) => return resp,
     };
     let branch_raw = opt_str(args, "branch").unwrap_or("supersonic");
-    let branch = match crate::devices::nozzle_flow::parse_branch(branch_raw) {
-        Some(v) => v,
-        None => {
-            return InvokeResponse::err(
-                op,
-                request_id,
-                "invalid_arg_value",
-                format!("unsupported branch '{branch_raw}'"),
-                Some("branch"),
-                None,
-            );
+    let mut fixed_args = Map::new();
+    fixed_args.insert("gamma".to_string(), json!(gamma));
+    fixed_args.insert("branch".to_string(), json!(branch_raw));
+    let spec = crate::solve::WorkflowStudySpec {
+        workflow_key: "nozzle_normal_shock_chain".to_string(),
+        sweep_arg: "area_ratio".to_string(),
+        axis,
+        fixed_args,
+    };
+    let table = match crate::solve::run_workflow_study(&spec) {
+        Ok(v) => v,
+        Err(e) => {
+            return InvokeResponse::err(op, request_id, "study_workflow_failed", e, None, None);
         }
     };
-    let table = crate::solve::study_nozzle_normal_shock_workflow(gamma, axis, branch);
     study_response(op, request_id, args, table)
 }
 

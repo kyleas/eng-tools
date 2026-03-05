@@ -259,8 +259,20 @@
       "description": "Run nozzle-flow calculator device and return compact path trace text"
     },
     {
+      "op": "workflow.nozzle_normal_shock.eval",
+      "description": "Evaluate one nozzle+normal-shock workflow sample and return outputs+path diagnostics"
+    },
+    {
       "op": "study.equation.sweep",
       "description": "Run 1D equation parameter sweep and return diagnostics-aware table"
+    },
+    {
+      "op": "study.device.sweep",
+      "description": "Run generic 1D device parameter sweep from device metadata"
+    },
+    {
+      "op": "study.workflow.sweep",
+      "description": "Run generic 1D workflow parameter sweep from workflow metadata"
     },
     {
       "op": "study.device.isentropic_m_to_p_p0.table",

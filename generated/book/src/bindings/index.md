@@ -52,6 +52,8 @@ Rust remains the authoritative implementation. Generated Python and Excel bindin
   - `engpy.helpers.format_value(value, in_unit, out_unit)`
   - `engpy.helpers.meta_get(entity, key, field)`
   - `engpy.study.equation_sweep_table(...)`
+  - `engpy.study.device_table(...)`
+  - `engpy.study.workflow_table(...)`
   - `engpy.study.isentropic_m_to_p_p0_table(...)`
   - `engpy.study.nozzle_flow_table(...)`
   - `engpy.study.normal_shock_table(...)`
@@ -70,6 +72,11 @@ Rust remains the authoritative implementation. Generated Python and Excel bindin
   - `ENG_EQUATION_FAMILY(path_id)`
   - `ENG_EQUATION_DEFAULT_UNIT(path_id, variable)`
 
+  - `ENG_STUDY_EQUATION_TABLE(path_id, target, sweep_variable, start, end, count, [spacing], [branch])`
+  - `ENG_STUDY_DEVICE_TABLE(device_key, sweep_arg, start, end, count, fixed_args_json, [outputs_csv])`
+  - `ENG_STUDY_WORKFLOW_TABLE(workflow_key, sweep_arg, start, end, count, fixed_args_json)`
+
+  - Convenience wrappers:
   - `ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE(gamma, start, end, count, [branch])`
   - `ENG_STUDY_NOZZLE_FLOW_TABLE(gamma, start, end, count, branch)`
   - `ENG_STUDY_NORMAL_SHOCK_TABLE(gamma, start, end, count)`

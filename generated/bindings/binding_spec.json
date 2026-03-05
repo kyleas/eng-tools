@@ -7927,6 +7927,52 @@
       "pyxll_example": "=ENG_STUDY_NOZZLE_FLOW_TABLE(1.4,1.2,3,20,\"supersonic\")"
     },
     {
+      "id": "study.device.sweep",
+      "entity": "study",
+      "source": "devices",
+      "python_module": "study",
+      "python_name": "device_table",
+      "excel_name": "ENG_STUDY_DEVICE_TABLE",
+      "op": "study.device.sweep",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "device_key",
+          "description": "Device key (for example nozzle_flow_calc)"
+        },
+        {
+          "name": "sweep_arg",
+          "description": "Numeric argument name to sweep"
+        },
+        {
+          "name": "start",
+          "description": "Sweep start"
+        },
+        {
+          "name": "end",
+          "description": "Sweep end"
+        },
+        {
+          "name": "count",
+          "description": "Sample count"
+        },
+        {
+          "name": "fixed_args",
+          "description": "JSON object string for fixed args"
+        },
+        {
+          "name": "outputs",
+          "description": "Optional output list string (comma separated: value,pivot,path_text)"
+        }
+      ],
+      "returns": "dict(table, spill)",
+      "help": "Generic metadata-driven device study table",
+      "rust_example": "eng::solve::run_device_study(...)",
+      "python_example": "engpy.study.device_table(device_key=\"nozzle_flow_calc\", sweep_arg=\"input_value\", start=1.2, end=3.0, count=10, fixed_args={\"input_kind\":\"area_ratio\",\"target_kind\":\"mach\",\"gamma\":1.4,\"branch\":\"supersonic\"})",
+      "xloil_example": "=ENG_STUDY_DEVICE_TABLE(\"nozzle_flow_calc\",\"input_value\",1.2,3,10,\"{\"\"input_kind\"\":\"\"area_ratio\"\",\"\"target_kind\"\":\"\"mach\"\",\"\"gamma\"\":1.4,\"\"branch\"\":\"\"supersonic\"\"}\",\"value,pivot,path_text\")",
+      "pyxll_example": "=ENG_STUDY_DEVICE_TABLE(\"nozzle_flow_calc\",\"input_value\",1.2,3,10,\"{\"\"input_kind\"\":\"\"area_ratio\"\",\"\"target_kind\"\":\"\"mach\"\",\"\"gamma\"\":1.4,\"\"branch\"\":\"\"supersonic\"\"}\",\"value,pivot,path_text\")"
+    },
+    {
       "id": "study.equation.sweep",
       "entity": "study",
       "source": "equation",
@@ -8013,6 +8059,48 @@
       "python_example": "engpy.study.nozzle_normal_shock_workflow_table(gamma=1.4, start=1.2, end=3.0, count=20, branch=\"supersonic\")",
       "xloil_example": "=ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE(1.4,1.2,3,20,\"supersonic\")",
       "pyxll_example": "=ENG_STUDY_NOZZLE_NORMAL_SHOCK_WORKFLOW_TABLE(1.4,1.2,3,20,\"supersonic\")"
+    },
+    {
+      "id": "study.workflow.sweep",
+      "entity": "study",
+      "source": "workflows",
+      "python_module": "study",
+      "python_name": "workflow_table",
+      "excel_name": "ENG_STUDY_WORKFLOW_TABLE",
+      "op": "study.workflow.sweep",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "workflow_key",
+          "description": "Workflow key (for example nozzle_normal_shock_chain)"
+        },
+        {
+          "name": "sweep_arg",
+          "description": "Numeric argument name to sweep"
+        },
+        {
+          "name": "start",
+          "description": "Sweep start"
+        },
+        {
+          "name": "end",
+          "description": "Sweep end"
+        },
+        {
+          "name": "count",
+          "description": "Sample count"
+        },
+        {
+          "name": "fixed_args",
+          "description": "JSON object string for fixed args"
+        }
+      ],
+      "returns": "dict(table, spill)",
+      "help": "Generic workflow-chain study table",
+      "rust_example": "eng::solve::run_workflow_study(...)",
+      "python_example": "engpy.study.workflow_table(workflow_key=\"nozzle_normal_shock_chain\", sweep_arg=\"area_ratio\", start=1.2, end=3.0, count=12, fixed_args={\"gamma\":1.4,\"branch\":\"supersonic\"})",
+      "xloil_example": "=ENG_STUDY_WORKFLOW_TABLE(\"nozzle_normal_shock_chain\",\"area_ratio\",1.2,3,12,\"{\"\"gamma\"\":1.4,\"\"branch\"\":\"\"supersonic\"\"}\")",
+      "pyxll_example": "=ENG_STUDY_WORKFLOW_TABLE(\"nozzle_normal_shock_chain\",\"area_ratio\",1.2,3,12,\"{\"\"gamma\"\":1.4,\"\"branch\"\":\"\"supersonic\"\"}\")"
     }
   ]
 }

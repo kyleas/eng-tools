@@ -155,7 +155,8 @@ fn unified_mdbook_export_api_writes_book_structure() {
             .expect("read studies page");
     assert!(studies_page.contains("Studies and Parameter Sweeps"));
     assert!(studies_page.contains("run_equation_study"));
-    assert!(studies_page.contains("study_nozzle_normal_shock_workflow"));
+    assert!(studies_page.contains("run_device_study"));
+    assert!(studies_page.contains("run_workflow_study"));
 }
 
 #[test]

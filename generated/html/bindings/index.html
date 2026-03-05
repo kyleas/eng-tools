@@ -37,7 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-67deae90.js";
+            window.path_to_searchindex_js = "../searchindex-6ab4289e.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-6c0f58de.js"></script>
@@ -228,6 +228,8 @@
 <li><code>engpy.helpers.format_value(value, in_unit, out_unit)</code></li>
 <li><code>engpy.helpers.meta_get(entity, key, field)</code></li>
 <li><code>engpy.study.equation_sweep_table(...)</code></li>
+<li><code>engpy.study.device_table(...)</code></li>
+<li><code>engpy.study.workflow_table(...)</code></li>
 <li><code>engpy.study.isentropic_m_to_p_p0_table(...)</code></li>
 <li><code>engpy.study.nozzle_flow_table(...)</code></li>
 <li><code>engpy.study.normal_shock_table(...)</code></li>
@@ -271,6 +273,18 @@
 </li>
 <li>
 <p><code>ENG_EQUATION_DEFAULT_UNIT(path_id, variable)</code></p>
+</li>
+<li>
+<p><code>ENG_STUDY_EQUATION_TABLE(path_id, target, sweep_variable, start, end, count, [spacing], [branch])</code></p>
+</li>
+<li>
+<p><code>ENG_STUDY_DEVICE_TABLE(device_key, sweep_arg, start, end, count, fixed_args_json, [outputs_csv])</code></p>
+</li>
+<li>
+<p><code>ENG_STUDY_WORKFLOW_TABLE(workflow_key, sweep_arg, start, end, count, fixed_args_json)</code></p>
+</li>
+<li>
+<p>Convenience wrappers:</p>
 </li>
 <li>
 <p><code>ENG_STUDY_ISENTROPIC_M_TO_P_P0_TABLE(gamma, start, end, count, [branch])</code></p>
