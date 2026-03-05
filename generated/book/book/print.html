@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-9bf5a7c8.js";
+            window.path_to_searchindex_js = "searchindex-1f0df41d.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-171c17c7.js"></script>
@@ -1086,67 +1086,560 @@ variants:
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="compressible"><a class="header" href="#compressible">Compressible</a></h1>
 <h2 id="equation-summary"><a class="header" href="#equation-summary">Equation Summary</a></h2>
-<table>
-<thead>
-<tr><th>Equation</th><th>Path ID</th><th>LaTeX</th><th>Targets</th><th>Default</th><th>Branches</th><th>Subcategory</th></tr>
-</thead>
-<tbody>
-<tr><td><a href="#isentropic-area-mach-relation">Isentropic Area-Mach Relation</a></td><td><code>compressible.area_mach</code></td><td>\(\frac{A}{A^*} = \frac{1}{M}\left(\frac{2}{\gamma+1}\left(1+\frac{\gamma-1}{2}M^2\right)\right)^{\frac{\gamma+1}{2(\gamma-1)}}\)</td><td><code>M</code>, <code>area_ratio</code></td><td><code>-</code></td><td><code>subsonic</code>, <code>supersonic</code></td><td>-</td></tr>
+<style>
+.equation-summary-cards { display: grid; grid-template-columns: 1fr; gap: 0.9rem; margin: 0.6rem 0 1rem; }
+.equation-summary-card { border: 1px solid var(--table-border-color); border-radius: 10px; padding: 0.9rem 1rem; background: rgba(255,255,255,0.02); }
+.equation-summary-title { font-size: 1.02rem; font-weight: 600; margin: 0 0 0.35rem; }
+.equation-summary-path { font-family: var(--mono-font); font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.45rem; overflow-wrap: anywhere; }
+.equation-summary-latex { text-align: center; font-size: 1.2rem; line-height: 1.45; margin: 0.5rem 0 0.6rem; overflow-x: auto; }
+.equation-summary-meta { display: grid; grid-template-columns: auto 1fr; column-gap: 0.55rem; row-gap: 0.25rem; font-size: 0.9rem; }
+.equation-summary-meta-label { opacity: 0.85; }
+.equation-summary-meta-value { overflow-wrap: anywhere; }
+.equation-summary-meta-value code { white-space: nowrap; }
+@media (max-width: 900px) { .equation-summary-latex { font-size: 1.1rem; } }
+</style>
+<div class="equation-summary-cards">
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#isentropic-area-mach-relation">Isentropic Area-Mach Relation</a></h3>
 
-<tr><td><a href="#choked-mass-flux">Choked Mass Flux</a></td><td><code>compressible.choked_mass_flux</code></td><td>\(G^* = \frac{p_0}{\sqrt{T_0}} \sqrt{\frac{\gamma}{R}} \left(\frac{2}{\gamma+1}\right)^{(\gamma+1)/(2(\gamma-1))}\)</td><td><code>G_star</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-path"><code>compressible.area_mach</code></div>
 
-<tr><td><a href="#fanno-density-ratio">Fanno Density Ratio</a></td><td><code>compressible.fanno_density_ratio</code></td><td>\(\frac{\rho}{\rho^*} = \frac{1}{M}\sqrt{\frac{1+\frac{\gamma-1}{2}M^2}{\frac{\gamma+1}{2}}}\)</td><td><code>M</code>, <code>rho_rhostar</code></td><td><code>-</code></td><td><code>subsonic</code>, <code>supersonic</code></td><td>-</td></tr>
+<div class="equation-summary-latex">\(\frac{A}{A^*} = \frac{1}{M}\left(\frac{2}{\gamma+1}\left(1+\frac{\gamma-1}{2}M^2\right)\right)^{\frac{\gamma+1}{2(\gamma-1)}}\)</div>
 
-<tr><td><a href="#fanno-friction-length-parameter">Fanno Friction Length Parameter</a></td><td><code>compressible.fanno_friction_parameter</code></td><td>\(\frac{4 f L^*}{D} = \frac{1-M^2}{\gamma M^2} + \frac{\gamma+1}{2\gamma}\ln\!\left(\frac{\frac{\gamma+1}{2}M^2}{1+\frac{\gamma-1}{2}M^2}\right)\)</td><td><code>M</code>, <code>four_flstar_d</code></td><td><code>-</code></td><td><code>subsonic</code>, <code>supersonic</code></td><td>-</td></tr>
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>area_ratio</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value"><code>subsonic</code>, <code>supersonic</code></div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
 
-<tr><td><a href="#fanno-pressure-ratio">Fanno Pressure Ratio</a></td><td><code>compressible.fanno_pressure_ratio</code></td><td>\(\frac{p}{p^*} = \frac{1}{M}\sqrt{\frac{\frac{\gamma+1}{2}}{1+\frac{\gamma-1}{2}M^2}}\)</td><td><code>M</code>, <code>p_pstar</code></td><td><code>-</code></td><td><code>subsonic</code>, <code>supersonic</code></td><td>-</td></tr>
+</div>
 
-<tr><td><a href="#fanno-stagnation-pressure-ratio">Fanno Stagnation Pressure Ratio</a></td><td><code>compressible.fanno_stagnation_pressure_ratio</code></td><td>\(\frac{p_0}{p_0^*} = \frac{1}{M}\left(\frac{1+\frac{\gamma-1}{2}M^2}{\frac{\gamma+1}{2}}\right)^{\frac{\gamma+1}{2(\gamma-1)}}\)</td><td><code>M</code>, <code>p0_p0star</code></td><td><code>-</code></td><td><code>subsonic</code>, <code>supersonic</code></td><td>-</td></tr>
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#choked-mass-flux">Choked Mass Flux</a></h3>
 
-<tr><td><a href="#fanno-temperature-ratio">Fanno Temperature Ratio</a></td><td><code>compressible.fanno_temperature_ratio</code></td><td>\(\frac{T}{T^*} = \frac{\frac{\gamma+1}{2}}{1+\frac{\gamma-1}{2}M^2}\)</td><td><code>M</code>, <code>t_tstar</code></td><td><code>-</code></td><td><code>subsonic</code>, <code>supersonic</code></td><td>-</td></tr>
+<div class="equation-summary-path"><code>compressible.choked_mass_flux</code></div>
 
-<tr><td><a href="#fanno-velocity-ratio">Fanno Velocity Ratio</a></td><td><code>compressible.fanno_velocity_ratio</code></td><td>\(\frac{V}{V^*} = M\sqrt{\frac{\frac{\gamma+1}{2}}{1+\frac{\gamma-1}{2}M^2}}\)</td><td><code>M</code>, <code>v_vstar</code></td><td><code>-</code></td><td><code>subsonic</code>, <code>supersonic</code></td><td>-</td></tr>
+<div class="equation-summary-latex">\(G^* = \frac{p_0}{\sqrt{T_0}} \sqrt{\frac{\gamma}{R}} \left(\frac{2}{\gamma+1}\right)^{(\gamma+1)/(2(\gamma-1))}\)</div>
 
-<tr><td><a href="#isentropic-density-ratio">Isentropic Density Ratio</a></td><td><code>compressible.isentropic_density_ratio</code></td><td>\(\frac{\rho}{\rho_0} = \left(1+\frac{\gamma-1}{2}M^2\right)^{-1/(\gamma-1)}\)</td><td><code>M</code>, <code>rho_rho0</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>G_star</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
 
-<tr><td><a href="#isentropic-pressure-ratio">Isentropic Pressure Ratio</a></td><td><code>compressible.isentropic_pressure_ratio</code></td><td>\(\frac{p}{p_0} = \left(1+\frac{\gamma-1}{2}M^2\right)^{-\gamma/(\gamma-1)}\)</td><td><code>M</code>, <code>p_p0</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+</div>
 
-<tr><td><a href="#isentropic-temperature-ratio">Isentropic Temperature Ratio</a></td><td><code>compressible.isentropic_temperature_ratio</code></td><td>\(\frac{T}{T_0} = \left(1+\frac{\gamma-1}{2}M^2\right)^{-1}\)</td><td><code>M</code>, <code>T_T0</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#fanno-density-ratio">Fanno Density Ratio</a></h3>
 
-<tr><td><a href="#mach-angle">Mach Angle</a></td><td><code>compressible.mach_angle</code></td><td>\(\mu = \arcsin\left(\frac{1}{M}\right)\)</td><td><code>M</code>, <code>mu</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-path"><code>compressible.fanno_density_ratio</code></div>
 
-<tr><td><a href="#normal-shock-density-ratio">Normal Shock Density Ratio</a></td><td><code>compressible.normal_shock_density_ratio</code></td><td>\(\frac{\rho_2}{\rho_1} = \frac{(\gamma+1)M_1^2}{(\gamma-1)M_1^2+2}\)</td><td><code>M1</code>, <code>rho2_rho1</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-latex">\(\frac{\rho}{\rho^*} = \frac{1}{M}\sqrt{\frac{1+\frac{\gamma-1}{2}M^2}{\frac{\gamma+1}{2}}}\)</div>
 
-<tr><td><a href="#normal-shock-downstream-mach-number">Normal Shock Downstream Mach Number</a></td><td><code>compressible.normal_shock_m2</code></td><td>\(M_2 = \sqrt{\frac{1 + \frac{\gamma-1}{2}M_1^2}{\gamma M_1^2 - \frac{\gamma-1}{2}}}\)</td><td><code>M1</code>, <code>M2</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>rho_rhostar</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value"><code>subsonic</code>, <code>supersonic</code></div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
 
-<tr><td><a href="#normal-shock-static-pressure-ratio">Normal Shock Static Pressure Ratio</a></td><td><code>compressible.normal_shock_pressure_ratio</code></td><td>\(\frac{p_2}{p_1} = 1 + \frac{2\gamma}{\gamma+1}(M_1^2-1)\)</td><td><code>M1</code>, <code>p2_p1</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+</div>
 
-<tr><td><a href="#normal-shock-stagnation-pressure-ratio">Normal Shock Stagnation Pressure Ratio</a></td><td><code>compressible.normal_shock_stagnation_pressure_ratio</code></td><td>\(\frac{p_{02}}{p_{01}} = \left(\frac{(\gamma+1)M_1^2}{(\gamma-1)M_1^2+2}\right)^{\gamma/(\gamma-1)}\left(\frac{\gamma+1}{2\gamma M_1^2-(\gamma-1)}\right)^{1/(\gamma-1)}\)</td><td><code>M1</code>, <code>p02_p01</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#fanno-friction-length-parameter">Fanno Friction Length Parameter</a></h3>
 
-<tr><td><a href="#normal-shock-temperature-ratio">Normal Shock Temperature Ratio</a></td><td><code>compressible.normal_shock_temperature_ratio</code></td><td>\(\frac{T_2}{T_1} = \frac{p_2/p_1}{\rho_2/\rho_1} = \left(1+\frac{2\gamma}{\gamma+1}(M_1^2-1)\right)\frac{(\gamma-1)M_1^2+2}{(\gamma+1)M_1^2}\)</td><td><code>M1</code>, <code>T2_T1</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-path"><code>compressible.fanno_friction_parameter</code></div>
 
-<tr><td><a href="#oblique-shock-downstream-mach">Oblique Shock Downstream Mach</a></td><td><code>compressible.oblique_shock_m2</code></td><td>\(M_2 = \frac{M_{n2}}{\sin(\beta-\theta)}\)</td><td><code>beta</code>, <code>m2</code>, <code>mn2</code>, <code>theta</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-latex">\(\frac{4 f L^*}{D} = \frac{1-M^2}{\gamma M^2} + \frac{\gamma+1}{2\gamma}\ln\!\left(\frac{\frac{\gamma+1}{2}M^2}{1+\frac{\gamma-1}{2}M^2}\right)\)</div>
 
-<tr><td><a href="#oblique-shock-normal-upstream-mach">Oblique Shock Normal Upstream Mach</a></td><td><code>compressible.oblique_shock_mn1</code></td><td>\(M_{n1} = M_1 \sin\beta\)</td><td><code>beta</code>, <code>m1</code>, <code>mn1</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>four_flstar_d</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value"><code>subsonic</code>, <code>supersonic</code></div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
 
-<tr><td><a href="#oblique-shock-theta-beta-m-relation">Oblique Shock Theta-Beta-M Relation</a></td><td><code>compressible.oblique_shock_theta_beta_m</code></td><td>\(\tan\theta = \frac{2\cot\beta\left(M_1^2\sin^2\beta - 1\right)}{M_1^2\left(\gamma + \cos 2\beta\right)+2}\)</td><td><code>beta</code>, <code>theta</code></td><td><code>-</code></td><td><code>weak</code>, <code>strong</code></td><td>-</td></tr>
+</div>
 
-<tr><td><a href="#prandtl-meyer-expansion-angle">Prandtl-Meyer Expansion Angle</a></td><td><code>compressible.prandtl_meyer</code></td><td>\(\nu = \sqrt{\frac{\gamma+1}{\gamma-1}} \tan^{-1}\!\left(\sqrt{\frac{\gamma-1}{\gamma+1}(M^2-1)}\right) - \tan^{-1}\!\left(\sqrt{M^2-1}\right)\)</td><td><code>M</code>, <code>nu</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#fanno-pressure-ratio">Fanno Pressure Ratio</a></h3>
 
-<tr><td><a href="#rayleigh-density-ratio">Rayleigh Density Ratio</a></td><td><code>compressible.rayleigh_density_ratio</code></td><td>\(\frac{\rho}{\rho^*} = \frac{1+\gamma M^2}{(\gamma+1)M^2}\)</td><td><code>M</code>, <code>rho_rhostar</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-path"><code>compressible.fanno_pressure_ratio</code></div>
 
-<tr><td><a href="#rayleigh-pressure-ratio">Rayleigh Pressure Ratio</a></td><td><code>compressible.rayleigh_pressure_ratio</code></td><td>\(\frac{p}{p^*} = \frac{\gamma+1}{1+\gamma M^2}\)</td><td><code>M</code>, <code>p_pstar</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-latex">\(\frac{p}{p^*} = \frac{1}{M}\sqrt{\frac{\frac{\gamma+1}{2}}{1+\frac{\gamma-1}{2}M^2}}\)</div>
 
-<tr><td><a href="#rayleigh-stagnation-pressure-ratio">Rayleigh Stagnation Pressure Ratio</a></td><td><code>compressible.rayleigh_stagnation_pressure_ratio</code></td><td>\(\frac{p_0}{p_0^*} = \frac{\gamma+1}{1+\gamma M^2}\left(\frac{1+\frac{\gamma-1}{2}M^2}{\frac{\gamma+1}{2}}\right)^{\frac{\gamma}{\gamma-1}}\)</td><td><code>M</code>, <code>p0_p0star</code></td><td><code>-</code></td><td><code>subsonic</code>, <code>supersonic</code></td><td>-</td></tr>
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>p_pstar</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value"><code>subsonic</code>, <code>supersonic</code></div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
 
-<tr><td><a href="#rayleigh-stagnation-temperature-ratio">Rayleigh Stagnation Temperature Ratio</a></td><td><code>compressible.rayleigh_stagnation_temperature_ratio</code></td><td>\(\frac{T_0}{T_0^*} = \frac{2(\gamma+1)M^2\left(1+\frac{\gamma-1}{2}M^2\right)}{(1+\gamma M^2)^2}\)</td><td><code>M</code>, <code>t0_t0star</code></td><td><code>-</code></td><td><code>subsonic</code>, <code>supersonic</code></td><td>-</td></tr>
+</div>
 
-<tr><td><a href="#rayleigh-temperature-ratio">Rayleigh Temperature Ratio</a></td><td><code>compressible.rayleigh_temperature_ratio</code></td><td>\(\frac{T}{T^*} = \frac{(\gamma+1)^2 M^2}{(1+\gamma M^2)^2}\)</td><td><code>M</code>, <code>t_tstar</code></td><td><code>-</code></td><td><code>subsonic</code>, <code>supersonic</code></td><td>-</td></tr>
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#fanno-stagnation-pressure-ratio">Fanno Stagnation Pressure Ratio</a></h3>
 
-<tr><td><a href="#rayleigh-velocity-ratio">Rayleigh Velocity Ratio</a></td><td><code>compressible.rayleigh_velocity_ratio</code></td><td>\(\frac{V}{V^*} = \frac{(\gamma+1)M^2}{1+\gamma M^2}\)</td><td><code>M</code>, <code>v_vstar</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-path"><code>compressible.fanno_stagnation_pressure_ratio</code></div>
 
-</tbody>
-</table>
+<div class="equation-summary-latex">\(\frac{p_0}{p_0^*} = \frac{1}{M}\left(\frac{1+\frac{\gamma-1}{2}M^2}{\frac{\gamma+1}{2}}\right)^{\frac{\gamma+1}{2(\gamma-1)}}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>p0_p0star</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value"><code>subsonic</code>, <code>supersonic</code></div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#fanno-temperature-ratio">Fanno Temperature Ratio</a></h3>
+
+<div class="equation-summary-path"><code>compressible.fanno_temperature_ratio</code></div>
+
+<div class="equation-summary-latex">\(\frac{T}{T^*} = \frac{\frac{\gamma+1}{2}}{1+\frac{\gamma-1}{2}M^2}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>t_tstar</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value"><code>subsonic</code>, <code>supersonic</code></div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#fanno-velocity-ratio">Fanno Velocity Ratio</a></h3>
+
+<div class="equation-summary-path"><code>compressible.fanno_velocity_ratio</code></div>
+
+<div class="equation-summary-latex">\(\frac{V}{V^*} = M\sqrt{\frac{\frac{\gamma+1}{2}}{1+\frac{\gamma-1}{2}M^2}}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>v_vstar</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value"><code>subsonic</code>, <code>supersonic</code></div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#isentropic-density-ratio">Isentropic Density Ratio</a></h3>
+
+<div class="equation-summary-path"><code>compressible.isentropic_density_ratio</code></div>
+
+<div class="equation-summary-latex">\(\frac{\rho}{\rho_0} = \left(1+\frac{\gamma-1}{2}M^2\right)^{-1/(\gamma-1)}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>rho_rho0</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#isentropic-pressure-ratio">Isentropic Pressure Ratio</a></h3>
+
+<div class="equation-summary-path"><code>compressible.isentropic_pressure_ratio</code></div>
+
+<div class="equation-summary-latex">\(\frac{p}{p_0} = \left(1+\frac{\gamma-1}{2}M^2\right)^{-\gamma/(\gamma-1)}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>p_p0</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#isentropic-temperature-ratio">Isentropic Temperature Ratio</a></h3>
+
+<div class="equation-summary-path"><code>compressible.isentropic_temperature_ratio</code></div>
+
+<div class="equation-summary-latex">\(\frac{T}{T_0} = \left(1+\frac{\gamma-1}{2}M^2\right)^{-1}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>T_T0</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#mach-angle">Mach Angle</a></h3>
+
+<div class="equation-summary-path"><code>compressible.mach_angle</code></div>
+
+<div class="equation-summary-latex">\(\mu = \arcsin\left(\frac{1}{M}\right)\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>mu</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#normal-shock-density-ratio">Normal Shock Density Ratio</a></h3>
+
+<div class="equation-summary-path"><code>compressible.normal_shock_density_ratio</code></div>
+
+<div class="equation-summary-latex">\(\frac{\rho_2}{\rho_1} = \frac{(\gamma+1)M_1^2}{(\gamma-1)M_1^2+2}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M1</code>, <code>rho2_rho1</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#normal-shock-downstream-mach-number">Normal Shock Downstream Mach Number</a></h3>
+
+<div class="equation-summary-path"><code>compressible.normal_shock_m2</code></div>
+
+<div class="equation-summary-latex">\(M_2 = \sqrt{\frac{1 + \frac{\gamma-1}{2}M_1^2}{\gamma M_1^2 - \frac{\gamma-1}{2}}}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M1</code>, <code>M2</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#normal-shock-static-pressure-ratio">Normal Shock Static Pressure Ratio</a></h3>
+
+<div class="equation-summary-path"><code>compressible.normal_shock_pressure_ratio</code></div>
+
+<div class="equation-summary-latex">\(\frac{p_2}{p_1} = 1 + \frac{2\gamma}{\gamma+1}(M_1^2-1)\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M1</code>, <code>p2_p1</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#normal-shock-stagnation-pressure-ratio">Normal Shock Stagnation Pressure Ratio</a></h3>
+
+<div class="equation-summary-path"><code>compressible.normal_shock_stagnation_pressure_ratio</code></div>
+
+<div class="equation-summary-latex">\(\frac{p_{02}}{p_{01}} = \left(\frac{(\gamma+1)M_1^2}{(\gamma-1)M_1^2+2}\right)^{\gamma/(\gamma-1)}\left(\frac{\gamma+1}{2\gamma M_1^2-(\gamma-1)}\right)^{1/(\gamma-1)}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M1</code>, <code>p02_p01</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#normal-shock-temperature-ratio">Normal Shock Temperature Ratio</a></h3>
+
+<div class="equation-summary-path"><code>compressible.normal_shock_temperature_ratio</code></div>
+
+<div class="equation-summary-latex">\(\frac{T_2}{T_1} = \frac{p_2/p_1}{\rho_2/\rho_1} = \left(1+\frac{2\gamma}{\gamma+1}(M_1^2-1)\right)\frac{(\gamma-1)M_1^2+2}{(\gamma+1)M_1^2}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M1</code>, <code>T2_T1</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#oblique-shock-downstream-mach">Oblique Shock Downstream Mach</a></h3>
+
+<div class="equation-summary-path"><code>compressible.oblique_shock_m2</code></div>
+
+<div class="equation-summary-latex">\(M_2 = \frac{M_{n2}}{\sin(\beta-\theta)}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>beta</code>, <code>m2</code>, <code>mn2</code>, <code>theta</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#oblique-shock-normal-upstream-mach">Oblique Shock Normal Upstream Mach</a></h3>
+
+<div class="equation-summary-path"><code>compressible.oblique_shock_mn1</code></div>
+
+<div class="equation-summary-latex">\(M_{n1} = M_1 \sin\beta\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>beta</code>, <code>m1</code>, <code>mn1</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#oblique-shock-theta-beta-m-relation">Oblique Shock Theta-Beta-M Relation</a></h3>
+
+<div class="equation-summary-path"><code>compressible.oblique_shock_theta_beta_m</code></div>
+
+<div class="equation-summary-latex">\(\tan\theta = \frac{2\cot\beta\left(M_1^2\sin^2\beta - 1\right)}{M_1^2\left(\gamma + \cos 2\beta\right)+2}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>beta</code>, <code>theta</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value"><code>weak</code>, <code>strong</code></div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#prandtl-meyer-expansion-angle">Prandtl-Meyer Expansion Angle</a></h3>
+
+<div class="equation-summary-path"><code>compressible.prandtl_meyer</code></div>
+
+<div class="equation-summary-latex">\(\nu = \sqrt{\frac{\gamma+1}{\gamma-1}} \tan^{-1}\!\left(\sqrt{\frac{\gamma-1}{\gamma+1}(M^2-1)}\right) - \tan^{-1}\!\left(\sqrt{M^2-1}\right)\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>nu</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#rayleigh-density-ratio">Rayleigh Density Ratio</a></h3>
+
+<div class="equation-summary-path"><code>compressible.rayleigh_density_ratio</code></div>
+
+<div class="equation-summary-latex">\(\frac{\rho}{\rho^*} = \frac{1+\gamma M^2}{(\gamma+1)M^2}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>rho_rhostar</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#rayleigh-pressure-ratio">Rayleigh Pressure Ratio</a></h3>
+
+<div class="equation-summary-path"><code>compressible.rayleigh_pressure_ratio</code></div>
+
+<div class="equation-summary-latex">\(\frac{p}{p^*} = \frac{\gamma+1}{1+\gamma M^2}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>p_pstar</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#rayleigh-stagnation-pressure-ratio">Rayleigh Stagnation Pressure Ratio</a></h3>
+
+<div class="equation-summary-path"><code>compressible.rayleigh_stagnation_pressure_ratio</code></div>
+
+<div class="equation-summary-latex">\(\frac{p_0}{p_0^*} = \frac{\gamma+1}{1+\gamma M^2}\left(\frac{1+\frac{\gamma-1}{2}M^2}{\frac{\gamma+1}{2}}\right)^{\frac{\gamma}{\gamma-1}}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>p0_p0star</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value"><code>subsonic</code>, <code>supersonic</code></div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#rayleigh-stagnation-temperature-ratio">Rayleigh Stagnation Temperature Ratio</a></h3>
+
+<div class="equation-summary-path"><code>compressible.rayleigh_stagnation_temperature_ratio</code></div>
+
+<div class="equation-summary-latex">\(\frac{T_0}{T_0^*} = \frac{2(\gamma+1)M^2\left(1+\frac{\gamma-1}{2}M^2\right)}{(1+\gamma M^2)^2}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>t0_t0star</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value"><code>subsonic</code>, <code>supersonic</code></div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#rayleigh-temperature-ratio">Rayleigh Temperature Ratio</a></h3>
+
+<div class="equation-summary-path"><code>compressible.rayleigh_temperature_ratio</code></div>
+
+<div class="equation-summary-latex">\(\frac{T}{T^*} = \frac{(\gamma+1)^2 M^2}{(1+\gamma M^2)^2}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>t_tstar</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value"><code>subsonic</code>, <code>supersonic</code></div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#rayleigh-velocity-ratio">Rayleigh Velocity Ratio</a></h3>
+
+<div class="equation-summary-path"><code>compressible.rayleigh_velocity_ratio</code></div>
+
+<div class="equation-summary-latex">\(\frac{V}{V^*} = \frac{(\gamma+1)M^2}{1+\gamma M^2}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>M</code>, <code>v_vstar</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+</div>
 
 <h2 id="browse"><a class="header" href="#browse">Browse</a></h2>
 <ul>
@@ -3640,25 +4133,140 @@ engpy.helpers.equation_target_count("compressible.rayleigh_velocity_ratio")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="fluids"><a class="header" href="#fluids">Fluids</a></h1>
 <h2 id="equation-summary-1"><a class="header" href="#equation-summary-1">Equation Summary</a></h2>
-<table>
-<thead>
-<tr><th>Equation</th><th>Path ID</th><th>LaTeX</th><th>Targets</th><th>Default</th><th>Branches</th><th>Subcategory</th></tr>
-</thead>
-<tbody>
-<tr><td><a href="#circular-pipe-flow-area">Circular Pipe Flow Area</a></td><td><code>fluids.circular_pipe_area</code></td><td>\(A = \frac{\pi D^2}{4}\)</td><td><code>A</code>, <code>D</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<style>
+.equation-summary-cards { display: grid; grid-template-columns: 1fr; gap: 0.9rem; margin: 0.6rem 0 1rem; }
+.equation-summary-card { border: 1px solid var(--table-border-color); border-radius: 10px; padding: 0.9rem 1rem; background: rgba(255,255,255,0.02); }
+.equation-summary-title { font-size: 1.02rem; font-weight: 600; margin: 0 0 0.35rem; }
+.equation-summary-path { font-family: var(--mono-font); font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.45rem; overflow-wrap: anywhere; }
+.equation-summary-latex { text-align: center; font-size: 1.2rem; line-height: 1.45; margin: 0.5rem 0 0.6rem; overflow-x: auto; }
+.equation-summary-meta { display: grid; grid-template-columns: auto 1fr; column-gap: 0.55rem; row-gap: 0.25rem; font-size: 0.9rem; }
+.equation-summary-meta-label { opacity: 0.85; }
+.equation-summary-meta-value { overflow-wrap: anywhere; }
+.equation-summary-meta-value code { white-space: nowrap; }
+@media (max-width: 900px) { .equation-summary-latex { font-size: 1.1rem; } }
+</style>
+<div class="equation-summary-cards">
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#circular-pipe-flow-area">Circular Pipe Flow Area</a></h3>
 
-<tr><td><a href="#colebrook-white-friction-factor">Colebrook-White Friction Factor</a></td><td><code>fluids.colebrook</code></td><td>\(\frac{1}{\sqrt{f}} + 2\log_{10}\left(\frac{\varepsilon_D}{3.7} + \frac{2.51}{Re\sqrt{f}}\right) = 0\)</td><td><code>f</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-path"><code>fluids.circular_pipe_area</code></div>
 
-<tr><td><a href="#continuity-mass-flow">Continuity Mass Flow</a></td><td><code>fluids.continuity_mass_flow</code></td><td>\(\dot{m} = \rho A V\)</td><td><code>A</code>, <code>V</code>, <code>m_dot</code>, <code>rho</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-latex">\(A = \frac{\pi D^2}{4}\)</div>
 
-<tr><td><a href="#darcy-weisbach-pressure-drop">Darcy-Weisbach Pressure Drop</a></td><td><code>fluids.darcy_weisbach_pressure_drop</code></td><td>\(\Delta p = f \frac{L}{D} \frac{\rho V^2}{2}\)</td><td><code>D</code>, <code>L</code>, <code>V</code>, <code>delta_p</code>, <code>f</code>, <code>rho</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>A</code>, <code>D</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
 
-<tr><td><a href="#incompressible-orifice-mass-flow">Incompressible Orifice Mass Flow</a></td><td><code>fluids.orifice_mass_flow_incompressible</code></td><td>\(\dot{m} = C_d A \sqrt{2 \rho \Delta p}\)</td><td><code>A</code>, <code>C_d</code>, <code>delta_p</code>, <code>m_dot</code>, <code>rho</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+</div>
 
-<tr><td><a href="#reynolds-number">Reynolds Number</a></td><td><code>fluids.reynolds_number</code></td><td>\(Re = \frac{\rho V D}{\mu}\)</td><td><code>D</code>, <code>Re</code>, <code>V</code>, <code>mu</code>, <code>rho</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#colebrook-white-friction-factor">Colebrook-White Friction Factor</a></h3>
 
-</tbody>
-</table>
+<div class="equation-summary-path"><code>fluids.colebrook</code></div>
+
+<div class="equation-summary-latex">\(\frac{1}{\sqrt{f}} + 2\log_{10}\left(\frac{\varepsilon_D}{3.7} + \frac{2.51}{Re\sqrt{f}}\right) = 0\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>f</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#continuity-mass-flow">Continuity Mass Flow</a></h3>
+
+<div class="equation-summary-path"><code>fluids.continuity_mass_flow</code></div>
+
+<div class="equation-summary-latex">\(\dot{m} = \rho A V\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>A</code>, <code>V</code>, <code>m_dot</code>, <code>rho</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#darcy-weisbach-pressure-drop">Darcy-Weisbach Pressure Drop</a></h3>
+
+<div class="equation-summary-path"><code>fluids.darcy_weisbach_pressure_drop</code></div>
+
+<div class="equation-summary-latex">\(\Delta p = f \frac{L}{D} \frac{\rho V^2}{2}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>D</code>, <code>L</code>, <code>V</code>, <code>delta_p</code>, <code>f</code>, <code>rho</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#incompressible-orifice-mass-flow">Incompressible Orifice Mass Flow</a></h3>
+
+<div class="equation-summary-path"><code>fluids.orifice_mass_flow_incompressible</code></div>
+
+<div class="equation-summary-latex">\(\dot{m} = C_d A \sqrt{2 \rho \Delta p}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>A</code>, <code>C_d</code>, <code>delta_p</code>, <code>m_dot</code>, <code>rho</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#reynolds-number">Reynolds Number</a></h3>
+
+<div class="equation-summary-path"><code>fluids.reynolds_number</code></div>
+
+<div class="equation-summary-latex">\(Re = \frac{\rho V D}{\mu}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>D</code>, <code>Re</code>, <code>V</code>, <code>mu</code>, <code>rho</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+</div>
 
 <h2 id="browse-1"><a class="header" href="#browse-1">Browse</a></h2>
 <ul>
@@ -4385,23 +4993,120 @@ engpy.helpers.equation_target_count("fluids.reynolds_number")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="heat-transfer"><a class="header" href="#heat-transfer">Heat Transfer</a></h1>
 <h2 id="equation-summary-2"><a class="header" href="#equation-summary-2">Equation Summary</a></h2>
-<table>
-<thead>
-<tr><th>Equation</th><th>Path ID</th><th>LaTeX</th><th>Targets</th><th>Default</th><th>Branches</th><th>Subcategory</th></tr>
-</thead>
-<tbody>
-<tr><td><a href="#plane-wall-conduction-heat-rate">Plane-Wall Conduction Heat Rate</a></td><td><code>heat_transfer.conduction_plane_wall_heat_rate</code></td><td>\(\dot{Q} = k A \frac{T_h - T_c}{L}\)</td><td><code>A</code>, <code>L</code>, <code>Q_dot</code>, <code>T_c</code>, <code>T_h</code>, <code>k</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<style>
+.equation-summary-cards { display: grid; grid-template-columns: 1fr; gap: 0.9rem; margin: 0.6rem 0 1rem; }
+.equation-summary-card { border: 1px solid var(--table-border-color); border-radius: 10px; padding: 0.9rem 1rem; background: rgba(255,255,255,0.02); }
+.equation-summary-title { font-size: 1.02rem; font-weight: 600; margin: 0 0 0.35rem; }
+.equation-summary-path { font-family: var(--mono-font); font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.45rem; overflow-wrap: anywhere; }
+.equation-summary-latex { text-align: center; font-size: 1.2rem; line-height: 1.45; margin: 0.5rem 0 0.6rem; overflow-x: auto; }
+.equation-summary-meta { display: grid; grid-template-columns: auto 1fr; column-gap: 0.55rem; row-gap: 0.25rem; font-size: 0.9rem; }
+.equation-summary-meta-label { opacity: 0.85; }
+.equation-summary-meta-value { overflow-wrap: anywhere; }
+.equation-summary-meta-value code { white-space: nowrap; }
+@media (max-width: 900px) { .equation-summary-latex { font-size: 1.1rem; } }
+</style>
+<div class="equation-summary-cards">
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#plane-wall-conduction-heat-rate">Plane-Wall Conduction Heat Rate</a></h3>
 
-<tr><td><a href="#convection-heat-transfer-rate">Convection Heat Transfer Rate</a></td><td><code>heat_transfer.convection_heat_rate</code></td><td>\(\dot{Q} = h A (T_s - T_\infty)\)</td><td><code>A</code>, <code>Q_dot</code>, <code>T_inf</code>, <code>T_s</code>, <code>h</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-path"><code>heat_transfer.conduction_plane_wall_heat_rate</code></div>
 
-<tr><td><a href="#log-mean-temperature-difference">Log-Mean Temperature Difference</a></td><td><code>heat_transfer.log_mean_temperature_difference</code></td><td>\(\Delta T_{lm} = \frac{\Delta T_1 - \Delta T_2}{\ln(\Delta T_1 / \Delta T_2)}\)</td><td><code>delta_T_lm</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-latex">\(\dot{Q} = k A \frac{T_h - T_c}{L}\)</div>
 
-<tr><td><a href="#conduction-thermal-resistance">Conduction Thermal Resistance</a></td><td><code>heat_transfer.thermal_resistance_conduction</code></td><td>\(R_{th} = \frac{L}{k A}\)</td><td><code>A</code>, <code>L</code>, <code>R_th</code>, <code>k</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>A</code>, <code>L</code>, <code>Q_dot</code>, <code>T_c</code>, <code>T_h</code>, <code>k</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
 
-<tr><td><a href="#convection-thermal-resistance">Convection Thermal Resistance</a></td><td><code>heat_transfer.thermal_resistance_convection</code></td><td>\(R_{th} = \frac{1}{h A}\)</td><td><code>A</code>, <code>R_th</code>, <code>h</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+</div>
 
-</tbody>
-</table>
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#convection-heat-transfer-rate">Convection Heat Transfer Rate</a></h3>
+
+<div class="equation-summary-path"><code>heat_transfer.convection_heat_rate</code></div>
+
+<div class="equation-summary-latex">\(\dot{Q} = h A (T_s - T_\infty)\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>A</code>, <code>Q_dot</code>, <code>T_inf</code>, <code>T_s</code>, <code>h</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#log-mean-temperature-difference">Log-Mean Temperature Difference</a></h3>
+
+<div class="equation-summary-path"><code>heat_transfer.log_mean_temperature_difference</code></div>
+
+<div class="equation-summary-latex">\(\Delta T_{lm} = \frac{\Delta T_1 - \Delta T_2}{\ln(\Delta T_1 / \Delta T_2)}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>delta_T_lm</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#conduction-thermal-resistance">Conduction Thermal Resistance</a></h3>
+
+<div class="equation-summary-path"><code>heat_transfer.thermal_resistance_conduction</code></div>
+
+<div class="equation-summary-latex">\(R_{th} = \frac{L}{k A}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>A</code>, <code>L</code>, <code>R_th</code>, <code>k</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#convection-thermal-resistance">Convection Thermal Resistance</a></h3>
+
+<div class="equation-summary-path"><code>heat_transfer.thermal_resistance_convection</code></div>
+
+<div class="equation-summary-latex">\(R_{th} = \frac{1}{h A}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>A</code>, <code>R_th</code>, <code>h</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+</div>
 
 <h2 id="browse-2"><a class="header" href="#browse-2">Browse</a></h2>
 <ul>
@@ -5024,21 +5729,100 @@ engpy.helpers.equation_target_count("heat_transfer.thermal_resistance_convection
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="rockets"><a class="header" href="#rockets">Rockets</a></h1>
 <h2 id="equation-summary-3"><a class="header" href="#equation-summary-3">Equation Summary</a></h2>
-<table>
-<thead>
-<tr><th>Equation</th><th>Path ID</th><th>LaTeX</th><th>Targets</th><th>Default</th><th>Branches</th><th>Subcategory</th></tr>
-</thead>
-<tbody>
-<tr><td><a href="#ideal-characteristic-velocity">Ideal Characteristic Velocity</a></td><td><code>rockets.cstar_ideal</code></td><td>\(c^* = \sqrt{\frac{R T_c}{\gamma}} \left(\frac{\gamma+1}{2}\right)^{(\gamma+1)/(2(\gamma-1))}\)</td><td><code>c_star</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<style>
+.equation-summary-cards { display: grid; grid-template-columns: 1fr; gap: 0.9rem; margin: 0.6rem 0 1rem; }
+.equation-summary-card { border: 1px solid var(--table-border-color); border-radius: 10px; padding: 0.9rem 1rem; background: rgba(255,255,255,0.02); }
+.equation-summary-title { font-size: 1.02rem; font-weight: 600; margin: 0 0 0.35rem; }
+.equation-summary-path { font-family: var(--mono-font); font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.45rem; overflow-wrap: anywhere; }
+.equation-summary-latex { text-align: center; font-size: 1.2rem; line-height: 1.45; margin: 0.5rem 0 0.6rem; overflow-x: auto; }
+.equation-summary-meta { display: grid; grid-template-columns: auto 1fr; column-gap: 0.55rem; row-gap: 0.25rem; font-size: 0.9rem; }
+.equation-summary-meta-label { opacity: 0.85; }
+.equation-summary-meta-value { overflow-wrap: anywhere; }
+.equation-summary-meta-value code { white-space: nowrap; }
+@media (max-width: 900px) { .equation-summary-latex { font-size: 1.1rem; } }
+</style>
+<div class="equation-summary-cards">
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#ideal-characteristic-velocity">Ideal Characteristic Velocity</a></h3>
 
-<tr><td><a href="#ideal-specific-impulse">Ideal Specific Impulse</a></td><td><code>rockets.specific_impulse_ideal</code></td><td>\(I_{sp} = \frac{C_f c^*}{g_0}\)</td><td><code>C_f</code>, <code>I_sp</code>, <code>c_star</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-path"><code>rockets.cstar_ideal</code></div>
 
-<tr><td><a href="#ideal-thrust-coefficient">Ideal Thrust Coefficient</a></td><td><code>rockets.thrust_coefficient_ideal</code></td><td>\(C_f = \sqrt{\frac{2\gamma^2}{\gamma-1}\left(\frac{2}{\gamma+1}\right)^{(\gamma+1)/(\gamma-1)}\left(1-\left(\frac{p_e}{p_c}\right)^{(\gamma-1)/\gamma}\right)} + \left(\frac{p_e}{p_c}-\frac{p_a}{p_c}\right)\frac{A_e}{A_t}\)</td><td><code>C_f</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-latex">\(c^* = \sqrt{\frac{R T_c}{\gamma}} \left(\frac{\gamma+1}{2}\right)^{(\gamma+1)/(2(\gamma-1))}\)</div>
 
-<tr><td><a href="#thrust-from-mass-flow-and-effective-exhaust-velocity">Thrust From Mass Flow and Effective Exhaust Velocity</a></td><td><code>rockets.thrust_from_mass_flow</code></td><td>\(F = \dot{m} c_{eff}\)</td><td><code>F</code>, <code>c_eff</code>, <code>m_dot</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>c_star</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
 
-</tbody>
-</table>
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#ideal-specific-impulse">Ideal Specific Impulse</a></h3>
+
+<div class="equation-summary-path"><code>rockets.specific_impulse_ideal</code></div>
+
+<div class="equation-summary-latex">\(I_{sp} = \frac{C_f c^*}{g_0}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>C_f</code>, <code>I_sp</code>, <code>c_star</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#ideal-thrust-coefficient">Ideal Thrust Coefficient</a></h3>
+
+<div class="equation-summary-path"><code>rockets.thrust_coefficient_ideal</code></div>
+
+<div class="equation-summary-latex">\(C_f = \sqrt{\frac{2\gamma^2}{\gamma-1}\left(\frac{2}{\gamma+1}\right)^{(\gamma+1)/(\gamma-1)}\left(1-\left(\frac{p_e}{p_c}\right)^{(\gamma-1)/\gamma}\right)} + \left(\frac{p_e}{p_c}-\frac{p_a}{p_c}\right)\frac{A_e}{A_t}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>C_f</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#thrust-from-mass-flow-and-effective-exhaust-velocity">Thrust From Mass Flow and Effective Exhaust Velocity</a></h3>
+
+<div class="equation-summary-path"><code>rockets.thrust_from_mass_flow</code></div>
+
+<div class="equation-summary-latex">\(F = \dot{m} c_{eff}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>F</code>, <code>c_eff</code>, <code>m_dot</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+</div>
 
 <h2 id="browse-3"><a class="header" href="#browse-3">Browse</a></h2>
 <ul>
@@ -5436,25 +6220,140 @@ engpy.helpers.equation_target_count("rockets.thrust_from_mass_flow")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="structures"><a class="header" href="#structures">Structures</a></h1>
 <h2 id="equation-summary-4"><a class="header" href="#equation-summary-4">Equation Summary</a></h2>
-<table>
-<thead>
-<tr><th>Equation</th><th>Path ID</th><th>LaTeX</th><th>Targets</th><th>Default</th><th>Branches</th><th>Subcategory</th></tr>
-</thead>
-<tbody>
-<tr><td><a href="#axial-normal-stress">Axial Normal Stress</a></td><td><code>structures.axial_stress</code></td><td>\(\sigma = \frac{F}{A}\)</td><td><code>A</code>, <code>F</code>, <code>sigma</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<style>
+.equation-summary-cards { display: grid; grid-template-columns: 1fr; gap: 0.9rem; margin: 0.6rem 0 1rem; }
+.equation-summary-card { border: 1px solid var(--table-border-color); border-radius: 10px; padding: 0.9rem 1rem; background: rgba(255,255,255,0.02); }
+.equation-summary-title { font-size: 1.02rem; font-weight: 600; margin: 0 0 0.35rem; }
+.equation-summary-path { font-family: var(--mono-font); font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.45rem; overflow-wrap: anywhere; }
+.equation-summary-latex { text-align: center; font-size: 1.2rem; line-height: 1.45; margin: 0.5rem 0 0.6rem; overflow-x: auto; }
+.equation-summary-meta { display: grid; grid-template-columns: auto 1fr; column-gap: 0.55rem; row-gap: 0.25rem; font-size: 0.9rem; }
+.equation-summary-meta-label { opacity: 0.85; }
+.equation-summary-meta-value { overflow-wrap: anywhere; }
+.equation-summary-meta-value code { white-space: nowrap; }
+@media (max-width: 900px) { .equation-summary-latex { font-size: 1.1rem; } }
+</style>
+<div class="equation-summary-cards">
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#axial-normal-stress">Axial Normal Stress</a></h3>
 
-<tr><td><a href="#beam-bending-stress">Beam Bending Stress</a></td><td><code>structures.beam_bending_stress</code></td><td>\(\sigma_b = \frac{M c}{I}\)</td><td><code>I</code>, <code>M</code>, <code>c</code>, <code>sigma_b</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-path"><code>structures.axial_stress</code></div>
 
-<tr><td><a href="#euler-buckling-critical-load">Euler Buckling Critical Load</a></td><td><code>structures.euler_buckling_load</code></td><td>\(P_{cr} = \frac{\pi^2 E I}{(K L)^2}\)</td><td><code>E</code>, <code>I</code>, <code>K</code>, <code>L</code>, <code>P_cr</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-latex">\(\sigma = \frac{F}{A}\)</div>
 
-<tr><td><a href="#thin-wall-hoop-stress">Thin-Wall Hoop Stress</a></td><td><code>structures.hoop_stress</code></td><td>\(\sigma_h = \frac{P r}{t}\)</td><td><code>P</code>, <code>r</code>, <code>sigma_h</code>, <code>t</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>A</code>, <code>F</code>, <code>sigma</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
 
-<tr><td><a href="#thin-wall-longitudinal-stress">Thin-Wall Longitudinal Stress</a></td><td><code>structures.longitudinal_stress_thin_wall</code></td><td>\(\sigma_l = \frac{P r}{2 t}\)</td><td><code>P</code>, <code>r</code>, <code>sigma_l</code>, <code>t</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+</div>
 
-<tr><td><a href="#circular-shaft-torsion-stress">Circular Shaft Torsion Stress</a></td><td><code>structures.shaft_torsion_stress</code></td><td>\(\tau = \frac{T r}{J}\)</td><td><code>J</code>, <code>T</code>, <code>r</code>, <code>tau</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#beam-bending-stress">Beam Bending Stress</a></h3>
 
-</tbody>
-</table>
+<div class="equation-summary-path"><code>structures.beam_bending_stress</code></div>
+
+<div class="equation-summary-latex">\(\sigma_b = \frac{M c}{I}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>I</code>, <code>M</code>, <code>c</code>, <code>sigma_b</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#euler-buckling-critical-load">Euler Buckling Critical Load</a></h3>
+
+<div class="equation-summary-path"><code>structures.euler_buckling_load</code></div>
+
+<div class="equation-summary-latex">\(P_{cr} = \frac{\pi^2 E I}{(K L)^2}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>E</code>, <code>I</code>, <code>K</code>, <code>L</code>, <code>P_cr</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#thin-wall-hoop-stress">Thin-Wall Hoop Stress</a></h3>
+
+<div class="equation-summary-path"><code>structures.hoop_stress</code></div>
+
+<div class="equation-summary-latex">\(\sigma_h = \frac{P r}{t}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>P</code>, <code>r</code>, <code>sigma_h</code>, <code>t</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#thin-wall-longitudinal-stress">Thin-Wall Longitudinal Stress</a></h3>
+
+<div class="equation-summary-path"><code>structures.longitudinal_stress_thin_wall</code></div>
+
+<div class="equation-summary-latex">\(\sigma_l = \frac{P r}{2 t}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>P</code>, <code>r</code>, <code>sigma_l</code>, <code>t</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#circular-shaft-torsion-stress">Circular Shaft Torsion Stress</a></h3>
+
+<div class="equation-summary-path"><code>structures.shaft_torsion_stress</code></div>
+
+<div class="equation-summary-latex">\(\tau = \frac{T r}{J}\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>J</code>, <code>T</code>, <code>r</code>, <code>tau</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">-</div>
+
+</div>
+
+</article>
+</div>
 
 <h2 id="browse-4"><a class="header" href="#browse-4">Browse</a></h2>
 <ul>
@@ -6195,17 +7094,60 @@ engpy.helpers.equation_target_count("structures.shaft_torsion_stress")
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="thermo"><a class="header" href="#thermo">Thermo</a></h1>
 <h2 id="equation-summary-5"><a class="header" href="#equation-summary-5">Equation Summary</a></h2>
-<table>
-<thead>
-<tr><th>Equation</th><th>Path ID</th><th>LaTeX</th><th>Targets</th><th>Default</th><th>Branches</th><th>Subcategory</th></tr>
-</thead>
-<tbody>
-<tr><td><a href="#ideal-gas-law-density-form">Ideal Gas Law (Density Form)</a></td><td><code>thermo.ideal_gas.density</code></td><td>\(P = \rho R T\)</td><td><code>P</code>, <code>R</code>, <code>T</code>, <code>rho</code></td><td><code>-</code></td><td>-</td><td>Ideal Gas</td></tr>
+<style>
+.equation-summary-cards { display: grid; grid-template-columns: 1fr; gap: 0.9rem; margin: 0.6rem 0 1rem; }
+.equation-summary-card { border: 1px solid var(--table-border-color); border-radius: 10px; padding: 0.9rem 1rem; background: rgba(255,255,255,0.02); }
+.equation-summary-title { font-size: 1.02rem; font-weight: 600; margin: 0 0 0.35rem; }
+.equation-summary-path { font-family: var(--mono-font); font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.45rem; overflow-wrap: anywhere; }
+.equation-summary-latex { text-align: center; font-size: 1.2rem; line-height: 1.45; margin: 0.5rem 0 0.6rem; overflow-x: auto; }
+.equation-summary-meta { display: grid; grid-template-columns: auto 1fr; column-gap: 0.55rem; row-gap: 0.25rem; font-size: 0.9rem; }
+.equation-summary-meta-label { opacity: 0.85; }
+.equation-summary-meta-value { overflow-wrap: anywhere; }
+.equation-summary-meta-value code { white-space: nowrap; }
+@media (max-width: 900px) { .equation-summary-latex { font-size: 1.1rem; } }
+</style>
+<div class="equation-summary-cards">
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#ideal-gas-law-density-form">Ideal Gas Law (Density Form)</a></h3>
 
-<tr><td><a href="#ideal-gas-law-mass-volume-form">Ideal Gas Law (Mass-Volume Form)</a></td><td><code>thermo.ideal_gas.mass_volume</code></td><td>\(P V = m R T\)</td><td><code>P</code>, <code>R</code>, <code>T</code>, <code>V</code>, <code>m</code></td><td><code>-</code></td><td>-</td><td>Ideal Gas</td></tr>
+<div class="equation-summary-path"><code>thermo.ideal_gas.density</code></div>
 
-</tbody>
-</table>
+<div class="equation-summary-latex">\(P = \rho R T\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>P</code>, <code>R</code>, <code>T</code>, <code>rho</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">Ideal Gas</div>
+
+</div>
+
+</article>
+<article class="equation-summary-card">
+<h3 class="equation-summary-title"><a href="#ideal-gas-law-mass-volume-form">Ideal Gas Law (Mass-Volume Form)</a></h3>
+
+<div class="equation-summary-path"><code>thermo.ideal_gas.mass_volume</code></div>
+
+<div class="equation-summary-latex">\(P V = m R T\)</div>
+
+<div class="equation-summary-meta">
+<div class="equation-summary-meta-label">Targets</div>
+<div class="equation-summary-meta-value"><code>P</code>, <code>R</code>, <code>T</code>, <code>V</code>, <code>m</code></div>
+<div class="equation-summary-meta-label">Default</div>
+<div class="equation-summary-meta-value"><code>-</code></div>
+<div class="equation-summary-meta-label">Branches</div>
+<div class="equation-summary-meta-value">-</div>
+<div class="equation-summary-meta-label">Subcategory</div>
+<div class="equation-summary-meta-value">Ideal Gas</div>
+
+</div>
+
+</article>
+</div>
 
 <h2 id="browse-5"><a class="header" href="#browse-5">Browse</a></h2>
 <ul>
