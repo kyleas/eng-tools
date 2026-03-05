@@ -3724,6 +3724,10 @@ fn render_material_page(m: &eng_materials::MaterialDocsEntry) -> String {
 fn render_category_index(cat: &CategoryPresentation) -> String {
     let mut md = String::new();
     md.push_str(&format!("# {}\n\n", title_case(&cat.name)));
+    md.push_str("## Equation Summary\n\n");
+    md.push_str(&render_category_equation_summary_table(cat));
+    md.push('\n');
+    md.push_str("## Browse\n\n");
     for eq in &cat.root_equations {
         md.push_str(&format!("- [{}](./{}.md)\n", eq.page.name, eq.slug));
     }
@@ -3735,6 +3739,103 @@ fn render_category_index(cat: &CategoryPresentation) -> String {
         ));
     }
     md
+}
+
+fn render_category_equation_summary_table(cat: &CategoryPresentation) -> String {
+    #[derive(Debug)]
+    struct CategoryEqRow {
+        path_id: String,
+        name: String,
+        link: String,
+        latex: String,
+        targets: String,
+        default_target: String,
+        branches: String,
+        subcategory: String,
+    }
+
+    let mut rows: Vec<CategoryEqRow> = Vec::new();
+    for eq in &cat.root_equations {
+        rows.push(CategoryEqRow {
+            path_id: eq.path_id.clone(),
+            name: eq.page.name.clone(),
+            link: format!("./{}.md", eq.slug),
+            latex: eq.page.latex.clone(),
+            targets: format_compact_targets(&eq.page),
+            default_target: eq
+                .page
+                .default_target
+                .clone()
+                .unwrap_or_else(|| "-".to_string()),
+            branches: format_compact_branches(&eq.page),
+            subcategory: "-".to_string(),
+        });
+    }
+    for sub in &cat.subcategories {
+        for eq in &sub.equations {
+            rows.push(CategoryEqRow {
+                path_id: eq.path_id.clone(),
+                name: eq.page.name.clone(),
+                link: format!("./{}/{}.md", sub.name, eq.slug),
+                latex: eq.page.latex.clone(),
+                targets: format_compact_targets(&eq.page),
+                default_target: eq
+                    .page
+                    .default_target
+                    .clone()
+                    .unwrap_or_else(|| "-".to_string()),
+                branches: format_compact_branches(&eq.page),
+                subcategory: title_case(&sub.name),
+            });
+        }
+    }
+    rows.sort_by(|a, b| a.path_id.cmp(&b.path_id));
+
+    let mut md = String::new();
+    // Invariant: category-level equation visibility must remain registry-driven.
+    // This summary table is built from category metadata (root + subcategory equations),
+    // not handwritten per-category markdown.
+    //
+    // Invariant: use an HTML table here intentionally. mdBook markdown tables can be brittle
+    // with inline MathJax content; HTML + `\(...\)` preserves rendered LaTeX at a glance.
+    md.push_str("<table><thead><tr><th>Equation</th><th>Path ID</th><th>LaTeX</th><th>Targets</th><th>Default</th><th>Branches</th><th>Subcategory</th></tr></thead><tbody>\n");
+    for row in rows {
+        md.push_str(&format!(
+            "<tr><td><a href=\"{}\">{}</a></td><td><code>{}</code></td><td>\\({}\\)</td><td>{}</td><td><code>{}</code></td><td>{}</td><td>{}</td></tr>\n",
+            row.link,
+            row.name,
+            row.path_id,
+            row.latex,
+            row.targets,
+            row.default_target,
+            row.branches,
+            row.subcategory
+        ));
+    }
+    md.push_str("</tbody></table>\n");
+    md
+}
+
+fn format_compact_targets(page: &EquationPageModel) -> String {
+    if page.solve_targets.is_empty() {
+        return "-".to_string();
+    }
+    page.solve_targets
+        .iter()
+        .map(|t| format!("<code>{}</code>", t.target))
+        .collect::<Vec<_>>()
+        .join(", ")
+}
+
+fn format_compact_branches(page: &EquationPageModel) -> String {
+    if page.branches.is_empty() {
+        return "-".to_string();
+    }
+    page.branches
+        .iter()
+        .map(|b| format!("<code>{}</code>", b.name))
+        .collect::<Vec<_>>()
+        .join(", ")
 }
 
 fn render_subcategory_index(cat: &CategoryPresentation, sub: &SubcategoryPresentation) -> String {
