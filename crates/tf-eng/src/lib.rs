@@ -101,6 +101,30 @@ pub struct StudyTargetDescriptor {
     pub outputs: Vec<StudyOutputDescriptor>,
     pub default_output: Option<String>,
     pub plot_default: Option<StudyPlotDefault>,
+    pub display_latex: Option<String>,
+    pub display_unicode: Option<String>,
+    pub display_ascii: Option<String>,
+    pub branch_options: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SingleSolveRequest {
+    pub target_kind: StudyTargetKind,
+    pub target_id: String,
+    #[serde(default)]
+    pub inputs: Map<String, Value>,
+    pub output_key: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SingleSolveResult {
+    pub target_kind: StudyTargetKind,
+    pub target_id: String,
+    pub output_key: String,
+    pub value: Value,
+    pub unit: Option<String>,
+    pub path_text: Option<String>,
+    pub warnings: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -340,6 +364,19 @@ pub fn run_study_from_form(req: StudyRunRequest) -> Result<StudyResult, BridgeEr
         NormalizedStudyRequest::Equation(r) => run_equation_study(r),
         NormalizedStudyRequest::Device(r) => run_device_study(r),
         NormalizedStudyRequest::Workflow(r) => run_workflow_study(r),
+    }
+}
+
+pub fn run_single_solve(req: SingleSolveRequest) -> Result<SingleSolveResult, BridgeError> {
+    let descriptor = match req.target_kind {
+        StudyTargetKind::Equation => describe_equation_target(&req.target_id)?,
+        StudyTargetKind::Device => describe_device_target(&req.target_id)?,
+        StudyTargetKind::Workflow => describe_workflow_target(&req.target_id)?,
+    };
+    match req.target_kind {
+        StudyTargetKind::Equation => run_single_equation(&descriptor, req),
+        StudyTargetKind::Device => run_single_device(&descriptor, req),
+        StudyTargetKind::Workflow => run_single_workflow(&descriptor, req),
     }
 }
 
@@ -685,6 +722,10 @@ fn describe_all_equations() -> Result<Vec<StudyTargetDescriptor>, BridgeError> {
                 y_label: y,
                 title_template: format!("{} study", eq.name),
             }),
+            display_latex: Some(eq.display.latex.clone()),
+            display_unicode: eq.display.unicode.clone(),
+            display_ascii: eq.display.ascii.clone(),
+            branch_options: eq.branches.iter().map(|b| b.name.clone()).collect(),
         });
     }
     out.sort_by(|a, b| a.id.cmp(&b.id));
@@ -775,6 +816,11 @@ fn describe_all_devices() -> Vec<StudyTargetDescriptor> {
             .or_else(|| fields.iter().find(|f| f.sweepable))
             .map(|f| f.key.clone())
             .unwrap_or_else(|| "input_value".to_string());
+        let branch_options = fields
+            .iter()
+            .find(|f| f.key == "branch")
+            .map(|f| f.enum_options.iter().map(|o| o.key.clone()).collect())
+            .unwrap_or_default();
 
         out.push(StudyTargetDescriptor {
             id: spec.key.to_string(),
@@ -798,6 +844,10 @@ fn describe_all_devices() -> Vec<StudyTargetDescriptor> {
                 y_label: y,
                 title_template: format!("{} study", spec.name),
             }),
+            display_latex: None,
+            display_unicode: None,
+            display_ascii: None,
+            branch_options,
         });
     }
     out.sort_by(|a, b| a.id.cmp(&b.id));
@@ -850,6 +900,11 @@ fn describe_all_workflows() -> Vec<StudyTargetDescriptor> {
             .find(|o| o.plottable)
             .map(|o| o.key.clone())
             .or_else(|| outputs.first().map(|o| o.key.clone()));
+        let branch_options = fields
+            .iter()
+            .find(|f| f.key == "branch")
+            .map(|f| f.enum_options.iter().map(|o| o.key.clone()).collect())
+            .unwrap_or_default();
 
         out.push(StudyTargetDescriptor {
             id: wf.key.to_string(),
@@ -873,6 +928,10 @@ fn describe_all_workflows() -> Vec<StudyTargetDescriptor> {
                 y_label: y,
                 title_template: format!("{} study", wf.name),
             }),
+            display_latex: None,
+            display_unicode: None,
+            display_ascii: None,
+            branch_options,
         });
     }
     out.sort_by(|a, b| a.id.cmp(&b.id));
@@ -1061,6 +1120,214 @@ fn normalize_table(table: EngStudyTable, output_key: &str) -> StudyResult {
     }
 }
 
+fn run_single_equation(
+    descriptor: &StudyTargetDescriptor,
+    req: SingleSolveRequest,
+) -> Result<SingleSolveResult, BridgeError> {
+    let mut numeric_inputs = BTreeMap::<String, f64>::new();
+    let mut branch = None::<String>;
+    for (k, v) in &req.inputs {
+        if k == "branch" {
+            branch = v.as_str().map(|s| s.to_string());
+            continue;
+        }
+        if let Some(n) = v.as_f64() {
+            numeric_inputs.insert(k.clone(), n);
+        }
+    }
+
+    let output_key = if let Some(k) = req.output_key.clone() {
+        k
+    } else {
+        let missing = descriptor
+            .input_fields
+            .iter()
+            .filter(|f| f.key != "branch")
+            .filter(|f| !numeric_inputs.contains_key(&f.key))
+            .map(|f| f.key.clone())
+            .collect::<Vec<_>>();
+        match missing.len() {
+            1 => missing[0].clone(),
+            0 => descriptor.default_output.clone().ok_or_else(|| {
+                BridgeError::InvalidRequest(
+                    "equation solve requires an explicit target".to_string(),
+                )
+            })?,
+            _ => {
+                return Err(BridgeError::InvalidRequest(
+                    "provide exactly one unknown equation variable or set output_key".to_string(),
+                ));
+            }
+        }
+    };
+    if !descriptor.outputs.iter().any(|o| o.key == output_key) {
+        return Err(BridgeError::InvalidRequest(format!(
+            "invalid equation target '{output_key}' for '{}'",
+            req.target_id
+        )));
+    }
+
+    let mut solve = eng::eq
+        .solve(req.target_id.as_str())
+        .for_target(&output_key);
+    for (k, n) in numeric_inputs {
+        solve = solve.given(k, n);
+    }
+    if let Some(b) = branch {
+        solve = solve.branch(&b);
+    }
+    let v = solve
+        .value()
+        .map_err(|e| BridgeError::Engine(e.to_string()))?;
+    let unit = descriptor
+        .outputs
+        .iter()
+        .find(|o| o.key == output_key)
+        .and_then(|o| o.unit.clone());
+    Ok(SingleSolveResult {
+        target_kind: StudyTargetKind::Equation,
+        target_id: req.target_id,
+        output_key,
+        value: Value::from(v),
+        unit,
+        path_text: None,
+        warnings: Vec::new(),
+    })
+}
+
+fn run_single_device(
+    _descriptor: &StudyTargetDescriptor,
+    req: SingleSolveRequest,
+) -> Result<SingleSolveResult, BridgeError> {
+    let device = eng::solve::studyable_devices()
+        .into_iter()
+        .find(|d| d.device_key == req.target_id)
+        .ok_or_else(|| {
+            BridgeError::InvalidRequest(format!("unknown device '{}'", req.target_id))
+        })?;
+    let output_key = req.output_key.unwrap_or_else(|| "value".to_string());
+    let value = match output_key.as_str() {
+        "value" | "result" => invoke_op_value(&device.value_op, &req.inputs)?,
+        "pivot" => {
+            let op = device.pivot_op.clone().ok_or_else(|| {
+                BridgeError::InvalidRequest(
+                    "pivot output is not available for this device".to_string(),
+                )
+            })?;
+            invoke_op_value(&op, &req.inputs)?
+        }
+        "path_text" => {
+            let op = device.path_op.clone().ok_or_else(|| {
+                BridgeError::InvalidRequest(
+                    "path_text output is not available for this device".to_string(),
+                )
+            })?;
+            invoke_op_value(&op, &req.inputs)?
+        }
+        other => {
+            let root = invoke_op_value(&device.main_op, &req.inputs)?;
+            select_json(&root, other).cloned().ok_or_else(|| {
+                BridgeError::InvalidRequest(format!("unknown device output '{other}'"))
+            })?
+        }
+    };
+    let path_text = if let Some(op) = device.path_op.clone() {
+        invoke_op_value(&op, &req.inputs)
+            .ok()
+            .and_then(|v| v.as_str().map(|s| s.to_string()))
+    } else {
+        None
+    };
+    Ok(SingleSolveResult {
+        target_kind: StudyTargetKind::Device,
+        target_id: req.target_id,
+        output_key,
+        value,
+        unit: None,
+        path_text,
+        warnings: Vec::new(),
+    })
+}
+
+fn run_single_workflow(
+    _descriptor: &StudyTargetDescriptor,
+    req: SingleSolveRequest,
+) -> Result<SingleSolveResult, BridgeError> {
+    let wf = eng::solve::studyable_workflows()
+        .into_iter()
+        .find(|w| w.key == req.target_id)
+        .ok_or_else(|| {
+            BridgeError::InvalidRequest(format!("unknown workflow '{}'", req.target_id))
+        })?;
+    let output_key = req
+        .output_key
+        .or_else(|| wf.default_columns.first().map(|s| s.to_string()))
+        .ok_or_else(|| {
+            BridgeError::InvalidRequest("workflow has no default outputs".to_string())
+        })?;
+    let root = invoke_op_value(wf.eval_op, &req.inputs)?;
+    let value = root
+        .get("outputs")
+        .and_then(|v| select_json(v, &output_key))
+        .cloned()
+        .ok_or_else(|| {
+            BridgeError::InvalidRequest(format!("unknown workflow output '{output_key}'"))
+        })?;
+    let warnings = root
+        .get("warnings")
+        .and_then(Value::as_array)
+        .map(|arr| {
+            arr.iter()
+                .filter_map(Value::as_str)
+                .map(|s| s.to_string())
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_default();
+    let path_text = root
+        .get("path_text")
+        .and_then(Value::as_str)
+        .map(|s| s.to_string());
+    Ok(SingleSolveResult {
+        target_kind: StudyTargetKind::Workflow,
+        target_id: req.target_id,
+        output_key,
+        value,
+        unit: None,
+        path_text,
+        warnings,
+    })
+}
+
+fn invoke_op_value(op: &str, args: &Map<String, Value>) -> Result<Value, BridgeError> {
+    let req = eng::bindings::InvokeRequest {
+        protocol_version: eng::bindings::INVOKE_PROTOCOL_VERSION.to_string(),
+        op: op.to_string(),
+        request_id: None,
+        args: Value::Object(args.clone()),
+    };
+    let resp = eng::invoke::handle_invoke(req);
+    if !resp.ok {
+        let err = resp
+            .error
+            .map(|e| format!("[{}] {}", e.code, e.message))
+            .unwrap_or_else(|| "unknown invoke error".to_string());
+        return Err(BridgeError::Engine(err));
+    }
+    resp.value
+        .ok_or_else(|| BridgeError::Engine("missing invoke value".to_string()))
+}
+
+fn select_json<'a>(value: &'a Value, selector: &str) -> Option<&'a Value> {
+    let mut cur = value;
+    for part in selector.split('.') {
+        if part.is_empty() {
+            return None;
+        }
+        cur = cur.get(part)?;
+    }
+    Some(cur)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1122,5 +1389,45 @@ mod tests {
         let presets = list_study_presets().expect("presets");
         assert!(!presets.is_empty());
         assert!(presets.iter().any(|p| p.id.contains("isentropic")));
+    }
+
+    #[test]
+    fn single_solve_equation_supports_missing_one_variable_target() {
+        let req = SingleSolveRequest {
+            target_kind: StudyTargetKind::Equation,
+            target_id: "compressible.isentropic_temperature_ratio".to_string(),
+            inputs: Map::from_iter([
+                ("M".to_string(), Value::from(2.0)),
+                ("gamma".to_string(), Value::from(1.4)),
+            ]),
+            output_key: None,
+        };
+        let out = run_single_solve(req).expect("single equation solve");
+        assert_eq!(out.output_key, "T_T0");
+        assert!(out.value.as_f64().unwrap_or(0.0) > 0.0);
+    }
+
+    #[test]
+    fn single_solve_device_supports_value_output() {
+        let req = SingleSolveRequest {
+            target_kind: StudyTargetKind::Device,
+            target_id: "normal_shock_calc".to_string(),
+            inputs: Map::from_iter([
+                ("input_kind".to_string(), Value::from("m1")),
+                ("input_value".to_string(), Value::from(2.0)),
+                ("target_kind".to_string(), Value::from("p2_p1")),
+                ("gamma".to_string(), Value::from(1.4)),
+            ]),
+            output_key: Some("value".to_string()),
+        };
+        let out = run_single_solve(req).expect("single device solve");
+        assert_eq!(out.output_key, "value");
+        assert!(out.value.as_f64().unwrap_or(0.0) > 1.0);
+    }
+
+    #[test]
+    fn equation_descriptor_exposes_display_metadata() {
+        let d = describe_equation_target("compressible.isentropic_pressure_ratio").expect("desc");
+        assert!(d.display_latex.is_some());
     }
 }

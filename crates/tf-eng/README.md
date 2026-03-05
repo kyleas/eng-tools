@@ -1,13 +1,22 @@
 # tf-eng Study Explorer Metadata
 
-`tf-eng` is the Thermoflow-facing bridge over `eng` study execution.
+`tf-eng` is the Thermoflow-facing bridge over `eng` solve/study execution.
 
 ## Responsibilities
 
 - Discover studyable equation/device/workflow targets from `eng` metadata.
 - Expose target descriptors (fields, outputs, defaults, sweep candidates).
 - Validate form/CLI input before execution.
+- Run single solves for equation/device/workflow targets.
 - Run studies through `eng` and normalize to plot/table-friendly output.
+
+## Workbench modes
+
+Thermoflow Eng Workbench uses these descriptor surfaces for:
+
+- `Solve`: single-shot evaluation (including equation missing-one-variable target inference).
+- `Study`: sweep/study execution.
+- `Reference`: metadata inspection (inputs/outputs/branches/displays).
 
 ## Auto-discovery model
 

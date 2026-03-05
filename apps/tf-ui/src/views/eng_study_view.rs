@@ -3,9 +3,18 @@ use std::collections::BTreeMap;
 use egui_plot::{Legend, Line, Plot, PlotPoints};
 use serde_json::{Map, Value};
 use tf_eng::{
-    StudyFieldType, StudyPresetDescriptor, StudyRunRequest, StudyTargetDescriptor, StudyTargetKind,
-    SweepAxisSpec, list_study_presets, list_study_targets, run_study_from_form,
+    SingleSolveRequest, SingleSolveResult, StudyFieldType, StudyPresetDescriptor, StudyResult,
+    StudyRunRequest, StudyTargetDescriptor, StudyTargetKind, SweepAxisSpec, describe_device_target,
+    describe_equation_target, describe_workflow_target, list_study_presets, list_study_targets,
+    run_single_solve, run_study_from_form,
 };
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum WorkbenchMode {
+    Solve,
+    Study,
+    Reference,
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum AxisMode {
@@ -14,26 +23,63 @@ enum AxisMode {
     Logspace,
 }
 
+#[derive(Debug, Clone)]
+struct SolveRow {
+    kind: StudyTargetKind,
+    target_search: String,
+    target_id: String,
+    output_search: String,
+    output_key: String,
+    field_values: BTreeMap<String, Value>,
+    result: Option<SingleSolveResult>,
+    last_error: Option<String>,
+}
+
+impl SolveRow {
+    fn new(kind: StudyTargetKind) -> Self {
+        Self {
+            kind,
+            target_search: String::new(),
+            target_id: String::new(),
+            output_search: String::new(),
+            output_key: String::new(),
+            field_values: BTreeMap::new(),
+            result: None,
+            last_error: None,
+        }
+    }
+}
+
 pub struct EngStudyView {
     targets: Vec<StudyTargetDescriptor>,
     presets: Vec<StudyPresetDescriptor>,
+    mode: WorkbenchMode,
 
-    kind: StudyTargetKind,
-    selected_target_idx: usize,
-    selected_preset_idx: usize,
+    solve_rows: Vec<SolveRow>,
 
+    study_kind: StudyTargetKind,
+    study_target_search: String,
+    study_target_id: String,
+    study_preset_id: String,
     axis_mode: AxisMode,
     axis_start: f64,
     axis_end: f64,
     axis_count: usize,
     axis_values_csv: String,
-
+    sweep_field_search: String,
     sweep_field: String,
+    output_search: String,
     output_key: String,
     field_values: BTreeMap<String, Value>,
-
-    result: Option<tf_eng::StudyResult>,
+    result: Option<StudyResult>,
     last_error: Option<String>,
+
+    reference_kind: StudyTargetKind,
+    reference_target_search: String,
+    reference_target_id: String,
+
+    recents: Vec<String>,
+    favorites: Vec<String>,
 }
 
 impl Default for EngStudyView {
@@ -43,21 +89,33 @@ impl Default for EngStudyView {
         let mut s = Self {
             targets,
             presets,
-            kind: StudyTargetKind::Equation,
-            selected_target_idx: 0,
-            selected_preset_idx: 0,
+            mode: WorkbenchMode::Solve,
+            solve_rows: vec![SolveRow::new(StudyTargetKind::Equation)],
+            study_kind: StudyTargetKind::Equation,
+            study_target_search: String::new(),
+            study_target_id: String::new(),
+            study_preset_id: String::new(),
             axis_mode: AxisMode::Linspace,
             axis_start: 0.2,
             axis_end: 3.0,
             axis_count: 20,
             axis_values_csv: "0.2,0.5,1.0,2.0,3.0".to_string(),
+            sweep_field_search: String::new(),
             sweep_field: String::new(),
+            output_search: String::new(),
             output_key: String::new(),
             field_values: BTreeMap::new(),
             result: None,
             last_error: None,
+            reference_kind: StudyTargetKind::Equation,
+            reference_target_search: String::new(),
+            reference_target_id: String::new(),
+            recents: Vec::new(),
+            favorites: Vec::new(),
         };
-        s.reset_for_target();
+        s.ensure_study_target();
+        s.ensure_reference_target();
+        s.ensure_solve_rows();
         s
     }
 }
@@ -65,29 +123,220 @@ impl Default for EngStudyView {
 impl EngStudyView {
     pub fn show(&mut self, ui: &mut egui::Ui) {
         egui::ScrollArea::vertical().show(ui, |ui| {
-            ui.heading("Eng Study Explorer");
-            ui.label("Schema-driven study forms from tf-eng target descriptors.");
+            ui.heading("Eng Workbench");
+            ui.label(
+                "Metadata-driven solve, study, and reference over eng equations/devices/workflows.",
+            );
 
+            ui.horizontal(|ui| {
+                ui.selectable_value(&mut self.mode, WorkbenchMode::Solve, "Solve");
+                ui.selectable_value(&mut self.mode, WorkbenchMode::Study, "Study");
+                ui.selectable_value(&mut self.mode, WorkbenchMode::Reference, "Reference");
+            });
             ui.separator();
-            self.render_kind_selector(ui);
 
-            ui.separator();
-            self.render_target_selector(ui);
-            self.render_preset_selector(ui);
-
-            if let Some(target) = self.current_target() {
-                ui.label(format!("{}", target.description));
-                ui.separator();
-                self.render_sweep_controls(ui, &target);
-                self.render_field_controls(ui, &target);
-                self.render_output_selector(ui, &target);
+            match self.mode {
+                WorkbenchMode::Solve => self.show_solve_mode(ui),
+                WorkbenchMode::Study => self.show_study_mode(ui),
+                WorkbenchMode::Reference => self.show_reference_mode(ui),
             }
+        });
+    }
+
+    fn show_solve_mode(&mut self, ui: &mut egui::Ui) {
+        ui.horizontal(|ui| {
+            if ui.button("Add row").clicked() {
+                self.solve_rows
+                    .push(SolveRow::new(StudyTargetKind::Equation));
+                self.ensure_solve_rows();
+            }
+            if ui.button("Clear all").clicked() {
+                self.solve_rows = vec![SolveRow::new(StudyTargetKind::Equation)];
+                self.ensure_solve_rows();
+            }
+        });
+
+        let mut delete_idx = None;
+        let mut duplicate_idx = None;
+
+        for i in 0..self.solve_rows.len() {
+            let mut row = self.solve_rows[i].clone();
+            let mut recent_to_add: Option<String> = None;
+            ui.separator();
+            ui.collapsing(format!("Solve Row {}", i + 1), |ui| {
+                let mut changed_target = false;
+
+                ui.horizontal(|ui| {
+                    ui.selectable_value(&mut row.kind, StudyTargetKind::Equation, "Equation");
+                    ui.selectable_value(&mut row.kind, StudyTargetKind::Device, "Device");
+                    ui.selectable_value(&mut row.kind, StudyTargetKind::Workflow, "Workflow");
+                });
+
+                let all_targets = self.targets_of_kind(&row.kind, "");
+                let (selected_id, was_changed) = Self::render_target_picker(
+                    ui,
+                    &all_targets,
+                    &mut row.target_search,
+                    &row.target_id,
+                    "solve_row_target",
+                    i,
+                );
+                if was_changed {
+                    row.target_id = selected_id;
+                    row.field_values.clear();
+                    row.output_key.clear();
+                    row.result = None;
+                    row.last_error = None;
+                    changed_target = true;
+                } else if row.target_id.is_empty() {
+                    row.target_id = selected_id;
+                    changed_target = true;
+                }
+
+                let descriptor = self.descriptor_for(row.kind.clone(), &row.target_id);
+                if let Some(target) = descriptor {
+                    if changed_target {
+                        Self::seed_defaults(&target, &mut row.field_values, &mut row.output_key);
+                    }
+                    Self::render_reference_panel(ui, &target, true);
+                    Self::render_field_controls(ui, &target, &mut row.field_values);
+
+                    if target.kind == StudyTargetKind::Equation {
+                        if let Some(implied) =
+                            Self::implied_equation_target(&target, &row.field_values)
+                        {
+                            ui.small(format!("Implied target (one unknown): {implied}"));
+                        } else {
+                            ui.small(
+                                "Implied target available when exactly one variable is left blank.",
+                            );
+                        }
+                    }
+
+                    Self::render_output_picker(
+                        ui,
+                        &target,
+                        &mut row.output_search,
+                        &mut row.output_key,
+                        true,
+                        i,
+                        false,
+                    );
+
+                    ui.horizontal(|ui| {
+                        if ui.button("Run").clicked() {
+                            let req = SingleSolveRequest {
+                                target_kind: target.kind.clone(),
+                                target_id: target.id.clone(),
+                                inputs: Map::from_iter(
+                                    row.field_values.iter().map(|(k, v)| (k.clone(), v.clone())),
+                                ),
+                                output_key: if row.output_key.is_empty() {
+                                    None
+                                } else {
+                                    Some(row.output_key.clone())
+                                },
+                            };
+                            match run_single_solve(req) {
+                                Ok(res) => {
+                                    row.last_error = None;
+                                    row.result = Some(res);
+                                    recent_to_add =
+                                        Some(format!("{}:{}", target.kind.kind_name(), target.id));
+                                }
+                                Err(e) => {
+                                    row.result = None;
+                                    row.last_error = Some(e.to_string());
+                                }
+                            }
+                        }
+                        if ui.button("Duplicate").clicked() {
+                            duplicate_idx = Some(i);
+                        }
+                        if ui.button("Clear row").clicked() {
+                            row.field_values.clear();
+                            row.result = None;
+                            row.last_error = None;
+                        }
+                        if ui.button("Delete row").clicked() {
+                            delete_idx = Some(i);
+                        }
+                    });
+
+                    if let Some(err) = &row.last_error {
+                        ui.colored_label(egui::Color32::RED, format!("Error: {err}"));
+                    }
+                    if let Some(res) = &row.result {
+                        Self::render_single_result(ui, res);
+                    }
+                } else {
+                    ui.label("No target selected.");
+                }
+            });
+            self.solve_rows[i] = row;
+            if let Some(recent) = recent_to_add {
+                self.push_recent(&recent);
+            }
+        }
+
+        if let Some(i) = duplicate_idx
+            && let Some(row) = self.solve_rows.get(i).cloned()
+        {
+            self.solve_rows.insert(i + 1, row);
+        }
+        if let Some(i) = delete_idx {
+            if self.solve_rows.len() > 1 {
+                self.solve_rows.remove(i);
+            } else {
+                self.solve_rows[0] = SolveRow::new(StudyTargetKind::Equation);
+            }
+        }
+        self.ensure_solve_rows();
+    }
+
+    fn show_study_mode(&mut self, ui: &mut egui::Ui) {
+        ui.horizontal(|ui| {
+            ui.selectable_value(&mut self.study_kind, StudyTargetKind::Equation, "Equation");
+            ui.selectable_value(&mut self.study_kind, StudyTargetKind::Device, "Device");
+            ui.selectable_value(&mut self.study_kind, StudyTargetKind::Workflow, "Workflow");
+        });
+
+        let all_targets = self.targets_of_kind(&self.study_kind, "");
+        let (selected, changed) = Self::render_target_picker(
+            ui,
+            &all_targets,
+            &mut self.study_target_search,
+            &self.study_target_id,
+            "study_target",
+            0,
+        );
+        if changed || self.study_target_id.is_empty() {
+            self.study_target_id = selected;
+            self.reset_for_study_target();
+        }
+
+        self.render_study_preset_selector(ui);
+
+        if let Some(target) = self.current_study_target() {
+            Self::render_reference_panel(ui, &target, true);
+            self.render_sweep_controls(ui, &target);
+            Self::render_field_controls(ui, &target, &mut self.field_values);
+            Self::render_output_picker(
+                ui,
+                &target,
+                &mut self.output_search,
+                &mut self.output_key,
+                false,
+                0,
+                true,
+            );
 
             if ui.button("Run Study").clicked() {
                 match self.run_selected() {
                     Ok(result) => {
                         self.last_error = None;
                         self.result = Some(result);
+                        self.push_recent(&format!("{}:{}", target.kind.kind_name(), target.id));
                     }
                     Err(e) => {
                         self.result = None;
@@ -95,98 +344,205 @@ impl EngStudyView {
                     }
                 }
             }
-
-            if let Some(err) = &self.last_error {
-                ui.separator();
-                ui.colored_label(egui::Color32::RED, format!("Error: {err}"));
-            }
-
-            if let Some(result) = &self.result {
-                self.show_result(ui, result);
-            }
-        });
-    }
-
-    fn render_kind_selector(&mut self, ui: &mut egui::Ui) {
-        ui.horizontal(|ui| {
-            ui.selectable_value(&mut self.kind, StudyTargetKind::Equation, "Equation");
-            ui.selectable_value(&mut self.kind, StudyTargetKind::Device, "Device");
-            ui.selectable_value(&mut self.kind, StudyTargetKind::Workflow, "Workflow");
-        });
-    }
-
-    fn render_target_selector(&mut self, ui: &mut egui::Ui) {
-        let filtered = self.filtered_targets();
-        if filtered.is_empty() {
-            ui.label("No studyable targets discovered.");
-            return;
         }
-        self.selected_target_idx = self
-            .selected_target_idx
-            .min(filtered.len().saturating_sub(1));
-        let current_name = filtered[self.selected_target_idx].name.clone();
-        egui::ComboBox::from_label("Target")
-            .selected_text(current_name)
+
+        if let Some(err) = &self.last_error {
+            ui.separator();
+            ui.colored_label(egui::Color32::RED, format!("Error: {err}"));
+        }
+        if let Some(result) = &self.result {
+            self.show_result(ui, result);
+        }
+    }
+
+    fn show_reference_mode(&mut self, ui: &mut egui::Ui) {
+        ui.horizontal(|ui| {
+            ui.selectable_value(
+                &mut self.reference_kind,
+                StudyTargetKind::Equation,
+                "Equation",
+            );
+            ui.selectable_value(&mut self.reference_kind, StudyTargetKind::Device, "Device");
+            ui.selectable_value(
+                &mut self.reference_kind,
+                StudyTargetKind::Workflow,
+                "Workflow",
+            );
+        });
+
+        let all_targets = self.targets_of_kind(&self.reference_kind, "");
+        let (selected, changed) = Self::render_target_picker(
+            ui,
+            &all_targets,
+            &mut self.reference_target_search,
+            &self.reference_target_id,
+            "reference_target",
+            0,
+        );
+        if changed || self.reference_target_id.is_empty() {
+            self.reference_target_id = selected;
+        }
+
+        if let Some(target) = self.current_reference_target() {
+            Self::render_reference_panel(ui, &target, false);
+            ui.separator();
+            ui.label("Quick actions");
+            ui.horizontal(|ui| {
+                if ui.button("Pin favorite").clicked()
+                    && !self.favorites.iter().any(|f| f == &target.id)
+                {
+                    self.favorites.push(target.id.clone());
+                }
+                if ui.button("Copy key").clicked() {
+                    ui.ctx().copy_text(target.id.clone());
+                }
+            });
+
+            if !self.favorites.is_empty() {
+                ui.separator();
+                ui.label("Favorites");
+                for f in self.favorites.clone() {
+                    ui.horizontal(|ui| {
+                        ui.monospace(f.clone());
+                        if ui.button("Use").clicked() {
+                            self.reference_target_id = f.clone();
+                        }
+                    });
+                }
+            }
+            if !self.recents.is_empty() {
+                ui.separator();
+                ui.label("Recent");
+                for r in self.recents.iter().rev().take(10) {
+                    ui.monospace(r);
+                }
+            }
+        }
+    }
+
+    fn render_target_picker(
+        ui: &mut egui::Ui,
+        all_targets: &[StudyTargetDescriptor],
+        search: &mut String,
+        selected_id: &str,
+        id_prefix: &str,
+        row_idx: usize,
+    ) -> (String, bool) {
+        let mut choices = filter_targets(all_targets, search);
+        if choices.is_empty() {
+            ui.label("No targets discovered.");
+            return (String::new(), false);
+        }
+
+        let mut selected = selected_id.to_string();
+        if selected.is_empty() || !choices.iter().any(|t| t.id == selected) {
+            selected = choices[0].id.clone();
+        }
+
+        ui.horizontal(|ui| {
+            ui.label("Find target");
+            ui.text_edit_singleline(search);
+        });
+
+        choices = filter_targets(all_targets, search);
+        if !choices.iter().any(|t| t.id == selected) {
+            selected = choices
+                .first()
+                .map(|t| t.id.clone())
+                .unwrap_or_else(String::new);
+        }
+
+        let mut changed = false;
+        let selected_text = choices
+            .iter()
+            .find(|t| t.id == selected)
+            .map(|t| format!("{} ({})", t.name, t.id))
+            .unwrap_or_else(|| "(select)".to_string());
+
+        egui::ComboBox::from_id_salt(format!("{id_prefix}_{row_idx}"))
+            .selected_text(selected_text)
             .show_ui(ui, |ui| {
-                for (i, t) in filtered.iter().enumerate() {
+                for t in &choices {
                     if ui
-                        .selectable_value(
-                            &mut self.selected_target_idx,
-                            i,
-                            format!("{} ({})", t.name, t.id),
-                        )
-                        .changed()
+                        .selectable_label(selected == t.id, format!("{} ({})", t.name, t.id))
+                        .clicked()
                     {
-                        self.reset_for_target();
+                        selected = t.id.clone();
+                        changed = true;
                     }
                 }
             });
+        (selected, changed)
     }
 
-    fn render_preset_selector(&mut self, ui: &mut egui::Ui) {
-        let Some(target) = self.current_target() else {
+    fn render_study_preset_selector(&mut self, ui: &mut egui::Ui) {
+        let Some(target) = self.current_study_target() else {
             return;
         };
         let matching = self
             .presets
             .iter()
             .filter(|p| p.target_kind == target.kind && p.target_id == target.id)
-            .cloned()
             .collect::<Vec<_>>();
         if matching.is_empty() {
             return;
         }
-        self.selected_preset_idx = self
-            .selected_preset_idx
-            .min(matching.len().saturating_sub(1));
+
+        if self.study_preset_id.is_empty() || !matching.iter().any(|p| p.id == self.study_preset_id)
+        {
+            self.study_preset_id = matching[0].id.clone();
+        }
+
         egui::ComboBox::from_label("Preset")
-            .selected_text(matching[self.selected_preset_idx].name.clone())
+            .selected_text(
+                matching
+                    .iter()
+                    .find(|p| p.id == self.study_preset_id)
+                    .map(|p| p.name.clone())
+                    .unwrap_or_else(|| "(select)".to_string()),
+            )
             .show_ui(ui, |ui| {
-                for (i, p) in matching.iter().enumerate() {
-                    if ui
-                        .selectable_value(&mut self.selected_preset_idx, i, p.name.clone())
-                        .changed()
-                    {
-                        self.apply_preset(p);
-                    }
+                for p in &matching {
+                    ui.selectable_value(&mut self.study_preset_id, p.id.clone(), &p.name);
                 }
             });
-        if ui.button("Apply preset").clicked() {
-            let preset = matching[self.selected_preset_idx].clone();
+        if ui.button("Apply preset").clicked()
+            && let Some(p) = matching.iter().find(|p| p.id == self.study_preset_id)
+        {
+            let preset = (*p).clone();
             self.apply_preset(&preset);
         }
     }
 
     fn render_sweep_controls(&mut self, ui: &mut egui::Ui, target: &StudyTargetDescriptor) {
+        ui.separator();
         ui.label("Sweep");
         if !target.sweepable_fields.is_empty() {
+            ui.horizontal(|ui| {
+                ui.label("Find sweep field");
+                ui.text_edit_singleline(&mut self.sweep_field_search);
+            });
+            let filtered = target
+                .sweepable_fields
+                .iter()
+                .filter(|f| {
+                    self.sweep_field_search.trim().is_empty()
+                        || contains_ci(f, &self.sweep_field_search)
+                })
+                .cloned()
+                .collect::<Vec<_>>();
             if self.sweep_field.is_empty() {
-                self.sweep_field = target.sweepable_fields[0].clone();
+                self.sweep_field = target
+                    .plot_default
+                    .as_ref()
+                    .map(|p| p.x_field.clone())
+                    .or_else(|| filtered.first().cloned())
+                    .unwrap_or_default();
             }
             egui::ComboBox::from_label("Sweep field")
                 .selected_text(self.sweep_field.clone())
                 .show_ui(ui, |ui| {
-                    for f in &target.sweepable_fields {
+                    for f in filtered {
                         ui.selectable_value(&mut self.sweep_field, f.clone(), f);
                     }
                 });
@@ -214,26 +570,38 @@ impl EngStudyView {
         }
     }
 
-    fn render_field_controls(&mut self, ui: &mut egui::Ui, target: &StudyTargetDescriptor) {
+    fn render_field_controls(
+        ui: &mut egui::Ui,
+        target: &StudyTargetDescriptor,
+        fields: &mut BTreeMap<String, Value>,
+    ) {
         ui.separator();
         ui.label("Inputs");
         for field in &target.input_fields {
             let key = field.key.clone();
-            if !self.field_values.contains_key(&key) {
-                if let Some(v) = &field.default_value {
-                    self.field_values.insert(key.clone(), v.clone());
-                }
+            if !fields.contains_key(&key)
+                && let Some(v) = &field.default_value
+            {
+                fields.insert(key.clone(), v.clone());
             }
+
+            let has_value = fields.contains_key(&key);
+            let color = if has_value {
+                egui::Color32::LIGHT_GREEN
+            } else if field.required {
+                egui::Color32::LIGHT_RED
+            } else {
+                egui::Color32::GRAY
+            };
+
             ui.horizontal(|ui| {
-                ui.label(format!(
-                    "{}{}",
-                    field.label,
-                    if field.required { " *" } else { "" }
-                ));
+                ui.colored_label(
+                    color,
+                    format!("{}{}", field.label, if field.required { " *" } else { "" }),
+                );
                 match field.field_type {
                     StudyFieldType::Enum => {
-                        let current = self
-                            .field_values
+                        let current = fields
                             .get(&key)
                             .and_then(Value::as_str)
                             .unwrap_or("")
@@ -250,20 +618,19 @@ impl EngStudyView {
                                     ui.selectable_value(&mut next, opt.key.clone(), &opt.label);
                                 }
                             });
-                        self.field_values.insert(key.clone(), Value::from(next));
+                        if next.trim().is_empty() {
+                            fields.remove(&key);
+                        } else {
+                            fields.insert(key.clone(), Value::from(next));
+                        }
                     }
                     StudyFieldType::Bool => {
-                        let mut b = self
-                            .field_values
-                            .get(&key)
-                            .and_then(Value::as_bool)
-                            .unwrap_or(false);
+                        let mut b = fields.get(&key).and_then(Value::as_bool).unwrap_or(false);
                         ui.checkbox(&mut b, "");
-                        self.field_values.insert(key.clone(), Value::from(b));
+                        fields.insert(key.clone(), Value::from(b));
                     }
                     StudyFieldType::Float => {
-                        let mut text = self
-                            .field_values
+                        let mut text = fields
                             .get(&key)
                             .and_then(Value::as_f64)
                             .map(|v| v.to_string())
@@ -275,71 +642,194 @@ impl EngStudyView {
                         }
                         if ui.text_edit_singleline(&mut text).changed() {
                             if let Ok(v) = text.trim().parse::<f64>() {
-                                self.field_values.insert(key.clone(), Value::from(v));
+                                fields.insert(key.clone(), Value::from(v));
                             } else if text.trim().is_empty() {
-                                self.field_values.remove(&key);
+                                fields.remove(&key);
                             }
                         }
                     }
                     StudyFieldType::Int => {
-                        let mut text = self
-                            .field_values
+                        let mut text = fields
                             .get(&key)
                             .and_then(Value::as_i64)
                             .map(|v| v.to_string())
                             .unwrap_or_default();
                         if ui.text_edit_singleline(&mut text).changed() {
                             if let Ok(v) = text.trim().parse::<i64>() {
-                                self.field_values.insert(key.clone(), Value::from(v));
+                                fields.insert(key.clone(), Value::from(v));
                             } else if text.trim().is_empty() {
-                                self.field_values.remove(&key);
+                                fields.remove(&key);
                             }
                         }
                     }
                     StudyFieldType::String => {
-                        let mut text = self
-                            .field_values
+                        let mut text = fields
                             .get(&key)
                             .and_then(Value::as_str)
                             .unwrap_or("")
                             .to_string();
                         if ui.text_edit_singleline(&mut text).changed() {
-                            self.field_values.insert(key.clone(), Value::from(text));
+                            if text.trim().is_empty() {
+                                fields.remove(&key);
+                            } else {
+                                fields.insert(key.clone(), Value::from(text));
+                            }
                         }
                     }
                 }
             });
-            ui.small(&field.description);
+
+            let mut meta = field.description.clone();
+            if let Some(unit) = &field.unit {
+                meta.push_str(&format!(" | unit: {unit}"));
+            }
+            if !field.enum_options.is_empty() {
+                meta.push_str(" | enum");
+            }
+            ui.small(meta);
         }
     }
 
-    fn render_output_selector(&mut self, ui: &mut egui::Ui, target: &StudyTargetDescriptor) {
+    fn render_output_picker(
+        ui: &mut egui::Ui,
+        target: &StudyTargetDescriptor,
+        output_search: &mut String,
+        output_key: &mut String,
+        allow_auto_equation_target: bool,
+        row_idx: usize,
+        study_mode: bool,
+    ) {
         ui.separator();
-        let plot_outputs = target
-            .outputs
-            .iter()
-            .filter(|o| o.plottable)
-            .collect::<Vec<_>>();
-        if plot_outputs.is_empty() {
+        ui.horizontal(|ui| {
+            ui.label("Find output");
+            ui.text_edit_singleline(output_search);
+        });
+
+        let mut outputs = target.outputs.clone();
+        if study_mode {
+            outputs.retain(|o| o.plottable);
+        }
+        outputs.retain(|o| {
+            output_search.trim().is_empty()
+                || contains_ci(&o.key, output_search)
+                || contains_ci(&o.label, output_search)
+        });
+        if outputs.is_empty() {
+            ui.label("No outputs available.");
             return;
         }
-        if self.output_key.is_empty() {
-            self.output_key = target
+
+        if output_key.is_empty() {
+            *output_key = target
                 .default_output
                 .clone()
-                .unwrap_or_else(|| plot_outputs[0].key.clone());
+                .unwrap_or_else(|| outputs[0].key.clone());
         }
-        egui::ComboBox::from_label("Output")
-            .selected_text(self.output_key.clone())
+
+        let selected_text = if allow_auto_equation_target
+            && target.kind == StudyTargetKind::Equation
+            && output_key.is_empty()
+        {
+            "(auto missing variable)".to_string()
+        } else {
+            outputs
+                .iter()
+                .find(|o| o.key == *output_key)
+                .map(|o| format!("{} ({})", o.label, o.key))
+                .unwrap_or_else(|| output_key.clone())
+        };
+
+        egui::ComboBox::from_id_salt(format!("output_picker_{}_{}", target.id, row_idx))
+            .selected_text(selected_text)
             .show_ui(ui, |ui| {
-                for out in plot_outputs {
-                    ui.selectable_value(&mut self.output_key, out.key.clone(), out.label.clone());
+                if allow_auto_equation_target && target.kind == StudyTargetKind::Equation {
+                    if ui
+                        .selectable_label(output_key.is_empty(), "(auto missing variable)")
+                        .clicked()
+                    {
+                        output_key.clear();
+                    }
+                }
+                for out in outputs {
+                    if ui
+                        .selectable_label(
+                            *output_key == out.key,
+                            format!("{} ({})", out.label, out.key),
+                        )
+                        .clicked()
+                    {
+                        *output_key = out.key;
+                    }
                 }
             });
     }
 
-    fn run_selected(&self) -> Result<tf_eng::StudyResult, String> {
-        let Some(target) = self.current_target() else {
+    fn render_reference_panel(ui: &mut egui::Ui, target: &StudyTargetDescriptor, compact: bool) {
+        ui.separator();
+        ui.label(format!("{} ({})", target.name, target.id));
+        ui.small(&target.description);
+        if let Some(category) = &target.category {
+            ui.small(format!("Category: {category}"));
+        }
+        if let Some(display) = &target.display_unicode {
+            ui.label(format!("Display: {display}"));
+        } else if let Some(display) = &target.display_ascii {
+            ui.label(format!("Display: {display}"));
+        }
+        if let Some(latex) = &target.display_latex {
+            ui.small(format!("LaTeX: {latex}"));
+        }
+        if !target.branch_options.is_empty() {
+            ui.small(format!("Branches: {}", target.branch_options.join(", ")));
+        }
+        if let Some(default_output) = &target.default_output {
+            ui.small(format!("Default output: {default_output}"));
+        }
+        if compact {
+            return;
+        }
+
+        ui.collapsing("Inputs", |ui| {
+            for f in &target.input_fields {
+                let req = if f.required { "required" } else { "optional" };
+                let unit = f.unit.clone().unwrap_or_else(|| "-".to_string());
+                ui.monospace(format!(
+                    "{} | {} | {} | unit: {}",
+                    f.key, f.label, req, unit
+                ));
+            }
+        });
+        ui.collapsing("Outputs", |ui| {
+            for o in &target.outputs {
+                let plot = if o.plottable { "plot" } else { "meta" };
+                ui.monospace(format!("{} | {} | {}", o.key, o.label, plot));
+            }
+        });
+    }
+
+    fn render_single_result(ui: &mut egui::Ui, res: &SingleSolveResult) {
+        ui.separator();
+        ui.label(format!("Output: {}", res.output_key));
+        let mut line = format!("Value: {}", value_to_display(&res.value));
+        if let Some(unit) = &res.unit {
+            line.push_str(&format!(" {unit}"));
+        }
+        ui.monospace(line);
+        if let Some(path) = &res.path_text {
+            ui.collapsing("Path / diagnostics", |ui| {
+                ui.monospace(path);
+            });
+        }
+        if !res.warnings.is_empty() {
+            ui.label(format!("Warnings: {}", res.warnings.join(" | ")));
+        }
+        if ui.button("Copy result").clicked() {
+            ui.ctx().copy_text(value_to_display(&res.value));
+        }
+    }
+
+    fn run_selected(&self) -> Result<StudyResult, String> {
+        let Some(target) = self.current_study_target() else {
             return Err("No target selected".to_string());
         };
 
@@ -385,7 +875,7 @@ impl EngStudyView {
         .map_err(|e| e.to_string())
     }
 
-    fn show_result(&self, ui: &mut egui::Ui, result: &tf_eng::StudyResult) {
+    fn show_result(&self, ui: &mut egui::Ui, result: &StudyResult) {
         ui.separator();
         ui.label(format!(
             "Study {} | ok={} fail={} | output={}",
@@ -434,22 +924,95 @@ impl EngStudyView {
         });
     }
 
-    fn filtered_targets(&self) -> Vec<StudyTargetDescriptor> {
+    fn targets_of_kind(&self, kind: &StudyTargetKind, search: &str) -> Vec<StudyTargetDescriptor> {
         self.targets
             .iter()
-            .filter(|t| t.kind == self.kind)
+            .filter(|t| &t.kind == kind)
+            .filter(|t| {
+                search.trim().is_empty()
+                    || contains_ci(&t.name, search)
+                    || contains_ci(&t.id, search)
+                    || t.category
+                        .as_ref()
+                        .map(|c| contains_ci(c, search))
+                        .unwrap_or(false)
+            })
             .cloned()
             .collect()
     }
 
-    fn current_target(&self) -> Option<StudyTargetDescriptor> {
-        let filtered = self.filtered_targets();
-        filtered.get(self.selected_target_idx).cloned()
+    fn descriptor_for(&self, kind: StudyTargetKind, id: &str) -> Option<StudyTargetDescriptor> {
+        self.targets
+            .iter()
+            .find(|t| t.kind == kind && t.id == id)
+            .cloned()
+            .or_else(|| match kind {
+                StudyTargetKind::Equation => describe_equation_target(id).ok(),
+                StudyTargetKind::Device => describe_device_target(id).ok(),
+                StudyTargetKind::Workflow => describe_workflow_target(id).ok(),
+            })
     }
 
-    fn reset_for_target(&mut self) {
+    fn current_study_target(&self) -> Option<StudyTargetDescriptor> {
+        self.descriptor_for(self.study_kind.clone(), &self.study_target_id)
+    }
+
+    fn current_reference_target(&self) -> Option<StudyTargetDescriptor> {
+        self.descriptor_for(self.reference_kind.clone(), &self.reference_target_id)
+    }
+
+    fn ensure_study_target(&mut self) {
+        if self.study_target_id.is_empty()
+            && let Some(t) = self.targets_of_kind(&self.study_kind, "").first()
+        {
+            self.study_target_id = t.id.clone();
+        }
+    }
+
+    fn ensure_reference_target(&mut self) {
+        if self.reference_target_id.is_empty()
+            && let Some(t) = self.targets_of_kind(&self.reference_kind, "").first()
+        {
+            self.reference_target_id = t.id.clone();
+        }
+    }
+
+    fn ensure_solve_rows(&mut self) {
+        for i in 0..self.solve_rows.len() {
+            if self.solve_rows[i].target_id.is_empty()
+                && let Some(t) = self.targets_of_kind(&self.solve_rows[i].kind, "").first()
+            {
+                self.solve_rows[i].target_id = t.id.clone();
+                if let Some(d) = self.descriptor_for(
+                    self.solve_rows[i].kind.clone(),
+                    &self.solve_rows[i].target_id,
+                ) {
+                    let row = &mut self.solve_rows[i];
+                    Self::seed_defaults(&d, &mut row.field_values, &mut row.output_key);
+                }
+            }
+        }
+    }
+
+    fn seed_defaults(
+        target: &StudyTargetDescriptor,
+        field_values: &mut BTreeMap<String, Value>,
+        output_key: &mut String,
+    ) {
+        field_values.clear();
+        for f in &target.input_fields {
+            if let Some(v) = &f.default_value {
+                field_values.insert(f.key.clone(), v.clone());
+            }
+        }
+        *output_key = target.default_output.clone().unwrap_or_default();
+    }
+
+    fn reset_for_study_target(&mut self) {
         self.field_values.clear();
-        if let Some(target) = self.current_target() {
+        self.sweep_field_search.clear();
+        self.output_search.clear();
+        if let Some(target) = self.current_study_target() {
             self.sweep_field = target
                 .plot_default
                 .as_ref()
@@ -500,5 +1063,80 @@ impl EngStudyView {
                     .join(",");
             }
         }
+    }
+
+    fn implied_equation_target(
+        target: &StudyTargetDescriptor,
+        values: &BTreeMap<String, Value>,
+    ) -> Option<String> {
+        if target.kind != StudyTargetKind::Equation {
+            return None;
+        }
+        let missing = target
+            .input_fields
+            .iter()
+            .filter(|f| f.key != "branch")
+            .filter(|f| !values.contains_key(&f.key))
+            .map(|f| f.key.clone())
+            .collect::<Vec<_>>();
+        (missing.len() == 1).then(|| missing[0].clone())
+    }
+
+    fn push_recent(&mut self, item: &str) {
+        if let Some(idx) = self.recents.iter().position(|r| r == item) {
+            self.recents.remove(idx);
+        }
+        self.recents.push(item.to_string());
+        if self.recents.len() > 25 {
+            self.recents.remove(0);
+        }
+    }
+}
+
+trait KindName {
+    fn kind_name(&self) -> &'static str;
+}
+
+impl KindName for StudyTargetKind {
+    fn kind_name(&self) -> &'static str {
+        match self {
+            StudyTargetKind::Equation => "equation",
+            StudyTargetKind::Device => "device",
+            StudyTargetKind::Workflow => "workflow",
+        }
+    }
+}
+
+fn contains_ci(hay: &str, needle: &str) -> bool {
+    hay.to_ascii_lowercase()
+        .contains(&needle.trim().to_ascii_lowercase())
+}
+
+fn filter_targets(
+    all_targets: &[StudyTargetDescriptor],
+    search: &str,
+) -> Vec<StudyTargetDescriptor> {
+    all_targets
+        .iter()
+        .filter(|t| {
+            search.trim().is_empty()
+                || contains_ci(&t.name, search)
+                || contains_ci(&t.id, search)
+                || t.category
+                    .as_ref()
+                    .map(|c| contains_ci(c, search))
+                    .unwrap_or(false)
+        })
+        .cloned()
+        .collect()
+}
+
+fn value_to_display(v: &Value) -> String {
+    match v {
+        Value::String(s) => s.clone(),
+        Value::Number(n) => n.to_string(),
+        Value::Bool(b) => b.to_string(),
+        Value::Null => "null".to_string(),
+        other => other.to_string(),
     }
 }
