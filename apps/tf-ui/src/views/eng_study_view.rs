@@ -3,10 +3,10 @@ use std::collections::BTreeMap;
 use egui_plot::{Legend, Line, Plot, PlotPoints};
 use serde_json::{Map, Value};
 use tf_eng::{
-    SingleSolveRequest, SingleSolveResult, SolveRowState, SolveValidation, StudyFieldType,
-    StudyPresetDescriptor, StudyResult, StudyRunRequest, StudyTargetDescriptor, StudyTargetKind,
-    SweepAxisSpec, describe_device_target, describe_equation_target, describe_workflow_target,
-    list_study_presets, list_study_targets, run_single_solve, run_study_from_form,
+    SingleSolveResult, SolveRowState, SolveValidation, StudyFieldType, StudyPresetDescriptor,
+    StudyResult, StudyRunRequest, StudyTargetDescriptor, StudyTargetKind, SweepAxisSpec,
+    describe_device_target, describe_equation_target, describe_workflow_target,
+    evaluate_single_solve, list_study_presets, list_study_targets, run_study_from_form,
     validate_single_solve,
 };
 
@@ -245,53 +245,68 @@ impl EngStudyView {
                         false,
                     );
 
-                    row.validation = validate_single_solve(
-                        target.kind.clone(),
-                        &target.id,
-                        &row.input_text,
-                        if row.output_key.is_empty() {
-                            None
+                    let evaluation = if row.freeze {
+                        validate_single_solve(
+                            target.kind.clone(),
+                            &target.id,
+                            &row.input_text,
+                            if row.output_key.is_empty() {
+                                None
+                            } else {
+                                Some(row.output_key.as_str())
+                            },
+                        )
+                        .map(|v| (v, None))
+                    } else {
+                        evaluate_single_solve(
+                            target.kind.clone(),
+                            &target.id,
+                            &row.input_text,
+                            if row.output_key.is_empty() {
+                                None
+                            } else {
+                                Some(row.output_key.as_str())
+                            },
+                        )
+                    };
+
+                    if let Ok((validation, maybe_result)) = evaluation {
+                        row.validation = Some(validation.clone());
+                        if let Some(res) = maybe_result {
+                            let signature = format!(
+                                "{}|{}|{}|{}",
+                                target.kind.kind_name(),
+                                target.id,
+                                validation.output_key.clone().unwrap_or_default(),
+                                serde_json::to_string(&validation.normalized_inputs)
+                                    .unwrap_or_default()
+                            );
+                            row.last_error = None;
+                            row.result = Some(res);
+                            row.last_signature = Some(signature);
+                            recent_to_add =
+                                Some(format!("{}:{}", target.kind.kind_name(), target.id));
                         } else {
-                            Some(row.output_key.as_str())
-                        },
-                    )
-                    .ok();
+                            row.result = None;
+                        }
+                    } else if let Err(e) = evaluation {
+                        row.validation = None;
+                        row.result = None;
+                        row.last_error = Some(e.to_string());
+                    }
 
                     if let Some(v) = &row.validation {
                         Self::render_row_validation(ui, v);
-                        let output = v.output_key.clone();
-                        let signature = format!(
-                            "{}|{}|{}|{}",
-                            target.kind.kind_name(),
-                            target.id,
-                            output.clone().unwrap_or_default(),
-                            serde_json::to_string(&v.normalized_inputs).unwrap_or_default()
-                        );
-                        if v.ready
-                            && !row.freeze
-                            && row.last_signature.as_deref() != Some(signature.as_str())
-                        {
-                            let req = SingleSolveRequest {
-                                target_kind: target.kind.clone(),
-                                target_id: target.id.clone(),
-                                inputs: v.normalized_inputs.clone(),
-                                output_key: output,
-                            };
-                            match run_single_solve(req) {
-                                Ok(res) => {
-                                    row.last_error = None;
-                                    row.result = Some(res);
-                                    row.last_signature = Some(signature);
-                                    recent_to_add =
-                                        Some(format!("{}:{}", target.kind.kind_name(), target.id));
-                                }
-                                Err(e) => {
-                                    row.result = None;
-                                    row.last_error = Some(e.to_string());
-                                    row.last_signature = Some(signature);
-                                }
+                        ui.collapsing("Debug request", |ui| {
+                            if let Some(preview) = &v.request_preview {
+                                ui.monospace(
+                                    serde_json::to_string_pretty(preview)
+                                        .unwrap_or_else(|_| preview.to_string()),
+                                );
+                            } else {
+                                ui.small("No executable request yet.");
                             }
-                        }
+                        });
                     }
 
                     ui.horizontal(|ui| {
@@ -771,12 +786,12 @@ impl EngStudyView {
 
     fn render_row_validation(ui: &mut egui::Ui, validation: &SolveValidation) {
         let (label, color) = match validation.state {
+            SolveRowState::Validating => ("validating", egui::Color32::LIGHT_BLUE),
             SolveRowState::Ready => ("ready", egui::Color32::LIGHT_GREEN),
-            SolveRowState::Solved => ("solved", egui::Color32::LIGHT_GREEN),
-            SolveRowState::InvalidInput | SolveRowState::RuntimeError => {
-                ("invalid", egui::Color32::LIGHT_RED)
-            }
-            SolveRowState::BlockedAmbiguity => ("ambiguous", egui::Color32::YELLOW),
+            SolveRowState::Success => ("success", egui::Color32::LIGHT_GREEN),
+            SolveRowState::Invalid | SolveRowState::Error => ("invalid", egui::Color32::LIGHT_RED),
+            SolveRowState::Ambiguous => ("ambiguous", egui::Color32::YELLOW),
+            SolveRowState::Unsupported => ("unsupported", egui::Color32::YELLOW),
             SolveRowState::Incomplete => ("incomplete", egui::Color32::GRAY),
         };
         ui.colored_label(color, format!("State: {label}"));
@@ -788,6 +803,18 @@ impl EngStudyView {
                 "Missing required: {}",
                 validation.missing_required.join(", ")
             ));
+        }
+        for field in &validation.fields {
+            if !field.valid && !field.empty {
+                ui.colored_label(
+                    egui::Color32::LIGHT_RED,
+                    format!(
+                        "{}: {}",
+                        field.key,
+                        field.message.clone().unwrap_or_default()
+                    ),
+                );
+            }
         }
         for reason in &validation.blocking_reasons {
             ui.colored_label(egui::Color32::LIGHT_RED, reason);

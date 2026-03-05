@@ -14,7 +14,7 @@ use eng::solve::{
 };
 use equations::{Registry, registry::ids::derive_path_id};
 use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value};
+use serde_json::{Map, Value, json};
 use thiserror::Error;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -132,11 +132,13 @@ pub struct SingleSolveResult {
 #[serde(rename_all = "snake_case")]
 pub enum SolveRowState {
     Incomplete,
+    Validating,
     Ready,
-    Solved,
-    BlockedAmbiguity,
-    InvalidInput,
-    RuntimeError,
+    Success,
+    Invalid,
+    Ambiguous,
+    Unsupported,
+    Error,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -154,6 +156,7 @@ pub struct SolveValidation {
     pub ready: bool,
     pub output_key: Option<String>,
     pub normalized_inputs: Map<String, Value>,
+    pub request_preview: Option<Value>,
     pub fields: Vec<SolveFieldValidation>,
     pub missing_required: Vec<String>,
     pub blocking_reasons: Vec<String>,
@@ -412,12 +415,56 @@ pub fn run_single_solve(req: SingleSolveRequest) -> Result<SingleSolveResult, Br
     }
 }
 
+#[derive(Debug, Clone)]
+struct SingleSolvePlan {
+    request: Option<SingleSolveRequest>,
+    validation: SolveValidation,
+}
+
+pub fn evaluate_single_solve(
+    target_kind: StudyTargetKind,
+    target_id: &str,
+    raw_inputs: &BTreeMap<String, String>,
+    output_key: Option<&str>,
+) -> Result<(SolveValidation, Option<SingleSolveResult>), BridgeError> {
+    let plan = build_single_solve_plan(target_kind, target_id, raw_inputs, output_key)?;
+    if !plan.validation.ready {
+        return Ok((plan.validation, None));
+    }
+    let req = plan
+        .request
+        .ok_or_else(|| BridgeError::InvalidRequest("missing solve request".to_string()))?;
+    match run_single_solve(req) {
+        Ok(res) => {
+            let mut validation = plan.validation;
+            validation.state = SolveRowState::Success;
+            Ok((validation, Some(res)))
+        }
+        Err(e) => {
+            let mut validation = plan.validation;
+            validation.state = SolveRowState::Error;
+            validation.ready = false;
+            validation.blocking_reasons.push(e.to_string());
+            Ok((validation, None))
+        }
+    }
+}
+
 pub fn validate_single_solve(
     target_kind: StudyTargetKind,
     target_id: &str,
     raw_inputs: &BTreeMap<String, String>,
     output_key: Option<&str>,
 ) -> Result<SolveValidation, BridgeError> {
+    Ok(build_single_solve_plan(target_kind, target_id, raw_inputs, output_key)?.validation)
+}
+
+fn build_single_solve_plan(
+    target_kind: StudyTargetKind,
+    target_id: &str,
+    raw_inputs: &BTreeMap<String, String>,
+    output_key: Option<&str>,
+) -> Result<SingleSolvePlan, BridgeError> {
     let descriptor = match target_kind {
         StudyTargetKind::Equation => describe_equation_target(target_id)?,
         StudyTargetKind::Device => describe_device_target(target_id)?,
@@ -509,13 +556,15 @@ pub fn validate_single_solve(
                 );
             }
         }
+    } else if resolved_output.is_none() {
+        resolved_output = descriptor.default_output.clone();
     }
 
     if let Some(out) = &resolved_output {
         if !descriptor.outputs.iter().any(|o| o.key == *out) {
             blocking_reasons.push(format!("invalid output '{out}'"));
         } else if descriptor.kind == StudyTargetKind::Equation {
-            missing_required.retain(|m| m == out || m == "branch");
+            missing_required.retain(|m| m != out && m != "branch");
         }
     }
 
@@ -523,17 +572,20 @@ pub fn validate_single_solve(
     let ready = !has_invalid
         && blocking_reasons.is_empty()
         && resolved_output.is_some()
-        && missing_required.iter().all(|m| {
-            matches!(target_kind, StudyTargetKind::Equation) && resolved_output.as_ref() == Some(m)
-        });
+        && missing_required.is_empty();
     let state = if has_invalid {
-        SolveRowState::InvalidInput
+        SolveRowState::Invalid
     } else if !blocking_reasons.is_empty() {
         if blocking_reasons
             .iter()
             .any(|m| m.contains("exactly one unknown"))
         {
-            SolveRowState::BlockedAmbiguity
+            SolveRowState::Ambiguous
+        } else if blocking_reasons
+            .iter()
+            .any(|m| m.contains("invalid output"))
+        {
+            SolveRowState::Unsupported
         } else {
             SolveRowState::Incomplete
         }
@@ -543,14 +595,38 @@ pub fn validate_single_solve(
         SolveRowState::Incomplete
     };
 
-    Ok(SolveValidation {
+    let request_preview = resolved_output.as_ref().map(|out| {
+        json!({
+            "target_kind": target_kind,
+            "target_id": target_id,
+            "output_key": out,
+            "inputs": normalized.clone(),
+        })
+    });
+
+    let validation = SolveValidation {
         state,
         ready,
         output_key: resolved_output,
         normalized_inputs: normalized,
+        request_preview,
         fields,
         missing_required,
         blocking_reasons,
+    };
+    let request = if validation.ready {
+        Some(SingleSolveRequest {
+            target_kind,
+            target_id: target_id.to_string(),
+            inputs: validation.normalized_inputs.clone(),
+            output_key: validation.output_key.clone(),
+        })
+    } else {
+        None
+    };
+    Ok(SingleSolvePlan {
+        request,
+        validation,
     })
 }
 
@@ -1303,18 +1379,17 @@ fn run_single_equation(
     descriptor: &StudyTargetDescriptor,
     req: SingleSolveRequest,
 ) -> Result<SingleSolveResult, BridgeError> {
-    let mut numeric_inputs = BTreeMap::<String, f64>::new();
-    let mut branch = None::<String>;
+    let mut given_keys = BTreeSet::<String>::new();
     for (k, v) in &req.inputs {
         if k == "branch" {
-            branch = v.as_str().map(|s| s.to_string());
             continue;
         }
-        if let Some(n) = v.as_f64() {
-            numeric_inputs.insert(k.clone(), n);
+        let provided = v.as_f64().is_some() || v.as_str().is_some();
+        if provided {
+            given_keys.insert(k.clone());
         }
     }
-
+    let mut branch = None::<String>;
     let output_key = if let Some(k) = req.output_key.clone() {
         k
     } else {
@@ -1322,7 +1397,7 @@ fn run_single_equation(
             .input_fields
             .iter()
             .filter(|f| f.key != "branch")
-            .filter(|f| !numeric_inputs.contains_key(&f.key))
+            .filter(|f| !given_keys.contains(&f.key))
             .map(|f| f.key.clone())
             .collect::<Vec<_>>();
         match missing.len() {
@@ -1349,8 +1424,23 @@ fn run_single_equation(
     let mut solve = eng::eq
         .solve(req.target_id.as_str())
         .for_target(&output_key);
-    for (k, n) in numeric_inputs {
-        solve = solve.given(k, n);
+    for (k, v) in &req.inputs {
+        if k == "branch" {
+            branch = v.as_str().map(|s| s.to_string());
+            continue;
+        }
+        if let Some(n) = v.as_f64() {
+            solve = solve.given(k.clone(), n);
+            given_keys.insert(k.clone());
+        } else if let Some(s) = v.as_str() {
+            solve = solve.given(k.clone(), s.to_string());
+            given_keys.insert(k.clone());
+        } else {
+            return Err(BridgeError::InvalidRequest(format!(
+                "unsupported input type for equation field '{}'",
+                k
+            )));
+        }
     }
     if let Some(b) = branch {
         solve = solve.branch(&b);
@@ -1724,5 +1814,72 @@ mod tests {
                 .iter()
                 .any(|m| m.contains("exactly one unknown"))
         );
+    }
+
+    #[test]
+    fn hoop_stress_one_unknown_inference_executes_with_units() {
+        let raw = BTreeMap::from([
+            ("P".to_string(), "500 psia".to_string()),
+            ("r".to_string(), "1.2 in".to_string()),
+            ("t".to_string(), "0.12 in".to_string()),
+        ]);
+        let (v, solved) = evaluate_single_solve(
+            StudyTargetKind::Equation,
+            "structures.hoop_stress",
+            &raw,
+            None,
+        )
+        .expect("evaluation");
+        assert_eq!(v.output_key.as_deref(), Some("sigma_h"));
+        let solved = solved.expect("solve result");
+        assert_eq!(solved.output_key, "sigma_h");
+        assert!(solved.value.as_f64().unwrap_or(0.0) > 0.0);
+    }
+
+    #[test]
+    fn hoop_stress_inverse_targets_execute() {
+        let base = BTreeMap::from([
+            ("P".to_string(), "500 psia".to_string()),
+            ("r".to_string(), "1.2 in".to_string()),
+            ("t".to_string(), "0.12 in".to_string()),
+            ("sigma_h".to_string(), "5000 psia".to_string()),
+        ]);
+        for target in ["P", "r", "t"] {
+            let mut raw = base.clone();
+            raw.insert(target.to_string(), String::new());
+            let (_, solved) = evaluate_single_solve(
+                StudyTargetKind::Equation,
+                "structures.hoop_stress",
+                &raw,
+                None,
+            )
+            .expect("evaluation");
+            let solved = solved.expect("solve result");
+            assert_eq!(solved.output_key, target);
+        }
+    }
+
+    #[test]
+    fn validation_ready_and_execution_stay_consistent() {
+        let raw = BTreeMap::from([
+            ("M".to_string(), "2.0".to_string()),
+            ("gamma".to_string(), "1.4".to_string()),
+        ]);
+        let v = validate_single_solve(
+            StudyTargetKind::Equation,
+            "compressible.isentropic_pressure_ratio",
+            &raw,
+            Some("p_p0"),
+        )
+        .expect("validation");
+        assert!(v.ready);
+        let (_, solved) = evaluate_single_solve(
+            StudyTargetKind::Equation,
+            "compressible.isentropic_pressure_ratio",
+            &raw,
+            Some("p_p0"),
+        )
+        .expect("evaluation");
+        assert!(solved.is_some());
     }
 }
