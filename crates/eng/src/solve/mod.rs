@@ -17,6 +17,7 @@ pub use study::{
 };
 pub use workflow::{
     NozzleShockWorkflowRequest, NozzleShockWorkflowResult, QuantityProvenance, QuantityRecord,
-    StationState, WorkflowError, WorkflowRun, WorkflowStepTrace, WorkflowStudySpecEntry,
+    StationState, WorkflowError, WorkflowFieldType, WorkflowInputFieldSpec,
+    WorkflowOutputFieldSpec, WorkflowRun, WorkflowStepTrace, WorkflowStudySpecEntry,
     run_nozzle_normal_shock_workflow, studyable_workflows,
 };

@@ -1,41 +1,36 @@
+use std::collections::BTreeMap;
+
 use egui_plot::{Legend, Line, Plot, PlotPoints};
+use serde_json::{Map, Value};
 use tf_eng::{
-    DeviceStudyRequest, EquationStudyRequest, SweepAxisSpec, WorkflowStudyRequest,
-    run_device_study, run_equation_study, run_workflow_study, studyable_device_keys,
-    studyable_workflow_keys,
+    StudyFieldType, StudyPresetDescriptor, StudyRunRequest, StudyTargetDescriptor, StudyTargetKind,
+    SweepAxisSpec, list_study_presets, list_study_targets, run_study_from_form,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum StudyMode {
-    Equation,
-    Device,
-    Workflow,
+enum AxisMode {
+    Values,
+    Linspace,
+    Logspace,
 }
 
 pub struct EngStudyView {
-    mode: StudyMode,
+    targets: Vec<StudyTargetDescriptor>,
+    presets: Vec<StudyPresetDescriptor>,
+
+    kind: StudyTargetKind,
+    selected_target_idx: usize,
+    selected_preset_idx: usize,
+
+    axis_mode: AxisMode,
     axis_start: f64,
     axis_end: f64,
     axis_count: usize,
+    axis_values_csv: String,
 
-    equation_path_id: String,
-    equation_target: String,
-    equation_sweep_variable: String,
-    equation_fixed_inputs_json: String,
-    equation_branch: String,
-
-    device_keys: Vec<String>,
-    device_key_index: usize,
-    device_sweep_arg: String,
-    device_fixed_args_json: String,
-    device_outputs_csv: String,
-    device_output_key: String,
-
-    workflow_keys: Vec<String>,
-    workflow_key_index: usize,
-    workflow_sweep_arg: String,
-    workflow_fixed_args_json: String,
-    workflow_output_key: String,
+    sweep_field: String,
+    output_key: String,
+    field_values: BTreeMap<String, Value>,
 
     result: Option<tf_eng::StudyResult>,
     last_error: Option<String>,
@@ -43,70 +38,49 @@ pub struct EngStudyView {
 
 impl Default for EngStudyView {
     fn default() -> Self {
-        let device_keys = studyable_device_keys();
-        let workflow_keys = studyable_workflow_keys();
-        Self {
-            mode: StudyMode::Equation,
+        let targets = list_study_targets().unwrap_or_default();
+        let presets = list_study_presets().unwrap_or_default();
+        let mut s = Self {
+            targets,
+            presets,
+            kind: StudyTargetKind::Equation,
+            selected_target_idx: 0,
+            selected_preset_idx: 0,
+            axis_mode: AxisMode::Linspace,
             axis_start: 0.2,
             axis_end: 3.0,
             axis_count: 20,
-
-            equation_path_id: "compressible.isentropic_pressure_ratio".to_string(),
-            equation_target: "p_p0".to_string(),
-            equation_sweep_variable: "M".to_string(),
-            equation_fixed_inputs_json: "{\"gamma\":1.4}".to_string(),
-            equation_branch: String::new(),
-
-            device_key_index: 0,
-            device_keys,
-            device_sweep_arg: "input_value".to_string(),
-            device_fixed_args_json:
-                "{\"input_kind\":\"mach\",\"target_kind\":\"pressure_ratio\",\"gamma\":1.4}"
-                    .to_string(),
-            device_outputs_csv: "value,pivot,path_text".to_string(),
-            device_output_key: "value".to_string(),
-
-            workflow_key_index: 0,
-            workflow_keys,
-            workflow_sweep_arg: "area_ratio".to_string(),
-            workflow_fixed_args_json: "{\"gamma\":1.4,\"branch\":\"supersonic\"}".to_string(),
-            workflow_output_key: "pre_shock_mach".to_string(),
-
+            axis_values_csv: "0.2,0.5,1.0,2.0,3.0".to_string(),
+            sweep_field: String::new(),
+            output_key: String::new(),
+            field_values: BTreeMap::new(),
             result: None,
             last_error: None,
-        }
+        };
+        s.reset_for_target();
+        s
     }
 }
 
 impl EngStudyView {
     pub fn show(&mut self, ui: &mut egui::Ui) {
         egui::ScrollArea::vertical().show(ui, |ui| {
-            ui.heading("Eng Studies");
-            ui.label(
-                "Generic bridge to eng equation/device/workflow studies with plot-ready outputs.",
-            );
-            ui.separator();
-
-            ui.horizontal(|ui| {
-                ui.selectable_value(&mut self.mode, StudyMode::Equation, "Equation");
-                ui.selectable_value(&mut self.mode, StudyMode::Device, "Device");
-                ui.selectable_value(&mut self.mode, StudyMode::Workflow, "Workflow");
-            });
+            ui.heading("Eng Study Explorer");
+            ui.label("Schema-driven study forms from tf-eng target descriptors.");
 
             ui.separator();
-            ui.horizontal(|ui| {
-                ui.label("Axis start");
-                ui.add(egui::DragValue::new(&mut self.axis_start));
-                ui.label("end");
-                ui.add(egui::DragValue::new(&mut self.axis_end));
-                ui.label("count");
-                ui.add(egui::DragValue::new(&mut self.axis_count).range(2..=2000));
-            });
+            self.render_kind_selector(ui);
 
-            match self.mode {
-                StudyMode::Equation => self.show_equation_fields(ui),
-                StudyMode::Device => self.show_device_fields(ui),
-                StudyMode::Workflow => self.show_workflow_fields(ui),
+            ui.separator();
+            self.render_target_selector(ui);
+            self.render_preset_selector(ui);
+
+            if let Some(target) = self.current_target() {
+                ui.label(format!("{}", target.description));
+                ui.separator();
+                self.render_sweep_controls(ui, &target);
+                self.render_field_controls(ui, &target);
+                self.render_output_selector(ui, &target);
             }
 
             if ui.button("Run Study").clicked() {
@@ -133,133 +107,282 @@ impl EngStudyView {
         });
     }
 
-    fn show_equation_fields(&mut self, ui: &mut egui::Ui) {
+    fn render_kind_selector(&mut self, ui: &mut egui::Ui) {
         ui.horizontal(|ui| {
-            ui.label("path_id");
-            ui.text_edit_singleline(&mut self.equation_path_id);
-        });
-        ui.horizontal(|ui| {
-            ui.label("target");
-            ui.text_edit_singleline(&mut self.equation_target);
-            ui.label("sweep variable");
-            ui.text_edit_singleline(&mut self.equation_sweep_variable);
-        });
-        ui.label("fixed inputs JSON (numeric object)");
-        ui.text_edit_singleline(&mut self.equation_fixed_inputs_json);
-        ui.horizontal(|ui| {
-            ui.label("branch (optional)");
-            ui.text_edit_singleline(&mut self.equation_branch);
+            ui.selectable_value(&mut self.kind, StudyTargetKind::Equation, "Equation");
+            ui.selectable_value(&mut self.kind, StudyTargetKind::Device, "Device");
+            ui.selectable_value(&mut self.kind, StudyTargetKind::Workflow, "Workflow");
         });
     }
 
-    fn show_device_fields(&mut self, ui: &mut egui::Ui) {
-        if self.device_keys.is_empty() {
-            ui.label("No studyable devices registered.");
+    fn render_target_selector(&mut self, ui: &mut egui::Ui) {
+        let filtered = self.filtered_targets();
+        if filtered.is_empty() {
+            ui.label("No studyable targets discovered.");
             return;
         }
-        self.device_key_index = self
-            .device_key_index
-            .min(self.device_keys.len().saturating_sub(1));
-        egui::ComboBox::from_label("device")
-            .selected_text(self.device_keys[self.device_key_index].clone())
+        self.selected_target_idx = self
+            .selected_target_idx
+            .min(filtered.len().saturating_sub(1));
+        let current_name = filtered[self.selected_target_idx].name.clone();
+        egui::ComboBox::from_label("Target")
+            .selected_text(current_name)
             .show_ui(ui, |ui| {
-                for (idx, key) in self.device_keys.iter().enumerate() {
-                    ui.selectable_value(&mut self.device_key_index, idx, key);
+                for (i, t) in filtered.iter().enumerate() {
+                    if ui
+                        .selectable_value(
+                            &mut self.selected_target_idx,
+                            i,
+                            format!("{} ({})", t.name, t.id),
+                        )
+                        .changed()
+                    {
+                        self.reset_for_target();
+                    }
                 }
             });
-        ui.horizontal(|ui| {
-            ui.label("sweep arg");
-            ui.text_edit_singleline(&mut self.device_sweep_arg);
-        });
-        ui.label("fixed args JSON (object)");
-        ui.text_edit_singleline(&mut self.device_fixed_args_json);
-        ui.horizontal(|ui| {
-            ui.label("outputs csv");
-            ui.text_edit_singleline(&mut self.device_outputs_csv);
-            ui.label("plot output key");
-            ui.text_edit_singleline(&mut self.device_output_key);
-        });
     }
 
-    fn show_workflow_fields(&mut self, ui: &mut egui::Ui) {
-        if self.workflow_keys.is_empty() {
-            ui.label("No studyable workflows registered.");
+    fn render_preset_selector(&mut self, ui: &mut egui::Ui) {
+        let Some(target) = self.current_target() else {
+            return;
+        };
+        let matching = self
+            .presets
+            .iter()
+            .filter(|p| p.target_kind == target.kind && p.target_id == target.id)
+            .cloned()
+            .collect::<Vec<_>>();
+        if matching.is_empty() {
             return;
         }
-        self.workflow_key_index = self
-            .workflow_key_index
-            .min(self.workflow_keys.len().saturating_sub(1));
-        egui::ComboBox::from_label("workflow")
-            .selected_text(self.workflow_keys[self.workflow_key_index].clone())
+        self.selected_preset_idx = self
+            .selected_preset_idx
+            .min(matching.len().saturating_sub(1));
+        egui::ComboBox::from_label("Preset")
+            .selected_text(matching[self.selected_preset_idx].name.clone())
             .show_ui(ui, |ui| {
-                for (idx, key) in self.workflow_keys.iter().enumerate() {
-                    ui.selectable_value(&mut self.workflow_key_index, idx, key);
+                for (i, p) in matching.iter().enumerate() {
+                    if ui
+                        .selectable_value(&mut self.selected_preset_idx, i, p.name.clone())
+                        .changed()
+                    {
+                        self.apply_preset(p);
+                    }
                 }
             });
+        if ui.button("Apply preset").clicked() {
+            let preset = matching[self.selected_preset_idx].clone();
+            self.apply_preset(&preset);
+        }
+    }
+
+    fn render_sweep_controls(&mut self, ui: &mut egui::Ui, target: &StudyTargetDescriptor) {
+        ui.label("Sweep");
+        if !target.sweepable_fields.is_empty() {
+            if self.sweep_field.is_empty() {
+                self.sweep_field = target.sweepable_fields[0].clone();
+            }
+            egui::ComboBox::from_label("Sweep field")
+                .selected_text(self.sweep_field.clone())
+                .show_ui(ui, |ui| {
+                    for f in &target.sweepable_fields {
+                        ui.selectable_value(&mut self.sweep_field, f.clone(), f);
+                    }
+                });
+        }
+
         ui.horizontal(|ui| {
-            ui.label("sweep arg");
-            ui.text_edit_singleline(&mut self.workflow_sweep_arg);
-            ui.label("plot output key");
-            ui.text_edit_singleline(&mut self.workflow_output_key);
+            ui.selectable_value(&mut self.axis_mode, AxisMode::Linspace, "linspace");
+            ui.selectable_value(&mut self.axis_mode, AxisMode::Logspace, "logspace");
+            ui.selectable_value(&mut self.axis_mode, AxisMode::Values, "values");
         });
-        ui.label("fixed args JSON (object)");
-        ui.text_edit_singleline(&mut self.workflow_fixed_args_json);
+        match self.axis_mode {
+            AxisMode::Values => {
+                ui.text_edit_singleline(&mut self.axis_values_csv);
+            }
+            AxisMode::Linspace | AxisMode::Logspace => {
+                ui.horizontal(|ui| {
+                    ui.label("start");
+                    ui.add(egui::DragValue::new(&mut self.axis_start));
+                    ui.label("end");
+                    ui.add(egui::DragValue::new(&mut self.axis_end));
+                    ui.label("count");
+                    ui.add(egui::DragValue::new(&mut self.axis_count).range(2..=5000));
+                });
+            }
+        }
+    }
+
+    fn render_field_controls(&mut self, ui: &mut egui::Ui, target: &StudyTargetDescriptor) {
+        ui.separator();
+        ui.label("Inputs");
+        for field in &target.input_fields {
+            let key = field.key.clone();
+            if !self.field_values.contains_key(&key) {
+                if let Some(v) = &field.default_value {
+                    self.field_values.insert(key.clone(), v.clone());
+                }
+            }
+            ui.horizontal(|ui| {
+                ui.label(format!(
+                    "{}{}",
+                    field.label,
+                    if field.required { " *" } else { "" }
+                ));
+                match field.field_type {
+                    StudyFieldType::Enum => {
+                        let current = self
+                            .field_values
+                            .get(&key)
+                            .and_then(Value::as_str)
+                            .unwrap_or("")
+                            .to_string();
+                        let mut next = current.clone();
+                        egui::ComboBox::from_id_salt(format!("field_{key}"))
+                            .selected_text(if current.is_empty() {
+                                "(select)"
+                            } else {
+                                &current
+                            })
+                            .show_ui(ui, |ui| {
+                                for opt in &field.enum_options {
+                                    ui.selectable_value(&mut next, opt.key.clone(), &opt.label);
+                                }
+                            });
+                        self.field_values.insert(key.clone(), Value::from(next));
+                    }
+                    StudyFieldType::Bool => {
+                        let mut b = self
+                            .field_values
+                            .get(&key)
+                            .and_then(Value::as_bool)
+                            .unwrap_or(false);
+                        ui.checkbox(&mut b, "");
+                        self.field_values.insert(key.clone(), Value::from(b));
+                    }
+                    StudyFieldType::Float => {
+                        let mut text = self
+                            .field_values
+                            .get(&key)
+                            .and_then(Value::as_f64)
+                            .map(|v| v.to_string())
+                            .unwrap_or_default();
+                        if text.is_empty()
+                            && let Some(Value::Number(n)) = field.default_value.as_ref()
+                        {
+                            text = n.to_string();
+                        }
+                        if ui.text_edit_singleline(&mut text).changed() {
+                            if let Ok(v) = text.trim().parse::<f64>() {
+                                self.field_values.insert(key.clone(), Value::from(v));
+                            } else if text.trim().is_empty() {
+                                self.field_values.remove(&key);
+                            }
+                        }
+                    }
+                    StudyFieldType::Int => {
+                        let mut text = self
+                            .field_values
+                            .get(&key)
+                            .and_then(Value::as_i64)
+                            .map(|v| v.to_string())
+                            .unwrap_or_default();
+                        if ui.text_edit_singleline(&mut text).changed() {
+                            if let Ok(v) = text.trim().parse::<i64>() {
+                                self.field_values.insert(key.clone(), Value::from(v));
+                            } else if text.trim().is_empty() {
+                                self.field_values.remove(&key);
+                            }
+                        }
+                    }
+                    StudyFieldType::String => {
+                        let mut text = self
+                            .field_values
+                            .get(&key)
+                            .and_then(Value::as_str)
+                            .unwrap_or("")
+                            .to_string();
+                        if ui.text_edit_singleline(&mut text).changed() {
+                            self.field_values.insert(key.clone(), Value::from(text));
+                        }
+                    }
+                }
+            });
+            ui.small(&field.description);
+        }
+    }
+
+    fn render_output_selector(&mut self, ui: &mut egui::Ui, target: &StudyTargetDescriptor) {
+        ui.separator();
+        let plot_outputs = target
+            .outputs
+            .iter()
+            .filter(|o| o.plottable)
+            .collect::<Vec<_>>();
+        if plot_outputs.is_empty() {
+            return;
+        }
+        if self.output_key.is_empty() {
+            self.output_key = target
+                .default_output
+                .clone()
+                .unwrap_or_else(|| plot_outputs[0].key.clone());
+        }
+        egui::ComboBox::from_label("Output")
+            .selected_text(self.output_key.clone())
+            .show_ui(ui, |ui| {
+                for out in plot_outputs {
+                    ui.selectable_value(&mut self.output_key, out.key.clone(), out.label.clone());
+                }
+            });
     }
 
     fn run_selected(&self) -> Result<tf_eng::StudyResult, String> {
-        let axis = SweepAxisSpec::Linspace {
-            start: self.axis_start,
-            end: self.axis_end,
-            count: self.axis_count,
+        let Some(target) = self.current_target() else {
+            return Err("No target selected".to_string());
         };
-        match self.mode {
-            StudyMode::Equation => {
-                let fixed_inputs = parse_numeric_map(&self.equation_fixed_inputs_json)?;
-                run_equation_study(EquationStudyRequest {
-                    path_id: self.equation_path_id.clone(),
-                    target: self.equation_target.clone(),
-                    sweep_variable: self.equation_sweep_variable.clone(),
-                    axis,
-                    fixed_inputs,
-                    branch: (!self.equation_branch.trim().is_empty())
-                        .then(|| self.equation_branch.trim().to_string()),
-                    output_key: None,
-                })
-                .map_err(|e| e.to_string())
-            }
-            StudyMode::Device => {
-                let fixed_args = parse_json_object(&self.device_fixed_args_json)?;
-                let requested_outputs = self
-                    .device_outputs_csv
+
+        let axis = match self.axis_mode {
+            AxisMode::Linspace => SweepAxisSpec::Linspace {
+                start: self.axis_start,
+                end: self.axis_end,
+                count: self.axis_count,
+            },
+            AxisMode::Logspace => SweepAxisSpec::Logspace {
+                start: self.axis_start,
+                end: self.axis_end,
+                count: self.axis_count,
+            },
+            AxisMode::Values => {
+                let values = self
+                    .axis_values_csv
                     .split(',')
                     .map(str::trim)
                     .filter(|s| !s.is_empty())
-                    .map(ToString::to_string)
-                    .collect::<Vec<_>>();
-                run_device_study(DeviceStudyRequest {
-                    device_key: self.device_keys[self.device_key_index].clone(),
-                    sweep_arg: self.device_sweep_arg.clone(),
-                    axis,
-                    fixed_args,
-                    requested_outputs,
-                    output_key: (!self.device_output_key.trim().is_empty())
-                        .then(|| self.device_output_key.trim().to_string()),
-                })
-                .map_err(|e| e.to_string())
+                    .map(|s| {
+                        s.parse::<f64>()
+                            .map_err(|_| format!("invalid axis value '{s}'"))
+                    })
+                    .collect::<Result<Vec<_>, _>>()?;
+                SweepAxisSpec::Values(values)
             }
-            StudyMode::Workflow => {
-                let fixed_args = parse_json_object(&self.workflow_fixed_args_json)?;
-                run_workflow_study(WorkflowStudyRequest {
-                    workflow_key: self.workflow_keys[self.workflow_key_index].clone(),
-                    sweep_arg: self.workflow_sweep_arg.clone(),
-                    axis,
-                    fixed_args,
-                    output_key: (!self.workflow_output_key.trim().is_empty())
-                        .then(|| self.workflow_output_key.trim().to_string()),
-                })
-                .map_err(|e| e.to_string())
-            }
-        }
+        };
+
+        let inputs = Map::from_iter(
+            self.field_values
+                .iter()
+                .map(|(k, v)| (k.clone(), v.clone())),
+        );
+        run_study_from_form(StudyRunRequest {
+            target_kind: target.kind.clone(),
+            target_id: target.id.clone(),
+            sweep_field: self.sweep_field.clone(),
+            axis,
+            inputs,
+            output_key: Some(self.output_key.clone()),
+        })
+        .map_err(|e| e.to_string())
     }
 
     fn show_result(&self, ui: &mut egui::Ui, result: &tf_eng::StudyResult) {
@@ -310,23 +433,72 @@ impl EngStudyView {
             }
         });
     }
-}
 
-fn parse_json_object(text: &str) -> Result<serde_json::Map<String, serde_json::Value>, String> {
-    match serde_json::from_str::<serde_json::Value>(text).map_err(|e| e.to_string())? {
-        serde_json::Value::Object(obj) => Ok(obj),
-        _ => Err("JSON must be an object".to_string()),
+    fn filtered_targets(&self) -> Vec<StudyTargetDescriptor> {
+        self.targets
+            .iter()
+            .filter(|t| t.kind == self.kind)
+            .cloned()
+            .collect()
     }
-}
 
-fn parse_numeric_map(text: &str) -> Result<std::collections::BTreeMap<String, f64>, String> {
-    let obj = parse_json_object(text)?;
-    let mut out = std::collections::BTreeMap::new();
-    for (k, v) in obj {
-        let Some(n) = v.as_f64() else {
-            return Err(format!("fixed input '{k}' must be numeric"));
-        };
-        out.insert(k, n);
+    fn current_target(&self) -> Option<StudyTargetDescriptor> {
+        let filtered = self.filtered_targets();
+        filtered.get(self.selected_target_idx).cloned()
     }
-    Ok(out)
+
+    fn reset_for_target(&mut self) {
+        self.field_values.clear();
+        if let Some(target) = self.current_target() {
+            self.sweep_field = target
+                .plot_default
+                .as_ref()
+                .map(|p| p.x_field.clone())
+                .or_else(|| target.sweepable_fields.first().cloned())
+                .unwrap_or_default();
+            self.output_key = target
+                .plot_default
+                .as_ref()
+                .map(|p| p.y_output.clone())
+                .or_else(|| target.default_output.clone())
+                .unwrap_or_default();
+            for f in &target.input_fields {
+                if let Some(v) = &f.default_value {
+                    self.field_values.insert(f.key.clone(), v.clone());
+                }
+            }
+        }
+    }
+
+    fn apply_preset(&mut self, preset: &StudyPresetDescriptor) {
+        self.sweep_field = preset.sweep_field.clone();
+        self.output_key = preset.output_key.clone();
+        self.field_values = preset
+            .input_overrides
+            .iter()
+            .map(|(k, v)| (k.clone(), v.clone()))
+            .collect();
+        match preset.axis {
+            SweepAxisSpec::Linspace { start, end, count } => {
+                self.axis_mode = AxisMode::Linspace;
+                self.axis_start = start;
+                self.axis_end = end;
+                self.axis_count = count;
+            }
+            SweepAxisSpec::Logspace { start, end, count } => {
+                self.axis_mode = AxisMode::Logspace;
+                self.axis_start = start;
+                self.axis_end = end;
+                self.axis_count = count;
+            }
+            SweepAxisSpec::Values(ref values) => {
+                self.axis_mode = AxisMode::Values;
+                self.axis_values_csv = values
+                    .iter()
+                    .map(|v| v.to_string())
+                    .collect::<Vec<_>>()
+                    .join(",");
+            }
+        }
+    }
 }

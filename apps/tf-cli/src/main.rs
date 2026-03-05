@@ -10,8 +10,9 @@ use tf_app::{
 };
 use tf_cea::{NativeCeaBackend, Reactant};
 use tf_eng::{
-    DeviceStudyRequest, EquationStudyRequest, SweepAxisSpec, WorkflowStudyRequest,
-    run_device_study, run_equation_study, run_workflow_study,
+    DeviceStudyRequest, EquationStudyRequest, StudyTargetKind, SweepAxisSpec, WorkflowStudyRequest,
+    describe_device_target, describe_equation_target, describe_workflow_target, list_study_presets,
+    list_study_targets, run_device_study, run_equation_study, run_workflow_study,
 };
 use tf_rpa::{
     CombustorModel, NozzleChemistryModel, NozzleConstraint, RocketAnalysisProblem,
@@ -79,6 +80,27 @@ enum Commands {
 
 #[derive(Subcommand)]
 enum EngCommands {
+    /// List studyable targets discovered from tf-eng metadata.
+    List {
+        #[arg(long, value_enum, default_value_t = CliStudyFormat::Json)]
+        format: CliStudyFormat,
+    },
+    /// Show study presets.
+    Presets {
+        #[arg(long, value_enum, default_value_t = CliStudyFormat::Json)]
+        format: CliStudyFormat,
+    },
+    /// Describe one equation/device/workflow target schema.
+    Describe {
+        #[arg(long)]
+        equation: Option<String>,
+        #[arg(long)]
+        device: Option<String>,
+        #[arg(long)]
+        workflow: Option<String>,
+        #[arg(long, value_enum, default_value_t = CliStudyFormat::Json)]
+        format: CliStudyFormat,
+    },
     /// Run a generic equation study and export plot-ready/table output.
     Equation {
         #[arg(long)]
@@ -354,6 +376,14 @@ fn main() -> AppResult<()> {
             ),
         },
         Commands::Eng(eng_cmd) => match eng_cmd {
+            EngCommands::List { format } => cmd_eng_list_targets(format),
+            EngCommands::Presets { format } => cmd_eng_list_presets(format),
+            EngCommands::Describe {
+                equation,
+                device,
+                workflow,
+                format,
+            } => cmd_eng_describe_target(equation, device, workflow, format),
             EngCommands::Equation {
                 path_id,
                 target,
@@ -443,6 +473,108 @@ fn cmd_eng_equation_study(
     })
     .map_err(|e| AppError::InvalidInput(e.to_string()))?;
     write_study_result(&result, format)
+}
+
+fn cmd_eng_list_targets(format: CliStudyFormat) -> AppResult<()> {
+    let targets = list_study_targets().map_err(|e| AppError::InvalidInput(e.to_string()))?;
+    match format {
+        CliStudyFormat::Json => print_json(&targets),
+        CliStudyFormat::Csv => {
+            println!("kind,id,name,category,default_output,sweepable_fields");
+            for t in targets {
+                println!(
+                    "{},{},{},{},{},{}",
+                    study_kind_label(&t.kind),
+                    t.id,
+                    t.name,
+                    t.category.unwrap_or_default(),
+                    t.default_output.unwrap_or_default(),
+                    t.sweepable_fields.join("|")
+                );
+            }
+            Ok(())
+        }
+    }
+}
+
+fn cmd_eng_list_presets(format: CliStudyFormat) -> AppResult<()> {
+    let presets = list_study_presets().map_err(|e| AppError::InvalidInput(e.to_string()))?;
+    match format {
+        CliStudyFormat::Json => print_json(&presets),
+        CliStudyFormat::Csv => {
+            println!("id,name,target_kind,target_id,sweep_field,output_key");
+            for p in presets {
+                println!(
+                    "{},{},{},{},{},{}",
+                    p.id,
+                    p.name,
+                    study_kind_label(&p.target_kind),
+                    p.target_id,
+                    p.sweep_field,
+                    p.output_key
+                );
+            }
+            Ok(())
+        }
+    }
+}
+
+fn cmd_eng_describe_target(
+    equation: Option<String>,
+    device: Option<String>,
+    workflow: Option<String>,
+    format: CliStudyFormat,
+) -> AppResult<()> {
+    let count = equation.is_some() as u8 + device.is_some() as u8 + workflow.is_some() as u8;
+    if count != 1 {
+        return Err(AppError::InvalidInput(
+            "specify exactly one of --equation, --device, or --workflow".to_string(),
+        ));
+    }
+
+    let desc = if let Some(id) = equation {
+        describe_equation_target(&id).map_err(|e| AppError::InvalidInput(e.to_string()))?
+    } else if let Some(id) = device {
+        describe_device_target(&id).map_err(|e| AppError::InvalidInput(e.to_string()))?
+    } else if let Some(id) = workflow {
+        describe_workflow_target(&id).map_err(|e| AppError::InvalidInput(e.to_string()))?
+    } else {
+        return Err(AppError::InvalidInput("missing target id".to_string()));
+    };
+
+    match format {
+        CliStudyFormat::Json => print_json(&desc),
+        CliStudyFormat::Csv => {
+            println!("kind,id,name,description");
+            println!(
+                "{},{},{},{}",
+                study_kind_label(&desc.kind),
+                desc.id,
+                desc.name,
+                desc.description
+            );
+            println!();
+            println!("inputs:key:type:required:sweepable");
+            for f in desc.input_fields {
+                println!(
+                    "{}:{}:{}:{}",
+                    f.key,
+                    format!("{:?}", f.field_type).to_ascii_lowercase(),
+                    f.required,
+                    f.sweepable
+                );
+            }
+            Ok(())
+        }
+    }
+}
+
+fn study_kind_label(kind: &StudyTargetKind) -> &'static str {
+    match kind {
+        StudyTargetKind::Equation => "equation",
+        StudyTargetKind::Device => "device",
+        StudyTargetKind::Workflow => "workflow",
+    }
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -1215,4 +1347,39 @@ fn cmd_export_series(
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use clap::Parser;
+
+    #[test]
+    fn cli_parses_eng_list() {
+        let cli = Cli::try_parse_from(["tf-cli", "eng", "list"]).expect("parse");
+        match cli.command {
+            Commands::Eng(EngCommands::List { .. }) => {}
+            other => panic!("unexpected command: {:?}", std::mem::discriminant(&other)),
+        }
+    }
+
+    #[test]
+    fn cli_parses_eng_describe_device() {
+        let cli = Cli::try_parse_from([
+            "tf-cli",
+            "eng",
+            "describe",
+            "--device",
+            "isentropic_calc",
+            "--format",
+            "json",
+        ])
+        .expect("parse");
+        match cli.command {
+            Commands::Eng(EngCommands::Describe {
+                device: Some(id), ..
+            }) => assert_eq!(id, "isentropic_calc"),
+            other => panic!("unexpected command: {:?}", std::mem::discriminant(&other)),
+        }
+    }
 }

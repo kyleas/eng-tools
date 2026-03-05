@@ -50,7 +50,98 @@ pub struct WorkflowStudySpecEntry {
     pub eval_op: &'static str,
     pub default_sweep_arg: &'static str,
     pub default_columns: &'static [&'static str],
+    pub input_fields: &'static [WorkflowInputFieldSpec],
+    pub output_fields: &'static [WorkflowOutputFieldSpec],
 }
+
+#[derive(Debug, Clone)]
+pub enum WorkflowFieldType {
+    Float,
+    Int,
+    Bool,
+    Enum,
+    String,
+}
+
+#[derive(Debug, Clone)]
+pub struct WorkflowInputFieldSpec {
+    pub key: &'static str,
+    pub label: &'static str,
+    pub description: &'static str,
+    pub field_type: WorkflowFieldType,
+    pub required: bool,
+    pub sweepable: bool,
+    pub enum_options: &'static [&'static str],
+    pub default_value: Option<&'static str>,
+}
+
+#[derive(Debug, Clone)]
+pub struct WorkflowOutputFieldSpec {
+    pub key: &'static str,
+    pub label: &'static str,
+    pub description: &'static str,
+    pub plottable: bool,
+}
+
+const NOZZLE_NORMAL_SHOCK_INPUT_FIELDS: &[WorkflowInputFieldSpec] = &[
+    WorkflowInputFieldSpec {
+        key: "gamma",
+        label: "Gamma",
+        description: "Specific heat ratio",
+        field_type: WorkflowFieldType::Float,
+        required: true,
+        sweepable: true,
+        enum_options: &[],
+        default_value: Some("1.4"),
+    },
+    WorkflowInputFieldSpec {
+        key: "area_ratio",
+        label: "Area ratio (A/A*)",
+        description: "Nozzle area ratio",
+        field_type: WorkflowFieldType::Float,
+        required: true,
+        sweepable: true,
+        enum_options: &[],
+        default_value: Some("2.0"),
+    },
+    WorkflowInputFieldSpec {
+        key: "branch",
+        label: "Branch",
+        description: "Nozzle branch for area_ratio -> Mach inversion",
+        field_type: WorkflowFieldType::Enum,
+        required: false,
+        sweepable: false,
+        enum_options: &["subsonic", "supersonic"],
+        default_value: Some("supersonic"),
+    },
+];
+
+const NOZZLE_NORMAL_SHOCK_OUTPUT_FIELDS: &[WorkflowOutputFieldSpec] = &[
+    WorkflowOutputFieldSpec {
+        key: "pre_shock_mach",
+        label: "Pre-shock Mach",
+        description: "Mach immediately before shock",
+        plottable: true,
+    },
+    WorkflowOutputFieldSpec {
+        key: "post_shock_mach",
+        label: "Post-shock Mach",
+        description: "Mach immediately after normal shock",
+        plottable: true,
+    },
+    WorkflowOutputFieldSpec {
+        key: "shock_pressure_ratio",
+        label: "Shock pressure ratio",
+        description: "Normal-shock static pressure ratio p2/p1",
+        plottable: true,
+    },
+    WorkflowOutputFieldSpec {
+        key: "s1_mach_provenance",
+        label: "S1 Mach provenance",
+        description: "Provenance code (0 input, 1 solved, 2 propagated)",
+        plottable: true,
+    },
+];
 
 pub fn studyable_workflows() -> Vec<WorkflowStudySpecEntry> {
     vec![WorkflowStudySpecEntry {
@@ -65,6 +156,8 @@ pub fn studyable_workflows() -> Vec<WorkflowStudySpecEntry> {
             "shock_pressure_ratio",
             "s1_mach_provenance",
         ],
+        input_fields: NOZZLE_NORMAL_SHOCK_INPUT_FIELDS,
+        output_fields: NOZZLE_NORMAL_SHOCK_OUTPUT_FIELDS,
     }]
 }
 
