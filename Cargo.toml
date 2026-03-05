@@ -14,6 +14,7 @@ members = [
   "crates/tf-bench",
   "crates/tf-cea",
   "crates/tf-rpa",
+  "crates/tf-eng",
   "crates/equations",
   "crates/eng-core",
   "crates/eng-unit-expr",
@@ -70,6 +71,7 @@ tf-results = { path = "crates/tf-results" }
 tf-cea = { path = "crates/tf-cea" }
 
 tf-rpa = { path = "crates/tf-rpa" }
+tf-eng = { path = "crates/tf-eng" }
 equations = { path = "crates/equations" }
 eng-core = { path = "crates/eng-core" }
 eng-unit-expr = { path = "crates/eng-unit-expr" }

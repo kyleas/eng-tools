@@ -1,3 +1,4 @@
+pub mod eng_study_view;
 pub mod fluid_view;
 pub mod inspect_view;
 pub mod module_view;
@@ -6,6 +7,7 @@ pub mod plot_view;
 pub mod rocket;
 pub mod run_view;
 
+pub use eng_study_view::EngStudyView;
 pub use fluid_view::FluidView;
 pub use inspect_view::{
     ComponentKindChoice, ControlBlockKindChoice, InspectActions, InspectView, NewComponentSpec,

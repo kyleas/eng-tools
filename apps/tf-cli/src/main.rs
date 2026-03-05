@@ -1,4 +1,6 @@
 use clap::{Parser, Subcommand, ValueEnum};
+use serde::Serialize;
+use serde_json::{Map, Value};
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
@@ -7,6 +9,10 @@ use tf_app::{
     project_service, query, run_service,
 };
 use tf_cea::{NativeCeaBackend, Reactant};
+use tf_eng::{
+    DeviceStudyRequest, EquationStudyRequest, SweepAxisSpec, WorkflowStudyRequest,
+    run_device_study, run_equation_study, run_workflow_study,
+};
 use tf_rpa::{
     CombustorModel, NozzleChemistryModel, NozzleConstraint, RocketAnalysisProblem,
     RocketAnalysisSolver,
@@ -66,6 +72,80 @@ enum Commands {
     /// Rocket performance workflows powered by tf-rpa + CEA backend
     #[command(subcommand)]
     Rocket(RocketCommands),
+    /// Generic eng study bridge (equations/devices/workflows)
+    #[command(subcommand)]
+    Eng(EngCommands),
+}
+
+#[derive(Subcommand)]
+enum EngCommands {
+    /// Run a generic equation study and export plot-ready/table output.
+    Equation {
+        #[arg(long)]
+        path_id: String,
+        #[arg(long)]
+        target: String,
+        #[arg(long)]
+        sweep_variable: String,
+        #[arg(long)]
+        from: f64,
+        #[arg(long)]
+        to: f64,
+        #[arg(long, default_value_t = 50)]
+        n: usize,
+        #[arg(long, default_value = "{}")]
+        fixed_inputs_json: String,
+        #[arg(long)]
+        branch: Option<String>,
+        #[arg(long, value_enum, default_value_t = CliStudyFormat::Json)]
+        format: CliStudyFormat,
+    },
+    /// Run a generic device study and export plot-ready/table output.
+    Device {
+        #[arg(long)]
+        device: String,
+        #[arg(long)]
+        sweep_arg: String,
+        #[arg(long)]
+        from: f64,
+        #[arg(long)]
+        to: f64,
+        #[arg(long, default_value_t = 50)]
+        n: usize,
+        #[arg(long, default_value = "{}")]
+        fixed_args_json: String,
+        #[arg(long, default_value = "value,path_text")]
+        outputs_csv: String,
+        #[arg(long, default_value = "value")]
+        output_key: String,
+        #[arg(long, value_enum, default_value_t = CliStudyFormat::Json)]
+        format: CliStudyFormat,
+    },
+    /// Run a generic workflow study and export plot-ready/table output.
+    Workflow {
+        #[arg(long)]
+        workflow: String,
+        #[arg(long)]
+        sweep_arg: String,
+        #[arg(long)]
+        from: f64,
+        #[arg(long)]
+        to: f64,
+        #[arg(long, default_value_t = 50)]
+        n: usize,
+        #[arg(long, default_value = "{}")]
+        fixed_args_json: String,
+        #[arg(long, default_value = "pre_shock_mach")]
+        output_key: String,
+        #[arg(long, value_enum, default_value_t = CliStudyFormat::Json)]
+        format: CliStudyFormat,
+    },
+}
+
+#[derive(Debug, Clone, Copy, ValueEnum)]
+enum CliStudyFormat {
+    Json,
+    Csv,
 }
 
 #[derive(Subcommand)]
@@ -273,7 +353,217 @@ fn main() -> AppResult<()> {
                 exit_pressure_pa,
             ),
         },
+        Commands::Eng(eng_cmd) => match eng_cmd {
+            EngCommands::Equation {
+                path_id,
+                target,
+                sweep_variable,
+                from,
+                to,
+                n,
+                fixed_inputs_json,
+                branch,
+                format,
+            } => cmd_eng_equation_study(
+                &path_id,
+                &target,
+                &sweep_variable,
+                from,
+                to,
+                n,
+                &fixed_inputs_json,
+                branch,
+                format,
+            ),
+            EngCommands::Device {
+                device,
+                sweep_arg,
+                from,
+                to,
+                n,
+                fixed_args_json,
+                outputs_csv,
+                output_key,
+                format,
+            } => cmd_eng_device_study(
+                &device,
+                &sweep_arg,
+                from,
+                to,
+                n,
+                &fixed_args_json,
+                &outputs_csv,
+                &output_key,
+                format,
+            ),
+            EngCommands::Workflow {
+                workflow,
+                sweep_arg,
+                from,
+                to,
+                n,
+                fixed_args_json,
+                output_key,
+                format,
+            } => cmd_eng_workflow_study(
+                &workflow,
+                &sweep_arg,
+                from,
+                to,
+                n,
+                &fixed_args_json,
+                &output_key,
+                format,
+            ),
+        },
     }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn cmd_eng_equation_study(
+    path_id: &str,
+    target: &str,
+    sweep_variable: &str,
+    from: f64,
+    to: f64,
+    n: usize,
+    fixed_inputs_json: &str,
+    branch: Option<String>,
+    format: CliStudyFormat,
+) -> AppResult<()> {
+    let fixed_inputs = parse_numeric_map(fixed_inputs_json)?;
+    let result = run_equation_study(EquationStudyRequest {
+        path_id: path_id.to_string(),
+        target: target.to_string(),
+        sweep_variable: sweep_variable.to_string(),
+        axis: SweepAxisSpec::linspace(from, to, n),
+        fixed_inputs,
+        branch,
+        output_key: Some(target.to_string()),
+    })
+    .map_err(|e| AppError::InvalidInput(e.to_string()))?;
+    write_study_result(&result, format)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn cmd_eng_device_study(
+    device: &str,
+    sweep_arg: &str,
+    from: f64,
+    to: f64,
+    n: usize,
+    fixed_args_json: &str,
+    outputs_csv: &str,
+    output_key: &str,
+    format: CliStudyFormat,
+) -> AppResult<()> {
+    let fixed_args = parse_json_object(fixed_args_json)?;
+    let requested_outputs = outputs_csv
+        .split(',')
+        .map(str::trim)
+        .filter(|s| !s.is_empty())
+        .map(ToString::to_string)
+        .collect::<Vec<_>>();
+    let result = run_device_study(DeviceStudyRequest {
+        device_key: device.to_string(),
+        sweep_arg: sweep_arg.to_string(),
+        axis: SweepAxisSpec::linspace(from, to, n),
+        fixed_args,
+        requested_outputs,
+        output_key: Some(output_key.to_string()),
+    })
+    .map_err(|e| AppError::InvalidInput(e.to_string()))?;
+    write_study_result(&result, format)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn cmd_eng_workflow_study(
+    workflow: &str,
+    sweep_arg: &str,
+    from: f64,
+    to: f64,
+    n: usize,
+    fixed_args_json: &str,
+    output_key: &str,
+    format: CliStudyFormat,
+) -> AppResult<()> {
+    let fixed_args = parse_json_object(fixed_args_json)?;
+    let result = run_workflow_study(WorkflowStudyRequest {
+        workflow_key: workflow.to_string(),
+        sweep_arg: sweep_arg.to_string(),
+        axis: SweepAxisSpec::linspace(from, to, n),
+        fixed_args,
+        output_key: Some(output_key.to_string()),
+    })
+    .map_err(|e| AppError::InvalidInput(e.to_string()))?;
+    write_study_result(&result, format)
+}
+
+fn write_study_result(result: &tf_eng::StudyResult, format: CliStudyFormat) -> AppResult<()> {
+    match format {
+        CliStudyFormat::Json => print_json(result),
+        CliStudyFormat::Csv => print_csv_table(&result.table),
+    }
+}
+
+fn print_json<T: Serialize>(value: &T) -> AppResult<()> {
+    let text = serde_json::to_string_pretty(value)
+        .map_err(|e| AppError::InvalidInput(format!("JSON serialization failed: {e}")))?;
+    println!("{text}");
+    Ok(())
+}
+
+fn print_csv_table(table: &tf_eng::StudyTable) -> AppResult<()> {
+    fn escape_csv_cell(cell: &str) -> String {
+        if cell.contains(',') || cell.contains('"') || cell.contains('\n') || cell.contains('\r') {
+            format!("\"{}\"", cell.replace('"', "\"\""))
+        } else {
+            cell.to_string()
+        }
+    }
+
+    println!(
+        "{}",
+        table
+            .columns
+            .iter()
+            .map(|c| escape_csv_cell(c))
+            .collect::<Vec<_>>()
+            .join(",")
+    );
+    for row in &table.rows {
+        println!(
+            "{}",
+            row.iter()
+                .map(|c| escape_csv_cell(c))
+                .collect::<Vec<_>>()
+                .join(",")
+        );
+    }
+    Ok(())
+}
+
+fn parse_json_object(text: &str) -> AppResult<Map<String, Value>> {
+    match serde_json::from_str::<Value>(text).map_err(|e| AppError::InvalidInput(e.to_string()))? {
+        Value::Object(obj) => Ok(obj),
+        _ => Err(AppError::InvalidInput(
+            "JSON payload must be an object".to_string(),
+        )),
+    }
+}
+
+fn parse_numeric_map(text: &str) -> AppResult<std::collections::BTreeMap<String, f64>> {
+    let obj = parse_json_object(text)?;
+    let mut out = std::collections::BTreeMap::new();
+    for (k, v) in obj {
+        let Some(n) = v.as_f64() else {
+            return Err(AppError::InvalidInput(format!(
+                "fixed input '{k}' must be numeric"
+            )));
+        };
+        out.insert(k, n);
+    }
+    Ok(out)
 }
 
 fn cmd_validate(project_path: &Path) -> AppResult<()> {

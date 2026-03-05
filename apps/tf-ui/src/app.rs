@@ -1,8 +1,8 @@
 use crate::project_io::SystemRuntime;
 use crate::run_worker::{RunWorker, WorkerMessage};
 use crate::views::{
-    ComponentKindChoice, FluidView, InspectActions, InspectView, ModuleView, NewComponentSpec,
-    NodeKindChoice, PidView, PlotView, RocketView, RunView,
+    ComponentKindChoice, EngStudyView, FluidView, InspectActions, InspectView, ModuleView,
+    NewComponentSpec, NodeKindChoice, PidView, PlotView, RocketView, RunView,
 };
 use egui_file_dialog::{DialogMode, FileDialog};
 use std::path::PathBuf;
@@ -33,6 +33,7 @@ pub struct ThermoflowApp {
     fluid_view: FluidView,
     run_view: RunView,
     fluid_workspace: crate::fluid_workspace::FluidWorkspace,
+    eng_study_view: EngStudyView,
     rocket_view: RocketView,
     rocket_workspace: crate::rocket_workspace::RocketWorkspace,
     inspect_view: InspectView,
@@ -53,6 +54,7 @@ enum ViewTab {
     Modules,
     Plots,
     Fluid,
+    EngStudy,
     Rocket,
     Runs,
 }
@@ -86,6 +88,7 @@ impl ThermoflowApp {
             fluid_view: FluidView::default(),
             run_view: RunView::default(),
             fluid_workspace: crate::fluid_workspace::FluidWorkspace::default(),
+            eng_study_view: EngStudyView::default(),
             rocket_view: RocketView,
             rocket_workspace: crate::rocket_workspace::RocketWorkspace::default(),
             inspect_view: InspectView::default(),
@@ -901,6 +904,7 @@ impl eframe::App for ThermoflowApp {
                 ui.selectable_value(&mut self.active_view, ViewTab::Modules, "Modules");
                 ui.selectable_value(&mut self.active_view, ViewTab::Plots, "Plots");
                 ui.selectable_value(&mut self.active_view, ViewTab::Fluid, "Fluid");
+                ui.selectable_value(&mut self.active_view, ViewTab::EngStudy, "Eng Study");
                 ui.selectable_value(&mut self.active_view, ViewTab::Rocket, "Rocket");
                 ui.selectable_value(&mut self.active_view, ViewTab::Runs, "Runs");
             });
@@ -1005,6 +1009,9 @@ impl eframe::App for ThermoflowApp {
                             }
                         }
                     }
+                }
+                ViewTab::EngStudy => {
+                    self.eng_study_view.show(ui);
                 }
                 ViewTab::Rocket => {
                     self.rocket_view.show(ui, &mut self.rocket_workspace);

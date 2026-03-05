@@ -4690,11 +4690,13 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "serde",
+ "serde_json",
  "serde_yaml",
  "tf-app",
  "tf-cea",
  "tf-components",
  "tf-core",
+ "tf-eng",
  "tf-graph",
  "tf-rpa",
  "tf-solver",
@@ -4730,6 +4732,16 @@ version = "0.1.0"
 dependencies = [
  "eng-core",
  "proptest",
+]
+
+[[package]]
+name = "tf-eng"
+version = "0.1.0"
+dependencies = [
+ "eng",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -4838,6 +4850,7 @@ dependencies = [
  "tf-cea",
  "tf-components",
  "tf-core",
+ "tf-eng",
  "tf-fluids",
  "tf-graph",
  "tf-project",
