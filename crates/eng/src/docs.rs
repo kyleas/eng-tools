@@ -3793,26 +3793,65 @@ fn render_category_equation_summary_table(cat: &CategoryPresentation) -> String 
 
     let mut md = String::new();
     // Invariant: category-level equation visibility must remain registry-driven.
-    // This summary table is built from category metadata (root + subcategory equations),
-    // not handwritten per-category markdown.
+    // This summary layout is built from category metadata (root + subcategory equations),
+    // never from handwritten per-category markdown.
     //
-    // Invariant: use an HTML table here intentionally. mdBook markdown tables can be brittle
-    // with inline MathJax content; HTML + `\(...\)` preserves rendered LaTeX at a glance.
-    md.push_str("<table><thead><tr><th>Equation</th><th>Path ID</th><th>LaTeX</th><th>Targets</th><th>Default</th><th>Branches</th><th>Subcategory</th></tr></thead><tbody>\n");
+    // Invariant: category summary must be LaTeX-first and readable on laptop widths.
+    // Keep the equation expression in a prominent centered MathJax block and avoid
+    // dense multi-column tables that squeeze math.
+    md.push_str(
+        "<style>\n\
+         .equation-summary-cards { display: grid; grid-template-columns: 1fr; gap: 0.9rem; margin: 0.6rem 0 1rem; }\n\
+         .equation-summary-card { border: 1px solid var(--table-border-color); border-radius: 10px; padding: 0.9rem 1rem; background: rgba(255,255,255,0.02); }\n\
+         .equation-summary-title { font-size: 1.02rem; font-weight: 600; margin: 0 0 0.35rem; }\n\
+         .equation-summary-path { font-family: var(--mono-font); font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.45rem; overflow-wrap: anywhere; }\n\
+         .equation-summary-latex { text-align: center; font-size: 1.2rem; line-height: 1.45; margin: 0.5rem 0 0.6rem; overflow-x: auto; }\n\
+         .equation-summary-meta { display: grid; grid-template-columns: auto 1fr; column-gap: 0.55rem; row-gap: 0.25rem; font-size: 0.9rem; }\n\
+         .equation-summary-meta-label { opacity: 0.85; }\n\
+         .equation-summary-meta-value { overflow-wrap: anywhere; }\n\
+         .equation-summary-meta-value code { white-space: nowrap; }\n\
+         @media (max-width: 900px) { .equation-summary-latex { font-size: 1.1rem; } }\n\
+         </style>\n",
+    );
+    md.push_str("<div class=\"equation-summary-cards\">\n");
     for row in rows {
+        md.push_str("<article class=\"equation-summary-card\">\n");
         md.push_str(&format!(
-            "<tr><td><a href=\"{}\">{}</a></td><td><code>{}</code></td><td>\\({}\\)</td><td>{}</td><td><code>{}</code></td><td>{}</td><td>{}</td></tr>\n",
-            row.link,
-            row.name,
-            row.path_id,
-            row.latex,
-            row.targets,
-            row.default_target,
-            row.branches,
+            "<h3 class=\"equation-summary-title\"><a href=\"{}\">{}</a></h3>\n",
+            row.link, row.name
+        ));
+        md.push_str(&format!(
+            "<div class=\"equation-summary-path\"><code>{}</code></div>\n",
+            row.path_id
+        ));
+        md.push_str(&format!(
+            "<div class=\"equation-summary-latex\">\\({}\\)</div>\n",
+            row.latex
+        ));
+        md.push_str("<div class=\"equation-summary-meta\">\n");
+        md.push_str("<div class=\"equation-summary-meta-label\">Targets</div>");
+        md.push_str(&format!(
+            "<div class=\"equation-summary-meta-value\">{}</div>",
+            row.targets
+        ));
+        md.push_str("<div class=\"equation-summary-meta-label\">Default</div>");
+        md.push_str(&format!(
+            "<div class=\"equation-summary-meta-value\"><code>{}</code></div>",
+            row.default_target
+        ));
+        md.push_str("<div class=\"equation-summary-meta-label\">Branches</div>");
+        md.push_str(&format!(
+            "<div class=\"equation-summary-meta-value\">{}</div>",
+            row.branches
+        ));
+        md.push_str("<div class=\"equation-summary-meta-label\">Subcategory</div>");
+        md.push_str(&format!(
+            "<div class=\"equation-summary-meta-value\">{}</div>",
             row.subcategory
         ));
+        md.push_str("\n</div>\n</article>\n");
     }
-    md.push_str("</tbody></table>\n");
+    md.push_str("</div>\n");
     md
 }
 
