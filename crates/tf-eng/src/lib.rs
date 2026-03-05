@@ -47,6 +47,7 @@ pub struct StudyFieldDescriptor {
     pub label: String,
     pub description: String,
     pub field_type: StudyFieldType,
+    pub dimension: Option<String>,
     pub required: bool,
     pub optional: bool,
     pub sweepable: bool,
@@ -125,6 +126,37 @@ pub struct SingleSolveResult {
     pub unit: Option<String>,
     pub path_text: Option<String>,
     pub warnings: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SolveRowState {
+    Incomplete,
+    Ready,
+    Solved,
+    BlockedAmbiguity,
+    InvalidInput,
+    RuntimeError,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SolveFieldValidation {
+    pub key: String,
+    pub valid: bool,
+    pub empty: bool,
+    pub message: Option<String>,
+    pub normalized: Option<Value>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SolveValidation {
+    pub state: SolveRowState,
+    pub ready: bool,
+    pub output_key: Option<String>,
+    pub normalized_inputs: Map<String, Value>,
+    pub fields: Vec<SolveFieldValidation>,
+    pub missing_required: Vec<String>,
+    pub blocking_reasons: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -378,6 +410,148 @@ pub fn run_single_solve(req: SingleSolveRequest) -> Result<SingleSolveResult, Br
         StudyTargetKind::Device => run_single_device(&descriptor, req),
         StudyTargetKind::Workflow => run_single_workflow(&descriptor, req),
     }
+}
+
+pub fn validate_single_solve(
+    target_kind: StudyTargetKind,
+    target_id: &str,
+    raw_inputs: &BTreeMap<String, String>,
+    output_key: Option<&str>,
+) -> Result<SolveValidation, BridgeError> {
+    let descriptor = match target_kind {
+        StudyTargetKind::Equation => describe_equation_target(target_id)?,
+        StudyTargetKind::Device => describe_device_target(target_id)?,
+        StudyTargetKind::Workflow => describe_workflow_target(target_id)?,
+    };
+
+    let mut fields = Vec::new();
+    let mut normalized = Map::new();
+    let mut missing_required = Vec::new();
+    let mut blocking_reasons = Vec::new();
+
+    for field in &descriptor.input_fields {
+        let raw = raw_inputs
+            .get(&field.key)
+            .map(|s| s.trim().to_string())
+            .unwrap_or_default();
+        let empty = raw.is_empty();
+        if empty {
+            fields.push(SolveFieldValidation {
+                key: field.key.clone(),
+                valid: !field.required,
+                empty: true,
+                message: if field.required {
+                    Some("required".to_string())
+                } else {
+                    None
+                },
+                normalized: None,
+            });
+            if field.required {
+                missing_required.push(field.key.clone());
+            }
+            continue;
+        }
+
+        match parse_field_value(field, &raw) {
+            Ok(v) => {
+                normalized.insert(field.key.clone(), v.clone());
+                fields.push(SolveFieldValidation {
+                    key: field.key.clone(),
+                    valid: true,
+                    empty: false,
+                    message: None,
+                    normalized: Some(v),
+                });
+            }
+            Err(e) => {
+                fields.push(SolveFieldValidation {
+                    key: field.key.clone(),
+                    valid: false,
+                    empty: false,
+                    message: Some(e.clone()),
+                    normalized: None,
+                });
+                blocking_reasons.push(format!("{}: {}", field.key, e));
+            }
+        }
+    }
+
+    let mut resolved_output = output_key
+        .map(|s| s.to_string())
+        .filter(|s| !s.trim().is_empty());
+    if matches!(target_kind, StudyTargetKind::Equation) && resolved_output.is_none() {
+        let unknown = descriptor
+            .input_fields
+            .iter()
+            .filter(|f| f.key != "branch")
+            .filter(|f| {
+                raw_inputs
+                    .get(&f.key)
+                    .map(|v| v.trim().is_empty())
+                    .unwrap_or(true)
+            })
+            .map(|f| f.key.clone())
+            .collect::<Vec<_>>();
+        match unknown.len() {
+            1 => {
+                resolved_output = Some(unknown[0].clone());
+                missing_required.retain(|m| m != &unknown[0]);
+            }
+            n if n > 1 => {
+                blocking_reasons.push(
+                    "equation solve requires exactly one unknown (or explicit output)".to_string(),
+                );
+            }
+            _ => {
+                blocking_reasons.push(
+                    "equation solve has no inferred unknown; choose output explicitly".to_string(),
+                );
+            }
+        }
+    }
+
+    if let Some(out) = &resolved_output {
+        if !descriptor.outputs.iter().any(|o| o.key == *out) {
+            blocking_reasons.push(format!("invalid output '{out}'"));
+        } else if descriptor.kind == StudyTargetKind::Equation {
+            missing_required.retain(|m| m == out || m == "branch");
+        }
+    }
+
+    let has_invalid = fields.iter().any(|f| !f.valid && !f.empty);
+    let ready = !has_invalid
+        && blocking_reasons.is_empty()
+        && resolved_output.is_some()
+        && missing_required.iter().all(|m| {
+            matches!(target_kind, StudyTargetKind::Equation) && resolved_output.as_ref() == Some(m)
+        });
+    let state = if has_invalid {
+        SolveRowState::InvalidInput
+    } else if !blocking_reasons.is_empty() {
+        if blocking_reasons
+            .iter()
+            .any(|m| m.contains("exactly one unknown"))
+        {
+            SolveRowState::BlockedAmbiguity
+        } else {
+            SolveRowState::Incomplete
+        }
+    } else if ready {
+        SolveRowState::Ready
+    } else {
+        SolveRowState::Incomplete
+    };
+
+    Ok(SolveValidation {
+        state,
+        ready,
+        output_key: resolved_output,
+        normalized_inputs: normalized,
+        fields,
+        missing_required,
+        blocking_reasons,
+    })
 }
 
 pub fn run_equation_study(req: EquationStudyRequest) -> Result<StudyResult, BridgeError> {
@@ -642,6 +816,7 @@ fn describe_all_equations() -> Result<Vec<StudyTargetDescriptor>, BridgeError> {
                 label: v.name.clone(),
                 description: v.description.clone().unwrap_or_else(|| v.name.clone()),
                 field_type: StudyFieldType::Float,
+                dimension: Some(v.dimension.clone()),
                 required: true,
                 optional: false,
                 sweepable: true,
@@ -662,6 +837,7 @@ fn describe_all_equations() -> Result<Vec<StudyTargetDescriptor>, BridgeError> {
                 label: "Branch".to_string(),
                 description: "Optional branch selection".to_string(),
                 field_type: StudyFieldType::Enum,
+                dimension: None,
                 required: false,
                 optional: true,
                 sweepable: false,
@@ -769,6 +945,7 @@ fn describe_all_devices() -> Vec<StudyTargetDescriptor> {
                 label: "Input value".to_string(),
                 description: "Numeric sweep/input value".to_string(),
                 field_type: StudyFieldType::Float,
+                dimension: None,
                 required: true,
                 optional: false,
                 sweepable: true,
@@ -865,6 +1042,7 @@ fn describe_all_workflows() -> Vec<StudyTargetDescriptor> {
                 label: f.label.to_string(),
                 description: f.description.to_string(),
                 field_type: map_workflow_field_type(&f.field_type),
+                dimension: None,
                 required: f.required,
                 optional: !f.required,
                 sweepable: f.sweepable,
@@ -981,6 +1159,7 @@ fn infer_field_from_binding_arg(name: &str, description: &str) -> StudyFieldDesc
         label: to_label(name),
         description: description.to_string(),
         field_type,
+        dimension: None,
         required: !optional,
         optional,
         sweepable,
@@ -1298,6 +1477,59 @@ fn run_single_workflow(
     })
 }
 
+fn parse_field_value(field: &StudyFieldDescriptor, raw: &str) -> Result<Value, String> {
+    match field.field_type {
+        StudyFieldType::Enum => {
+            if field.enum_options.is_empty()
+                || field
+                    .enum_options
+                    .iter()
+                    .any(|o| o.key.eq_ignore_ascii_case(raw))
+            {
+                Ok(Value::from(raw.to_string()))
+            } else {
+                Err(format!(
+                    "unsupported value '{}'; expected one of: {}",
+                    raw,
+                    field
+                        .enum_options
+                        .iter()
+                        .map(|o| o.key.as_str())
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                ))
+            }
+        }
+        StudyFieldType::Bool => {
+            let v = match raw.to_ascii_lowercase().as_str() {
+                "1" | "true" | "yes" | "y" => true,
+                "0" | "false" | "no" | "n" => false,
+                _ => {
+                    return Err("expected boolean value (true/false/yes/no/1/0)".to_string());
+                }
+            };
+            Ok(Value::from(v))
+        }
+        StudyFieldType::Int => raw
+            .parse::<i64>()
+            .map(Value::from)
+            .map_err(|_| "expected integer".to_string()),
+        StudyFieldType::Float => {
+            if let Ok(v) = raw.parse::<f64>() {
+                return Ok(Value::from(v));
+            }
+            if let Some(dim) = &field.dimension {
+                eng_core::units::parse_equation_quantity_to_si(dim, raw)
+                    .map_err(|e| e.to_string())?;
+            } else {
+                eng_core::units::parse_quantity_expression(raw).map_err(|e| e.to_string())?;
+            }
+            Ok(Value::from(raw.to_string()))
+        }
+        StudyFieldType::String => Ok(Value::from(raw.to_string())),
+    }
+}
+
 fn invoke_op_value(op: &str, args: &Map<String, Value>) -> Result<Value, BridgeError> {
     let req = eng::bindings::InvokeRequest {
         protocol_version: eng::bindings::INVOKE_PROTOCOL_VERSION.to_string(),
@@ -1429,5 +1661,68 @@ mod tests {
     fn equation_descriptor_exposes_display_metadata() {
         let d = describe_equation_target("compressible.isentropic_pressure_ratio").expect("desc");
         assert!(d.display_latex.is_some());
+    }
+
+    #[test]
+    fn validate_single_solve_accepts_numeric_and_unit_inputs() {
+        let mut raw = BTreeMap::new();
+        raw.insert("P".to_string(), "2000000".to_string());
+        raw.insert("r".to_string(), "0.25".to_string());
+        raw.insert("t".to_string(), "0.01".to_string());
+        let v = validate_single_solve(
+            StudyTargetKind::Equation,
+            "structures.hoop_stress",
+            &raw,
+            Some("sigma_h"),
+        )
+        .expect("validation");
+        assert!(v.ready, "blocking: {:?}", v.blocking_reasons);
+
+        raw.insert("P".to_string(), "2 MPa".to_string());
+        raw.insert("r".to_string(), "0.25 m".to_string());
+        raw.insert("t".to_string(), "0.01 m".to_string());
+        let v = validate_single_solve(
+            StudyTargetKind::Equation,
+            "structures.hoop_stress",
+            &raw,
+            Some("sigma_h"),
+        )
+        .expect("validation with units");
+        assert!(v.ready, "blocking: {:?}", v.blocking_reasons);
+    }
+
+    #[test]
+    fn validate_single_solve_infers_equation_target_for_one_unknown() {
+        let raw = BTreeMap::from([
+            ("M".to_string(), "2.0".to_string()),
+            ("gamma".to_string(), "1.4".to_string()),
+        ]);
+        let v = validate_single_solve(
+            StudyTargetKind::Equation,
+            "compressible.isentropic_temperature_ratio",
+            &raw,
+            None,
+        )
+        .expect("validation");
+        assert_eq!(v.output_key.as_deref(), Some("T_T0"));
+        assert!(v.ready);
+    }
+
+    #[test]
+    fn validate_single_solve_blocks_when_multiple_unknowns() {
+        let raw = BTreeMap::new();
+        let v = validate_single_solve(
+            StudyTargetKind::Equation,
+            "compressible.isentropic_temperature_ratio",
+            &raw,
+            None,
+        )
+        .expect("validation");
+        assert!(!v.ready);
+        assert!(
+            v.blocking_reasons
+                .iter()
+                .any(|m| m.contains("exactly one unknown"))
+        );
     }
 }

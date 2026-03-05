@@ -4739,6 +4739,7 @@ name = "tf-eng"
 version = "0.1.0"
 dependencies = [
  "eng",
+ "eng-core",
  "equations",
  "serde",
  "serde_json",

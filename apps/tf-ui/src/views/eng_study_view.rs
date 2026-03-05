@@ -3,10 +3,11 @@ use std::collections::BTreeMap;
 use egui_plot::{Legend, Line, Plot, PlotPoints};
 use serde_json::{Map, Value};
 use tf_eng::{
-    SingleSolveRequest, SingleSolveResult, StudyFieldType, StudyPresetDescriptor, StudyResult,
-    StudyRunRequest, StudyTargetDescriptor, StudyTargetKind, SweepAxisSpec, describe_device_target,
-    describe_equation_target, describe_workflow_target, list_study_presets, list_study_targets,
-    run_single_solve, run_study_from_form,
+    SingleSolveRequest, SingleSolveResult, SolveRowState, SolveValidation, StudyFieldType,
+    StudyPresetDescriptor, StudyResult, StudyRunRequest, StudyTargetDescriptor, StudyTargetKind,
+    SweepAxisSpec, describe_device_target, describe_equation_target, describe_workflow_target,
+    list_study_presets, list_study_targets, run_single_solve, run_study_from_form,
+    validate_single_solve,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -26,11 +27,15 @@ enum AxisMode {
 #[derive(Debug, Clone)]
 struct SolveRow {
     kind: StudyTargetKind,
+    expanded: bool,
+    freeze: bool,
     target_search: String,
     target_id: String,
     output_search: String,
     output_key: String,
-    field_values: BTreeMap<String, Value>,
+    input_text: BTreeMap<String, String>,
+    validation: Option<SolveValidation>,
+    last_signature: Option<String>,
     result: Option<SingleSolveResult>,
     last_error: Option<String>,
 }
@@ -39,11 +44,15 @@ impl SolveRow {
     fn new(kind: StudyTargetKind) -> Self {
         Self {
             kind,
+            expanded: true,
+            freeze: false,
             target_search: String::new(),
             target_id: String::new(),
             output_search: String::new(),
             output_key: String::new(),
-            field_values: BTreeMap::new(),
+            input_text: BTreeMap::new(),
+            validation: None,
+            last_signature: None,
             result: None,
             last_error: None,
         }
@@ -163,8 +172,13 @@ impl EngStudyView {
             let mut row = self.solve_rows[i].clone();
             let mut recent_to_add: Option<String> = None;
             ui.separator();
-            ui.collapsing(format!("Solve Row {}", i + 1), |ui| {
+            ui.group(|ui| {
                 let mut changed_target = false;
+                ui.horizontal(|ui| {
+                    ui.heading(format!("Solve Row {}", i + 1));
+                    ui.checkbox(&mut row.expanded, "expanded");
+                    ui.checkbox(&mut row.freeze, "freeze");
+                });
 
                 ui.horizontal(|ui| {
                     ui.selectable_value(&mut row.kind, StudyTargetKind::Equation, "Equation");
@@ -183,8 +197,10 @@ impl EngStudyView {
                 );
                 if was_changed {
                     row.target_id = selected_id;
-                    row.field_values.clear();
+                    row.input_text.clear();
                     row.output_key.clear();
+                    row.validation = None;
+                    row.last_signature = None;
                     row.result = None;
                     row.last_error = None;
                     changed_target = true;
@@ -196,14 +212,20 @@ impl EngStudyView {
                 let descriptor = self.descriptor_for(row.kind.clone(), &row.target_id);
                 if let Some(target) = descriptor {
                     if changed_target {
-                        Self::seed_defaults(&target, &mut row.field_values, &mut row.output_key);
+                        Self::seed_solve_defaults(
+                            &target,
+                            &mut row.input_text,
+                            &mut row.output_key,
+                        );
                     }
-                    Self::render_reference_panel(ui, &target, true);
-                    Self::render_field_controls(ui, &target, &mut row.field_values);
+                    Self::render_reference_panel(ui, &target, false);
+                    if row.expanded {
+                        Self::render_solve_input_controls(ui, &target, &mut row.input_text);
+                    }
 
                     if target.kind == StudyTargetKind::Equation {
                         if let Some(implied) =
-                            Self::implied_equation_target(&target, &row.field_values)
+                            Self::implied_equation_target_text(&target, &row.input_text)
                         {
                             ui.small(format!("Implied target (one unknown): {implied}"));
                         } else {
@@ -223,38 +245,63 @@ impl EngStudyView {
                         false,
                     );
 
-                    ui.horizontal(|ui| {
-                        if ui.button("Run").clicked() {
+                    row.validation = validate_single_solve(
+                        target.kind.clone(),
+                        &target.id,
+                        &row.input_text,
+                        if row.output_key.is_empty() {
+                            None
+                        } else {
+                            Some(row.output_key.as_str())
+                        },
+                    )
+                    .ok();
+
+                    if let Some(v) = &row.validation {
+                        Self::render_row_validation(ui, v);
+                        let output = v.output_key.clone();
+                        let signature = format!(
+                            "{}|{}|{}|{}",
+                            target.kind.kind_name(),
+                            target.id,
+                            output.clone().unwrap_or_default(),
+                            serde_json::to_string(&v.normalized_inputs).unwrap_or_default()
+                        );
+                        if v.ready
+                            && !row.freeze
+                            && row.last_signature.as_deref() != Some(signature.as_str())
+                        {
                             let req = SingleSolveRequest {
                                 target_kind: target.kind.clone(),
                                 target_id: target.id.clone(),
-                                inputs: Map::from_iter(
-                                    row.field_values.iter().map(|(k, v)| (k.clone(), v.clone())),
-                                ),
-                                output_key: if row.output_key.is_empty() {
-                                    None
-                                } else {
-                                    Some(row.output_key.clone())
-                                },
+                                inputs: v.normalized_inputs.clone(),
+                                output_key: output,
                             };
                             match run_single_solve(req) {
                                 Ok(res) => {
                                     row.last_error = None;
                                     row.result = Some(res);
+                                    row.last_signature = Some(signature);
                                     recent_to_add =
                                         Some(format!("{}:{}", target.kind.kind_name(), target.id));
                                 }
                                 Err(e) => {
                                     row.result = None;
                                     row.last_error = Some(e.to_string());
+                                    row.last_signature = Some(signature);
                                 }
                             }
                         }
+                    }
+
+                    ui.horizontal(|ui| {
                         if ui.button("Duplicate").clicked() {
                             duplicate_idx = Some(i);
                         }
                         if ui.button("Clear row").clicked() {
-                            row.field_values.clear();
+                            row.input_text.clear();
+                            row.validation = None;
+                            row.last_signature = None;
                             row.result = None;
                             row.last_error = None;
                         }
@@ -268,6 +315,7 @@ impl EngStudyView {
                     }
                     if let Some(res) = &row.result {
                         Self::render_single_result(ui, res);
+                        Self::render_copy_actions(ui, &target, res, row.validation.as_ref());
                     }
                 } else {
                     ui.label("No target selected.");
@@ -690,6 +738,62 @@ impl EngStudyView {
         }
     }
 
+    fn render_solve_input_controls(
+        ui: &mut egui::Ui,
+        target: &StudyTargetDescriptor,
+        fields: &mut BTreeMap<String, String>,
+    ) {
+        ui.separator();
+        ui.label("Inputs (number or eng unit string)");
+        for field in &target.input_fields {
+            let entry = fields.entry(field.key.clone()).or_insert_with(|| {
+                field
+                    .default_value
+                    .as_ref()
+                    .map(value_to_display)
+                    .unwrap_or_default()
+            });
+            ui.horizontal(|ui| {
+                let mut label = field.label.clone();
+                if field.required {
+                    label.push_str(" *");
+                }
+                ui.label(label);
+                ui.text_edit_singleline(entry);
+            });
+            let mut meta = field.description.clone();
+            if let Some(u) = &field.unit {
+                meta.push_str(&format!(" | default unit: {u}"));
+            }
+            ui.small(meta);
+        }
+    }
+
+    fn render_row_validation(ui: &mut egui::Ui, validation: &SolveValidation) {
+        let (label, color) = match validation.state {
+            SolveRowState::Ready => ("ready", egui::Color32::LIGHT_GREEN),
+            SolveRowState::Solved => ("solved", egui::Color32::LIGHT_GREEN),
+            SolveRowState::InvalidInput | SolveRowState::RuntimeError => {
+                ("invalid", egui::Color32::LIGHT_RED)
+            }
+            SolveRowState::BlockedAmbiguity => ("ambiguous", egui::Color32::YELLOW),
+            SolveRowState::Incomplete => ("incomplete", egui::Color32::GRAY),
+        };
+        ui.colored_label(color, format!("State: {label}"));
+        if let Some(out) = &validation.output_key {
+            ui.small(format!("Output: {out}"));
+        }
+        if !validation.missing_required.is_empty() {
+            ui.small(format!(
+                "Missing required: {}",
+                validation.missing_required.join(", ")
+            ));
+        }
+        for reason in &validation.blocking_reasons {
+            ui.colored_label(egui::Color32::LIGHT_RED, reason);
+        }
+    }
+
     fn render_output_picker(
         ui: &mut egui::Ui,
         target: &StudyTargetDescriptor,
@@ -766,18 +870,23 @@ impl EngStudyView {
 
     fn render_reference_panel(ui: &mut egui::Ui, target: &StudyTargetDescriptor, compact: bool) {
         ui.separator();
-        ui.label(format!("{} ({})", target.name, target.id));
-        ui.small(&target.description);
+        ui.heading(&target.name);
+        ui.small(format!("id: {}", target.id));
+        ui.label(&target.description);
         if let Some(category) = &target.category {
             ui.small(format!("Category: {category}"));
         }
+        // Egui does not provide stable native MathJax/LaTeX rendering. Prefer readable
+        // unicode/ascii equation text by default and keep latex available in details.
         if let Some(display) = &target.display_unicode {
-            ui.label(format!("Display: {display}"));
+            ui.monospace(format!("Equation: {display}"));
         } else if let Some(display) = &target.display_ascii {
-            ui.label(format!("Display: {display}"));
+            ui.monospace(format!("Equation: {display}"));
         }
         if let Some(latex) = &target.display_latex {
-            ui.small(format!("LaTeX: {latex}"));
+            ui.collapsing("LaTeX", |ui| {
+                ui.monospace(latex);
+            });
         }
         if !target.branch_options.is_empty() {
             ui.small(format!("Branches: {}", target.branch_options.join(", ")));
@@ -823,9 +932,42 @@ impl EngStudyView {
         if !res.warnings.is_empty() {
             ui.label(format!("Warnings: {}", res.warnings.join(" | ")));
         }
-        if ui.button("Copy result").clicked() {
-            ui.ctx().copy_text(value_to_display(&res.value));
-        }
+    }
+
+    fn render_copy_actions(
+        ui: &mut egui::Ui,
+        target: &StudyTargetDescriptor,
+        res: &SingleSolveResult,
+        validation: Option<&SolveValidation>,
+    ) {
+        ui.horizontal(|ui| {
+            if ui.button("Copy target key").clicked() {
+                ui.ctx().copy_text(target.id.clone());
+            }
+            if ui.button("Copy output value").clicked() {
+                let mut out = value_to_display(&res.value);
+                if let Some(unit) = &res.unit {
+                    out.push_str(&format!(" {unit}"));
+                }
+                ui.ctx().copy_text(out);
+            }
+            if ui.button("Copy display").clicked() {
+                let display = target
+                    .display_unicode
+                    .clone()
+                    .or(target.display_ascii.clone())
+                    .or(target.display_latex.clone())
+                    .unwrap_or_default();
+                ui.ctx().copy_text(display);
+            }
+            if ui.button("Copy normalized inputs").clicked()
+                && let Some(v) = validation
+            {
+                let text = serde_json::to_string_pretty(&v.normalized_inputs)
+                    .unwrap_or_else(|_| "{}".to_string());
+                ui.ctx().copy_text(text);
+            }
+        });
     }
 
     fn run_selected(&self) -> Result<StudyResult, String> {
@@ -988,21 +1130,21 @@ impl EngStudyView {
                     &self.solve_rows[i].target_id,
                 ) {
                     let row = &mut self.solve_rows[i];
-                    Self::seed_defaults(&d, &mut row.field_values, &mut row.output_key);
+                    Self::seed_solve_defaults(&d, &mut row.input_text, &mut row.output_key);
                 }
             }
         }
     }
 
-    fn seed_defaults(
+    fn seed_solve_defaults(
         target: &StudyTargetDescriptor,
-        field_values: &mut BTreeMap<String, Value>,
+        input_text: &mut BTreeMap<String, String>,
         output_key: &mut String,
     ) {
-        field_values.clear();
+        input_text.clear();
         for f in &target.input_fields {
             if let Some(v) = &f.default_value {
-                field_values.insert(f.key.clone(), v.clone());
+                input_text.insert(f.key.clone(), value_to_display(v));
             }
         }
         *output_key = target.default_output.clone().unwrap_or_default();
@@ -1065,9 +1207,9 @@ impl EngStudyView {
         }
     }
 
-    fn implied_equation_target(
+    fn implied_equation_target_text(
         target: &StudyTargetDescriptor,
-        values: &BTreeMap<String, Value>,
+        values: &BTreeMap<String, String>,
     ) -> Option<String> {
         if target.kind != StudyTargetKind::Equation {
             return None;
@@ -1076,7 +1218,12 @@ impl EngStudyView {
             .input_fields
             .iter()
             .filter(|f| f.key != "branch")
-            .filter(|f| !values.contains_key(&f.key))
+            .filter(|f| {
+                values
+                    .get(&f.key)
+                    .map(|v| v.trim().is_empty())
+                    .unwrap_or(true)
+            })
             .map(|f| f.key.clone())
             .collect::<Vec<_>>();
         (missing.len() == 1).then(|| missing[0].clone())
@@ -1138,5 +1285,42 @@ fn value_to_display(v: &Value) -> String {
         Value::Bool(b) => b.to_string(),
         Value::Null => "null".to_string(),
         other => other.to_string(),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn new_solve_row_is_expanded_by_default() {
+        let row = SolveRow::new(StudyTargetKind::Equation);
+        assert!(row.expanded);
+        assert!(!row.freeze);
+    }
+
+    #[test]
+    fn search_filter_matches_case_insensitive_substrings() {
+        let targets = vec![StudyTargetDescriptor {
+            id: "compressible.isentropic_pressure_ratio".to_string(),
+            kind: StudyTargetKind::Equation,
+            name: "Isentropic Pressure Ratio".to_string(),
+            description: String::new(),
+            category: Some("compressible".to_string()),
+            studyable: true,
+            input_fields: vec![],
+            sweepable_fields: vec![],
+            outputs: vec![],
+            default_output: None,
+            plot_default: None,
+            display_latex: None,
+            display_unicode: None,
+            display_ascii: None,
+            branch_options: vec![],
+        }];
+        let out = filter_targets(&targets, "PRESSURE");
+        assert_eq!(out.len(), 1);
+        let out = filter_targets(&targets, "compressible");
+        assert_eq!(out.len(), 1);
     }
 }
