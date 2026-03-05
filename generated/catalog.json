@@ -215,6 +215,66 @@
         "resolver_contexts": []
       },
       {
+        "key": "rayleigh_density_ratio",
+        "path_id": "compressible.rayleigh_density_ratio",
+        "name": "Rayleigh Density Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "rayleigh_pressure_ratio",
+        "path_id": "compressible.rayleigh_pressure_ratio",
+        "name": "Rayleigh Pressure Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "rayleigh_stagnation_pressure_ratio",
+        "path_id": "compressible.rayleigh_stagnation_pressure_ratio",
+        "name": "Rayleigh Stagnation Pressure Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "rayleigh_stagnation_temperature_ratio",
+        "path_id": "compressible.rayleigh_stagnation_temperature_ratio",
+        "name": "Rayleigh Stagnation Temperature Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "rayleigh_temperature_ratio",
+        "path_id": "compressible.rayleigh_temperature_ratio",
+        "name": "Rayleigh Temperature Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
+        "key": "rayleigh_velocity_ratio",
+        "path_id": "compressible.rayleigh_velocity_ratio",
+        "name": "Rayleigh Velocity Ratio",
+        "category": "compressible",
+        "subcategories": [],
+        "default_target": null,
+        "uses_constants": [],
+        "resolver_contexts": []
+      },
+      {
         "key": "circular_pipe_area",
         "path_id": "fluids.circular_pipe_area",
         "name": "Circular Pipe Flow Area",
@@ -655,6 +715,21 @@
           "path diagnostics"
         ],
         "route": "devices/fanno_flow_calc.md"
+      },
+      {
+        "key": "rayleigh_calc",
+        "name": "Rayleigh Flow Calculator",
+        "summary": "Calculator-style compressible device: solve Rayleigh star-reference input kinds to target kinds through Mach pivot orchestration.",
+        "supported_modes": [
+          "Input kinds: Mach, T/T*, p/p*, rho/rho*, T0/T0*, p0/p0*, V/V*",
+          "Branch-aware inversion for selected ratio -> Mach paths"
+        ],
+        "outputs": [
+          "value_si",
+          "pivot_mach",
+          "path diagnostics"
+        ],
+        "route": "devices/rayleigh_calc.md"
       }
     ],
     "fluids": [
@@ -1722,6 +1797,36 @@
         "relation": "device_uses_equation",
         "from": "pipe_loss",
         "to": "fluids.reynolds_number"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "rayleigh_calc",
+        "to": "compressible.rayleigh_density_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "rayleigh_calc",
+        "to": "compressible.rayleigh_pressure_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "rayleigh_calc",
+        "to": "compressible.rayleigh_stagnation_pressure_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "rayleigh_calc",
+        "to": "compressible.rayleigh_stagnation_temperature_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "rayleigh_calc",
+        "to": "compressible.rayleigh_temperature_ratio"
+      },
+      {
+        "relation": "device_uses_equation",
+        "from": "rayleigh_calc",
+        "to": "compressible.rayleigh_velocity_ratio"
       },
       {
         "relation": "equation_uses_constant",

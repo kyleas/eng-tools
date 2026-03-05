@@ -4,6 +4,7 @@ pub mod isentropic;
 pub mod normal_shock;
 pub mod oblique_shock;
 pub mod pipe_loss;
+pub mod rayleigh;
 
 pub use fanno_flow::{
     FannoFlowBranch, FannoFlowCalcError, FannoFlowCalcRequest, FannoFlowCalcResponse,
@@ -29,6 +30,11 @@ pub use oblique_shock::{
     ObliqueShockOutputKind, calc as oblique_shock_calc_from_request, oblique_shock_calc,
 };
 pub use pipe_loss::{PipeFrictionModel, PipeLossDevice, PipeLossError, PipeLossResult, pipe_loss};
+pub use rayleigh::{
+    RayleighBranch, RayleighCalcError, RayleighCalcRequest, RayleighCalcResponse,
+    RayleighCalculatorDevice, RayleighInputKind, RayleighOutputKind,
+    calc as rayleigh_calc_from_request, rayleigh_calc,
+};
 
 #[derive(Debug, Clone)]
 pub struct DeviceBindingArgSpec {
@@ -73,6 +79,7 @@ pub fn generation_specs() -> Vec<DeviceGenerationSpec> {
         normal_shock::generation_spec(),
         oblique_shock::generation_spec(),
         fanno_flow::generation_spec(),
+        rayleigh::generation_spec(),
     ]
 }
 

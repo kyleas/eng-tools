@@ -1,0 +1,84 @@
+key: rayleigh_temperature_ratio
+taxonomy:
+  category: compressible
+name: Rayleigh Temperature Ratio
+source: "Anderson, Modern Compressible Flow: With Historical Perspective"
+display:
+  latex: '\frac{T}{T^*} = \frac{(\gamma+1)^2 M^2}{(1+\gamma M^2)^2}'
+  unicode: "T/T* = ((gamma+1)^2 * M^2) / (1 + gamma*M^2)^2"
+  ascii: "t_tstar = ((gamma+1)^2 * M^2) / (1 + gamma*M^2)^2"
+  description: Rayleigh-flow static temperature ratio relative to sonic star state.
+variables:
+  t_tstar:
+    name: Temperature ratio to star state
+    symbol: '\frac{T}{T^*}'
+    dimension: ratio
+    constraints:
+      positive: true
+  M:
+    name: Mach number
+    symbol: 'M'
+    dimension: mach
+    constraints:
+      positive: true
+      nonzero: true
+  gamma:
+    name: Specific heat ratio
+    symbol: '\gamma'
+    dimension: dimensionless
+    constraints:
+      min: 1.01
+residual: t_tstar - ((((gamma + 1)^2) * M^2) / ((1 + gamma * M^2)^2))
+solve:
+  explicit_forms:
+    t_tstar: (((gamma + 1)^2) * M^2) / ((1 + gamma * M^2)^2)
+  numerical:
+    unsupported_targets: [gamma]
+    solver: bisection
+    initial_guess: 1.2
+    bracket: [0.01, 20.0]
+    tolerance_abs: 1e-12
+    tolerance_rel: 1e-10
+    max_iter: 400
+branches:
+  - name: subsonic
+    condition: 1 - M
+    preferred: false
+  - name: supersonic
+    condition: M - 1
+    preferred: true
+assumptions:
+  - One-dimensional, steady, constant-area, frictionless flow with heat transfer.
+  - Calorically perfect gas with constant gamma.
+tests:
+  units_policy: auto_convert_to_si
+  relation_tolerance:
+    abs: 1e-11
+    rel: 1e-9
+  cases:
+    - id: m_0_5
+      branch: subsonic
+      full_state:
+        gamma: 1.4
+        M: 0.5
+        t_tstar: 0.7901234567901233
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: t_tstar
+            methods: [explicit]
+          - target: M
+            methods: [numerical]
+    - id: m_2_0
+      branch: supersonic
+      full_state:
+        gamma: 1.4
+        M: 2.0
+        t_tstar: 0.5289256198347108
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: t_tstar
+            methods: [explicit]
+          - target: M
+            methods: [numerical]

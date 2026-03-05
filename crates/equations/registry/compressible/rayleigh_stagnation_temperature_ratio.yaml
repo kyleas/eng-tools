@@ -1,0 +1,84 @@
+key: rayleigh_stagnation_temperature_ratio
+taxonomy:
+  category: compressible
+name: Rayleigh Stagnation Temperature Ratio
+source: "Anderson, Modern Compressible Flow: With Historical Perspective"
+display:
+  latex: '\frac{T_0}{T_0^*} = \frac{2(\gamma+1)M^2\left(1+\frac{\gamma-1}{2}M^2\right)}{(1+\gamma M^2)^2}'
+  unicode: "T0/T0* = (2*(gamma+1)*M^2*(1 + ((gamma-1)/2)*M^2)) / (1 + gamma*M^2)^2"
+  ascii: "t0_t0star = (2*(gamma+1)*M^2*(1 + ((gamma-1)/2)*M^2)) / (1 + gamma*M^2)^2"
+  description: Rayleigh-flow stagnation temperature ratio relative to sonic star state.
+variables:
+  t0_t0star:
+    name: Stagnation temperature ratio to star state
+    symbol: '\frac{T_0}{T_0^*}'
+    dimension: ratio
+    constraints:
+      positive: true
+  M:
+    name: Mach number
+    symbol: 'M'
+    dimension: mach
+    constraints:
+      positive: true
+      nonzero: true
+  gamma:
+    name: Specific heat ratio
+    symbol: '\gamma'
+    dimension: dimensionless
+    constraints:
+      min: 1.01
+residual: t0_t0star - ((2 * (gamma + 1) * M^2 * (1 + ((gamma - 1) / 2) * M^2)) / ((1 + gamma * M^2)^2))
+solve:
+  explicit_forms:
+    t0_t0star: (2 * (gamma + 1) * M^2 * (1 + ((gamma - 1) / 2) * M^2)) / ((1 + gamma * M^2)^2)
+  numerical:
+    unsupported_targets: [gamma]
+    solver: bisection
+    initial_guess: 1.2
+    bracket: [0.01, 20.0]
+    tolerance_abs: 1e-12
+    tolerance_rel: 1e-10
+    max_iter: 400
+branches:
+  - name: subsonic
+    condition: 1 - M
+    preferred: false
+  - name: supersonic
+    condition: M - 1
+    preferred: true
+assumptions:
+  - One-dimensional, steady, constant-area, frictionless flow with heat transfer.
+  - Calorically perfect gas with constant gamma.
+tests:
+  units_policy: auto_convert_to_si
+  relation_tolerance:
+    abs: 1e-11
+    rel: 1e-9
+  cases:
+    - id: m_0_5
+      branch: subsonic
+      full_state:
+        gamma: 1.4
+        M: 0.5
+        t0_t0star: 0.691358024691358
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: t0_t0star
+            methods: [explicit]
+          - target: M
+            methods: [numerical]
+    - id: m_2_0
+      branch: supersonic
+      full_state:
+        gamma: 1.4
+        M: 2.0
+        t0_t0star: 0.7933884297520661
+      verify:
+        residual_zero: true
+        solve_targets:
+          - target: t0_t0star
+            methods: [explicit]
+          - target: M
+            methods: [numerical]

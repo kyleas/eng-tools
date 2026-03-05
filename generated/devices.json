@@ -81,6 +81,21 @@
         "path diagnostics"
       ],
       "route": "devices/fanno_flow_calc.md"
+    },
+    {
+      "key": "rayleigh_calc",
+      "name": "Rayleigh Flow Calculator",
+      "summary": "Calculator-style compressible device: solve Rayleigh star-reference input kinds to target kinds through Mach pivot orchestration.",
+      "supported_modes": [
+        "Input kinds: Mach, T/T*, p/p*, rho/rho*, T0/T0*, p0/p0*, V/V*",
+        "Branch-aware inversion for selected ratio -> Mach paths"
+      ],
+      "outputs": [
+        "value_si",
+        "pivot_mach",
+        "path diagnostics"
+      ],
+      "route": "devices/rayleigh_calc.md"
     }
   ]
 }

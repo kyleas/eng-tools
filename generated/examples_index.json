@@ -364,6 +364,96 @@
       "style": "convenience"
     },
     {
+      "code": "let value = eq\n    .solve(compressible::rayleigh_density_ratio::equation())\n    .target_rho_rhostar()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.rayleigh_density_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::rayleigh_density_ratio::solve_rho_rhostar(\n    0.5,\n    1.4,\n)?;",
+      "label": "convenience_rho_rhostar",
+      "path_id": "compressible.rayleigh_density_ratio",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::rayleigh_pressure_ratio::equation())\n    .target_p_pstar()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.rayleigh_pressure_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::rayleigh_pressure_ratio::solve_p_pstar(\n    0.5,\n    1.4,\n)?;",
+      "label": "convenience_p_pstar",
+      "path_id": "compressible.rayleigh_pressure_ratio",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::rayleigh_stagnation_pressure_ratio::equation())\n    .target_p0_p0star()\n    .branch_subsonic()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.rayleigh_stagnation_pressure_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::rayleigh_stagnation_pressure_ratio::solve_p0_p0star(\n    0.5,\n    1.4,\n)?;",
+      "label": "convenience_p0_p0star",
+      "path_id": "compressible.rayleigh_stagnation_pressure_ratio",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::rayleigh_stagnation_pressure_ratio::equation())\n    .target_p0_p0star()\n    .branch_supersonic()\n    .given_m(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_branch",
+      "path_id": "compressible.rayleigh_stagnation_pressure_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::rayleigh_stagnation_temperature_ratio::equation())\n    .target_t0_t0star()\n    .branch_subsonic()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.rayleigh_stagnation_temperature_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::rayleigh_stagnation_temperature_ratio::solve_t0_t0star(\n    0.5,\n    1.4,\n)?;",
+      "label": "convenience_t0_t0star",
+      "path_id": "compressible.rayleigh_stagnation_temperature_ratio",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::rayleigh_stagnation_temperature_ratio::equation())\n    .target_t0_t0star()\n    .branch_supersonic()\n    .given_m(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_branch",
+      "path_id": "compressible.rayleigh_stagnation_temperature_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::rayleigh_temperature_ratio::equation())\n    .target_t_tstar()\n    .branch_subsonic()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.rayleigh_temperature_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::rayleigh_temperature_ratio::solve_t_tstar(\n    0.5,\n    1.4,\n)?;",
+      "label": "convenience_t_tstar",
+      "path_id": "compressible.rayleigh_temperature_ratio",
+      "style": "convenience"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::rayleigh_temperature_ratio::equation())\n    .target_t_tstar()\n    .branch_supersonic()\n    .given_m(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_branch",
+      "path_id": "compressible.rayleigh_temperature_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = eq\n    .solve(compressible::rayleigh_velocity_ratio::equation())\n    .target_v_vstar()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+      "label": "typed_builder_si",
+      "path_id": "compressible.rayleigh_velocity_ratio",
+      "style": "typed_builder"
+    },
+    {
+      "code": "let value = equations::compressible::rayleigh_velocity_ratio::solve_v_vstar(\n    0.5,\n    1.4,\n)?;",
+      "label": "convenience_v_vstar",
+      "path_id": "compressible.rayleigh_velocity_ratio",
+      "style": "convenience"
+    },
+    {
       "code": "let value = eq\n    .solve(fluids::circular_pipe_area::equation())\n    .target_a()\n    .given_d(0.1)\n    .value()?;",
       "label": "typed_builder_si",
       "path_id": "fluids.circular_pipe_area",

@@ -458,6 +458,68 @@ fn invoke_fanno_flow_calc_requires_branch_for_inverse_paths() {
 }
 
 #[test]
+fn invoke_rayleigh_calc_supports_branch_sensitive_inverse_paths() {
+    let sub_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "device.rayleigh_calc.value",
+        "args": {
+            "input_kind": "t_tstar",
+            "input_value": 0.7901234567901233,
+            "target_kind": "mach",
+            "gamma": 1.4,
+            "branch": "subsonic"
+        }
+    });
+    let sub_resp = run_invoke(sub_req);
+    assert_eq!(sub_resp["ok"], true, "response: {sub_resp}");
+    let m_sub = sub_resp["value"].as_f64().unwrap_or(0.0);
+    assert!(
+        m_sub > 0.0 && m_sub < 1.0,
+        "expected subsonic M, got {m_sub}"
+    );
+
+    let sup_req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "device.rayleigh_calc.value",
+        "args": {
+            "input_kind": "t_tstar",
+            "input_value": 0.7901234567901233,
+            "target_kind": "mach",
+            "gamma": 1.4,
+            "branch": "supersonic"
+        }
+    });
+    let sup_resp = run_invoke(sup_req);
+    assert_eq!(sup_resp["ok"], true, "response: {sup_resp}");
+    let m_sup = sup_resp["value"].as_f64().unwrap_or(0.0);
+    assert!(m_sup > 1.0, "expected supersonic M, got {m_sup}");
+}
+
+#[test]
+fn invoke_rayleigh_calc_requires_branch_for_ambiguous_inverse_paths() {
+    let req = json!({
+        "protocol_version": "eng-invoke.v1",
+        "op": "device.rayleigh_calc.value",
+        "args": {
+            "input_kind": "p0_p0star",
+            "input_value": 1.114052503180089,
+            "target_kind": "mach",
+            "gamma": 1.4
+        }
+    });
+    let resp = run_invoke(req);
+    assert_eq!(resp["ok"], false, "response: {resp}");
+    assert_eq!(resp["error"]["code"], "device_rayleigh_calc_failed");
+    assert!(
+        resp["error"]["message"]
+            .as_str()
+            .unwrap_or("")
+            .contains("branch is required"),
+        "expected branch-required guidance"
+    );
+}
+
+#[test]
 fn invoke_format_and_meta_helpers_work() {
     let fmt_req = json!({
         "protocol_version": "eng-invoke.v1",

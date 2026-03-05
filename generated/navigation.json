@@ -27,7 +27,13 @@
           "oblique_shock_m2",
           "oblique_shock_mn1",
           "oblique_shock_theta_beta_m",
-          "prandtl_meyer"
+          "prandtl_meyer",
+          "rayleigh_density_ratio",
+          "rayleigh_pressure_ratio",
+          "rayleigh_stagnation_pressure_ratio",
+          "rayleigh_stagnation_temperature_ratio",
+          "rayleigh_temperature_ratio",
+          "rayleigh_velocity_ratio"
         ]
       }
     },

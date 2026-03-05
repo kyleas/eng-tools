@@ -24,6 +24,12 @@
 <tr><td><a href="./oblique_shock_mn1.md">Oblique Shock Normal Upstream Mach</a></td><td><code>compressible.oblique_shock_mn1</code></td><td>\(M_{n1} = M_1 \sin\beta\)</td><td><code>beta</code>, <code>m1</code>, <code>mn1</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
 <tr><td><a href="./oblique_shock_theta_beta_m.md">Oblique Shock Theta-Beta-M Relation</a></td><td><code>compressible.oblique_shock_theta_beta_m</code></td><td>\(\tan\theta = \frac{2\cot\beta\left(M_1^2\sin^2\beta - 1\right)}{M_1^2\left(\gamma + \cos 2\beta\right)+2}\)</td><td><code>beta</code>, <code>theta</code></td><td><code>-</code></td><td><code>weak</code>, <code>strong</code></td><td>-</td></tr>
 <tr><td><a href="./prandtl_meyer.md">Prandtl-Meyer Expansion Angle</a></td><td><code>compressible.prandtl_meyer</code></td><td>\(\nu = \sqrt{\frac{\gamma+1}{\gamma-1}} \tan^{-1}\!\left(\sqrt{\frac{\gamma-1}{\gamma+1}(M^2-1)}\right) - \tan^{-1}\!\left(\sqrt{M^2-1}\right)\)</td><td><code>M</code>, <code>nu</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<tr><td><a href="./rayleigh_density_ratio.md">Rayleigh Density Ratio</a></td><td><code>compressible.rayleigh_density_ratio</code></td><td>\(\frac{\rho}{\rho^*} = \frac{1+\gamma M^2}{(\gamma+1)M^2}\)</td><td><code>M</code>, <code>rho_rhostar</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<tr><td><a href="./rayleigh_pressure_ratio.md">Rayleigh Pressure Ratio</a></td><td><code>compressible.rayleigh_pressure_ratio</code></td><td>\(\frac{p}{p^*} = \frac{\gamma+1}{1+\gamma M^2}\)</td><td><code>M</code>, <code>p_pstar</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
+<tr><td><a href="./rayleigh_stagnation_pressure_ratio.md">Rayleigh Stagnation Pressure Ratio</a></td><td><code>compressible.rayleigh_stagnation_pressure_ratio</code></td><td>\(\frac{p_0}{p_0^*} = \frac{\gamma+1}{1+\gamma M^2}\left(\frac{1+\frac{\gamma-1}{2}M^2}{\frac{\gamma+1}{2}}\right)^{\frac{\gamma}{\gamma-1}}\)</td><td><code>M</code>, <code>p0_p0star</code></td><td><code>-</code></td><td><code>subsonic</code>, <code>supersonic</code></td><td>-</td></tr>
+<tr><td><a href="./rayleigh_stagnation_temperature_ratio.md">Rayleigh Stagnation Temperature Ratio</a></td><td><code>compressible.rayleigh_stagnation_temperature_ratio</code></td><td>\(\frac{T_0}{T_0^*} = \frac{2(\gamma+1)M^2\left(1+\frac{\gamma-1}{2}M^2\right)}{(1+\gamma M^2)^2}\)</td><td><code>M</code>, <code>t0_t0star</code></td><td><code>-</code></td><td><code>subsonic</code>, <code>supersonic</code></td><td>-</td></tr>
+<tr><td><a href="./rayleigh_temperature_ratio.md">Rayleigh Temperature Ratio</a></td><td><code>compressible.rayleigh_temperature_ratio</code></td><td>\(\frac{T}{T^*} = \frac{(\gamma+1)^2 M^2}{(1+\gamma M^2)^2}\)</td><td><code>M</code>, <code>t_tstar</code></td><td><code>-</code></td><td><code>subsonic</code>, <code>supersonic</code></td><td>-</td></tr>
+<tr><td><a href="./rayleigh_velocity_ratio.md">Rayleigh Velocity Ratio</a></td><td><code>compressible.rayleigh_velocity_ratio</code></td><td>\(\frac{V}{V^*} = \frac{(\gamma+1)M^2}{1+\gamma M^2}\)</td><td><code>M</code>, <code>v_vstar</code></td><td><code>-</code></td><td>-</td><td>-</td></tr>
 </tbody></table>
 
 ## Browse
@@ -49,3 +55,9 @@
 - [Oblique Shock Normal Upstream Mach](./oblique_shock_mn1.md)
 - [Oblique Shock Theta-Beta-M Relation](./oblique_shock_theta_beta_m.md)
 - [Prandtl-Meyer Expansion Angle](./prandtl_meyer.md)
+- [Rayleigh Density Ratio](./rayleigh_density_ratio.md)
+- [Rayleigh Pressure Ratio](./rayleigh_pressure_ratio.md)
+- [Rayleigh Stagnation Pressure Ratio](./rayleigh_stagnation_pressure_ratio.md)
+- [Rayleigh Stagnation Temperature Ratio](./rayleigh_stagnation_temperature_ratio.md)
+- [Rayleigh Temperature Ratio](./rayleigh_temperature_ratio.md)
+- [Rayleigh Velocity Ratio](./rayleigh_velocity_ratio.md)

@@ -1269,6 +1269,393 @@
       "pyxll_example": "=ENG_PIPE_LOSS_DELTA_P(...)"
     },
     {
+      "id": "device.rayleigh_calc",
+      "entity": "device",
+      "source": "rayleigh_calc",
+      "python_module": "devices",
+      "python_name": "rayleigh_calc",
+      "excel_name": "ENG_RAYLEIGH",
+      "op": "device.rayleigh_calc.value",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "input_kind",
+          "description": "Input kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input value"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Subsonic/supersonic branch for branch-sensitive inverse paths"
+        }
+      ],
+      "returns": "f64",
+      "help": "Rayleigh-flow calculator: input kind -> target kind through Mach pivot",
+      "rust_example": "eng::devices::rayleigh_calc().solve()?",
+      "python_example": "engpy.devices.rayleigh_calc(\"mach\", 2.0, \"p_pstar\", 1.4)",
+      "xloil_example": "=ENG_RAYLEIGH(\"mach\",2.0,\"p_pstar\",1.4,\"\")",
+      "pyxll_example": "=ENG_RAYLEIGH(\"mach\",2.0,\"p_pstar\",1.4,\"\")"
+    },
+    {
+      "id": "device.rayleigh_calc.from_m.to_p0_p0star",
+      "entity": "device",
+      "source": "rayleigh_calc",
+      "python_module": "devices",
+      "python_name": "rayleigh_from_m_to_p0_p0star",
+      "excel_name": "ENG_RAYLEIGH_FROM_M_TO_P0_P0STAR",
+      "op": "device.rayleigh_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "p0_p0star"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach input value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience Rayleigh path: Mach -> p0/p0*",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.rayleigh_from_m_to_p0_p0star(2.0, 1.4)",
+      "xloil_example": "=ENG_RAYLEIGH_FROM_M_TO_P0_P0STAR(2.0,1.4)",
+      "pyxll_example": "=ENG_RAYLEIGH_FROM_M_TO_P0_P0STAR(2.0,1.4)"
+    },
+    {
+      "id": "device.rayleigh_calc.from_m.to_p_pstar",
+      "entity": "device",
+      "source": "rayleigh_calc",
+      "python_module": "devices",
+      "python_name": "rayleigh_from_m_to_p_pstar",
+      "excel_name": "ENG_RAYLEIGH_FROM_M_TO_P_PSTAR",
+      "op": "device.rayleigh_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "p_pstar"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach input value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience Rayleigh path: Mach -> p/p*",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.rayleigh_from_m_to_p_pstar(2.0, 1.4)",
+      "xloil_example": "=ENG_RAYLEIGH_FROM_M_TO_P_PSTAR(2.0,1.4)",
+      "pyxll_example": "=ENG_RAYLEIGH_FROM_M_TO_P_PSTAR(2.0,1.4)"
+    },
+    {
+      "id": "device.rayleigh_calc.from_m.to_rho_rhostar",
+      "entity": "device",
+      "source": "rayleigh_calc",
+      "python_module": "devices",
+      "python_name": "rayleigh_from_m_to_rho_rhostar",
+      "excel_name": "ENG_RAYLEIGH_FROM_M_TO_RHO_RHOSTAR",
+      "op": "device.rayleigh_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "rho_rhostar"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach input value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience Rayleigh path: Mach -> rho/rho*",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.rayleigh_from_m_to_rho_rhostar(2.0, 1.4)",
+      "xloil_example": "=ENG_RAYLEIGH_FROM_M_TO_RHO_RHOSTAR(2.0,1.4)",
+      "pyxll_example": "=ENG_RAYLEIGH_FROM_M_TO_RHO_RHOSTAR(2.0,1.4)"
+    },
+    {
+      "id": "device.rayleigh_calc.from_m.to_t0_t0star",
+      "entity": "device",
+      "source": "rayleigh_calc",
+      "python_module": "devices",
+      "python_name": "rayleigh_from_m_to_t0_t0star",
+      "excel_name": "ENG_RAYLEIGH_FROM_M_TO_T0_T0STAR",
+      "op": "device.rayleigh_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "t0_t0star"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach input value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience Rayleigh path: Mach -> T0/T0*",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.rayleigh_from_m_to_t0_t0star(2.0, 1.4)",
+      "xloil_example": "=ENG_RAYLEIGH_FROM_M_TO_T0_T0STAR(2.0,1.4)",
+      "pyxll_example": "=ENG_RAYLEIGH_FROM_M_TO_T0_T0STAR(2.0,1.4)"
+    },
+    {
+      "id": "device.rayleigh_calc.from_m.to_t_tstar",
+      "entity": "device",
+      "source": "rayleigh_calc",
+      "python_module": "devices",
+      "python_name": "rayleigh_from_m_to_t_tstar",
+      "excel_name": "ENG_RAYLEIGH_FROM_M_TO_T_TSTAR",
+      "op": "device.rayleigh_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "t_tstar"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach input value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience Rayleigh path: Mach -> T/T*",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.rayleigh_from_m_to_t_tstar(2.0, 1.4)",
+      "xloil_example": "=ENG_RAYLEIGH_FROM_M_TO_T_TSTAR(2.0,1.4)",
+      "pyxll_example": "=ENG_RAYLEIGH_FROM_M_TO_T_TSTAR(2.0,1.4)"
+    },
+    {
+      "id": "device.rayleigh_calc.from_m.to_v_vstar",
+      "entity": "device",
+      "source": "rayleigh_calc",
+      "python_module": "devices",
+      "python_name": "rayleigh_from_m_to_v_vstar",
+      "excel_name": "ENG_RAYLEIGH_FROM_M_TO_V_VSTAR",
+      "op": "device.rayleigh_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "v_vstar"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach input value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience Rayleigh path: Mach -> V/V*",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.rayleigh_from_m_to_v_vstar(2.0, 1.4)",
+      "xloil_example": "=ENG_RAYLEIGH_FROM_M_TO_V_VSTAR(2.0,1.4)",
+      "pyxll_example": "=ENG_RAYLEIGH_FROM_M_TO_V_VSTAR(2.0,1.4)"
+    },
+    {
+      "id": "device.rayleigh_calc.from_p0_p0star.to_m",
+      "entity": "device",
+      "source": "rayleigh_calc",
+      "python_module": "devices",
+      "python_name": "rayleigh_from_p0_p0star_to_m",
+      "excel_name": "ENG_RAYLEIGH_FROM_P0_P0STAR_TO_M",
+      "op": "device.rayleigh_calc.value",
+      "fixed_args": {
+        "input_kind": "p0_p0star",
+        "target_kind": "mach"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Input ratio value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Subsonic or supersonic branch"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience Rayleigh path: p0/p0* -> Mach (branch required)",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.rayleigh_from_p0_p0star_to_m(1.1140525032, 1.4, \"subsonic\")",
+      "xloil_example": "=ENG_RAYLEIGH_FROM_P0_P0STAR_TO_M(1.1140525032,1.4,\"subsonic\")",
+      "pyxll_example": "=ENG_RAYLEIGH_FROM_P0_P0STAR_TO_M(1.1140525032,1.4,\"subsonic\")"
+    },
+    {
+      "id": "device.rayleigh_calc.from_t0_t0star.to_m",
+      "entity": "device",
+      "source": "rayleigh_calc",
+      "python_module": "devices",
+      "python_name": "rayleigh_from_t0_t0star_to_m",
+      "excel_name": "ENG_RAYLEIGH_FROM_T0_T0STAR_TO_M",
+      "op": "device.rayleigh_calc.value",
+      "fixed_args": {
+        "input_kind": "t0_t0star",
+        "target_kind": "mach"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Input ratio value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Subsonic or supersonic branch"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience Rayleigh path: T0/T0* -> Mach (branch required)",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.rayleigh_from_t0_t0star_to_m(0.7933884298, 1.4, \"supersonic\")",
+      "xloil_example": "=ENG_RAYLEIGH_FROM_T0_T0STAR_TO_M(0.7933884298,1.4,\"supersonic\")",
+      "pyxll_example": "=ENG_RAYLEIGH_FROM_T0_T0STAR_TO_M(0.7933884298,1.4,\"supersonic\")"
+    },
+    {
+      "id": "device.rayleigh_calc.from_t_tstar.to_m",
+      "entity": "device",
+      "source": "rayleigh_calc",
+      "python_module": "devices",
+      "python_name": "rayleigh_from_t_tstar_to_m",
+      "excel_name": "ENG_RAYLEIGH_FROM_T_TSTAR_TO_M",
+      "op": "device.rayleigh_calc.value",
+      "fixed_args": {
+        "input_kind": "t_tstar",
+        "target_kind": "mach"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Input ratio value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Subsonic or supersonic branch"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience Rayleigh path: T/T* -> Mach (branch required)",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.rayleigh_from_t_tstar_to_m(0.7901234568, 1.4, \"subsonic\")",
+      "xloil_example": "=ENG_RAYLEIGH_FROM_T_TSTAR_TO_M(0.7901234568,1.4,\"subsonic\")",
+      "pyxll_example": "=ENG_RAYLEIGH_FROM_T_TSTAR_TO_M(0.7901234568,1.4,\"subsonic\")"
+    },
+    {
+      "id": "device.rayleigh_calc.path_text",
+      "entity": "device",
+      "source": "rayleigh_calc",
+      "python_module": "devices",
+      "python_name": "rayleigh_path_text",
+      "excel_name": "ENG_RAYLEIGH_PATH_TEXT",
+      "op": "device.rayleigh_calc.path_text",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "input_kind",
+          "description": "Input kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input value"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Subsonic/supersonic branch for branch-sensitive inverse paths"
+        }
+      ],
+      "returns": "str",
+      "help": "Rayleigh-flow calculator helper: compact step trace text",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.rayleigh_path_text(\"t_tstar\", 0.7901234568, \"mach\", 1.4, \"subsonic\")",
+      "xloil_example": "=ENG_RAYLEIGH_PATH_TEXT(\"t_tstar\",0.7901234568,\"mach\",1.4,\"subsonic\")",
+      "pyxll_example": "=ENG_RAYLEIGH_PATH_TEXT(\"t_tstar\",0.7901234568,\"mach\",1.4,\"subsonic\")"
+    },
+    {
+      "id": "device.rayleigh_calc.pivot",
+      "entity": "device",
+      "source": "rayleigh_calc",
+      "python_module": "devices",
+      "python_name": "rayleigh_pivot_mach",
+      "excel_name": "ENG_RAYLEIGH_PIVOT_MACH",
+      "op": "device.rayleigh_calc.pivot_mach",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "input_kind",
+          "description": "Input kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input value"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Subsonic/supersonic branch for branch-sensitive inverse paths"
+        }
+      ],
+      "returns": "f64",
+      "help": "Rayleigh-flow calculator helper: return resolved pivot Mach",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.rayleigh_pivot_mach(\"t0_t0star\", 0.7933884298, \"mach\", 1.4, \"supersonic\")",
+      "xloil_example": "=ENG_RAYLEIGH_PIVOT_MACH(\"t0_t0star\",0.7933884298,\"mach\",1.4,\"supersonic\")",
+      "pyxll_example": "=ENG_RAYLEIGH_PIVOT_MACH(\"t0_t0star\",0.7933884298,\"mach\",1.4,\"supersonic\")"
+    },
+    {
       "id": "equation.ascii",
       "entity": "equation_meta",
       "source": "equations",
@@ -2697,6 +3084,378 @@
       "python_example": "engpy.equations.compressible.prandtl_meyer.solve_nu(m=\"...\", gamma=\"...\")",
       "xloil_example": "=ENG_COMPRESSIBLE_PRANDTL_MEYER_NU(\"...\",\"...\")",
       "pyxll_example": "=ENG_COMPRESSIBLE_PRANDTL_MEYER_NU(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.rayleigh_density_ratio.M",
+      "entity": "equation",
+      "source": "compressible.rayleigh_density_ratio",
+      "python_module": "equations.compressible.rayleigh_density_ratio",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_RAYLEIGH_DENSITY_RATIO_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.rayleigh_density_ratio",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "rho_rhostar",
+          "description": "Density ratio to star state"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Rayleigh Density Ratio for M",
+      "rust_example": "eq.solve(equations::compressible::rayleigh_density_ratio::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.rayleigh_density_ratio.solve_m(rho_rhostar=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_RAYLEIGH_DENSITY_RATIO_M(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_RAYLEIGH_DENSITY_RATIO_M(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.rayleigh_density_ratio.rho_rhostar",
+      "entity": "equation",
+      "source": "compressible.rayleigh_density_ratio",
+      "python_module": "equations.compressible.rayleigh_density_ratio",
+      "python_name": "solve_rho_rhostar",
+      "excel_name": "ENG_COMPRESSIBLE_RAYLEIGH_DENSITY_RATIO_RHO_RHOSTAR",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.rayleigh_density_ratio",
+        "target": "rho_rhostar"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Rayleigh Density Ratio for rho_rhostar",
+      "rust_example": "eq.solve(equations::compressible::rayleigh_density_ratio::equation()).for_target(\"rho_rhostar\").value()?",
+      "python_example": "engpy.equations.compressible.rayleigh_density_ratio.solve_rho_rhostar(m=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_RAYLEIGH_DENSITY_RATIO_RHO_RHOSTAR(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_RAYLEIGH_DENSITY_RATIO_RHO_RHOSTAR(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.rayleigh_pressure_ratio.M",
+      "entity": "equation",
+      "source": "compressible.rayleigh_pressure_ratio",
+      "python_module": "equations.compressible.rayleigh_pressure_ratio",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_RAYLEIGH_PRESSURE_RATIO_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.rayleigh_pressure_ratio",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "p_pstar",
+          "description": "Pressure ratio to star state"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Rayleigh Pressure Ratio for M",
+      "rust_example": "eq.solve(equations::compressible::rayleigh_pressure_ratio::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.rayleigh_pressure_ratio.solve_m(p_pstar=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_RAYLEIGH_PRESSURE_RATIO_M(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_RAYLEIGH_PRESSURE_RATIO_M(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.rayleigh_pressure_ratio.p_pstar",
+      "entity": "equation",
+      "source": "compressible.rayleigh_pressure_ratio",
+      "python_module": "equations.compressible.rayleigh_pressure_ratio",
+      "python_name": "solve_p_pstar",
+      "excel_name": "ENG_COMPRESSIBLE_RAYLEIGH_PRESSURE_RATIO_P_PSTAR",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.rayleigh_pressure_ratio",
+        "target": "p_pstar"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Rayleigh Pressure Ratio for p_pstar",
+      "rust_example": "eq.solve(equations::compressible::rayleigh_pressure_ratio::equation()).for_target(\"p_pstar\").value()?",
+      "python_example": "engpy.equations.compressible.rayleigh_pressure_ratio.solve_p_pstar(m=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_RAYLEIGH_PRESSURE_RATIO_P_PSTAR(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_RAYLEIGH_PRESSURE_RATIO_P_PSTAR(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.rayleigh_stagnation_pressure_ratio.M",
+      "entity": "equation",
+      "source": "compressible.rayleigh_stagnation_pressure_ratio",
+      "python_module": "equations.compressible.rayleigh_stagnation_pressure_ratio",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_PRESSURE_RATIO_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.rayleigh_stagnation_pressure_ratio",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "p0_p0star",
+          "description": "Stagnation pressure ratio to star state"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Rayleigh Stagnation Pressure Ratio for M",
+      "rust_example": "eq.solve(equations::compressible::rayleigh_stagnation_pressure_ratio::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.rayleigh_stagnation_pressure_ratio.solve_m(p0_p0star=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_PRESSURE_RATIO_M(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_PRESSURE_RATIO_M(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.rayleigh_stagnation_pressure_ratio.p0_p0star",
+      "entity": "equation",
+      "source": "compressible.rayleigh_stagnation_pressure_ratio",
+      "python_module": "equations.compressible.rayleigh_stagnation_pressure_ratio",
+      "python_name": "solve_p0_p0star",
+      "excel_name": "ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_PRESSURE_RATIO_P0_P0STAR",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.rayleigh_stagnation_pressure_ratio",
+        "target": "p0_p0star"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Rayleigh Stagnation Pressure Ratio for p0_p0star",
+      "rust_example": "eq.solve(equations::compressible::rayleigh_stagnation_pressure_ratio::equation()).for_target(\"p0_p0star\").value()?",
+      "python_example": "engpy.equations.compressible.rayleigh_stagnation_pressure_ratio.solve_p0_p0star(m=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_PRESSURE_RATIO_P0_P0STAR(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_PRESSURE_RATIO_P0_P0STAR(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.rayleigh_stagnation_temperature_ratio.M",
+      "entity": "equation",
+      "source": "compressible.rayleigh_stagnation_temperature_ratio",
+      "python_module": "equations.compressible.rayleigh_stagnation_temperature_ratio",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_TEMPERATURE_RATIO_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.rayleigh_stagnation_temperature_ratio",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "t0_t0star",
+          "description": "Stagnation temperature ratio to star state"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Rayleigh Stagnation Temperature Ratio for M",
+      "rust_example": "eq.solve(equations::compressible::rayleigh_stagnation_temperature_ratio::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.rayleigh_stagnation_temperature_ratio.solve_m(t0_t0star=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_TEMPERATURE_RATIO_M(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_TEMPERATURE_RATIO_M(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.rayleigh_stagnation_temperature_ratio.t0_t0star",
+      "entity": "equation",
+      "source": "compressible.rayleigh_stagnation_temperature_ratio",
+      "python_module": "equations.compressible.rayleigh_stagnation_temperature_ratio",
+      "python_name": "solve_t0_t0star",
+      "excel_name": "ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_TEMPERATURE_RATIO_T0_T0STAR",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.rayleigh_stagnation_temperature_ratio",
+        "target": "t0_t0star"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Rayleigh Stagnation Temperature Ratio for t0_t0star",
+      "rust_example": "eq.solve(equations::compressible::rayleigh_stagnation_temperature_ratio::equation()).for_target(\"t0_t0star\").value()?",
+      "python_example": "engpy.equations.compressible.rayleigh_stagnation_temperature_ratio.solve_t0_t0star(m=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_TEMPERATURE_RATIO_T0_T0STAR(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_TEMPERATURE_RATIO_T0_T0STAR(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.rayleigh_temperature_ratio.M",
+      "entity": "equation",
+      "source": "compressible.rayleigh_temperature_ratio",
+      "python_module": "equations.compressible.rayleigh_temperature_ratio",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_RAYLEIGH_TEMPERATURE_RATIO_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.rayleigh_temperature_ratio",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "t_tstar",
+          "description": "Temperature ratio to star state"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Rayleigh Temperature Ratio for M",
+      "rust_example": "eq.solve(equations::compressible::rayleigh_temperature_ratio::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.rayleigh_temperature_ratio.solve_m(t_tstar=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_RAYLEIGH_TEMPERATURE_RATIO_M(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_RAYLEIGH_TEMPERATURE_RATIO_M(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.rayleigh_temperature_ratio.t_tstar",
+      "entity": "equation",
+      "source": "compressible.rayleigh_temperature_ratio",
+      "python_module": "equations.compressible.rayleigh_temperature_ratio",
+      "python_name": "solve_t_tstar",
+      "excel_name": "ENG_COMPRESSIBLE_RAYLEIGH_TEMPERATURE_RATIO_T_TSTAR",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.rayleigh_temperature_ratio",
+        "target": "t_tstar"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Optional branch selection. Supported: subsonic, supersonic"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Rayleigh Temperature Ratio for t_tstar",
+      "rust_example": "eq.solve(equations::compressible::rayleigh_temperature_ratio::equation()).for_target(\"t_tstar\").value()?",
+      "python_example": "engpy.equations.compressible.rayleigh_temperature_ratio.solve_t_tstar(m=\"...\", gamma=\"...\", branch=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_RAYLEIGH_TEMPERATURE_RATIO_T_TSTAR(\"...\",\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_RAYLEIGH_TEMPERATURE_RATIO_T_TSTAR(\"...\",\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.rayleigh_velocity_ratio.M",
+      "entity": "equation",
+      "source": "compressible.rayleigh_velocity_ratio",
+      "python_module": "equations.compressible.rayleigh_velocity_ratio",
+      "python_name": "solve_m",
+      "excel_name": "ENG_COMPRESSIBLE_RAYLEIGH_VELOCITY_RATIO_M",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.rayleigh_velocity_ratio",
+        "target": "M"
+      },
+      "args": [
+        {
+          "name": "v_vstar",
+          "description": "Velocity ratio to star state"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Rayleigh Velocity Ratio for M",
+      "rust_example": "eq.solve(equations::compressible::rayleigh_velocity_ratio::equation()).for_target(\"M\").value()?",
+      "python_example": "engpy.equations.compressible.rayleigh_velocity_ratio.solve_m(v_vstar=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_RAYLEIGH_VELOCITY_RATIO_M(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_RAYLEIGH_VELOCITY_RATIO_M(\"...\",\"...\")"
+    },
+    {
+      "id": "equation.compressible.rayleigh_velocity_ratio.v_vstar",
+      "entity": "equation",
+      "source": "compressible.rayleigh_velocity_ratio",
+      "python_module": "equations.compressible.rayleigh_velocity_ratio",
+      "python_name": "solve_v_vstar",
+      "excel_name": "ENG_COMPRESSIBLE_RAYLEIGH_VELOCITY_RATIO_V_VSTAR",
+      "op": "equation.solve",
+      "fixed_args": {
+        "path_id": "compressible.rayleigh_velocity_ratio",
+        "target": "v_vstar"
+      },
+      "args": [
+        {
+          "name": "M",
+          "description": "Mach number"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Solve Rayleigh Velocity Ratio for v_vstar",
+      "rust_example": "eq.solve(equations::compressible::rayleigh_velocity_ratio::equation()).for_target(\"v_vstar\").value()?",
+      "python_example": "engpy.equations.compressible.rayleigh_velocity_ratio.solve_v_vstar(m=\"...\", gamma=\"...\")",
+      "xloil_example": "=ENG_COMPRESSIBLE_RAYLEIGH_VELOCITY_RATIO_V_VSTAR(\"...\",\"...\")",
+      "pyxll_example": "=ENG_COMPRESSIBLE_RAYLEIGH_VELOCITY_RATIO_V_VSTAR(\"...\",\"...\")"
     },
     {
       "id": "equation.default_unit",

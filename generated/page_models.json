@@ -2586,6 +2586,699 @@
       ]
     },
     {
+      "key": "rayleigh_density_ratio",
+      "path_id": "compressible.rayleigh_density_ratio",
+      "slug": "rayleigh_density_ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Rayleigh Density Ratio",
+      "description": "Rayleigh-flow density ratio relative to sonic star state.",
+      "latex": "\\frac{\\rho}{\\rho^*} = \\frac{1+\\gamma M^2}{(\\gamma+1)M^2}",
+      "unicode": "rho/rho* = (1 + gamma*M^2) / ((gamma+1)*M^2)",
+      "ascii": "rho_rhostar = (1 + gamma*M^2) / ((gamma+1)*M^2)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "M",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "rho_rhostar",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "One-dimensional, steady, constant-area, frictionless flow with heat transfer.",
+        "Calorically perfect gas with constant gamma."
+      ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
+      "references": [],
+      "variables": [
+        {
+          "key": "rho_rhostar",
+          "name": "Density ratio to star state",
+          "symbol": "\\frac{\\rho}{\\rho^*}",
+          "symbol_authored": true,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M",
+          "name": "Mach number",
+          "symbol": "M",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::rayleigh_density_ratio::equation())\n    .target_rho_rhostar()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_rho_rhostar",
+          "style": "convenience",
+          "code": "let value = equations::compressible::rayleigh_density_ratio::solve_rho_rhostar(\n    0.5,\n    1.4,\n)?;",
+          "target": "rho_rhostar",
+          "signature": "equations::compressible::rayleigh_density_ratio::solve_rho_rhostar(M, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M",
+              "description": "Mach number"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "rayleigh_pressure_ratio",
+      "path_id": "compressible.rayleigh_pressure_ratio",
+      "slug": "rayleigh_pressure_ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Rayleigh Pressure Ratio",
+      "description": "Rayleigh-flow static pressure ratio relative to sonic star state.",
+      "latex": "\\frac{p}{p^*} = \\frac{\\gamma+1}{1+\\gamma M^2}",
+      "unicode": "p/p* = (gamma + 1) / (1 + gamma*M^2)",
+      "ascii": "p_pstar = (gamma + 1) / (1 + gamma*M^2)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "M",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "p_pstar",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "One-dimensional, steady, constant-area, frictionless flow with heat transfer.",
+        "Calorically perfect gas with constant gamma."
+      ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
+      "references": [],
+      "variables": [
+        {
+          "key": "p_pstar",
+          "name": "Pressure ratio to star state",
+          "symbol": "\\frac{p}{p^*}",
+          "symbol_authored": true,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M",
+          "name": "Mach number",
+          "symbol": "M",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::rayleigh_pressure_ratio::equation())\n    .target_p_pstar()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_p_pstar",
+          "style": "convenience",
+          "code": "let value = equations::compressible::rayleigh_pressure_ratio::solve_p_pstar(\n    0.5,\n    1.4,\n)?;",
+          "target": "p_pstar",
+          "signature": "equations::compressible::rayleigh_pressure_ratio::solve_p_pstar(M, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M",
+              "description": "Mach number"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "rayleigh_stagnation_pressure_ratio",
+      "path_id": "compressible.rayleigh_stagnation_pressure_ratio",
+      "slug": "rayleigh_stagnation_pressure_ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Rayleigh Stagnation Pressure Ratio",
+      "description": "Rayleigh-flow stagnation pressure ratio relative to sonic star state.",
+      "latex": "\\frac{p_0}{p_0^*} = \\frac{\\gamma+1}{1+\\gamma M^2}\\left(\\frac{1+\\frac{\\gamma-1}{2}M^2}{\\frac{\\gamma+1}{2}}\\right)^{\\frac{\\gamma}{\\gamma-1}}",
+      "unicode": "p0/p0* = ((gamma+1) / (1 + gamma*M^2)) * ((1 + ((gamma-1)/2)*M^2) / ((gamma+1)/2))^(gamma/(gamma-1))",
+      "ascii": "p0_p0star = ((gamma+1) / (1 + gamma*M^2)) * ((1 + ((gamma-1)/2)*M^2) / ((gamma+1)/2))^(gamma/(gamma-1))",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "M",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "p0_p0star",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [
+        {
+          "name": "subsonic",
+          "condition": "1 - M",
+          "preferred": false
+        },
+        {
+          "name": "supersonic",
+          "condition": "M - 1",
+          "preferred": true
+        }
+      ],
+      "diagram_labels": [],
+      "assumptions": [
+        "One-dimensional, steady, constant-area, frictionless flow with heat transfer.",
+        "Calorically perfect gas with constant gamma."
+      ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
+      "references": [],
+      "variables": [
+        {
+          "key": "p0_p0star",
+          "name": "Stagnation pressure ratio to star state",
+          "symbol": "\\frac{p_0}{p_0^*}",
+          "symbol_authored": true,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M",
+          "name": "Mach number",
+          "symbol": "M",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::rayleigh_stagnation_pressure_ratio::equation())\n    .target_p0_p0star()\n    .branch_subsonic()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_p0_p0star",
+          "style": "convenience",
+          "code": "let value = equations::compressible::rayleigh_stagnation_pressure_ratio::solve_p0_p0star(\n    0.5,\n    1.4,\n)?;",
+          "target": "p0_p0star",
+          "signature": "equations::compressible::rayleigh_stagnation_pressure_ratio::solve_p0_p0star(M, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M",
+              "description": "Mach number"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        },
+        {
+          "label": "typed_builder_branch",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::rayleigh_stagnation_pressure_ratio::equation())\n    .target_p0_p0star()\n    .branch_supersonic()\n    .given_m(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        }
+      ]
+    },
+    {
+      "key": "rayleigh_stagnation_temperature_ratio",
+      "path_id": "compressible.rayleigh_stagnation_temperature_ratio",
+      "slug": "rayleigh_stagnation_temperature_ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Rayleigh Stagnation Temperature Ratio",
+      "description": "Rayleigh-flow stagnation temperature ratio relative to sonic star state.",
+      "latex": "\\frac{T_0}{T_0^*} = \\frac{2(\\gamma+1)M^2\\left(1+\\frac{\\gamma-1}{2}M^2\\right)}{(1+\\gamma M^2)^2}",
+      "unicode": "T0/T0* = (2*(gamma+1)*M^2*(1 + ((gamma-1)/2)*M^2)) / (1 + gamma*M^2)^2",
+      "ascii": "t0_t0star = (2*(gamma+1)*M^2*(1 + ((gamma-1)/2)*M^2)) / (1 + gamma*M^2)^2",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "M",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "t0_t0star",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [
+        {
+          "name": "subsonic",
+          "condition": "1 - M",
+          "preferred": false
+        },
+        {
+          "name": "supersonic",
+          "condition": "M - 1",
+          "preferred": true
+        }
+      ],
+      "diagram_labels": [],
+      "assumptions": [
+        "One-dimensional, steady, constant-area, frictionless flow with heat transfer.",
+        "Calorically perfect gas with constant gamma."
+      ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
+      "references": [],
+      "variables": [
+        {
+          "key": "t0_t0star",
+          "name": "Stagnation temperature ratio to star state",
+          "symbol": "\\frac{T_0}{T_0^*}",
+          "symbol_authored": true,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M",
+          "name": "Mach number",
+          "symbol": "M",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::rayleigh_stagnation_temperature_ratio::equation())\n    .target_t0_t0star()\n    .branch_subsonic()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_t0_t0star",
+          "style": "convenience",
+          "code": "let value = equations::compressible::rayleigh_stagnation_temperature_ratio::solve_t0_t0star(\n    0.5,\n    1.4,\n)?;",
+          "target": "t0_t0star",
+          "signature": "equations::compressible::rayleigh_stagnation_temperature_ratio::solve_t0_t0star(M, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M",
+              "description": "Mach number"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        },
+        {
+          "label": "typed_builder_branch",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::rayleigh_stagnation_temperature_ratio::equation())\n    .target_t0_t0star()\n    .branch_supersonic()\n    .given_m(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        }
+      ]
+    },
+    {
+      "key": "rayleigh_temperature_ratio",
+      "path_id": "compressible.rayleigh_temperature_ratio",
+      "slug": "rayleigh_temperature_ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Rayleigh Temperature Ratio",
+      "description": "Rayleigh-flow static temperature ratio relative to sonic star state.",
+      "latex": "\\frac{T}{T^*} = \\frac{(\\gamma+1)^2 M^2}{(1+\\gamma M^2)^2}",
+      "unicode": "T/T* = ((gamma+1)^2 * M^2) / (1 + gamma*M^2)^2",
+      "ascii": "t_tstar = ((gamma+1)^2 * M^2) / (1 + gamma*M^2)^2",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "M",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "t_tstar",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [
+        {
+          "name": "subsonic",
+          "condition": "1 - M",
+          "preferred": false
+        },
+        {
+          "name": "supersonic",
+          "condition": "M - 1",
+          "preferred": true
+        }
+      ],
+      "diagram_labels": [],
+      "assumptions": [
+        "One-dimensional, steady, constant-area, frictionless flow with heat transfer.",
+        "Calorically perfect gas with constant gamma."
+      ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
+      "references": [],
+      "variables": [
+        {
+          "key": "t_tstar",
+          "name": "Temperature ratio to star state",
+          "symbol": "\\frac{T}{T^*}",
+          "symbol_authored": true,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M",
+          "name": "Mach number",
+          "symbol": "M",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::rayleigh_temperature_ratio::equation())\n    .target_t_tstar()\n    .branch_subsonic()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_t_tstar",
+          "style": "convenience",
+          "code": "let value = equations::compressible::rayleigh_temperature_ratio::solve_t_tstar(\n    0.5,\n    1.4,\n)?;",
+          "target": "t_tstar",
+          "signature": "equations::compressible::rayleigh_temperature_ratio::solve_t_tstar(M, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M",
+              "description": "Mach number"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        },
+        {
+          "label": "typed_builder_branch",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::rayleigh_temperature_ratio::equation())\n    .target_t_tstar()\n    .branch_supersonic()\n    .given_m(2.0)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        }
+      ]
+    },
+    {
+      "key": "rayleigh_velocity_ratio",
+      "path_id": "compressible.rayleigh_velocity_ratio",
+      "slug": "rayleigh_velocity_ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "name": "Rayleigh Velocity Ratio",
+      "description": "Rayleigh-flow velocity ratio relative to sonic star state.",
+      "latex": "\\frac{V}{V^*} = \\frac{(\\gamma+1)M^2}{1+\\gamma M^2}",
+      "unicode": "V/V* = ((gamma+1)*M^2) / (1 + gamma*M^2)",
+      "ascii": "v_vstar = ((gamma+1)*M^2) / (1 + gamma*M^2)",
+      "aliases": [],
+      "default_target": null,
+      "solve_targets": [
+        {
+          "target": "M",
+          "methods": [
+            "numerical"
+          ]
+        },
+        {
+          "target": "v_vstar",
+          "methods": [
+            "explicit",
+            "numerical"
+          ]
+        }
+      ],
+      "branches": [],
+      "diagram_labels": [],
+      "assumptions": [
+        "One-dimensional, steady, constant-area, frictionless flow with heat transfer.",
+        "Calorically perfect gas with constant gamma."
+      ],
+      "source": {
+        "source": "Anderson, Modern Compressible Flow: With Historical Perspective",
+        "note": null
+      },
+      "references": [],
+      "variables": [
+        {
+          "key": "v_vstar",
+          "name": "Velocity ratio to star state",
+          "symbol": "\\frac{V}{V^*}",
+          "symbol_authored": true,
+          "dimension": "ratio",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "M",
+          "name": "Mach number",
+          "symbol": "M",
+          "symbol_authored": true,
+          "dimension": "mach",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        },
+        {
+          "key": "gamma",
+          "name": "Specific heat ratio",
+          "symbol": "\\gamma",
+          "symbol_authored": true,
+          "dimension": "dimensionless",
+          "default_unit": "1",
+          "description": "",
+          "resolver_source": null,
+          "resolver_kind": null,
+          "resolver_property": null
+        }
+      ],
+      "uses_constants": [],
+      "examples": [
+        {
+          "label": "typed_builder_si",
+          "style": "typed_builder",
+          "code": "let value = eq\n    .solve(compressible::rayleigh_velocity_ratio::equation())\n    .target_v_vstar()\n    .given_m(0.5)\n    .given_gamma(1.4)\n    .value()?;",
+          "target": null,
+          "signature": null,
+          "argument_order": []
+        },
+        {
+          "label": "convenience_v_vstar",
+          "style": "convenience",
+          "code": "let value = equations::compressible::rayleigh_velocity_ratio::solve_v_vstar(\n    0.5,\n    1.4,\n)?;",
+          "target": "v_vstar",
+          "signature": "equations::compressible::rayleigh_velocity_ratio::solve_v_vstar(M, gamma) -> Result<f64, _>",
+          "argument_order": [
+            {
+              "name": "M",
+              "description": "Mach number"
+            },
+            {
+              "name": "gamma",
+              "description": "Specific heat ratio"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "key": "circular_pipe_area",
       "path_id": "fluids.circular_pipe_area",
       "slug": "circular_pipe_area",

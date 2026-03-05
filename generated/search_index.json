@@ -281,6 +281,84 @@
       ]
     },
     {
+      "key": "rayleigh_density_ratio",
+      "path_id": "compressible.rayleigh_density_ratio",
+      "name": "Rayleigh Density Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Rayleigh-flow density ratio relative to sonic star state.",
+      "aliases": [],
+      "solve_targets": [
+        "rho_rhostar",
+        "M"
+      ]
+    },
+    {
+      "key": "rayleigh_pressure_ratio",
+      "path_id": "compressible.rayleigh_pressure_ratio",
+      "name": "Rayleigh Pressure Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Rayleigh-flow static pressure ratio relative to sonic star state.",
+      "aliases": [],
+      "solve_targets": [
+        "p_pstar",
+        "M"
+      ]
+    },
+    {
+      "key": "rayleigh_stagnation_pressure_ratio",
+      "path_id": "compressible.rayleigh_stagnation_pressure_ratio",
+      "name": "Rayleigh Stagnation Pressure Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Rayleigh-flow stagnation pressure ratio relative to sonic star state.",
+      "aliases": [],
+      "solve_targets": [
+        "p0_p0star",
+        "M"
+      ]
+    },
+    {
+      "key": "rayleigh_stagnation_temperature_ratio",
+      "path_id": "compressible.rayleigh_stagnation_temperature_ratio",
+      "name": "Rayleigh Stagnation Temperature Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Rayleigh-flow stagnation temperature ratio relative to sonic star state.",
+      "aliases": [],
+      "solve_targets": [
+        "t0_t0star",
+        "M"
+      ]
+    },
+    {
+      "key": "rayleigh_temperature_ratio",
+      "path_id": "compressible.rayleigh_temperature_ratio",
+      "name": "Rayleigh Temperature Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Rayleigh-flow static temperature ratio relative to sonic star state.",
+      "aliases": [],
+      "solve_targets": [
+        "t_tstar",
+        "M"
+      ]
+    },
+    {
+      "key": "rayleigh_velocity_ratio",
+      "path_id": "compressible.rayleigh_velocity_ratio",
+      "name": "Rayleigh Velocity Ratio",
+      "category": "compressible",
+      "subcategories": [],
+      "description": "Rayleigh-flow velocity ratio relative to sonic star state.",
+      "aliases": [],
+      "solve_targets": [
+        "v_vstar",
+        "M"
+      ]
+    },
+    {
       "key": "circular_pipe_area",
       "path_id": "fluids.circular_pipe_area",
       "name": "Circular Pipe Flow Area",

@@ -42,6 +42,14 @@ Devices/components compose multiple atomic equations into higher-level engineeri
 - Input kinds: Mach, T/T*, p/p*, rho/rho*, p0/p0*, 4fL*/D
 - Branch-aware inversion for ratio -> Mach
 
+## Rayleigh Flow Calculator
+
+- Key: `rayleigh_calc`
+- Calculator-style compressible device: solve Rayleigh star-reference input kinds to target kinds through Mach pivot orchestration.
+- Route: `devices/rayleigh_calc.md`
+- Input kinds: Mach, T/T*, p/p*, rho/rho*, T0/T0*, p0/p0*, V/V*
+- Branch-aware inversion for selected ratio -> Mach paths
+
 ## Fixed-f Mode
 
 ```rust

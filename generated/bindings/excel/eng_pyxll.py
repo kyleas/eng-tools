@@ -198,6 +198,66 @@ def e_n_g_p_i_p_e_l_o_s_s_d_e_l_t_a_p(friction_model, fixed_f, density, viscosit
     """Solve pipe pressure drop using Fixed/Colebrook friction model | Arguments: | - friction_model: Colebrook or Fixed | - fixed_f: Required when friction_model=Fixed | - density: Density input (optional with fluid context) | - viscosity: Viscosity input (required for Colebrook without fluid context) | - velocity: Velocity | - diameter: Diameter | - length: Length | - roughness: Roughness (Colebrook) | - fluid: Optional fluid key (e.g. H2O) | - in1_key: Fluid state input key 1 | - in1_value: Fluid state input value 1 | - in2_key: Fluid state input key 2 | - in2_value: Fluid state input value 2 | Returns: f64 | Example: =ENG_PIPE_LOSS_DELTA_P(...)"""
     return invoke("device.pipe_loss.solve_delta_p", {"friction_model": friction_model, "fixed_f": fixed_f, "rho": density, "mu": viscosity, "v": velocity, "d": diameter, "l": length, "eps": roughness, "fluid": fluid, "in1_key": in1_key, "in1_value": in1_value, "in2_key": in2_key, "in2_value": in2_value})
 
+@xl_func(name="ENG_RAYLEIGH", doc="Rayleigh-flow calculator: input kind -> target kind through Mach pivot | Arguments: | - input_kind: Input kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar) | - input_value: Input value | - target_kind: Target kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar) | - gamma: Specific heat ratio | - branch: Subsonic/supersonic branch for branch-sensitive inverse paths | Returns: f64 | Example: =ENG_RAYLEIGH('mach',2.0,'p_pstar',1.4,'')")
+def e_n_g_r_a_y_l_e_i_g_h(input_kind, input_value, target_kind, gamma, branch=""):
+    """Rayleigh-flow calculator: input kind -> target kind through Mach pivot | Arguments: | - input_kind: Input kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar) | - input_value: Input value | - target_kind: Target kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar) | - gamma: Specific heat ratio | - branch: Subsonic/supersonic branch for branch-sensitive inverse paths | Returns: f64 | Example: =ENG_RAYLEIGH('mach',2.0,'p_pstar',1.4,'')"""
+    return invoke("device.rayleigh_calc.value", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_RAYLEIGH_FROM_M_TO_P0_P0STAR", doc="Convenience Rayleigh path: Mach -> p0/p0* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_M_TO_P0_P0STAR(2.0,1.4)")
+def e_n_g_r_a_y_l_e_i_g_h_f_r_o_m_m_t_o_p0_p0_s_t_a_r(input_value, gamma):
+    """Convenience Rayleigh path: Mach -> p0/p0* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_M_TO_P0_P0STAR(2.0,1.4)"""
+    return invoke("device.rayleigh_calc.value", {"input_kind": "mach", "target_kind": "p0_p0star", "input_value": input_value, "gamma": gamma})
+
+@xl_func(name="ENG_RAYLEIGH_FROM_M_TO_P_PSTAR", doc="Convenience Rayleigh path: Mach -> p/p* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_M_TO_P_PSTAR(2.0,1.4)")
+def e_n_g_r_a_y_l_e_i_g_h_f_r_o_m_m_t_o_p_p_s_t_a_r(input_value, gamma):
+    """Convenience Rayleigh path: Mach -> p/p* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_M_TO_P_PSTAR(2.0,1.4)"""
+    return invoke("device.rayleigh_calc.value", {"input_kind": "mach", "target_kind": "p_pstar", "input_value": input_value, "gamma": gamma})
+
+@xl_func(name="ENG_RAYLEIGH_FROM_M_TO_RHO_RHOSTAR", doc="Convenience Rayleigh path: Mach -> rho/rho* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_M_TO_RHO_RHOSTAR(2.0,1.4)")
+def e_n_g_r_a_y_l_e_i_g_h_f_r_o_m_m_t_o_r_h_o_r_h_o_s_t_a_r(input_value, gamma):
+    """Convenience Rayleigh path: Mach -> rho/rho* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_M_TO_RHO_RHOSTAR(2.0,1.4)"""
+    return invoke("device.rayleigh_calc.value", {"input_kind": "mach", "target_kind": "rho_rhostar", "input_value": input_value, "gamma": gamma})
+
+@xl_func(name="ENG_RAYLEIGH_FROM_M_TO_T0_T0STAR", doc="Convenience Rayleigh path: Mach -> T0/T0* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_M_TO_T0_T0STAR(2.0,1.4)")
+def e_n_g_r_a_y_l_e_i_g_h_f_r_o_m_m_t_o_t0_t0_s_t_a_r(input_value, gamma):
+    """Convenience Rayleigh path: Mach -> T0/T0* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_M_TO_T0_T0STAR(2.0,1.4)"""
+    return invoke("device.rayleigh_calc.value", {"input_kind": "mach", "target_kind": "t0_t0star", "input_value": input_value, "gamma": gamma})
+
+@xl_func(name="ENG_RAYLEIGH_FROM_M_TO_T_TSTAR", doc="Convenience Rayleigh path: Mach -> T/T* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_M_TO_T_TSTAR(2.0,1.4)")
+def e_n_g_r_a_y_l_e_i_g_h_f_r_o_m_m_t_o_t_t_s_t_a_r(input_value, gamma):
+    """Convenience Rayleigh path: Mach -> T/T* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_M_TO_T_TSTAR(2.0,1.4)"""
+    return invoke("device.rayleigh_calc.value", {"input_kind": "mach", "target_kind": "t_tstar", "input_value": input_value, "gamma": gamma})
+
+@xl_func(name="ENG_RAYLEIGH_FROM_M_TO_V_VSTAR", doc="Convenience Rayleigh path: Mach -> V/V* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_M_TO_V_VSTAR(2.0,1.4)")
+def e_n_g_r_a_y_l_e_i_g_h_f_r_o_m_m_t_o_v_v_s_t_a_r(input_value, gamma):
+    """Convenience Rayleigh path: Mach -> V/V* | Arguments: | - input_value: Mach input value | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_M_TO_V_VSTAR(2.0,1.4)"""
+    return invoke("device.rayleigh_calc.value", {"input_kind": "mach", "target_kind": "v_vstar", "input_value": input_value, "gamma": gamma})
+
+@xl_func(name="ENG_RAYLEIGH_FROM_P0_P0STAR_TO_M", doc="Convenience Rayleigh path: p0/p0* -> Mach (branch required) | Arguments: | - input_value: Input ratio value | - gamma: Specific heat ratio | - branch: Subsonic or supersonic branch | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_P0_P0STAR_TO_M(1.1140525032,1.4,'subsonic')")
+def e_n_g_r_a_y_l_e_i_g_h_f_r_o_m_p0_p0_s_t_a_r_t_o_m(input_value, gamma, branch=""):
+    """Convenience Rayleigh path: p0/p0* -> Mach (branch required) | Arguments: | - input_value: Input ratio value | - gamma: Specific heat ratio | - branch: Subsonic or supersonic branch | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_P0_P0STAR_TO_M(1.1140525032,1.4,'subsonic')"""
+    return invoke("device.rayleigh_calc.value", {"input_kind": "p0_p0star", "target_kind": "mach", "input_value": input_value, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_RAYLEIGH_FROM_T0_T0STAR_TO_M", doc="Convenience Rayleigh path: T0/T0* -> Mach (branch required) | Arguments: | - input_value: Input ratio value | - gamma: Specific heat ratio | - branch: Subsonic or supersonic branch | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_T0_T0STAR_TO_M(0.7933884298,1.4,'supersonic')")
+def e_n_g_r_a_y_l_e_i_g_h_f_r_o_m_t0_t0_s_t_a_r_t_o_m(input_value, gamma, branch=""):
+    """Convenience Rayleigh path: T0/T0* -> Mach (branch required) | Arguments: | - input_value: Input ratio value | - gamma: Specific heat ratio | - branch: Subsonic or supersonic branch | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_T0_T0STAR_TO_M(0.7933884298,1.4,'supersonic')"""
+    return invoke("device.rayleigh_calc.value", {"input_kind": "t0_t0star", "target_kind": "mach", "input_value": input_value, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_RAYLEIGH_FROM_T_TSTAR_TO_M", doc="Convenience Rayleigh path: T/T* -> Mach (branch required) | Arguments: | - input_value: Input ratio value | - gamma: Specific heat ratio | - branch: Subsonic or supersonic branch | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_T_TSTAR_TO_M(0.7901234568,1.4,'subsonic')")
+def e_n_g_r_a_y_l_e_i_g_h_f_r_o_m_t_t_s_t_a_r_t_o_m(input_value, gamma, branch=""):
+    """Convenience Rayleigh path: T/T* -> Mach (branch required) | Arguments: | - input_value: Input ratio value | - gamma: Specific heat ratio | - branch: Subsonic or supersonic branch | Returns: f64 | Example: =ENG_RAYLEIGH_FROM_T_TSTAR_TO_M(0.7901234568,1.4,'subsonic')"""
+    return invoke("device.rayleigh_calc.value", {"input_kind": "t_tstar", "target_kind": "mach", "input_value": input_value, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_RAYLEIGH_PATH_TEXT", doc="Rayleigh-flow calculator helper: compact step trace text | Arguments: | - input_kind: Input kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar) | - input_value: Input value | - target_kind: Target kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar) | - gamma: Specific heat ratio | - branch: Subsonic/supersonic branch for branch-sensitive inverse paths | Returns: str | Example: =ENG_RAYLEIGH_PATH_TEXT('t_tstar',0.7901234568,'mach',1.4,'subsonic')")
+def e_n_g_r_a_y_l_e_i_g_h_p_a_t_h_t_e_x_t(input_kind, input_value, target_kind, gamma, branch=""):
+    """Rayleigh-flow calculator helper: compact step trace text | Arguments: | - input_kind: Input kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar) | - input_value: Input value | - target_kind: Target kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar) | - gamma: Specific heat ratio | - branch: Subsonic/supersonic branch for branch-sensitive inverse paths | Returns: str | Example: =ENG_RAYLEIGH_PATH_TEXT('t_tstar',0.7901234568,'mach',1.4,'subsonic')"""
+    return invoke("device.rayleigh_calc.path_text", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_RAYLEIGH_PIVOT_MACH", doc="Rayleigh-flow calculator helper: return resolved pivot Mach | Arguments: | - input_kind: Input kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar) | - input_value: Input value | - target_kind: Target kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar) | - gamma: Specific heat ratio | - branch: Subsonic/supersonic branch for branch-sensitive inverse paths | Returns: f64 | Example: =ENG_RAYLEIGH_PIVOT_MACH('t0_t0star',0.7933884298,'mach',1.4,'supersonic')")
+def e_n_g_r_a_y_l_e_i_g_h_p_i_v_o_t_m_a_c_h(input_kind, input_value, target_kind, gamma, branch=""):
+    """Rayleigh-flow calculator helper: return resolved pivot Mach | Arguments: | - input_kind: Input kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar) | - input_value: Input value | - target_kind: Target kind (mach, t_tstar, p_pstar, rho_rhostar, t0_t0star, p0_p0star, v_vstar) | - gamma: Specific heat ratio | - branch: Subsonic/supersonic branch for branch-sensitive inverse paths | Returns: f64 | Example: =ENG_RAYLEIGH_PIVOT_MACH('t0_t0star',0.7933884298,'mach',1.4,'supersonic')"""
+    return invoke("device.rayleigh_calc.pivot_mach", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
 @xl_func(name="ENG_EQUATION_ASCII", doc="Read ASCII display form for an equation | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_ASCII('fluids.reynolds_number')")
 def e_n_g_e_q_u_a_t_i_o_n_a_s_c_i_i(path_id):
     """Read ASCII display form for an equation | Arguments: | - path_id: Equation path id | Returns: str | Example: =ENG_EQUATION_ASCII('fluids.reynolds_number')"""
@@ -432,6 +492,66 @@ def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_p_r_a_n_d_t_l_m_e_y_e_r_m(nu, gamma):
 def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_p_r_a_n_d_t_l_m_e_y_e_r_n_u(m, gamma):
     """Solve Prandtl-Meyer Expansion Angle for nu | Arguments: | - m: Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_PRANDTL_MEYER_NU('...','...')"""
     return invoke("equation.solve", {"path_id": "compressible.prandtl_meyer", "target": "nu", "M": m, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_RAYLEIGH_DENSITY_RATIO_M", doc="Solve Rayleigh Density Ratio for M | Arguments: | - rho_rhostar: Density ratio to star state | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_DENSITY_RATIO_M('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_r_a_y_l_e_i_g_h_d_e_n_s_i_t_y_r_a_t_i_o_m(rho_rhostar, gamma):
+    """Solve Rayleigh Density Ratio for M | Arguments: | - rho_rhostar: Density ratio to star state | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_DENSITY_RATIO_M('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.rayleigh_density_ratio", "target": "M", "rho_rhostar": rho_rhostar, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_RAYLEIGH_DENSITY_RATIO_RHO_RHOSTAR", doc="Solve Rayleigh Density Ratio for rho_rhostar | Arguments: | - m: Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_DENSITY_RATIO_RHO_RHOSTAR('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_r_a_y_l_e_i_g_h_d_e_n_s_i_t_y_r_a_t_i_o_r_h_o_r_h_o_s_t_a_r(m, gamma):
+    """Solve Rayleigh Density Ratio for rho_rhostar | Arguments: | - m: Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_DENSITY_RATIO_RHO_RHOSTAR('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.rayleigh_density_ratio", "target": "rho_rhostar", "M": m, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_RAYLEIGH_PRESSURE_RATIO_M", doc="Solve Rayleigh Pressure Ratio for M | Arguments: | - p_pstar: Pressure ratio to star state | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_PRESSURE_RATIO_M('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_r_a_y_l_e_i_g_h_p_r_e_s_s_u_r_e_r_a_t_i_o_m(p_pstar, gamma):
+    """Solve Rayleigh Pressure Ratio for M | Arguments: | - p_pstar: Pressure ratio to star state | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_PRESSURE_RATIO_M('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.rayleigh_pressure_ratio", "target": "M", "p_pstar": p_pstar, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_RAYLEIGH_PRESSURE_RATIO_P_PSTAR", doc="Solve Rayleigh Pressure Ratio for p_pstar | Arguments: | - m: Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_PRESSURE_RATIO_P_PSTAR('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_r_a_y_l_e_i_g_h_p_r_e_s_s_u_r_e_r_a_t_i_o_p_p_s_t_a_r(m, gamma):
+    """Solve Rayleigh Pressure Ratio for p_pstar | Arguments: | - m: Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_PRESSURE_RATIO_P_PSTAR('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.rayleigh_pressure_ratio", "target": "p_pstar", "M": m, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_PRESSURE_RATIO_M", doc="Solve Rayleigh Stagnation Pressure Ratio for M | Arguments: | - p0_p0star: Stagnation pressure ratio to star state | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_PRESSURE_RATIO_M('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_r_a_y_l_e_i_g_h_s_t_a_g_n_a_t_i_o_n_p_r_e_s_s_u_r_e_r_a_t_i_o_m(p0_p0star, gamma, branch=""):
+    """Solve Rayleigh Stagnation Pressure Ratio for M | Arguments: | - p0_p0star: Stagnation pressure ratio to star state | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_PRESSURE_RATIO_M('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.rayleigh_stagnation_pressure_ratio", "target": "M", "p0_p0star": p0_p0star, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_PRESSURE_RATIO_P0_P0STAR", doc="Solve Rayleigh Stagnation Pressure Ratio for p0_p0star | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_PRESSURE_RATIO_P0_P0STAR('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_r_a_y_l_e_i_g_h_s_t_a_g_n_a_t_i_o_n_p_r_e_s_s_u_r_e_r_a_t_i_o_p0_p0_s_t_a_r(m, gamma, branch=""):
+    """Solve Rayleigh Stagnation Pressure Ratio for p0_p0star | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_PRESSURE_RATIO_P0_P0STAR('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.rayleigh_stagnation_pressure_ratio", "target": "p0_p0star", "M": m, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_TEMPERATURE_RATIO_M", doc="Solve Rayleigh Stagnation Temperature Ratio for M | Arguments: | - t0_t0star: Stagnation temperature ratio to star state | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_TEMPERATURE_RATIO_M('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_r_a_y_l_e_i_g_h_s_t_a_g_n_a_t_i_o_n_t_e_m_p_e_r_a_t_u_r_e_r_a_t_i_o_m(t0_t0star, gamma, branch=""):
+    """Solve Rayleigh Stagnation Temperature Ratio for M | Arguments: | - t0_t0star: Stagnation temperature ratio to star state | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_TEMPERATURE_RATIO_M('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.rayleigh_stagnation_temperature_ratio", "target": "M", "t0_t0star": t0_t0star, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_TEMPERATURE_RATIO_T0_T0STAR", doc="Solve Rayleigh Stagnation Temperature Ratio for t0_t0star | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_TEMPERATURE_RATIO_T0_T0STAR('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_r_a_y_l_e_i_g_h_s_t_a_g_n_a_t_i_o_n_t_e_m_p_e_r_a_t_u_r_e_r_a_t_i_o_t0_t0_s_t_a_r(m, gamma, branch=""):
+    """Solve Rayleigh Stagnation Temperature Ratio for t0_t0star | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_STAGNATION_TEMPERATURE_RATIO_T0_T0STAR('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.rayleigh_stagnation_temperature_ratio", "target": "t0_t0star", "M": m, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_COMPRESSIBLE_RAYLEIGH_TEMPERATURE_RATIO_M", doc="Solve Rayleigh Temperature Ratio for M | Arguments: | - t_tstar: Temperature ratio to star state | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_TEMPERATURE_RATIO_M('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_r_a_y_l_e_i_g_h_t_e_m_p_e_r_a_t_u_r_e_r_a_t_i_o_m(t_tstar, gamma, branch=""):
+    """Solve Rayleigh Temperature Ratio for M | Arguments: | - t_tstar: Temperature ratio to star state | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_TEMPERATURE_RATIO_M('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.rayleigh_temperature_ratio", "target": "M", "t_tstar": t_tstar, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_COMPRESSIBLE_RAYLEIGH_TEMPERATURE_RATIO_T_TSTAR", doc="Solve Rayleigh Temperature Ratio for t_tstar | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_TEMPERATURE_RATIO_T_TSTAR('...','...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_r_a_y_l_e_i_g_h_t_e_m_p_e_r_a_t_u_r_e_r_a_t_i_o_t_t_s_t_a_r(m, gamma, branch=""):
+    """Solve Rayleigh Temperature Ratio for t_tstar | Arguments: | - m: Mach number | - gamma: Specific heat ratio | - branch: Optional branch selection. Supported: subsonic, supersonic | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_TEMPERATURE_RATIO_T_TSTAR('...','...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.rayleigh_temperature_ratio", "target": "t_tstar", "M": m, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+@xl_func(name="ENG_COMPRESSIBLE_RAYLEIGH_VELOCITY_RATIO_M", doc="Solve Rayleigh Velocity Ratio for M | Arguments: | - v_vstar: Velocity ratio to star state | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_VELOCITY_RATIO_M('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_r_a_y_l_e_i_g_h_v_e_l_o_c_i_t_y_r_a_t_i_o_m(v_vstar, gamma):
+    """Solve Rayleigh Velocity Ratio for M | Arguments: | - v_vstar: Velocity ratio to star state | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_VELOCITY_RATIO_M('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.rayleigh_velocity_ratio", "target": "M", "v_vstar": v_vstar, "gamma": gamma})
+
+@xl_func(name="ENG_COMPRESSIBLE_RAYLEIGH_VELOCITY_RATIO_V_VSTAR", doc="Solve Rayleigh Velocity Ratio for v_vstar | Arguments: | - m: Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_VELOCITY_RATIO_V_VSTAR('...','...')")
+def e_n_g_c_o_m_p_r_e_s_s_i_b_l_e_r_a_y_l_e_i_g_h_v_e_l_o_c_i_t_y_r_a_t_i_o_v_v_s_t_a_r(m, gamma):
+    """Solve Rayleigh Velocity Ratio for v_vstar | Arguments: | - m: Mach number | - gamma: Specific heat ratio | Returns: f64 | Example: =ENG_COMPRESSIBLE_RAYLEIGH_VELOCITY_RATIO_V_VSTAR('...','...')"""
+    return invoke("equation.solve", {"path_id": "compressible.rayleigh_velocity_ratio", "target": "v_vstar", "M": m, "gamma": gamma})
 
 @xl_func(name="ENG_EQUATION_DEFAULT_UNIT", doc="Read canonical default unit for one equation variable | Arguments: | - path_id: Equation path id | - variable: Variable key (case-insensitive) | Returns: str | Example: =ENG_EQUATION_DEFAULT_UNIT('fluids.reynolds_number','mu')")
 def e_n_g_e_q_u_a_t_i_o_n_d_e_f_a_u_l_t_u_n_i_t(path_id, variable):

@@ -215,6 +215,22 @@
       "description": "Run Fanno-flow calculator device and return compact path trace text"
     },
     {
+      "op": "device.rayleigh_calc",
+      "description": "Run Rayleigh-flow calculator device and return value+pivot+path diagnostics"
+    },
+    {
+      "op": "device.rayleigh_calc.value",
+      "description": "Run Rayleigh-flow calculator device and return scalar output value"
+    },
+    {
+      "op": "device.rayleigh_calc.pivot_mach",
+      "description": "Run Rayleigh-flow calculator device and return resolved pivot Mach"
+    },
+    {
+      "op": "device.rayleigh_calc.path_text",
+      "description": "Run Rayleigh-flow calculator device and return compact path trace text"
+    },
+    {
       "op": "device.pipe_loss.solve_delta_p",
       "description": "Solve pipe-loss device pressure drop"
     },
