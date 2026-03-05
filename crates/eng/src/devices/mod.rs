@@ -2,6 +2,7 @@ pub mod fanno_flow;
 pub mod framework;
 pub mod isentropic;
 pub mod normal_shock;
+pub mod nozzle_flow;
 pub mod oblique_shock;
 pub mod pipe_loss;
 pub mod rayleigh;
@@ -23,6 +24,11 @@ pub use normal_shock::{
     NormalShockCalcError, NormalShockCalcRequest, NormalShockCalcResponse, NormalShockCalcStep,
     NormalShockCalculatorDevice, NormalShockInputKind, NormalShockOutputKind,
     calc as normal_shock_calc_from_request, normal_shock_calc,
+};
+pub use nozzle_flow::{
+    NozzleFlowBranch, NozzleFlowCalcError, NozzleFlowCalcRequest, NozzleFlowCalcResponse,
+    NozzleFlowCalculatorDevice, NozzleFlowInputKind, NozzleFlowOutputKind,
+    calc as nozzle_flow_calc_from_request, nozzle_flow_calc,
 };
 pub use oblique_shock::{
     ObliqueShockBranch, ObliqueShockCalcError, ObliqueShockCalcRequest, ObliqueShockCalcResponse,
@@ -77,6 +83,7 @@ pub fn generation_specs() -> Vec<DeviceGenerationSpec> {
         pipe_loss::generation_spec(),
         isentropic::generation_spec(),
         normal_shock::generation_spec(),
+        nozzle_flow::generation_spec(),
         oblique_shock::generation_spec(),
         fanno_flow::generation_spec(),
         rayleigh::generation_spec(),

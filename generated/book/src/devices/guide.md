@@ -26,6 +26,15 @@ Devices/components compose multiple atomic equations into higher-level engineeri
 - Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01
 - Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01
 
+## Nozzle Flow Calculator
+
+- Key: `nozzle_flow_calc`
+- Calculator-style quasi-1D nozzle device: solve isentropic nozzle input kinds to target kinds through Mach pivot orchestration.
+- Route: `devices/nozzle_flow_calc.md`
+- Input kinds: Mach, A/A*, p/p0, T/T0, rho/rho0
+- Branch-aware inversion for A/A* -> Mach
+- Optional stagnation-reference scaling for static p/T/rho outputs
+
 ## Oblique Shock Calculator
 
 - Key: `oblique_shock_calc`

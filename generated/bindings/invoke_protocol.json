@@ -231,6 +231,22 @@
       "description": "Run Rayleigh-flow calculator device and return compact path trace text"
     },
     {
+      "op": "device.nozzle_flow_calc",
+      "description": "Run nozzle-flow calculator device and return value+pivot+path diagnostics"
+    },
+    {
+      "op": "device.nozzle_flow_calc.value",
+      "description": "Run nozzle-flow calculator device and return scalar output value"
+    },
+    {
+      "op": "device.nozzle_flow_calc.pivot_mach",
+      "description": "Run nozzle-flow calculator device and return resolved pivot Mach"
+    },
+    {
+      "op": "device.nozzle_flow_calc.path_text",
+      "description": "Run nozzle-flow calculator device and return compact path trace text"
+    },
+    {
       "op": "device.pipe_loss.solve_delta_p",
       "description": "Solve pipe-loss device pressure drop"
     },

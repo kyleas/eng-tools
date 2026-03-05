@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-15b4a914.js";
+            window.path_to_searchindex_js = "searchindex-9bf5a7c8.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-fa9422a7.js"></script>
+        <script src="toc-171c17c7.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -235,7 +235,7 @@
 <li><a href="#fluids-1">Fluids</a></li>
 <li><a href="#materials">Materials</a></li>
 </ul>
-<p><strong>Library size:</strong> 50 equations, 5 constants, 6 devices, 31 fluids, 2 materials.</p>
+<p><strong>Library size:</strong> 50 equations, 5 constants, 7 devices, 31 fluids, 2 materials.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h1>
 <p>The top-level crate is <code>eng</code>. It re-exports equations, fluids, materials, constants, units, and docs export APIs.</p>
@@ -724,6 +724,15 @@ print(engpy_native.runtime_info())
 <li>Route: <code>devices/normal_shock_calc.md</code></li>
 <li>Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01</li>
 <li>Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01</li>
+</ul>
+<h2 id="nozzle-flow-calculator"><a class="header" href="#nozzle-flow-calculator">Nozzle Flow Calculator</a></h2>
+<ul>
+<li>Key: <code>nozzle_flow_calc</code></li>
+<li>Calculator-style quasi-1D nozzle device: solve isentropic nozzle input kinds to target kinds through Mach pivot orchestration.</li>
+<li>Route: <code>devices/nozzle_flow_calc.md</code></li>
+<li>Input kinds: Mach, A/A*, p/p0, T/T0, rho/rho0</li>
+<li>Branch-aware inversion for A/A* -&gt; Mach</li>
+<li>Optional stagnation-reference scaling for static p/T/rho outputs</li>
 </ul>
 <h2 id="oblique-shock-calculator"><a class="header" href="#oblique-shock-calculator">Oblique Shock Calculator</a></h2>
 <ul>
@@ -6534,6 +6543,7 @@ ideal_gas.mass_volume.solve_&lt;target&gt;(...)
 <tr><td><a href="#pipe-pressure-drop-1">Pipe Pressure Drop</a></td><td><code>pipe_loss</code></td><td>Composes Reynolds + friction model + Darcy-Weisbach for pipe pressure loss.</td><td>Fixed friction factor, Colebrook</td></tr>
 <tr><td><a href="#isentropic-calculator-1">Isentropic Calculator</a></td><td><code>isentropic_calc</code></td><td>Calculator-style compressible device: solve any supported isentropic input to any supported output through Mach pivot orchestration.</td><td>Input kinds: Mach, MachAngle, Prandtl-Meyer angle, p/p0, T/T0, rho/rho0, A/A*, Branch-aware inversion for A/A*</td></tr>
 <tr><td><a href="#normal-shock-calculator-1">Normal Shock Calculator</a></td><td><code>normal_shock_calc</code></td><td>Calculator-style compressible device: solve normal-shock input kinds to target kinds through deterministic M1 pivot orchestration.</td><td>Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01, Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01</td></tr>
+<tr><td><a href="#nozzle-flow-calculator-1">Nozzle Flow Calculator</a></td><td><code>nozzle_flow_calc</code></td><td>Calculator-style quasi-1D nozzle device: solve isentropic nozzle input kinds to target kinds through Mach pivot orchestration.</td><td>Input kinds: Mach, A/A*, p/p0, T/T0, rho/rho0, Branch-aware inversion for A/A* -&gt; Mach, Optional stagnation-reference scaling for static p/T/rho outputs</td></tr>
 <tr><td><a href="#oblique-shock-calculator-1">Oblique Shock Calculator</a></td><td><code>oblique_shock_calc</code></td><td>Calculator-style compressible device: solve oblique-shock input pairs (M1+beta / M1+theta) to target outputs with explicit weak/strong branch handling.</td><td>Input pairs: (M1, beta), (M1, theta), Branch-aware inversion for (M1, theta) -&gt; beta</td></tr>
 <tr><td><a href="#fanno-flow-calculator-1">Fanno Flow Calculator</a></td><td><code>fanno_flow_calc</code></td><td>Calculator-style compressible device: solve Fanno star-reference input kinds to target kinds through Mach pivot orchestration.</td><td>Input kinds: Mach, T/T*, p/p*, rho/rho*, p0/p0*, 4fL*/D, Branch-aware inversion for ratio -&gt; Mach</td></tr>
 <tr><td><a href="#rayleigh-flow-calculator-1">Rayleigh Flow Calculator</a></td><td><code>rayleigh_calc</code></td><td>Calculator-style compressible device: solve Rayleigh star-reference input kinds to target kinds through Mach pivot orchestration.</td><td>Input kinds: Mach, T/T*, p/p*, rho/rho*, T0/T0*, p0/p0*, V/V*, Branch-aware inversion for selected ratio -&gt; Mach paths</td></tr>
@@ -6766,10 +6776,96 @@ engpy.devices.normal_shock_path_text("p02_p01", 0.7208738615, "m2", 1.4)
 <li><code>gamma</code>: specific heat ratio</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="nozzle-flow-calculator-1"><a class="header" href="#nozzle-flow-calculator-1">Nozzle Flow Calculator</a></h1>
+<p><strong>Key:</strong> <code>nozzle_flow_calc</code></p>
+<p>Calculator-style quasi-1D nozzle device: solve isentropic nozzle input kinds to target kinds through Mach pivot orchestration.</p>
+<h2 id="overview-3"><a class="header" href="#overview-3">Overview</a></h2>
+<p>A calculator-style quasi-1D nozzle-flow device that resolves a pivot Mach number from one supported input kind and then evaluates the requested target kind.</p>
+<h3 id="supported-input-kinds-2"><a class="header" href="#supported-input-kinds-2">Supported input kinds</a></h3>
+<ul>
+<li><code>mach</code></li>
+<li><code>area_ratio</code> (<code>A/A*</code>, branch-sensitive inverse)</li>
+<li><code>pressure_ratio</code> (<code>p/p0</code>)</li>
+<li><code>temperature_ratio</code> (<code>T/T0</code>)</li>
+<li><code>density_ratio</code> (<code>rho/rho0</code>)</li>
+</ul>
+<h3 id="supported-target-kinds-2"><a class="header" href="#supported-target-kinds-2">Supported target kinds</a></h3>
+<ul>
+<li><code>mach</code></li>
+<li><code>area_ratio</code></li>
+<li><code>pressure_ratio</code></li>
+<li><code>temperature_ratio</code></li>
+<li><code>density_ratio</code></li>
+<li><code>p</code> (requires <code>p0</code>)</li>
+<li><code>t</code> (requires <code>t0</code>)</li>
+<li><code>rho</code> (requires <code>rho0</code>)</li>
+</ul>
+<h3 id="branch-behavior-1"><a class="header" href="#branch-behavior-1">Branch behavior</a></h3>
+<ul>
+<li><code>area_ratio -&gt; mach</code> is double-valued and requires <code>subsonic</code> or <code>supersonic</code>.</li>
+</ul>
+<h3 id="rust-53"><a class="header" href="#rust-53">Rust</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use eng::devices::{nozzle_flow_calc, NozzleFlowBranch, NozzleFlowInputKind, NozzleFlowOutputKind};
+let out = nozzle_flow_calc()
+    .gamma(1.4)
+    .input(NozzleFlowInputKind::AreaRatio, 2.0)
+    .target(NozzleFlowOutputKind::Mach)
+    .branch(NozzleFlowBranch::Supersonic)
+    .solve()?;
+println!("M={}, value={}", out.pivot_mach, out.value_si);
+<span class="boring">}</span></code></pre>
+<h2 id="modes-4"><a class="header" href="#modes-4">Modes</a></h2>
+<ul>
+<li>Input kinds: Mach, A/A*, p/p0, T/T0, rho/rho0</li>
+<li>Branch-aware inversion for A/A* -&gt; Mach</li>
+<li>Optional stagnation-reference scaling for static p/T/rho outputs</li>
+</ul>
+<h2 id="outputs-3"><a class="header" href="#outputs-3">Outputs</a></h2>
+<ul>
+<li>value_si</li>
+<li>pivot_mach</li>
+<li>path diagnostics</li>
+</ul>
+<h2 id="internal-composition-3"><a class="header" href="#internal-composition-3">Internal Composition</a></h2>
+<ul>
+<li><a href="#isentropic-area-mach-relation">Compressible Area Mach</a></li>
+<li><a href="#isentropic-pressure-ratio">Compressible Isentropic Pressure Ratio</a></li>
+<li><a href="#isentropic-temperature-ratio">Compressible Isentropic Temperature Ratio</a></li>
+<li><a href="#isentropic-density-ratio">Compressible Isentropic Density Ratio</a></li>
+</ul>
+<h2 id="bindings-54"><a class="header" href="#bindings-54">Bindings</a></h2>
+<h3 id="python-54"><a class="header" href="#python-54">Python</a></h3>
+<pre><code class="language-python">engpy.devices.nozzle_flow_calc("area_ratio", 2.0, "mach", 1.4, None, None, None, "supersonic")
+engpy.devices.nozzle_flow_from_m_to_a_astar(2.0, 1.4)
+engpy.devices.nozzle_flow_from_m_to_p_p0(2.0, 1.4)
+engpy.devices.nozzle_flow_path_text("mach", 2.0, "p", 1.4, 2.0e6, None, None, "")
+</code></pre>
+<h3 id="excel-54"><a class="header" href="#excel-54">Excel</a></h3>
+<pre><code class="language-excel">=ENG_NOZZLE_FLOW("area_ratio",2.0,"mach",1.4,NA(),NA(),NA(),"supersonic")
+=ENG_NOZZLE_FLOW_FROM_M_TO_A_ASTAR(2.0,1.4)
+=ENG_NOZZLE_FLOW_FROM_A_ASTAR_TO_M(2.0,1.4,"subsonic")
+=ENG_NOZZLE_FLOW_FROM_M_TO_P_P0(2.0,1.4)
+=ENG_NOZZLE_FLOW_FROM_M_TO_T_T0(2.0,1.4)
+=ENG_NOZZLE_FLOW_FROM_M_TO_RHO_RHO0(2.0,1.4)
+=ENG_NOZZLE_FLOW("mach",2.0,"p",1.4,2000000,NA(),NA(),"")
+=ENG_NOZZLE_FLOW_PATH_TEXT("area_ratio",2.0,"mach",1.4,NA(),NA(),NA(),"supersonic")
+</code></pre>
+<p><strong>Excel arguments</strong></p>
+<ul>
+<li><code>input_kind</code>: <code>mach</code>, <code>area_ratio</code>, <code>pressure_ratio</code>, <code>temperature_ratio</code>, <code>density_ratio</code></li>
+<li><code>input_value</code>: input value</li>
+<li><code>target_kind</code>: <code>mach</code>, <code>area_ratio</code>, <code>pressure_ratio</code>, <code>temperature_ratio</code>, <code>density_ratio</code>, <code>p</code>, <code>t</code>, <code>rho</code></li>
+<li><code>gamma</code>: specific heat ratio</li>
+<li><code>p0</code>, <code>t0</code>, <code>rho0</code>: optional stagnation references required for static outputs <code>p</code>, <code>t</code>, <code>rho</code></li>
+<li><code>branch</code>: required for <code>area_ratio -&gt; mach</code></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="oblique-shock-calculator-1"><a class="header" href="#oblique-shock-calculator-1">Oblique Shock Calculator</a></h1>
 <p><strong>Key:</strong> <code>oblique_shock_calc</code></p>
 <p>Calculator-style compressible device: solve oblique-shock input pairs (M1+beta / M1+theta) to target outputs with explicit weak/strong branch handling.</p>
-<h2 id="overview-3"><a class="header" href="#overview-3">Overview</a></h2>
+<h2 id="overview-4"><a class="header" href="#overview-4">Overview</a></h2>
 <p>A calculator-style compressible device for oblique shocks. It supports the two practical input pairs:</p>
 <ul>
 <li><code>(M1, beta)</code></li>
@@ -6788,11 +6884,11 @@ engpy.devices.normal_shock_path_text("p02_p01", 0.7208738615, "m2", 1.4)
 <li><code>t2_t1</code></li>
 <li><code>p02_p01</code></li>
 </ul>
-<h3 id="branch-behavior-1"><a class="header" href="#branch-behavior-1">Branch behavior</a></h3>
+<h3 id="branch-behavior-2"><a class="header" href="#branch-behavior-2">Branch behavior</a></h3>
 <ul>
 <li><code>M1 + theta -&gt; beta</code> is double-valued and requires explicit <code>weak</code> or <code>strong</code> branch selection.</li>
 </ul>
-<h3 id="rust-53"><a class="header" href="#rust-53">Rust</a></h3>
+<h3 id="rust-54"><a class="header" href="#rust-54">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use eng::devices::{oblique_shock_calc, ObliqueShockInputKind, ObliqueShockOutputKind, ObliqueShockBranch};
@@ -6805,12 +6901,12 @@ let out = oblique_shock_calc()
     .solve()?;
 println!("beta={} deg, p2/p1={}", out.beta_rad.to_degrees(), out.value_si);
 <span class="boring">}</span></code></pre>
-<h2 id="modes-4"><a class="header" href="#modes-4">Modes</a></h2>
+<h2 id="modes-5"><a class="header" href="#modes-5">Modes</a></h2>
 <ul>
 <li>Input pairs: (M1, beta), (M1, theta)</li>
 <li>Branch-aware inversion for (M1, theta) -&gt; beta</li>
 </ul>
-<h2 id="outputs-3"><a class="header" href="#outputs-3">Outputs</a></h2>
+<h2 id="outputs-4"><a class="header" href="#outputs-4">Outputs</a></h2>
 <ul>
 <li>value_si</li>
 <li>beta_rad</li>
@@ -6820,7 +6916,7 @@ println!("beta={} deg, p2/p1={}", out.beta_rad.to_degrees(), out.value_si);
 <li>m2</li>
 <li>path diagnostics</li>
 </ul>
-<h2 id="internal-composition-3"><a class="header" href="#internal-composition-3">Internal Composition</a></h2>
+<h2 id="internal-composition-4"><a class="header" href="#internal-composition-4">Internal Composition</a></h2>
 <ul>
 <li><a href="#oblique-shock-theta-beta-m-relation">Compressible Oblique Shock Theta Beta M</a></li>
 <li><a href="#oblique-shock-normal-upstream-mach">Compressible Oblique Shock Mn1</a></li>
@@ -6831,15 +6927,15 @@ println!("beta={} deg, p2/p1={}", out.beta_rad.to_degrees(), out.value_si);
 <li><a href="#normal-shock-temperature-ratio">Compressible Normal Shock Temperature Ratio</a></li>
 <li><a href="#normal-shock-stagnation-pressure-ratio">Compressible Normal Shock Stagnation Pressure Ratio</a></li>
 </ul>
-<h2 id="bindings-54"><a class="header" href="#bindings-54">Bindings</a></h2>
-<h3 id="python-54"><a class="header" href="#python-54">Python</a></h3>
+<h2 id="bindings-55"><a class="header" href="#bindings-55">Bindings</a></h2>
+<h3 id="python-55"><a class="header" href="#python-55">Python</a></h3>
 <pre><code class="language-python">engpy.devices.oblique_shock_calc(2.0, "theta_deg", 10.0, "beta_deg", 1.4, "weak")
 engpy.devices.oblique_shock_from_m1_beta_to_theta(2.0, 40.0, 1.4)
 engpy.devices.oblique_shock_from_m1_theta_to_beta(2.0, 10.0, 1.4, "strong")
 engpy.devices.oblique_shock_from_m1_theta_to_p2_p1(2.0, 10.0, 1.4, "weak")
 engpy.devices.oblique_shock_path_text(2.0, "theta_deg", 10.0, "m2", 1.4, "weak")
 </code></pre>
-<h3 id="excel-54"><a class="header" href="#excel-54">Excel</a></h3>
+<h3 id="excel-55"><a class="header" href="#excel-55">Excel</a></h3>
 <pre><code class="language-excel">=ENG_OBLIQUE_SHOCK(2.0,"theta_deg",10.0,"beta_deg",1.4,"weak")
 =ENG_OBLIQUE_SHOCK_FROM_M1_BETA_TO_THETA(2.0,40.0,1.4)
 =ENG_OBLIQUE_SHOCK_FROM_M1_THETA_TO_BETA(2.0,10.0,1.4,"strong")
@@ -6860,9 +6956,9 @@ engpy.devices.oblique_shock_path_text(2.0, "theta_deg", 10.0, "m2", 1.4, "weak")
 <h1 id="fanno-flow-calculator-1"><a class="header" href="#fanno-flow-calculator-1">Fanno Flow Calculator</a></h1>
 <p><strong>Key:</strong> <code>fanno_flow_calc</code></p>
 <p>Calculator-style compressible device: solve Fanno star-reference input kinds to target kinds through Mach pivot orchestration.</p>
-<h2 id="overview-4"><a class="header" href="#overview-4">Overview</a></h2>
+<h2 id="overview-5"><a class="header" href="#overview-5">Overview</a></h2>
 <p>A calculator-style compressible device that resolves a pivot Mach number from one supported Fanno input kind and then evaluates the requested target kind.</p>
-<h3 id="supported-input-kinds-2"><a class="header" href="#supported-input-kinds-2">Supported input kinds</a></h3>
+<h3 id="supported-input-kinds-3"><a class="header" href="#supported-input-kinds-3">Supported input kinds</a></h3>
 <ul>
 <li><code>mach</code></li>
 <li><code>t_tstar</code> (<code>T/T*</code>)</li>
@@ -6871,7 +6967,7 @@ engpy.devices.oblique_shock_path_text(2.0, "theta_deg", 10.0, "m2", 1.4, "weak")
 <li><code>p0_p0star</code> (<code>p0/p0*</code>)</li>
 <li><code>four_flstar_d</code> (<code>4fL*/D</code>)</li>
 </ul>
-<h3 id="supported-target-kinds-2"><a class="header" href="#supported-target-kinds-2">Supported target kinds</a></h3>
+<h3 id="supported-target-kinds-3"><a class="header" href="#supported-target-kinds-3">Supported target kinds</a></h3>
 <ul>
 <li><code>mach</code></li>
 <li><code>t_tstar</code></li>
@@ -6881,11 +6977,11 @@ engpy.devices.oblique_shock_path_text(2.0, "theta_deg", 10.0, "m2", 1.4, "weak")
 <li><code>v_vstar</code></li>
 <li><code>four_flstar_d</code></li>
 </ul>
-<h3 id="branch-behavior-2"><a class="header" href="#branch-behavior-2">Branch behavior</a></h3>
+<h3 id="branch-behavior-3"><a class="header" href="#branch-behavior-3">Branch behavior</a></h3>
 <ul>
 <li>Inverse paths (<code>ratio -&gt; mach</code>) are branch-sensitive and require <code>subsonic</code> or <code>supersonic</code>.</li>
 </ul>
-<h3 id="rust-54"><a class="header" href="#rust-54">Rust</a></h3>
+<h3 id="rust-55"><a class="header" href="#rust-55">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use eng::devices::{fanno_flow_calc, FannoFlowBranch, FannoFlowInputKind, FannoFlowOutputKind};
@@ -6897,18 +6993,18 @@ let out = fanno_flow_calc()
     .solve()?;
 println!("M={}, value={}", out.pivot_mach, out.value_si);
 <span class="boring">}</span></code></pre>
-<h2 id="modes-5"><a class="header" href="#modes-5">Modes</a></h2>
+<h2 id="modes-6"><a class="header" href="#modes-6">Modes</a></h2>
 <ul>
 <li>Input kinds: Mach, T/T*, p/p*, rho/rho*, p0/p0*, 4fL*/D</li>
 <li>Branch-aware inversion for ratio -&gt; Mach</li>
 </ul>
-<h2 id="outputs-4"><a class="header" href="#outputs-4">Outputs</a></h2>
+<h2 id="outputs-5"><a class="header" href="#outputs-5">Outputs</a></h2>
 <ul>
 <li>value_si</li>
 <li>pivot_mach</li>
 <li>path diagnostics</li>
 </ul>
-<h2 id="internal-composition-4"><a class="header" href="#internal-composition-4">Internal Composition</a></h2>
+<h2 id="internal-composition-5"><a class="header" href="#internal-composition-5">Internal Composition</a></h2>
 <ul>
 <li><a href="#fanno-temperature-ratio">Compressible Fanno Temperature Ratio</a></li>
 <li><a href="#fanno-pressure-ratio">Compressible Fanno Pressure Ratio</a></li>
@@ -6917,14 +7013,14 @@ println!("M={}, value={}", out.pivot_mach, out.value_si);
 <li><a href="#fanno-velocity-ratio">Compressible Fanno Velocity Ratio</a></li>
 <li><a href="#fanno-friction-length-parameter">Compressible Fanno Friction Parameter</a></li>
 </ul>
-<h2 id="bindings-55"><a class="header" href="#bindings-55">Bindings</a></h2>
-<h3 id="python-55"><a class="header" href="#python-55">Python</a></h3>
+<h2 id="bindings-56"><a class="header" href="#bindings-56">Bindings</a></h2>
+<h3 id="python-56"><a class="header" href="#python-56">Python</a></h3>
 <pre><code class="language-python">engpy.devices.fanno_flow_calc("mach", 2.0, "p_pstar", 1.4)
 engpy.devices.fanno_flow_from_m_to_p0_p0star(2.0, 1.4)
 engpy.devices.fanno_flow_from_4flstar_d_to_m(0.3049965026, 1.4, "supersonic")
 engpy.devices.fanno_flow_path_text("p0_p0star", 1.33984375, "mach", 1.4, "subsonic")
 </code></pre>
-<h3 id="excel-55"><a class="header" href="#excel-55">Excel</a></h3>
+<h3 id="excel-56"><a class="header" href="#excel-56">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FANNO_FLOW("mach",2.0,"p_pstar",1.4,"")
 =ENG_FANNO_FLOW_FROM_M_TO_T_TSTAR(2.0,1.4)
 =ENG_FANNO_FLOW_FROM_M_TO_P_PSTAR(2.0,1.4)
@@ -6948,9 +7044,9 @@ engpy.devices.fanno_flow_path_text("p0_p0star", 1.33984375, "mach", 1.4, "subson
 <h1 id="rayleigh-flow-calculator-1"><a class="header" href="#rayleigh-flow-calculator-1">Rayleigh Flow Calculator</a></h1>
 <p><strong>Key:</strong> <code>rayleigh_calc</code></p>
 <p>Calculator-style compressible device: solve Rayleigh star-reference input kinds to target kinds through Mach pivot orchestration.</p>
-<h2 id="overview-5"><a class="header" href="#overview-5">Overview</a></h2>
+<h2 id="overview-6"><a class="header" href="#overview-6">Overview</a></h2>
 <p>A calculator-style compressible device that resolves a pivot Mach number from one supported Rayleigh input kind and then evaluates the requested target kind.</p>
-<h3 id="supported-input-kinds-3"><a class="header" href="#supported-input-kinds-3">Supported input kinds</a></h3>
+<h3 id="supported-input-kinds-4"><a class="header" href="#supported-input-kinds-4">Supported input kinds</a></h3>
 <ul>
 <li><code>mach</code></li>
 <li><code>t_tstar</code> (<code>T/T*</code>)</li>
@@ -6960,7 +7056,7 @@ engpy.devices.fanno_flow_path_text("p0_p0star", 1.33984375, "mach", 1.4, "subson
 <li><code>p0_p0star</code> (<code>p0/p0*</code>)</li>
 <li><code>v_vstar</code> (<code>V/V*</code>)</li>
 </ul>
-<h3 id="supported-target-kinds-3"><a class="header" href="#supported-target-kinds-3">Supported target kinds</a></h3>
+<h3 id="supported-target-kinds-4"><a class="header" href="#supported-target-kinds-4">Supported target kinds</a></h3>
 <ul>
 <li><code>mach</code></li>
 <li><code>t_tstar</code></li>
@@ -6970,11 +7066,11 @@ engpy.devices.fanno_flow_path_text("p0_p0star", 1.33984375, "mach", 1.4, "subson
 <li><code>p0_p0star</code></li>
 <li><code>v_vstar</code></li>
 </ul>
-<h3 id="branch-behavior-3"><a class="header" href="#branch-behavior-3">Branch behavior</a></h3>
+<h3 id="branch-behavior-4"><a class="header" href="#branch-behavior-4">Branch behavior</a></h3>
 <ul>
 <li>Branch-sensitive inverse paths (<code>T/T* -&gt; M</code>, <code>T0/T0* -&gt; M</code>, <code>p0/p0* -&gt; M</code>) require <code>subsonic</code> or <code>supersonic</code>.</li>
 </ul>
-<h3 id="rust-55"><a class="header" href="#rust-55">Rust</a></h3>
+<h3 id="rust-56"><a class="header" href="#rust-56">Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use eng::devices::{rayleigh_calc, RayleighBranch, RayleighInputKind, RayleighOutputKind};
@@ -6986,18 +7082,18 @@ let out = rayleigh_calc()
     .solve()?;
 println!("M={}, value={}", out.pivot_mach, out.value_si);
 <span class="boring">}</span></code></pre>
-<h2 id="modes-6"><a class="header" href="#modes-6">Modes</a></h2>
+<h2 id="modes-7"><a class="header" href="#modes-7">Modes</a></h2>
 <ul>
 <li>Input kinds: Mach, T/T*, p/p*, rho/rho*, T0/T0*, p0/p0*, V/V*</li>
 <li>Branch-aware inversion for selected ratio -&gt; Mach paths</li>
 </ul>
-<h2 id="outputs-5"><a class="header" href="#outputs-5">Outputs</a></h2>
+<h2 id="outputs-6"><a class="header" href="#outputs-6">Outputs</a></h2>
 <ul>
 <li>value_si</li>
 <li>pivot_mach</li>
 <li>path diagnostics</li>
 </ul>
-<h2 id="internal-composition-5"><a class="header" href="#internal-composition-5">Internal Composition</a></h2>
+<h2 id="internal-composition-6"><a class="header" href="#internal-composition-6">Internal Composition</a></h2>
 <ul>
 <li><a href="#rayleigh-temperature-ratio">Compressible Rayleigh Temperature Ratio</a></li>
 <li><a href="#rayleigh-pressure-ratio">Compressible Rayleigh Pressure Ratio</a></li>
@@ -7006,14 +7102,14 @@ println!("M={}, value={}", out.pivot_mach, out.value_si);
 <li><a href="#rayleigh-stagnation-pressure-ratio">Compressible Rayleigh Stagnation Pressure Ratio</a></li>
 <li><a href="#rayleigh-velocity-ratio">Compressible Rayleigh Velocity Ratio</a></li>
 </ul>
-<h2 id="bindings-56"><a class="header" href="#bindings-56">Bindings</a></h2>
-<h3 id="python-56"><a class="header" href="#python-56">Python</a></h3>
+<h2 id="bindings-57"><a class="header" href="#bindings-57">Bindings</a></h2>
+<h3 id="python-57"><a class="header" href="#python-57">Python</a></h3>
 <pre><code class="language-python">engpy.devices.rayleigh_calc("mach", 2.0, "p_pstar", 1.4)
 engpy.devices.rayleigh_from_m_to_t0_t0star(2.0, 1.4)
 engpy.devices.rayleigh_from_t_tstar_to_m(0.7901234568, 1.4, "subsonic")
 engpy.devices.rayleigh_path_text("t0_t0star", 0.7933884298, "mach", 1.4, "supersonic")
 </code></pre>
-<h3 id="excel-56"><a class="header" href="#excel-56">Excel</a></h3>
+<h3 id="excel-57"><a class="header" href="#excel-57">Excel</a></h3>
 <pre><code class="language-excel">=ENG_RAYLEIGH("mach",2.0,"p_pstar",1.4,"")
 =ENG_RAYLEIGH_FROM_M_TO_T_TSTAR(2.0,1.4)
 =ENG_RAYLEIGH_FROM_M_TO_P_PSTAR(2.0,1.4)
@@ -7429,15 +7525,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-57"><a class="header" href="#bindings-57">Bindings</a></h2>
-<h3 id="python-57"><a class="header" href="#python-57">Python</a></h3>
+<h2 id="bindings-58"><a class="header" href="#bindings-58">Bindings</a></h2>
+<h3 id="python-58"><a class="header" href="#python-58">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-57"><a class="header" href="#excel-57">Excel</a></h3>
+<h3 id="excel-58"><a class="header" href="#excel-58">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -7592,15 +7688,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-58"><a class="header" href="#bindings-58">Bindings</a></h2>
-<h3 id="python-58"><a class="header" href="#python-58">Python</a></h3>
+<h2 id="bindings-59"><a class="header" href="#bindings-59">Bindings</a></h2>
+<h3 id="python-59"><a class="header" href="#python-59">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-58"><a class="header" href="#excel-58">Excel</a></h3>
+<h3 id="excel-59"><a class="header" href="#excel-59">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -7755,15 +7851,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-59"><a class="header" href="#bindings-59">Bindings</a></h2>
-<h3 id="python-59"><a class="header" href="#python-59">Python</a></h3>
+<h2 id="bindings-60"><a class="header" href="#bindings-60">Bindings</a></h2>
+<h3 id="python-60"><a class="header" href="#python-60">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-59"><a class="header" href="#excel-59">Excel</a></h3>
+<h3 id="excel-60"><a class="header" href="#excel-60">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -7918,15 +8014,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-60"><a class="header" href="#bindings-60">Bindings</a></h2>
-<h3 id="python-60"><a class="header" href="#python-60">Python</a></h3>
+<h2 id="bindings-61"><a class="header" href="#bindings-61">Bindings</a></h2>
+<h3 id="python-61"><a class="header" href="#python-61">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-60"><a class="header" href="#excel-60">Excel</a></h3>
+<h3 id="excel-61"><a class="header" href="#excel-61">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -8081,15 +8177,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-61"><a class="header" href="#bindings-61">Bindings</a></h2>
-<h3 id="python-61"><a class="header" href="#python-61">Python</a></h3>
+<h2 id="bindings-62"><a class="header" href="#bindings-62">Bindings</a></h2>
+<h3 id="python-62"><a class="header" href="#python-62">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-61"><a class="header" href="#excel-61">Excel</a></h3>
+<h3 id="excel-62"><a class="header" href="#excel-62">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -8244,15 +8340,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-62"><a class="header" href="#bindings-62">Bindings</a></h2>
-<h3 id="python-62"><a class="header" href="#python-62">Python</a></h3>
+<h2 id="bindings-63"><a class="header" href="#bindings-63">Bindings</a></h2>
+<h3 id="python-63"><a class="header" href="#python-63">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-62"><a class="header" href="#excel-62">Excel</a></h3>
+<h3 id="excel-63"><a class="header" href="#excel-63">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -8407,15 +8503,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-63"><a class="header" href="#bindings-63">Bindings</a></h2>
-<h3 id="python-63"><a class="header" href="#python-63">Python</a></h3>
+<h2 id="bindings-64"><a class="header" href="#bindings-64">Bindings</a></h2>
+<h3 id="python-64"><a class="header" href="#python-64">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-63"><a class="header" href="#excel-63">Excel</a></h3>
+<h3 id="excel-64"><a class="header" href="#excel-64">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -8570,15 +8666,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-64"><a class="header" href="#bindings-64">Bindings</a></h2>
-<h3 id="python-64"><a class="header" href="#python-64">Python</a></h3>
+<h2 id="bindings-65"><a class="header" href="#bindings-65">Bindings</a></h2>
+<h3 id="python-65"><a class="header" href="#python-65">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-64"><a class="header" href="#excel-64">Excel</a></h3>
+<h3 id="excel-65"><a class="header" href="#excel-65">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -8733,15 +8829,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-65"><a class="header" href="#bindings-65">Bindings</a></h2>
-<h3 id="python-65"><a class="header" href="#python-65">Python</a></h3>
+<h2 id="bindings-66"><a class="header" href="#bindings-66">Bindings</a></h2>
+<h3 id="python-66"><a class="header" href="#python-66">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-65"><a class="header" href="#excel-65">Excel</a></h3>
+<h3 id="excel-66"><a class="header" href="#excel-66">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -8896,15 +8992,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-66"><a class="header" href="#bindings-66">Bindings</a></h2>
-<h3 id="python-66"><a class="header" href="#python-66">Python</a></h3>
+<h2 id="bindings-67"><a class="header" href="#bindings-67">Bindings</a></h2>
+<h3 id="python-67"><a class="header" href="#python-67">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-66"><a class="header" href="#excel-66">Excel</a></h3>
+<h3 id="excel-67"><a class="header" href="#excel-67">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -9059,15 +9155,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-67"><a class="header" href="#bindings-67">Bindings</a></h2>
-<h3 id="python-67"><a class="header" href="#python-67">Python</a></h3>
+<h2 id="bindings-68"><a class="header" href="#bindings-68">Bindings</a></h2>
+<h3 id="python-68"><a class="header" href="#python-68">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-67"><a class="header" href="#excel-67">Excel</a></h3>
+<h3 id="excel-68"><a class="header" href="#excel-68">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -9222,15 +9318,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-68"><a class="header" href="#bindings-68">Bindings</a></h2>
-<h3 id="python-68"><a class="header" href="#python-68">Python</a></h3>
+<h2 id="bindings-69"><a class="header" href="#bindings-69">Bindings</a></h2>
+<h3 id="python-69"><a class="header" href="#python-69">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-68"><a class="header" href="#excel-68">Excel</a></h3>
+<h3 id="excel-69"><a class="header" href="#excel-69">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -9385,15 +9481,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-69"><a class="header" href="#bindings-69">Bindings</a></h2>
-<h3 id="python-69"><a class="header" href="#python-69">Python</a></h3>
+<h2 id="bindings-70"><a class="header" href="#bindings-70">Bindings</a></h2>
+<h3 id="python-70"><a class="header" href="#python-70">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-69"><a class="header" href="#excel-69">Excel</a></h3>
+<h3 id="excel-70"><a class="header" href="#excel-70">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -9548,15 +9644,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-70"><a class="header" href="#bindings-70">Bindings</a></h2>
-<h3 id="python-70"><a class="header" href="#python-70">Python</a></h3>
+<h2 id="bindings-71"><a class="header" href="#bindings-71">Bindings</a></h2>
+<h3 id="python-71"><a class="header" href="#python-71">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-70"><a class="header" href="#excel-70">Excel</a></h3>
+<h3 id="excel-71"><a class="header" href="#excel-71">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -9711,15 +9807,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-71"><a class="header" href="#bindings-71">Bindings</a></h2>
-<h3 id="python-71"><a class="header" href="#python-71">Python</a></h3>
+<h2 id="bindings-72"><a class="header" href="#bindings-72">Bindings</a></h2>
+<h3 id="python-72"><a class="header" href="#python-72">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-71"><a class="header" href="#excel-71">Excel</a></h3>
+<h3 id="excel-72"><a class="header" href="#excel-72">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -9874,15 +9970,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-72"><a class="header" href="#bindings-72">Bindings</a></h2>
-<h3 id="python-72"><a class="header" href="#python-72">Python</a></h3>
+<h2 id="bindings-73"><a class="header" href="#bindings-73">Bindings</a></h2>
+<h3 id="python-73"><a class="header" href="#python-73">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-72"><a class="header" href="#excel-72">Excel</a></h3>
+<h3 id="excel-73"><a class="header" href="#excel-73">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -10037,15 +10133,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-73"><a class="header" href="#bindings-73">Bindings</a></h2>
-<h3 id="python-73"><a class="header" href="#python-73">Python</a></h3>
+<h2 id="bindings-74"><a class="header" href="#bindings-74">Bindings</a></h2>
+<h3 id="python-74"><a class="header" href="#python-74">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-73"><a class="header" href="#excel-73">Excel</a></h3>
+<h3 id="excel-74"><a class="header" href="#excel-74">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -10200,15 +10296,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-74"><a class="header" href="#bindings-74">Bindings</a></h2>
-<h3 id="python-74"><a class="header" href="#python-74">Python</a></h3>
+<h2 id="bindings-75"><a class="header" href="#bindings-75">Bindings</a></h2>
+<h3 id="python-75"><a class="header" href="#python-75">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-74"><a class="header" href="#excel-74">Excel</a></h3>
+<h3 id="excel-75"><a class="header" href="#excel-75">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -10363,15 +10459,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-75"><a class="header" href="#bindings-75">Bindings</a></h2>
-<h3 id="python-75"><a class="header" href="#python-75">Python</a></h3>
+<h2 id="bindings-76"><a class="header" href="#bindings-76">Bindings</a></h2>
+<h3 id="python-76"><a class="header" href="#python-76">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-75"><a class="header" href="#excel-75">Excel</a></h3>
+<h3 id="excel-76"><a class="header" href="#excel-76">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -10526,15 +10622,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-76"><a class="header" href="#bindings-76">Bindings</a></h2>
-<h3 id="python-76"><a class="header" href="#python-76">Python</a></h3>
+<h2 id="bindings-77"><a class="header" href="#bindings-77">Bindings</a></h2>
+<h3 id="python-77"><a class="header" href="#python-77">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-76"><a class="header" href="#excel-76">Excel</a></h3>
+<h3 id="excel-77"><a class="header" href="#excel-77">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -10689,15 +10785,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-77"><a class="header" href="#bindings-77">Bindings</a></h2>
-<h3 id="python-77"><a class="header" href="#python-77">Python</a></h3>
+<h2 id="bindings-78"><a class="header" href="#bindings-78">Bindings</a></h2>
+<h3 id="python-78"><a class="header" href="#python-78">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-77"><a class="header" href="#excel-77">Excel</a></h3>
+<h3 id="excel-78"><a class="header" href="#excel-78">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -10852,15 +10948,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-78"><a class="header" href="#bindings-78">Bindings</a></h2>
-<h3 id="python-78"><a class="header" href="#python-78">Python</a></h3>
+<h2 id="bindings-79"><a class="header" href="#bindings-79">Bindings</a></h2>
+<h3 id="python-79"><a class="header" href="#python-79">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-78"><a class="header" href="#excel-78">Excel</a></h3>
+<h3 id="excel-79"><a class="header" href="#excel-79">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -11015,15 +11111,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-79"><a class="header" href="#bindings-79">Bindings</a></h2>
-<h3 id="python-79"><a class="header" href="#python-79">Python</a></h3>
+<h2 id="bindings-80"><a class="header" href="#bindings-80">Bindings</a></h2>
+<h3 id="python-80"><a class="header" href="#python-80">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-79"><a class="header" href="#excel-79">Excel</a></h3>
+<h3 id="excel-80"><a class="header" href="#excel-80">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -11178,15 +11274,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-80"><a class="header" href="#bindings-80">Bindings</a></h2>
-<h3 id="python-80"><a class="header" href="#python-80">Python</a></h3>
+<h2 id="bindings-81"><a class="header" href="#bindings-81">Bindings</a></h2>
+<h3 id="python-81"><a class="header" href="#python-81">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-80"><a class="header" href="#excel-80">Excel</a></h3>
+<h3 id="excel-81"><a class="header" href="#excel-81">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -11341,15 +11437,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-81"><a class="header" href="#bindings-81">Bindings</a></h2>
-<h3 id="python-81"><a class="header" href="#python-81">Python</a></h3>
+<h2 id="bindings-82"><a class="header" href="#bindings-82">Bindings</a></h2>
+<h3 id="python-82"><a class="header" href="#python-82">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-81"><a class="header" href="#excel-81">Excel</a></h3>
+<h3 id="excel-82"><a class="header" href="#excel-82">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -11504,15 +11600,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-82"><a class="header" href="#bindings-82">Bindings</a></h2>
-<h3 id="python-82"><a class="header" href="#python-82">Python</a></h3>
+<h2 id="bindings-83"><a class="header" href="#bindings-83">Bindings</a></h2>
+<h3 id="python-83"><a class="header" href="#python-83">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-82"><a class="header" href="#excel-82">Excel</a></h3>
+<h3 id="excel-83"><a class="header" href="#excel-83">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -11667,15 +11763,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-83"><a class="header" href="#bindings-83">Bindings</a></h2>
-<h3 id="python-83"><a class="header" href="#python-83">Python</a></h3>
+<h2 id="bindings-84"><a class="header" href="#bindings-84">Bindings</a></h2>
+<h3 id="python-84"><a class="header" href="#python-84">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-83"><a class="header" href="#excel-83">Excel</a></h3>
+<h3 id="excel-84"><a class="header" href="#excel-84">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -11830,15 +11926,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-84"><a class="header" href="#bindings-84">Bindings</a></h2>
-<h3 id="python-84"><a class="header" href="#python-84">Python</a></h3>
+<h2 id="bindings-85"><a class="header" href="#bindings-85">Bindings</a></h2>
+<h3 id="python-85"><a class="header" href="#python-85">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-84"><a class="header" href="#excel-84">Excel</a></h3>
+<h3 id="excel-85"><a class="header" href="#excel-85">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -11993,15 +12089,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-85"><a class="header" href="#bindings-85">Bindings</a></h2>
-<h3 id="python-85"><a class="header" href="#python-85">Python</a></h3>
+<h2 id="bindings-86"><a class="header" href="#bindings-86">Bindings</a></h2>
+<h3 id="python-86"><a class="header" href="#python-86">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-85"><a class="header" href="#excel-85">Excel</a></h3>
+<h3 id="excel-86"><a class="header" href="#excel-86">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -12156,15 +12252,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-86"><a class="header" href="#bindings-86">Bindings</a></h2>
-<h3 id="python-86"><a class="header" href="#python-86">Python</a></h3>
+<h2 id="bindings-87"><a class="header" href="#bindings-87">Bindings</a></h2>
+<h3 id="python-87"><a class="header" href="#python-87">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-86"><a class="header" href="#excel-86">Excel</a></h3>
+<h3 id="excel-87"><a class="header" href="#excel-87">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -12319,15 +12415,15 @@ let re = eq
 <li><code>u</code>/internal-energy keys are rejected intentionally to prevent ambiguity with <code>h</code>.</li>
 <li>Backend failures are surfaced as recoverable structured errors with fluid/pair/property context.</li>
 </ul>
-<h2 id="bindings-87"><a class="header" href="#bindings-87">Bindings</a></h2>
-<h3 id="python-87"><a class="header" href="#python-87">Python</a></h3>
+<h2 id="bindings-88"><a class="header" href="#bindings-88">Bindings</a></h2>
+<h3 id="python-88"><a class="header" href="#python-88">Python</a></h3>
 <pre><code class="language-python">engpy.fluids.fluid_prop("H2O", "T", "300 K", "P", "1 bar", "rho")
 engpy.helpers.fluid_properties("H2O")
 engpy.helpers.fluid_properties_text("H2O")
 engpy.helpers.fluid_properties_table("H2O")
 engpy.helpers.fluid_property_count("H2O")
 </code></pre>
-<h3 id="excel-87"><a class="header" href="#excel-87">Excel</a></h3>
+<h3 id="excel-88"><a class="header" href="#excel-88">Excel</a></h3>
 <pre><code class="language-excel">=ENG_FLUID_PROP("H2O","T","300 K","P","1 bar","rho")
 =ENG_FLUID_PROPERTIES("H2O")
 =ENG_FLUID_PROPERTIES_TEXT("H2O")
@@ -12368,15 +12464,15 @@ let sy = state.property("yield_strength")?;
 <li>Properties: elastic_modulus, thermal_conductivity, yield_strength</li>
 </ul>
 <p>Heat-treated aluminum alloy with dense temperature-property series.</p>
-<h2 id="bindings-88"><a class="header" href="#bindings-88">Bindings</a></h2>
-<h3 id="python-88"><a class="header" href="#python-88">Python</a></h3>
+<h2 id="bindings-89"><a class="header" href="#bindings-89">Bindings</a></h2>
+<h3 id="python-89"><a class="header" href="#python-89">Python</a></h3>
 <pre><code class="language-python">engpy.materials.mat_prop("stainless_304", "elastic_modulus", "350 K")
 engpy.helpers.material_properties("stainless_304")
 engpy.helpers.material_properties_text("stainless_304")
 engpy.helpers.material_properties_table("stainless_304")
 engpy.helpers.material_property_count("stainless_304")
 </code></pre>
-<h3 id="excel-88"><a class="header" href="#excel-88">Excel</a></h3>
+<h3 id="excel-89"><a class="header" href="#excel-89">Excel</a></h3>
 <pre><code class="language-excel">=ENG_MAT_PROP("stainless_304","elastic_modulus","350 K")
 =ENG_MATERIAL_PROPERTIES("stainless_304")
 =ENG_MATERIAL_PROPERTIES_TEXT("stainless_304")
@@ -12398,15 +12494,15 @@ engpy.helpers.material_property_count("stainless_304")
 <li>Properties: elastic_modulus, thermal_conductivity, yield_strength</li>
 </ul>
 <p>Austenitic stainless steel with temperature-dependent mechanical and thermal properties.</p>
-<h2 id="bindings-89"><a class="header" href="#bindings-89">Bindings</a></h2>
-<h3 id="python-89"><a class="header" href="#python-89">Python</a></h3>
+<h2 id="bindings-90"><a class="header" href="#bindings-90">Bindings</a></h2>
+<h3 id="python-90"><a class="header" href="#python-90">Python</a></h3>
 <pre><code class="language-python">engpy.materials.mat_prop("stainless_304", "elastic_modulus", "350 K")
 engpy.helpers.material_properties("stainless_304")
 engpy.helpers.material_properties_text("stainless_304")
 engpy.helpers.material_properties_table("stainless_304")
 engpy.helpers.material_property_count("stainless_304")
 </code></pre>
-<h3 id="excel-89"><a class="header" href="#excel-89">Excel</a></h3>
+<h3 id="excel-90"><a class="header" href="#excel-90">Excel</a></h3>
 <pre><code class="language-excel">=ENG_MAT_PROP("stainless_304","elastic_modulus","350 K")
 =ENG_MATERIAL_PROPERTIES("stainless_304")
 =ENG_MATERIAL_PROPERTIES_TEXT("stainless_304")

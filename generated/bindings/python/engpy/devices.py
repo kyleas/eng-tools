@@ -328,6 +328,113 @@ Returns:
 """
     return invoke("device.normal_shock_calc.pivot_m1", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma})
 
+def nozzle_flow_calc(input_kind, input_value, target_kind, gamma, p0, t0, rho0, branch=None):
+    """Nozzle-flow calculator: input kind -> target kind through Mach pivot
+
+Args:
+  input_kind: Input kind (mach, area_ratio, pressure_ratio, temperature_ratio, density_ratio)
+  input_value: Input value
+  target_kind: Target kind (mach, area_ratio, pressure_ratio, temperature_ratio, density_ratio, p, t, rho)
+  gamma: Specific heat ratio
+  p0: Optional stagnation pressure reference for static p output
+  t0: Optional stagnation temperature reference for static T output
+  rho0: Optional stagnation density reference for static rho output
+  branch: Subsonic/supersonic branch for area_ratio -> mach inversion
+Returns:
+  f64
+"""
+    return invoke("device.nozzle_flow_calc.value", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, "p0": p0, "t0": t0, "rho0": rho0, **({"branch": branch} if branch not in (None, "") else {})})
+
+def nozzle_flow_from_a_astar_to_m(input_value, gamma, branch=None):
+    """Convenience nozzle-flow path: A/A* -> Mach (branch required)
+
+Args:
+  input_value: Area ratio input value (A/A*)
+  gamma: Specific heat ratio
+  branch: Subsonic or supersonic branch
+Returns:
+  f64
+"""
+    return invoke("device.nozzle_flow_calc.value", {"input_kind": "area_ratio", "target_kind": "mach", "input_value": input_value, "gamma": gamma, **({"branch": branch} if branch not in (None, "") else {})})
+
+def nozzle_flow_from_m_to_a_astar(input_value, gamma):
+    """Convenience nozzle-flow path: Mach -> A/A*
+
+Args:
+  input_value: Mach input value
+  gamma: Specific heat ratio
+Returns:
+  f64
+"""
+    return invoke("device.nozzle_flow_calc.value", {"input_kind": "mach", "target_kind": "area_ratio", "input_value": input_value, "gamma": gamma})
+
+def nozzle_flow_from_m_to_p_p0(input_value, gamma):
+    """Convenience nozzle-flow path: Mach -> p/p0
+
+Args:
+  input_value: Mach input value
+  gamma: Specific heat ratio
+Returns:
+  f64
+"""
+    return invoke("device.nozzle_flow_calc.value", {"input_kind": "mach", "target_kind": "pressure_ratio", "input_value": input_value, "gamma": gamma})
+
+def nozzle_flow_from_m_to_rho_rho0(input_value, gamma):
+    """Convenience nozzle-flow path: Mach -> rho/rho0
+
+Args:
+  input_value: Mach input value
+  gamma: Specific heat ratio
+Returns:
+  f64
+"""
+    return invoke("device.nozzle_flow_calc.value", {"input_kind": "mach", "target_kind": "density_ratio", "input_value": input_value, "gamma": gamma})
+
+def nozzle_flow_from_m_to_t_t0(input_value, gamma):
+    """Convenience nozzle-flow path: Mach -> T/T0
+
+Args:
+  input_value: Mach input value
+  gamma: Specific heat ratio
+Returns:
+  f64
+"""
+    return invoke("device.nozzle_flow_calc.value", {"input_kind": "mach", "target_kind": "temperature_ratio", "input_value": input_value, "gamma": gamma})
+
+def nozzle_flow_path_text(input_kind, input_value, target_kind, gamma, p0, t0, rho0, branch=None):
+    """Nozzle-flow calculator helper: compact step trace text
+
+Args:
+  input_kind: Input kind (mach, area_ratio, pressure_ratio, temperature_ratio, density_ratio)
+  input_value: Input value
+  target_kind: Target kind (mach, area_ratio, pressure_ratio, temperature_ratio, density_ratio, p, t, rho)
+  gamma: Specific heat ratio
+  p0: Optional stagnation pressure reference for static p output
+  t0: Optional stagnation temperature reference for static T output
+  rho0: Optional stagnation density reference for static rho output
+  branch: Subsonic/supersonic branch for area_ratio -> mach inversion
+Returns:
+  str
+"""
+    return invoke("device.nozzle_flow_calc.path_text", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, "p0": p0, "t0": t0, "rho0": rho0, **({"branch": branch} if branch not in (None, "") else {})})
+
+def nozzle_flow_pivot_mach(input_kind, input_value, target_kind, gamma, p0, t0, rho0, branch=None):
+    """Nozzle-flow calculator helper: return resolved pivot Mach
+
+Args:
+  input_kind: Input kind (mach, area_ratio, pressure_ratio, temperature_ratio, density_ratio)
+  input_value: Input value
+  target_kind: Target kind (mach, area_ratio, pressure_ratio, temperature_ratio, density_ratio, p, t, rho)
+  gamma: Specific heat ratio
+  p0: Optional stagnation pressure reference for static p output
+  t0: Optional stagnation temperature reference for static T output
+  rho0: Optional stagnation density reference for static rho output
+  branch: Subsonic/supersonic branch for area_ratio -> mach inversion
+Returns:
+  f64
+"""
+    return invoke("device.nozzle_flow_calc.pivot_mach", {"input_kind": input_kind, "input_value": input_value, "target_kind": target_kind, "gamma": gamma, "p0": p0, "t0": t0, "rho0": rho0, **({"branch": branch} if branch not in (None, "") else {})})
+
 def oblique_shock_calc(m1, input_kind, input_value, target_kind, gamma, branch=None):
     """Oblique shock calculator: (M1 + beta/theta) -> target with weak/strong branch support
 

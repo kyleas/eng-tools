@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-15b4a914.js";
+            window.path_to_searchindex_js = "../searchindex-9bf5a7c8.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-fa9422a7.js"></script>
+        <script src="../toc-171c17c7.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -189,6 +189,7 @@
 <tr><td><a href="./pipe_loss.html">Pipe Pressure Drop</a></td><td><code>pipe_loss</code></td><td>Composes Reynolds + friction model + Darcy-Weisbach for pipe pressure loss.</td><td>Fixed friction factor, Colebrook</td></tr>
 <tr><td><a href="./isentropic_calc.html">Isentropic Calculator</a></td><td><code>isentropic_calc</code></td><td>Calculator-style compressible device: solve any supported isentropic input to any supported output through Mach pivot orchestration.</td><td>Input kinds: Mach, MachAngle, Prandtl-Meyer angle, p/p0, T/T0, rho/rho0, A/A*, Branch-aware inversion for A/A*</td></tr>
 <tr><td><a href="./normal_shock_calc.html">Normal Shock Calculator</a></td><td><code>normal_shock_calc</code></td><td>Calculator-style compressible device: solve normal-shock input kinds to target kinds through deterministic M1 pivot orchestration.</td><td>Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01, Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01</td></tr>
+<tr><td><a href="./nozzle_flow_calc.html">Nozzle Flow Calculator</a></td><td><code>nozzle_flow_calc</code></td><td>Calculator-style quasi-1D nozzle device: solve isentropic nozzle input kinds to target kinds through Mach pivot orchestration.</td><td>Input kinds: Mach, A/A*, p/p0, T/T0, rho/rho0, Branch-aware inversion for A/A* -&gt; Mach, Optional stagnation-reference scaling for static p/T/rho outputs</td></tr>
 <tr><td><a href="./oblique_shock_calc.html">Oblique Shock Calculator</a></td><td><code>oblique_shock_calc</code></td><td>Calculator-style compressible device: solve oblique-shock input pairs (M1+beta / M1+theta) to target outputs with explicit weak/strong branch handling.</td><td>Input pairs: (M1, beta), (M1, theta), Branch-aware inversion for (M1, theta) -&gt; beta</td></tr>
 <tr><td><a href="./fanno_flow_calc.html">Fanno Flow Calculator</a></td><td><code>fanno_flow_calc</code></td><td>Calculator-style compressible device: solve Fanno star-reference input kinds to target kinds through Mach pivot orchestration.</td><td>Input kinds: Mach, T/T*, p/p*, rho/rho*, p0/p0*, 4fL*/D, Branch-aware inversion for ratio -&gt; Mach</td></tr>
 <tr><td><a href="./rayleigh_calc.html">Rayleigh Flow Calculator</a></td><td><code>rayleigh_calc</code></td><td>Calculator-style compressible device: solve Rayleigh star-reference input kinds to target kinds through Mach pivot orchestration.</td><td>Input kinds: Mach, T/T*, p/p*, rho/rho*, T0/T0*, p0/p0*, V/V*, Branch-aware inversion for selected ratio -&gt; Mach paths</td></tr>

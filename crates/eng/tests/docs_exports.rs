@@ -58,6 +58,17 @@ fn unified_mdbook_export_api_writes_book_structure() {
     assert!(isentropic_page.contains("ENG_ISENTROPIC_FROM_NU_DEG_TO_M("));
     assert!(isentropic_page.contains("ENG_ISENTROPIC_FROM_M_TO_NU_DEG("));
 
+    let nozzle_page = std::fs::read_to_string(
+        book_root
+            .join("src")
+            .join("devices")
+            .join("nozzle_flow_calc.md"),
+    )
+    .expect("read generated nozzle-flow device page");
+    assert!(nozzle_page.contains("# Nozzle Flow Calculator"));
+    assert!(nozzle_page.contains("ENG_NOZZLE_FLOW("));
+    assert!(nozzle_page.contains("ENG_NOZZLE_FLOW_FROM_A_ASTAR_TO_M("));
+
     let area_mach = std::fs::read_to_string(
         book_root
             .join("src")

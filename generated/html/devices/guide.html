@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-15b4a914.js";
+            window.path_to_searchindex_js = "../searchindex-9bf5a7c8.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-fa9422a7.js"></script>
+        <script src="../toc-171c17c7.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -201,6 +201,15 @@
 <li>Route: <code>devices/normal_shock_calc.md</code></li>
 <li>Input kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01</li>
 <li>Target kinds: M1, M2, p2/p1, rho2/rho1, T2/T1, p02/p01</li>
+</ul>
+<h2 id="nozzle-flow-calculator"><a class="header" href="#nozzle-flow-calculator">Nozzle Flow Calculator</a></h2>
+<ul>
+<li>Key: <code>nozzle_flow_calc</code></li>
+<li>Calculator-style quasi-1D nozzle device: solve isentropic nozzle input kinds to target kinds through Mach pivot orchestration.</li>
+<li>Route: <code>devices/nozzle_flow_calc.md</code></li>
+<li>Input kinds: Mach, A/A*, p/p0, T/T0, rho/rho0</li>
+<li>Branch-aware inversion for A/A* -&gt; Mach</li>
+<li>Optional stagnation-reference scaling for static p/T/rho outputs</li>
 </ul>
 <h2 id="oblique-shock-calculator"><a class="header" href="#oblique-shock-calculator">Oblique Shock Calculator</a></h2>
 <ul>

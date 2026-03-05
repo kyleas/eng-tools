@@ -51,6 +51,10 @@ pub const INVOKE_SUPPORTED_OPS: &[&str] = &[
     "device.rayleigh_calc.value",
     "device.rayleigh_calc.pivot_mach",
     "device.rayleigh_calc.path_text",
+    "device.nozzle_flow_calc",
+    "device.nozzle_flow_calc.value",
+    "device.nozzle_flow_calc.pivot_mach",
+    "device.nozzle_flow_calc.path_text",
     "device.pipe_loss.solve_delta_p",
     "fluid.prop",
     "material.prop",
@@ -338,6 +342,22 @@ pub fn invoke_protocol_spec() -> InvokeProtocolSpec {
                     }
                     "device.rayleigh_calc.path_text" => {
                         "Run Rayleigh-flow calculator device and return compact path trace text"
+                            .to_string()
+                    }
+                    "device.nozzle_flow_calc" => {
+                        "Run nozzle-flow calculator device and return value+pivot+path diagnostics"
+                            .to_string()
+                    }
+                    "device.nozzle_flow_calc.value" => {
+                        "Run nozzle-flow calculator device and return scalar output value"
+                            .to_string()
+                    }
+                    "device.nozzle_flow_calc.pivot_mach" => {
+                        "Run nozzle-flow calculator device and return resolved pivot Mach"
+                            .to_string()
+                    }
+                    "device.nozzle_flow_calc.path_text" => {
+                        "Run nozzle-flow calculator device and return compact path trace text"
                             .to_string()
                     }
                     "device.pipe_loss.solve_delta_p" => {

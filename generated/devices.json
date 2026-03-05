@@ -49,6 +49,22 @@
       "route": "devices/normal_shock_calc.md"
     },
     {
+      "key": "nozzle_flow_calc",
+      "name": "Nozzle Flow Calculator",
+      "summary": "Calculator-style quasi-1D nozzle device: solve isentropic nozzle input kinds to target kinds through Mach pivot orchestration.",
+      "supported_modes": [
+        "Input kinds: Mach, A/A*, p/p0, T/T0, rho/rho0",
+        "Branch-aware inversion for A/A* -> Mach",
+        "Optional stagnation-reference scaling for static p/T/rho outputs"
+      ],
+      "outputs": [
+        "value_si",
+        "pivot_mach",
+        "path diagnostics"
+      ],
+      "route": "devices/nozzle_flow_calc.md"
+    },
+    {
       "key": "oblique_shock_calc",
       "name": "Oblique Shock Calculator",
       "summary": "Calculator-style compressible device: solve oblique-shock input pairs (M1+beta / M1+theta) to target outputs with explicit weak/strong branch handling.",

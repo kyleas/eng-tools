@@ -75,6 +75,7 @@
   - [Pipe Pressure Drop](devices/pipe_loss.md)
   - [Isentropic Calculator](devices/isentropic_calc.md)
   - [Normal Shock Calculator](devices/normal_shock_calc.md)
+  - [Nozzle Flow Calculator](devices/nozzle_flow_calc.md)
   - [Oblique Shock Calculator](devices/oblique_shock_calc.md)
   - [Fanno Flow Calculator](devices/fanno_flow_calc.md)
   - [Rayleigh Flow Calculator](devices/rayleigh_calc.md)

@@ -975,6 +975,305 @@
       "pyxll_example": "=ENG_NORMAL_SHOCK_PIVOT_M1(\"p2_p1\",4.5,\"m2\",1.4)"
     },
     {
+      "id": "device.nozzle_flow_calc",
+      "entity": "device",
+      "source": "nozzle_flow_calc",
+      "python_module": "devices",
+      "python_name": "nozzle_flow_calc",
+      "excel_name": "ENG_NOZZLE_FLOW",
+      "op": "device.nozzle_flow_calc.value",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "input_kind",
+          "description": "Input kind (mach, area_ratio, pressure_ratio, temperature_ratio, density_ratio)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input value"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (mach, area_ratio, pressure_ratio, temperature_ratio, density_ratio, p, t, rho)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "p0",
+          "description": "Optional stagnation pressure reference for static p output"
+        },
+        {
+          "name": "t0",
+          "description": "Optional stagnation temperature reference for static T output"
+        },
+        {
+          "name": "rho0",
+          "description": "Optional stagnation density reference for static rho output"
+        },
+        {
+          "name": "branch",
+          "description": "Subsonic/supersonic branch for area_ratio -> mach inversion"
+        }
+      ],
+      "returns": "f64",
+      "help": "Nozzle-flow calculator: input kind -> target kind through Mach pivot",
+      "rust_example": "eng::devices::nozzle_flow_calc().solve()?",
+      "python_example": "engpy.devices.nozzle_flow_calc(\"mach\", 2.0, \"pressure_ratio\", 1.4, None, None, None, \"\")",
+      "xloil_example": "=ENG_NOZZLE_FLOW(\"mach\",2.0,\"pressure_ratio\",1.4,NA(),NA(),NA(),\"\")",
+      "pyxll_example": "=ENG_NOZZLE_FLOW(\"mach\",2.0,\"pressure_ratio\",1.4,NA(),NA(),NA(),\"\")"
+    },
+    {
+      "id": "device.nozzle_flow_calc.from_a_astar.to_m",
+      "entity": "device",
+      "source": "nozzle_flow_calc",
+      "python_module": "devices",
+      "python_name": "nozzle_flow_from_a_astar_to_m",
+      "excel_name": "ENG_NOZZLE_FLOW_FROM_A_ASTAR_TO_M",
+      "op": "device.nozzle_flow_calc.value",
+      "fixed_args": {
+        "input_kind": "area_ratio",
+        "target_kind": "mach"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Area ratio input value (A/A*)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "branch",
+          "description": "Subsonic or supersonic branch"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience nozzle-flow path: A/A* -> Mach (branch required)",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.nozzle_flow_from_a_astar_to_m(2.0, 1.4, \"supersonic\")",
+      "xloil_example": "=ENG_NOZZLE_FLOW_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")",
+      "pyxll_example": "=ENG_NOZZLE_FLOW_FROM_A_ASTAR_TO_M(2.0,1.4,\"supersonic\")"
+    },
+    {
+      "id": "device.nozzle_flow_calc.from_m.to_a_astar",
+      "entity": "device",
+      "source": "nozzle_flow_calc",
+      "python_module": "devices",
+      "python_name": "nozzle_flow_from_m_to_a_astar",
+      "excel_name": "ENG_NOZZLE_FLOW_FROM_M_TO_A_ASTAR",
+      "op": "device.nozzle_flow_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "area_ratio"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach input value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience nozzle-flow path: Mach -> A/A*",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.nozzle_flow_from_m_to_a_astar(2.0, 1.4)",
+      "xloil_example": "=ENG_NOZZLE_FLOW_FROM_M_TO_A_ASTAR(2.0,1.4)",
+      "pyxll_example": "=ENG_NOZZLE_FLOW_FROM_M_TO_A_ASTAR(2.0,1.4)"
+    },
+    {
+      "id": "device.nozzle_flow_calc.from_m.to_p_p0",
+      "entity": "device",
+      "source": "nozzle_flow_calc",
+      "python_module": "devices",
+      "python_name": "nozzle_flow_from_m_to_p_p0",
+      "excel_name": "ENG_NOZZLE_FLOW_FROM_M_TO_P_P0",
+      "op": "device.nozzle_flow_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "pressure_ratio"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach input value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience nozzle-flow path: Mach -> p/p0",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.nozzle_flow_from_m_to_p_p0(2.0, 1.4)",
+      "xloil_example": "=ENG_NOZZLE_FLOW_FROM_M_TO_P_P0(2.0,1.4)",
+      "pyxll_example": "=ENG_NOZZLE_FLOW_FROM_M_TO_P_P0(2.0,1.4)"
+    },
+    {
+      "id": "device.nozzle_flow_calc.from_m.to_rho_rho0",
+      "entity": "device",
+      "source": "nozzle_flow_calc",
+      "python_module": "devices",
+      "python_name": "nozzle_flow_from_m_to_rho_rho0",
+      "excel_name": "ENG_NOZZLE_FLOW_FROM_M_TO_RHO_RHO0",
+      "op": "device.nozzle_flow_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "density_ratio"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach input value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience nozzle-flow path: Mach -> rho/rho0",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.nozzle_flow_from_m_to_rho_rho0(2.0, 1.4)",
+      "xloil_example": "=ENG_NOZZLE_FLOW_FROM_M_TO_RHO_RHO0(2.0,1.4)",
+      "pyxll_example": "=ENG_NOZZLE_FLOW_FROM_M_TO_RHO_RHO0(2.0,1.4)"
+    },
+    {
+      "id": "device.nozzle_flow_calc.from_m.to_t_t0",
+      "entity": "device",
+      "source": "nozzle_flow_calc",
+      "python_module": "devices",
+      "python_name": "nozzle_flow_from_m_to_t_t0",
+      "excel_name": "ENG_NOZZLE_FLOW_FROM_M_TO_T_T0",
+      "op": "device.nozzle_flow_calc.value",
+      "fixed_args": {
+        "input_kind": "mach",
+        "target_kind": "temperature_ratio"
+      },
+      "args": [
+        {
+          "name": "input_value",
+          "description": "Mach input value"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        }
+      ],
+      "returns": "f64",
+      "help": "Convenience nozzle-flow path: Mach -> T/T0",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.nozzle_flow_from_m_to_t_t0(2.0, 1.4)",
+      "xloil_example": "=ENG_NOZZLE_FLOW_FROM_M_TO_T_T0(2.0,1.4)",
+      "pyxll_example": "=ENG_NOZZLE_FLOW_FROM_M_TO_T_T0(2.0,1.4)"
+    },
+    {
+      "id": "device.nozzle_flow_calc.path_text",
+      "entity": "device",
+      "source": "nozzle_flow_calc",
+      "python_module": "devices",
+      "python_name": "nozzle_flow_path_text",
+      "excel_name": "ENG_NOZZLE_FLOW_PATH_TEXT",
+      "op": "device.nozzle_flow_calc.path_text",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "input_kind",
+          "description": "Input kind (mach, area_ratio, pressure_ratio, temperature_ratio, density_ratio)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input value"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (mach, area_ratio, pressure_ratio, temperature_ratio, density_ratio, p, t, rho)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "p0",
+          "description": "Optional stagnation pressure reference for static p output"
+        },
+        {
+          "name": "t0",
+          "description": "Optional stagnation temperature reference for static T output"
+        },
+        {
+          "name": "rho0",
+          "description": "Optional stagnation density reference for static rho output"
+        },
+        {
+          "name": "branch",
+          "description": "Subsonic/supersonic branch for area_ratio -> mach inversion"
+        }
+      ],
+      "returns": "str",
+      "help": "Nozzle-flow calculator helper: compact step trace text",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.nozzle_flow_path_text(\"area_ratio\", 2.0, \"mach\", 1.4, None, None, None, \"supersonic\")",
+      "xloil_example": "=ENG_NOZZLE_FLOW_PATH_TEXT(\"area_ratio\",2.0,\"mach\",1.4,NA(),NA(),NA(),\"supersonic\")",
+      "pyxll_example": "=ENG_NOZZLE_FLOW_PATH_TEXT(\"area_ratio\",2.0,\"mach\",1.4,NA(),NA(),NA(),\"supersonic\")"
+    },
+    {
+      "id": "device.nozzle_flow_calc.pivot",
+      "entity": "device",
+      "source": "nozzle_flow_calc",
+      "python_module": "devices",
+      "python_name": "nozzle_flow_pivot_mach",
+      "excel_name": "ENG_NOZZLE_FLOW_PIVOT_MACH",
+      "op": "device.nozzle_flow_calc.pivot_mach",
+      "fixed_args": {},
+      "args": [
+        {
+          "name": "input_kind",
+          "description": "Input kind (mach, area_ratio, pressure_ratio, temperature_ratio, density_ratio)"
+        },
+        {
+          "name": "input_value",
+          "description": "Input value"
+        },
+        {
+          "name": "target_kind",
+          "description": "Target kind (mach, area_ratio, pressure_ratio, temperature_ratio, density_ratio, p, t, rho)"
+        },
+        {
+          "name": "gamma",
+          "description": "Specific heat ratio"
+        },
+        {
+          "name": "p0",
+          "description": "Optional stagnation pressure reference for static p output"
+        },
+        {
+          "name": "t0",
+          "description": "Optional stagnation temperature reference for static T output"
+        },
+        {
+          "name": "rho0",
+          "description": "Optional stagnation density reference for static rho output"
+        },
+        {
+          "name": "branch",
+          "description": "Subsonic/supersonic branch for area_ratio -> mach inversion"
+        }
+      ],
+      "returns": "f64",
+      "help": "Nozzle-flow calculator helper: return resolved pivot Mach",
+      "rust_example": "eng::invoke::process_invoke_json(\"...\")",
+      "python_example": "engpy.devices.nozzle_flow_pivot_mach(\"area_ratio\", 2.0, \"mach\", 1.4, None, None, None, \"subsonic\")",
+      "xloil_example": "=ENG_NOZZLE_FLOW_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,NA(),NA(),NA(),\"subsonic\")",
+      "pyxll_example": "=ENG_NOZZLE_FLOW_PIVOT_MACH(\"area_ratio\",2.0,\"mach\",1.4,NA(),NA(),NA(),\"subsonic\")"
+    },
+    {
       "id": "device.oblique_shock_calc",
       "entity": "device",
       "source": "oblique_shock_calc",
