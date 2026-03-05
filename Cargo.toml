@@ -25,6 +25,7 @@ members = [
   "crates/eng-pyext",
   "apps/tf-cli",
   "apps/tf-ui",
+  "crates/tf-workbook",
 ]
 
 [workspace.package]
@@ -72,6 +73,7 @@ tf-cea = { path = "crates/tf-cea" }
 
 tf-rpa = { path = "crates/tf-rpa" }
 tf-eng = { path = "crates/tf-eng" }
+tf-workbook = { path = "crates/tf-workbook" }
 equations = { path = "crates/equations" }
 eng-core = { path = "crates/eng-core" }
 eng-unit-expr = { path = "crates/eng-unit-expr" }
@@ -79,4 +81,3 @@ eng-qty-macros = { path = "crates/eng-qty-macros" }
 eng = { path = "crates/eng" }
 eng-fluids = { path = "crates/eng-fluids" }
 eng-materials = { path = "crates/eng-materials" }
-

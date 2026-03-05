@@ -4700,6 +4700,7 @@ dependencies = [
  "tf-graph",
  "tf-rpa",
  "tf-solver",
+ "tf-workbook",
  "tracing",
  "tracing-subscriber",
 ]
@@ -4860,7 +4861,23 @@ dependencies = [
  "tf-rpa",
  "tf-sim",
  "tf-solver",
+ "tf-workbook",
  "uom",
+ "uuid",
+]
+
+[[package]]
+name = "tf-workbook"
+version = "0.1.0"
+dependencies = [
+ "eng-core",
+ "petgraph 0.8.3",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "tempfile",
+ "tf-eng",
+ "thiserror 1.0.69",
  "uuid",
 ]
 

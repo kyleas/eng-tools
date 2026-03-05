@@ -33,5 +33,6 @@ tf-app = { path = "../../crates/tf-app" }
 tf-cea = { workspace = true }
 tf-rpa = { workspace = true }
 tf-eng = { workspace = true }
+tf-workbook = { workspace = true }
 
 [dev-dependencies]

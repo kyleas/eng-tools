@@ -2,7 +2,7 @@ use crate::project_io::SystemRuntime;
 use crate::run_worker::{RunWorker, WorkerMessage};
 use crate::views::{
     ComponentKindChoice, EngStudyView, FluidView, InspectActions, InspectView, ModuleView,
-    NewComponentSpec, NodeKindChoice, PidView, PlotView, RocketView, RunView,
+    NewComponentSpec, NodeKindChoice, PidView, PlotView, RocketView, RunView, WorkbookView,
 };
 use egui_file_dialog::{DialogMode, FileDialog};
 use std::path::PathBuf;
@@ -34,6 +34,7 @@ pub struct ThermoflowApp {
     run_view: RunView,
     fluid_workspace: crate::fluid_workspace::FluidWorkspace,
     eng_study_view: EngStudyView,
+    workbook_view: WorkbookView,
     rocket_view: RocketView,
     rocket_workspace: crate::rocket_workspace::RocketWorkspace,
     inspect_view: InspectView,
@@ -55,6 +56,7 @@ enum ViewTab {
     Plots,
     Fluid,
     EngStudy,
+    Workbook,
     Rocket,
     Runs,
 }
@@ -89,6 +91,7 @@ impl ThermoflowApp {
             run_view: RunView::default(),
             fluid_workspace: crate::fluid_workspace::FluidWorkspace::default(),
             eng_study_view: EngStudyView::default(),
+            workbook_view: WorkbookView::default(),
             rocket_view: RocketView,
             rocket_workspace: crate::rocket_workspace::RocketWorkspace::default(),
             inspect_view: InspectView::default(),
@@ -905,6 +908,7 @@ impl eframe::App for ThermoflowApp {
                 ui.selectable_value(&mut self.active_view, ViewTab::Plots, "Plots");
                 ui.selectable_value(&mut self.active_view, ViewTab::Fluid, "Fluid");
                 ui.selectable_value(&mut self.active_view, ViewTab::EngStudy, "Eng Study");
+                ui.selectable_value(&mut self.active_view, ViewTab::Workbook, "Workbook");
                 ui.selectable_value(&mut self.active_view, ViewTab::Rocket, "Rocket");
                 ui.selectable_value(&mut self.active_view, ViewTab::Runs, "Runs");
             });
@@ -1012,6 +1016,9 @@ impl eframe::App for ThermoflowApp {
                 }
                 ViewTab::EngStudy => {
                     self.eng_study_view.show(ui);
+                }
+                ViewTab::Workbook => {
+                    self.workbook_view.show(ui);
                 }
                 ViewTab::Rocket => {
                     self.rocket_view.show(ui, &mut self.rocket_workspace);

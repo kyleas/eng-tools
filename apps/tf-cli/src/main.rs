@@ -18,6 +18,10 @@ use tf_rpa::{
     CombustorModel, NozzleChemistryModel, NozzleConstraint, RocketAnalysisProblem,
     RocketAnalysisSolver,
 };
+use tf_workbook::{
+    create_workbook_skeleton, execute_workbook, load_workbook_dir, rename_row_key,
+    run_result_to_csv_map, save_workbook_dir, validate_workbook,
+};
 
 #[derive(Parser)]
 #[command(name = "tf-cli")]
@@ -76,6 +80,9 @@ enum Commands {
     /// Generic eng study bridge (equations/devices/workflows)
     #[command(subcommand)]
     Eng(EngCommands),
+    /// Engineering workbook commands (.engwb)
+    #[command(subcommand)]
+    Workbook(WorkbookCommands),
 }
 
 #[derive(Subcommand)]
@@ -162,6 +169,40 @@ enum EngCommands {
         #[arg(long, value_enum, default_value_t = CliStudyFormat::Json)]
         format: CliStudyFormat,
     },
+}
+
+#[derive(Subcommand)]
+enum WorkbookCommands {
+    /// Create an empty workbook directory.
+    Init {
+        workbook_dir: PathBuf,
+        #[arg(long, default_value = "Engineering Workbook")]
+        title: String,
+    },
+    /// Validate workbook schema/references/dependencies without execution.
+    Validate { workbook_dir: PathBuf },
+    /// Execute workbook and print/export results.
+    Run {
+        workbook_dir: PathBuf,
+        #[arg(long)]
+        tab: Option<String>,
+        #[arg(long, value_enum, default_value_t = WorkbookFormat::Json)]
+        format: WorkbookFormat,
+        #[arg(long)]
+        out_dir: Option<PathBuf>,
+    },
+    /// Rename row key and rewrite references.
+    Rename {
+        workbook_dir: PathBuf,
+        old_key: String,
+        new_key: String,
+    },
+}
+
+#[derive(Debug, Clone, Copy, ValueEnum)]
+enum WorkbookFormat {
+    Json,
+    Csv,
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
@@ -446,6 +487,24 @@ fn main() -> AppResult<()> {
                 format,
             ),
         },
+        Commands::Workbook(cmd) => match cmd {
+            WorkbookCommands::Init {
+                workbook_dir,
+                title,
+            } => cmd_workbook_init(&workbook_dir, &title),
+            WorkbookCommands::Validate { workbook_dir } => cmd_workbook_validate(&workbook_dir),
+            WorkbookCommands::Run {
+                workbook_dir,
+                tab,
+                format,
+                out_dir,
+            } => cmd_workbook_run(&workbook_dir, tab.as_deref(), format, out_dir.as_deref()),
+            WorkbookCommands::Rename {
+                workbook_dir,
+                old_key,
+                new_key,
+            } => cmd_workbook_rename(&workbook_dir, &old_key, &new_key),
+        },
     }
 }
 
@@ -575,6 +634,68 @@ fn study_kind_label(kind: &StudyTargetKind) -> &'static str {
         StudyTargetKind::Device => "device",
         StudyTargetKind::Workflow => "workflow",
     }
+}
+
+fn cmd_workbook_init(workbook_dir: &Path, title: &str) -> AppResult<()> {
+    create_workbook_skeleton(workbook_dir, title)
+        .map_err(|e| AppError::InvalidInput(e.to_string()))?;
+    println!("Created workbook at {}", workbook_dir.display());
+    Ok(())
+}
+
+fn cmd_workbook_validate(workbook_dir: &Path) -> AppResult<()> {
+    let doc = load_workbook_dir(workbook_dir).map_err(|e| AppError::InvalidInput(e.to_string()))?;
+    let validation = validate_workbook(&doc);
+    if validation.ok {
+        println!("Workbook validation: ok");
+        Ok(())
+    } else {
+        eprintln!("Workbook validation: failed");
+        for m in validation.messages {
+            eprintln!("- {}", m);
+        }
+        Err(AppError::InvalidInput(
+            "workbook validation failed".to_string(),
+        ))
+    }
+}
+
+fn cmd_workbook_run(
+    workbook_dir: &Path,
+    tab: Option<&str>,
+    format: WorkbookFormat,
+    out_dir: Option<&Path>,
+) -> AppResult<()> {
+    let doc = load_workbook_dir(workbook_dir).map_err(|e| AppError::InvalidInput(e.to_string()))?;
+    let run = execute_workbook(&doc, tab).map_err(|e| AppError::InvalidInput(e.to_string()))?;
+    match format {
+        WorkbookFormat::Json => print_json(&run),
+        WorkbookFormat::Csv => {
+            let csv_map = run_result_to_csv_map(&run);
+            let out_base = out_dir
+                .map(PathBuf::from)
+                .unwrap_or_else(|| workbook_dir.join("cache").join("exports"));
+            std::fs::create_dir_all(&out_base)?;
+            for (file, content) in csv_map {
+                std::fs::write(out_base.join(&file), content)?;
+            }
+            println!("CSV exported to {}", out_base.display());
+            Ok(())
+        }
+    }
+}
+
+fn cmd_workbook_rename(workbook_dir: &Path, old_key: &str, new_key: &str) -> AppResult<()> {
+    let mut doc =
+        load_workbook_dir(workbook_dir).map_err(|e| AppError::InvalidInput(e.to_string()))?;
+    let changes = rename_row_key(&mut doc, old_key, new_key)
+        .map_err(|e| AppError::InvalidInput(e.to_string()))?;
+    save_workbook_dir(&doc).map_err(|e| AppError::InvalidInput(e.to_string()))?;
+    println!(
+        "Renamed key '{}' -> '{}' ({} updates)",
+        old_key, new_key, changes
+    );
+    Ok(())
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -1379,6 +1500,16 @@ mod tests {
             Commands::Eng(EngCommands::Describe {
                 device: Some(id), ..
             }) => assert_eq!(id, "isentropic_calc"),
+            other => panic!("unexpected command: {:?}", std::mem::discriminant(&other)),
+        }
+    }
+
+    #[test]
+    fn cli_parses_workbook_validate() {
+        let cli = Cli::try_parse_from(["tf-cli", "workbook", "validate", "examples/sample.engwb"])
+            .expect("parse");
+        match cli.command {
+            Commands::Workbook(WorkbookCommands::Validate { .. }) => {}
             other => panic!("unexpected command: {:?}", std::mem::discriminant(&other)),
         }
     }

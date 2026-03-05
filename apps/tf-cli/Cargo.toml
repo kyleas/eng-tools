@@ -14,6 +14,7 @@ tf-app = { path = "../../crates/tf-app" }
 tf-cea = { path = "../../crates/tf-cea" }
 tf-rpa = { path = "../../crates/tf-rpa" }
 tf-eng = { workspace = true }
+tf-workbook = { workspace = true }
 clap = { version = "4", features = ["derive"] }
 serde.workspace = true
 serde_yaml.workspace = true

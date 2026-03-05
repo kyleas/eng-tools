@@ -738,3 +738,46 @@ Rocket thermal design is backend-first in `tf-rpa` and UI-driven in `tf-ui`:
 - UI surfaces equation traces, assumptions, optimizer history, and plot diagnostics.
 
 This slice intentionally remains first-pass (1D station model), not CFD/CHT.
+
+## Engineering Workbook Layer (2026-03)
+
+Thermoflow now includes a text-first Engineering Workbook v1 layer (`.engwb`) for row-based engineering worksheets.
+
+### On-disk format
+
+- `<name>.engwb/`
+  - `workbook.yaml` (schema version, title, tab order, execution defaults)
+  - `tabs/*.yaml` (ordered rows)
+  - `assets/` (optional assets)
+  - `cache/` (optional generated outputs)
+
+### Layer ownership
+
+- `eng`: physics and solver authority (equations/devices/workflows/studies)
+- `tf-eng`: bridge metadata + solve/study runtime contract
+- `tf-workbook`: workbook schema, refs, dependency graph, execution, rename rewriting
+- `tf-ui` / `tf-cli`: presentation and command surfaces
+
+No workbook math is evaluated in the UI layer.
+
+### Row types (v1)
+
+- `text`
+- `markdown`
+- `constant`
+- `equation_solve`
+- `study`
+- `plot`
+
+### References and rename safety
+
+- References use `ref:<key>` (and optional `@key`).
+- Rows keep immutable `id`; `key` is user-facing and renameable.
+- Rename rewrites dependent references while preserving row IDs.
+
+### CLI commands
+
+- `tf-cli workbook init <dir> [--title ...]`
+- `tf-cli workbook validate <dir>`
+- `tf-cli workbook run <dir> [--tab ...] [--format json|csv] [--out-dir ...]`
+- `tf-cli workbook rename <dir> <old_key> <new_key>`
