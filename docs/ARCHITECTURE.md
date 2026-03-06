@@ -760,9 +760,18 @@ Thermoflow now includes a text-first Engineering Workbook v1 layer (`.engwb`) fo
 
 No workbook math is evaluated in the UI layer.
 
+### Tab model
+
+- Tabs are title-first in the UI.
+- Canonical tab metadata is:
+  - `id`: stable internal tab identifier
+  - `title`: human-visible tab label
+  - `file`: backing tab file under `tabs/`
+- Filenames are storage details only and should appear in tooltips/debug, not as primary tab labels.
+
 ### Row types (v1)
 
-- `text` (`render_mode: plain|easy_mark`, style flags; legacy `markdown` rows auto-migrate to `text`)
+- `text` (EasyMark source, rendered inline in the UI)
 - `constant`
 - `equation_solve`
 - `study`
@@ -770,7 +779,7 @@ No workbook math is evaluated in the UI layer.
 
 ### References and rename safety
 
-- References use `ref:<key>` (and optional `@key`).
+- References use `@key` only.
 - Rows keep immutable `id`; `key` is user-facing and renameable.
 - Rename rewrites dependent references while preserving row IDs.
 
@@ -785,7 +794,7 @@ No workbook math is evaluated in the UI layer.
 
 - Header + row-add toolbar are pinned above a dedicated vertical `ScrollArea` for rows.
 - Workbook rows are cell-like cards: primary feedback is shown on each row, not only in global panels.
-- Text rows are content-first and EasyMark-backed by default: the expanded state is a split source/render view, while collapsed state shows rendered document content instead of source text.
+- Text rows are content-first and EasyMark-backed: the expanded state is a split source/render view, while collapsed state shows rendered document content instead of source text.
 - Text rows do not require keys; referenceable/executable rows do require non-empty unique keys.
 - Result/status on each row must remain visible and actionable (`ok`, `invalid`, `incomplete`, `error`).
 - Global execution summaries are secondary and primarily for tab-level rollups/navigation.
@@ -794,6 +803,8 @@ No workbook math is evaluated in the UI layer.
 - Workbook row actions (duplicate/delete/move/collapse) are toolbar-first; row cards stay focused on content, target selection, and results.
 - Freeze is an expanded-row utility only and is described inline as pausing auto-run for that row.
 - Status indicators are compact solid circles with stable meanings: green `ok`, yellow `warning/ambiguous/ready`, red `invalid/error`, gray `incomplete/not run`.
+- Editable fields use commit semantics: workbook recompute happens on commit (focus loss / Enter for single-line fields), not on every keystroke. While a field is actively being edited, rows show a pending/stale status instead of thrashing recomputation.
+- Plot rows are display-first: collapsed rows render the plot inline, expanded rows expose source/config overrides and the full plot.
 
 ### Egui ID stability invariant
 
@@ -803,7 +814,22 @@ No workbook math is evaluated in the UI layer.
 - Never key repeated widgets by list index (indices change with reorder and can cause ID collisions).
 - Drag affordances and collapse controls are rendered with ASCII-safe or custom-painted widgets; do not rely on fragile glyph fallback for core row interactions.
 
-### Egui version baseline
+### Math display decision
 
-- Workbook UI is implemented against the current coherent workspace egui baseline (`0.29.x`).
-- A larger egui-stack upgrade is intentionally deferred until `egui_graph`, `egui_graphs`, and the rest of the Thermoflow UI dependency set move together.
+- Native, robust cross-platform LaTeX rendering is still not a good fit for the current egui-native workbook surface without adding a more complex rendering pipeline.
+- Workbook equation rows therefore use a deliberate fallback:
+  - primary display: unicode equation text when available
+  - secondary fallback: ascii display
+  - raw LaTeX only in details/disclosure sections
+- This keeps equation identity readable without half-working inline TeX dumps.
+
+### Egui / plot stack
+
+- The workbook UI is currently pinned to a coherent `egui 0.29.x` stack:
+  - `eframe = 0.29.1`
+  - `egui = 0.29.1`
+  - `egui_plot = 0.29.0`
+  - `egui_extras = 0.29.1`
+- Unused graph-widget dependencies were removed from `tf-ui` so the workbook surface no longer drags in conflicting egui versions.
+- Future egui upgrades must still move the full Thermoflow UI stack together rather than mixing partial versions.
+

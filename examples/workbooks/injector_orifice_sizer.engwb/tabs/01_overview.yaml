@@ -8,7 +8,7 @@
       "freeze": false,
       "type": "text",
       "content": {
-        "content": "# Injector Orifice Sizer\n\nUse this worksheet to size injector orifices with **unit-aware constants**, equation solves, a study sweep, and a plot.\n\n- Fill all known inputs\n- Leave one unknown blank for automatic inference\n- Keep refs stable with `ref:<key>` or `@key`",
+        "content": "# Injector Orifice Sizer\n\nUse this worksheet to size injector orifices with **unit-aware constants**, equation solves, a study sweep, and a plot.\n\n- Fill all known inputs\n- Leave one unknown blank for automatic inference\n- Keep refs stable with `@key`",
         "render_mode": "easy_mark",
         "style": {
           "header": false,
@@ -53,3 +53,4 @@
     }
   ]
 }
+

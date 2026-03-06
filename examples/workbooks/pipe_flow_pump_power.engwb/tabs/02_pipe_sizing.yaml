@@ -109,7 +109,7 @@
         "branch": null,
         "inputs": {
           "A": "",
-          "D": "ref:d_pipe"
+          "D": "@d_pipe"
         }
       }
     },
@@ -127,9 +127,9 @@
         "inputs": {
           "Re": "",
           "rho": "@rho_liq",
-          "V": "ref:v_line",
-          "D": "ref:d_pipe",
-          "mu": "ref:mu_liq"
+          "V": "@v_line",
+          "D": "@d_pipe",
+          "mu": "@mu_liq"
         }
       }
     },
@@ -146,11 +146,11 @@
         "branch": null,
         "inputs": {
           "delta_p": "",
-          "f": "ref:f_fixed",
-          "L": "ref:l_line",
+          "f": "@f_fixed",
+          "L": "@l_line",
           "D": "0 in",
-          "rho": "ref:rho_liq",
-          "V": "ref:v_line"
+          "rho": "@rho_liq",
+          "V": "@v_line"
         }
       }
     }

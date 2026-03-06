@@ -33,7 +33,7 @@
       "freeze": false,
       "type": "plot",
       "content": {
-        "source_row": "ref:isentropic_device_sweep",
+        "source_row": "@isentropic_device_sweep",
         "x": "input_value",
         "y": "value",
         "title": "Isentropic pressure ratio vs Mach",

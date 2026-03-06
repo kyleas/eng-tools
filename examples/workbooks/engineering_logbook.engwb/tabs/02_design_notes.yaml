@@ -13,9 +13,9 @@
         "branch": null,
         "inputs": {
           "sigma_h": "",
-          "P": "ref:p_case",
-          "r": "ref:r_case",
-          "t": "ref:t_case"
+          "P": "@p_case",
+          "r": "@r_case",
+          "t": "@t_case"
         }
       }
     },
@@ -32,7 +32,7 @@
         "branch": null,
         "inputs": {
           "mu": "",
-          "M": "ref:mach_case"
+          "M": "@mach_case"
         }
       }
     },
@@ -50,8 +50,8 @@
         "inputs": {
           "sigma_h": "",
           "P": "bad_pressure_value",
-          "r": "ref:r_case",
-          "t": "ref:t_case"
+          "r": "@r_case",
+          "t": "@t_case"
         }
       }
     }

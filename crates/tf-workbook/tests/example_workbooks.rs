@@ -43,6 +43,12 @@ fn copy_dir_recursive(src: &Path, dst: &Path) {
 #[test]
 fn examples_load_validate_and_roundtrip() {
     for wb_path in workbook_paths() {
+        let workbook_text = fs::read_to_string(wb_path.join("workbook.yaml")).expect("manifest");
+        assert!(
+            !workbook_text.contains("\"name\""),
+            "legacy tab name field still present in {}",
+            wb_path.display()
+        );
         let doc = load_workbook_dir(&wb_path).expect("load workbook");
         let validation = validate_workbook(&doc);
         assert!(
@@ -78,6 +84,16 @@ fn examples_load_validate_and_roundtrip() {
             "row count drifted for {}",
             wb_path.display()
         );
+
+        for tab in &doc_reloaded.tabs {
+            let raw = fs::read_to_string(copy_path.join("tabs").join(&tab.file)).expect("tab raw");
+            assert!(
+                !raw.contains("ref:"),
+                "legacy reference syntax still present in {} / {}",
+                wb_path.display(),
+                tab.file
+            );
+        }
     }
 }
 
@@ -162,11 +178,11 @@ fn injector_rename_rewrites_refs_and_still_executes() {
         all_text.push_str(&fs::read_to_string(p).expect("read tab file"));
     }
     assert!(
-        all_text.contains("ref:dp_injector"),
+        all_text.contains("@dp_injector"),
         "expected rewritten references to new key"
     );
     assert!(
-        !all_text.contains("ref:dp_orifice"),
+        !all_text.contains("@dp_orifice"),
         "old reference key still present after rename"
     );
 }

@@ -8,7 +8,7 @@
       "freeze": false,
       "type": "plot",
       "content": {
-        "source_row": "ref:shock_pressure_sweep",
+        "source_row": "@shock_pressure_sweep",
         "x": "input_value",
         "y": "value",
         "title": "Normal shock p2/p1 vs M1",
@@ -24,7 +24,7 @@
       "freeze": false,
       "type": "plot",
       "content": {
-        "source_row": "ref:nozzle_mach_sweep",
+        "source_row": "@nozzle_mach_sweep",
         "x": "input_value",
         "y": "value",
         "title": "Nozzle Mach vs area ratio",

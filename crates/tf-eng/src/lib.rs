@@ -12,7 +12,7 @@ use eng::solve::{
     StudySampleStatus, StudyTable as EngStudyTable, SweepAxis as EngSweepAxis,
     WorkflowFieldType as EngWorkflowFieldType, WorkflowStudySpec as EngWorkflowStudySpec,
 };
-use equations::{Registry, registry::ids::derive_path_id};
+use equations::{Registry, normalize::is_numerically_supported, registry::ids::derive_path_id};
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, json};
 use thiserror::Error;
@@ -857,18 +857,10 @@ fn describe_all_equations() -> Result<Vec<StudyTargetDescriptor>, BridgeError> {
     let mut out = Vec::new();
     for eq in registry.equations() {
         let path_id = derive_path_id(eq);
-        let unsupported = eq
-            .solve
-            .numerical
-            .unsupported_targets
-            .iter()
-            .map(|s| s.as_str())
-            .collect::<BTreeSet<_>>();
-
         let mut outputs = eq
             .variables
             .keys()
-            .filter(|k| !unsupported.contains(k.as_str()))
+            .filter(|k| eq.solve.explicit_forms.contains_key(*k) || is_numerically_supported(eq, k))
             .map(|k| StudyOutputDescriptor {
                 key: k.clone(),
                 label: k.clone(),
@@ -939,6 +931,7 @@ fn describe_all_equations() -> Result<Vec<StudyTargetDescriptor>, BridgeError> {
             .solve
             .default_target
             .clone()
+            .filter(|target| outputs.iter().any(|output| output.key == *target))
             .or_else(|| outputs.first().map(|o| o.key.clone()));
 
         let sweep_default = fields
@@ -1857,6 +1850,77 @@ mod tests {
             let solved = solved.expect("solve result");
             assert_eq!(solved.output_key, target);
         }
+    }
+
+    #[test]
+    fn circular_pipe_area_supports_forward_and_inverse_targets() {
+        let mut raw = BTreeMap::new();
+        raw.insert("D".to_string(), "0.1 m".to_string());
+        let (_, solved_area) = evaluate_single_solve(
+            StudyTargetKind::Equation,
+            "fluids.circular_pipe_area",
+            &raw,
+            None,
+        )
+        .expect("area solve");
+        assert_eq!(solved_area.expect("solved").output_key, "A");
+
+        let mut raw = BTreeMap::new();
+        raw.insert("A".to_string(), "0.007853981633974483 m2".to_string());
+        let (_, solved_diameter) = evaluate_single_solve(
+            StudyTargetKind::Equation,
+            "fluids.circular_pipe_area",
+            &raw,
+            None,
+        )
+        .expect("diameter solve");
+        assert_eq!(solved_diameter.expect("solved").output_key, "D");
+    }
+
+    #[test]
+    fn incompressible_orifice_mass_flow_supports_all_single_unknown_targets() {
+        let base = BTreeMap::from([
+            ("m_dot".to_string(), "1 kg/s".to_string()),
+            ("C_d".to_string(), "0.8".to_string()),
+            ("A".to_string(), "1.0e-4 m2".to_string()),
+            ("rho".to_string(), "1000 kg/m3".to_string()),
+            ("delta_p".to_string(), "80 kPa".to_string()),
+        ]);
+        for target in ["m_dot", "C_d", "A", "rho", "delta_p"] {
+            let mut raw = base.clone();
+            raw.insert(target.to_string(), String::new());
+            let (validation, solved) = evaluate_single_solve(
+                StudyTargetKind::Equation,
+                "fluids.orifice_mass_flow_incompressible",
+                &raw,
+                None,
+            )
+            .expect("evaluation");
+            assert!(
+                validation.output_key.as_deref() == Some(target),
+                "expected inferred target {target:?}, got {:?}",
+                validation.output_key
+            );
+            assert_eq!(solved.expect("solved").output_key, target);
+        }
+    }
+
+    #[test]
+    fn reynolds_number_supports_inverse_density_target() {
+        let raw = BTreeMap::from([
+            ("Re".to_string(), "250000".to_string()),
+            ("V".to_string(), "12 m/s".to_string()),
+            ("D".to_string(), "0.1 m".to_string()),
+            ("mu".to_string(), "1.8e-5 Pa*s".to_string()),
+        ]);
+        let (_, solved) = evaluate_single_solve(
+            StudyTargetKind::Equation,
+            "fluids.reynolds_number",
+            &raw,
+            None,
+        )
+        .expect("evaluation");
+        assert_eq!(solved.expect("solved").output_key, "rho");
     }
 
     #[test]

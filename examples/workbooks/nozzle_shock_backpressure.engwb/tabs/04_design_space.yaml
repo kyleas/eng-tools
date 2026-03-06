@@ -20,7 +20,7 @@
         "fixed_inputs": {
           "input_kind": "area_ratio",
           "target_kind": "mach",
-          "gamma": "ref:gamma",
+          "gamma": "@gamma",
           "branch": "supersonic"
         },
         "output_key": "value"

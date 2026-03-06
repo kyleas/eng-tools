@@ -1,35 +1,37 @@
 {
-  "schema_version": 1,
-  "title": "Engineering Logbook Template",
-  "tabs": [
-    {
-      "name": "today",
-      "file": "01_today.yaml",
-      "title": "Today"
-    },
-    {
-      "name": "design_notes",
-      "file": "02_design_notes.yaml",
-      "title": "Design notes"
-    },
-    {
-      "name": "quick_calcs",
-      "file": "03_quick_calcs.yaml",
-      "title": "Quick calcs"
-    },
-    {
-      "name": "meeting_notes",
-      "file": "04_meeting_notes.yaml",
-      "title": "Meeting notes"
-    },
-    {
-      "name": "references",
-      "file": "05_references.yaml",
-      "title": "References"
-    }
-  ],
-  "preferred_display_units": {},
-  "execution": {
-    "auto_run": true
-  }
+    "schema_version":  1,
+    "title":  "Engineering Logbook Template",
+    "tabs":  [
+                 {
+                     "file":  "01_today.yaml",
+                     "title":  "Today",
+                     "id":  "today"
+                 },
+                 {
+                     "file":  "02_design_notes.yaml",
+                     "title":  "Design notes",
+                     "id":  "design_notes"
+                 },
+                 {
+                     "file":  "03_quick_calcs.yaml",
+                     "title":  "Quick calcs",
+                     "id":  "quick_calcs"
+                 },
+                 {
+                     "file":  "04_meeting_notes.yaml",
+                     "title":  "Meeting notes",
+                     "id":  "meeting_notes"
+                 },
+                 {
+                     "file":  "05_references.yaml",
+                     "title":  "References",
+                     "id":  "references"
+                 }
+             ],
+    "preferred_display_units":  {
+
+                                },
+    "execution":  {
+                      "auto_run":  true
+                  }
 }

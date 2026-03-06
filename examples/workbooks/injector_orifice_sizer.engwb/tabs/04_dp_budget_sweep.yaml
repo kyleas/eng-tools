@@ -33,7 +33,7 @@
       "freeze": false,
       "type": "plot",
       "content": {
-        "source_row": "ref:dp_budget_sweep",
+        "source_row": "@dp_budget_sweep",
         "x": "input_value",
         "y": "value",
         "title": "Normal shock pressure ratio sweep",

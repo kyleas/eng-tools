@@ -1,35 +1,37 @@
 {
-  "schema_version": 1,
-  "title": "Oblique vs Conical Shock Comparison",
-  "tabs": [
-    {
-      "name": "scenario",
-      "file": "01_scenario.yaml",
-      "title": "Scenario"
-    },
-    {
-      "name": "oblique_shock_solve",
-      "file": "02_oblique_shock_solve.yaml",
-      "title": "Oblique shock solve"
-    },
-    {
-      "name": "conical_shock_solve",
-      "file": "03_conical_shock_solve.yaml",
-      "title": "Conical shock solve"
-    },
-    {
-      "name": "sweep_compare",
-      "file": "04_sweep_compare.yaml",
-      "title": "Sweep & compare"
-    },
-    {
-      "name": "takeaways",
-      "file": "05_takeaways.yaml",
-      "title": "Takeaways"
-    }
-  ],
-  "preferred_display_units": {},
-  "execution": {
-    "auto_run": true
-  }
+    "schema_version":  1,
+    "title":  "Oblique vs Conical Shock Comparison",
+    "tabs":  [
+                 {
+                     "file":  "01_scenario.yaml",
+                     "title":  "Scenario",
+                     "id":  "scenario"
+                 },
+                 {
+                     "file":  "02_oblique_shock_solve.yaml",
+                     "title":  "Oblique shock solve",
+                     "id":  "oblique_shock_solve"
+                 },
+                 {
+                     "file":  "03_conical_shock_solve.yaml",
+                     "title":  "Conical shock solve",
+                     "id":  "conical_shock_solve"
+                 },
+                 {
+                     "file":  "04_sweep_compare.yaml",
+                     "title":  "Sweep \u0026 compare",
+                     "id":  "sweep_compare"
+                 },
+                 {
+                     "file":  "05_takeaways.yaml",
+                     "title":  "Takeaways",
+                     "id":  "takeaways"
+                 }
+             ],
+    "preferred_display_units":  {
+
+                                },
+    "execution":  {
+                      "auto_run":  true
+                  }
 }

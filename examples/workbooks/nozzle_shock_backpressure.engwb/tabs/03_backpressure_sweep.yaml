@@ -18,7 +18,7 @@
           "count": 30
         },
         "fixed_inputs": {
-          "gamma": "ref:gamma",
+          "gamma": "@gamma",
           "branch": "supersonic"
         },
         "output_key": "pre_shock_mach"
@@ -32,7 +32,7 @@
       "freeze": false,
       "type": "plot",
       "content": {
-        "source_row": "ref:nozzle_chain_sweep",
+        "source_row": "@nozzle_chain_sweep",
         "x": "area_ratio",
         "y": "pre_shock_mach",
         "title": "Pre-shock Mach vs area ratio",

@@ -3,13 +3,13 @@ use std::path::Path;
 
 use crate::ui::drag_reorder::show_reorderable_ids;
 use crate::ui::search_picker::{PickerOption, searchable_picker};
+use egui_plot::{Legend, Line, Plot, PlotBounds, PlotPoints};
 use tf_eng::{StudyTargetDescriptor, StudyTargetKind, list_study_targets};
 use tf_workbook::{
-    ConstantRowContent, EquationSolveRowContent, PlotRowContent, StudyRowContent, TextRenderMode,
-    TextRowContent, WorkbookDocument, WorkbookRow, WorkbookRowExecution, WorkbookRowKind,
-    WorkbookRowResult, WorkbookRowState, WorkbookRunResult, WorkbookSweepAxis, WorkbookTab,
-    create_workbook_skeleton, execute_workbook, load_workbook_dir, row_requires_key,
-    save_workbook_dir,
+    ConstantRowContent, EquationSolveRowContent, PlotRowContent, StudyRowContent, TextRowContent,
+    WorkbookDocument, WorkbookRow, WorkbookRowExecution, WorkbookRowKind, WorkbookRowResult,
+    WorkbookRowState, WorkbookRunResult, WorkbookSweepAxis, WorkbookTab, create_workbook_skeleton,
+    execute_workbook, load_workbook_dir, row_requires_key, save_workbook_dir,
 };
 use uuid::Uuid;
 
@@ -25,6 +25,8 @@ pub struct WorkbookView {
     focus_row_id: Option<String>,
     selected_row_id: Option<String>,
     confirm_delete_selected: bool,
+    editing_rows: BTreeSet<String>,
+    pending_recompute: bool,
     picker_queries: HashMap<String, String>,
     targets: Vec<StudyTargetDescriptor>,
     highlighter: egui_demo_lib::easy_mark::MemoizedEasymarkHighlighter,
@@ -36,6 +38,29 @@ struct EditOutcome {
     changed_unfrozen: bool,
 }
 
+#[derive(Default, Clone, Copy)]
+struct RowEditActivity {
+    changed: bool,
+    committed: bool,
+    editing: bool,
+}
+
+impl RowEditActivity {
+    fn immediate_change() -> Self {
+        Self {
+            changed: true,
+            committed: true,
+            editing: false,
+        }
+    }
+
+    fn merge(&mut self, other: Self) {
+        self.changed |= other.changed;
+        self.committed |= other.committed;
+        self.editing |= other.editing;
+    }
+}
+
 #[derive(Clone)]
 struct PlotSourceOption {
     ref_value: String,
@@ -44,6 +69,7 @@ struct PlotSourceOption {
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum RowVisualState {
+    Editing,
     NotRun,
     Ok,
     Warning,
@@ -90,6 +116,8 @@ impl Default for WorkbookView {
             focus_row_id: None,
             selected_row_id: None,
             confirm_delete_selected: false,
+            editing_rows: BTreeSet::new(),
+            pending_recompute: false,
             picker_queries: HashMap::new(),
             targets: list_study_targets().unwrap_or_default(),
             highlighter: Default::default(),
@@ -114,13 +142,16 @@ impl WorkbookView {
             ui.horizontal_wrapped(|ui| {
                 ui.label(egui::RichText::new(&doc.manifest.title).strong());
                 for (i, tab) in doc.tabs.iter().enumerate() {
-                    if ui
-                        .selectable_label(
-                            self.selected_tab == i,
-                            format!("{} ({})", tab.name, tab.file),
-                        )
-                        .clicked()
-                    {
+                    let selected = self.selected_tab == i;
+                    let button =
+                        egui::Button::new(egui::RichText::new(&tab.title).strong().size(14.0))
+                            .selected(selected)
+                            .frame(true)
+                            .min_size(egui::vec2(96.0, 28.0));
+                    let response = ui
+                        .add(button)
+                        .on_hover_text(format!("tab id: {}\nfile: {}", tab.id, tab.file));
+                    if response.clicked() {
                         self.selected_tab = i;
                     }
                 }
@@ -151,6 +182,7 @@ impl WorkbookView {
                 egui::ScrollArea::vertical()
                     .id_salt(("workbook_rows_scroll", &tab.file))
                     .show(ui, |ui| {
+                        let mut editing_rows = BTreeSet::new();
                         let outcome = Self::show_tab_editor(
                             ui,
                             tab,
@@ -160,7 +192,11 @@ impl WorkbookView {
                             &mut self.picker_queries,
                             focus_row_id.as_deref(),
                             &mut self.highlighter,
+                            &mut editing_rows,
+                            self.pending_recompute,
                         );
+                        self.editing_rows = editing_rows;
+                        self.pending_recompute = !self.editing_rows.is_empty();
                         if outcome.changed {
                             self.last_error = None;
                             if self.auto_run && outcome.changed_unfrozen {
@@ -262,17 +298,13 @@ impl WorkbookView {
         let has_selected = selected_idx.is_some();
 
         ui.horizontal_wrapped(|ui| {
-            ui.heading(format!("Tab: {}", tab.name));
+            ui.heading(format!("Tab: {}", tab.title));
             ui.menu_button("Add row", |ui| {
                 for (label, kind, collapsed) in [
                     (
                         "Text",
                         WorkbookRowKind::Text(TextRowContent {
                             content: String::new(),
-                            render_mode: TextRenderMode::EasyMark,
-                            style: Default::default(),
-                            legacy_header: false,
-                            legacy_mono: false,
                         }),
                         false,
                     ),
@@ -319,6 +351,9 @@ impl WorkbookView {
                             title: Some("Plot".to_string()),
                             x_label: None,
                             y_label: None,
+                            x_bounds: None,
+                            y_bounds: None,
+                            legend: None,
                         }),
                         true,
                     ),
@@ -425,6 +460,8 @@ impl WorkbookView {
         picker_queries: &mut HashMap<String, String>,
         focus_row_id: Option<&str>,
         highlighter: &mut egui_demo_lib::easy_mark::MemoizedEasymarkHighlighter,
+        editing_rows: &mut BTreeSet<String>,
+        pending_recompute: bool,
     ) -> EditOutcome {
         let mut outcome = EditOutcome::default();
         let row_exec_map = run_tab
@@ -471,14 +508,20 @@ impl WorkbookView {
                     .as_ref()
                     .map(|selected| selected == &row.id)
                     .unwrap_or(false);
-                let visual_status = row_visual_status(row, exec, &duplicate_keys);
+                let visual_status = row_visual_status(
+                    row,
+                    exec,
+                    &duplicate_keys,
+                    pending_recompute,
+                    editing_rows.contains(&row.id),
+                );
                 let source_options = key_snapshot
                     .iter()
                     .filter(|(id, key, is_study)| id != &row.id && key.is_some() && *is_study)
                     .map(|(_, key, _)| {
                         let key = key.as_deref().unwrap_or_default();
                         PlotSourceOption {
-                            ref_value: format!("ref:{}", key),
+                            ref_value: format!("@{}", key),
                             label: key.to_string(),
                         }
                     })
@@ -519,12 +562,21 @@ impl WorkbookView {
                                 if let WorkbookRowKind::Text(content) = &row.kind {
                                     render_text_document(ui, &content.content);
                                 }
+                            } else if matches!(row.kind, WorkbookRowKind::Plot(_))
+                                && let Some(exec) = exec
+                            {
+                                ui.add_space(6.0);
+                                render_plot_preview(ui, exec, 180.0);
                             }
                         } else {
                             ui.add_space(8.0);
                             if !matches!(row.kind, WorkbookRowKind::Text(_)) {
-                                if Self::render_row_utilities(ui, row) {
+                                let utility_activity = Self::render_row_utilities(ui, row);
+                                if utility_activity.changed {
                                     row_changed_ids.insert(row.id.clone());
+                                }
+                                if utility_activity.editing {
+                                    editing_rows.insert(row.id.clone());
                                 }
                                 if let Some(message) = key_validation_message(row, &duplicate_keys)
                                 {
@@ -533,7 +585,7 @@ impl WorkbookView {
                                 ui.separator();
                             }
 
-                            let body_changed = match &mut row.kind {
+                            let body_activity = match &mut row.kind {
                                 WorkbookRowKind::Text(content) => {
                                     Self::render_text_row(ui, row.id.as_str(), content, highlighter)
                                 }
@@ -564,23 +616,15 @@ impl WorkbookView {
                                     &valid_keys,
                                     picker_queries,
                                 ),
-                                WorkbookRowKind::Markdown(content) => {
-                                    let mut text =
-                                        TextRowContent::from_markdown(content.markdown.clone());
-                                    let changed = Self::render_text_row(
-                                        ui,
-                                        row.id.as_str(),
-                                        &mut text,
-                                        highlighter,
-                                    );
-                                    if changed {
-                                        content.markdown = text.content;
-                                    }
-                                    changed
-                                }
                             };
-                            if body_changed {
+                            if body_activity.changed {
                                 row_changed_ids.insert(row.id.clone());
+                            }
+                            if body_activity.editing {
+                                editing_rows.insert(row.id.clone());
+                            }
+                            if body_activity.changed && !body_activity.committed {
+                                outcome.changed = true;
                             }
 
                             if !matches!(row.kind, WorkbookRowKind::Text(_)) {
@@ -621,11 +665,12 @@ impl WorkbookView {
 
         if !row_changed_ids.is_empty() {
             outcome.changed = true;
-            outcome.changed_unfrozen = tab
-                .rows
-                .iter()
-                .filter(|row| row_changed_ids.contains(&row.id))
-                .any(|row| !row.freeze);
+            outcome.changed_unfrozen = editing_rows.is_empty()
+                && tab
+                    .rows
+                    .iter()
+                    .filter(|row| row_changed_ids.contains(&row.id))
+                    .any(|row| !row.freeze);
         }
 
         outcome
@@ -693,11 +738,6 @@ impl WorkbookView {
                     selected = true;
                     kind_changed = true;
                 }
-                ui.label(
-                    egui::RichText::new(row_type_badge_label(&row.kind))
-                        .small()
-                        .color(ui.visuals().weak_text_color()),
-                );
             });
 
             let click_rect = ui.min_rect();
@@ -721,22 +761,19 @@ impl WorkbookView {
         }
     }
 
-    fn render_row_utilities(ui: &mut egui::Ui, row: &mut WorkbookRow) -> bool {
-        let mut changed = false;
+    fn render_row_utilities(ui: &mut egui::Ui, row: &mut WorkbookRow) -> RowEditActivity {
+        let mut activity = RowEditActivity::default();
         ui.horizontal_wrapped(|ui| {
             ui.label("Key");
             let key_entry = row.key.get_or_insert_with(String::new);
-            if ui.text_edit_singleline(key_entry).changed() {
-                changed = true;
-            }
-            if ui
-                .checkbox(&mut row.freeze, "pause auto-run for this row")
-                .changed()
-            {
-                changed = true;
-            }
+            let key_response = ui.text_edit_singleline(key_entry);
+            activity.merge(text_response_activity(&key_response, true));
+            activity.merge(immediate_change(
+                ui.checkbox(&mut row.freeze, "pause auto-run for this row")
+                    .changed(),
+            ));
         });
-        changed
+        activity
     }
 
     fn render_equation_row(
@@ -745,8 +782,8 @@ impl WorkbookView {
         c: &mut EquationSolveRowContent,
         targets: &[StudyTargetDescriptor],
         picker_queries: &mut HashMap<String, String>,
-    ) -> bool {
-        let mut changed = false;
+    ) -> RowEditActivity {
+        let mut activity = RowEditActivity::default();
         let equations = targets
             .iter()
             .filter(|target| target.kind == StudyTargetKind::Equation)
@@ -767,7 +804,7 @@ impl WorkbookView {
                 picker_queries,
             ) {
                 c.path_id = next;
-                changed = true;
+                activity.merge(RowEditActivity::immediate_change());
             }
         });
 
@@ -776,7 +813,7 @@ impl WorkbookView {
             .find(|target| target.kind == StudyTargetKind::Equation && target.id == c.path_id)
         else {
             ui.small("Unknown equation target");
-            return changed;
+            return activity;
         };
 
         ui.small(format!("{} [{}]", desc.name, desc.id));
@@ -784,10 +821,18 @@ impl WorkbookView {
             .display_unicode
             .as_ref()
             .or(desc.display_ascii.as_ref())
-            .or(desc.display_latex.as_ref())
         {
-            ui.label(egui::RichText::new(display).italics());
+            ui.label(egui::RichText::new(display).italics().size(15.0));
         }
+        ui.collapsing("Display details", |ui| {
+            if let Some(display) = &desc.display_ascii {
+                ui.monospace(display);
+            }
+            if let Some(latex) = &desc.display_latex {
+                ui.small("LaTeX");
+                ui.monospace(latex);
+            }
+        });
 
         let mut target_value = c.target.clone().unwrap_or_default();
         ui.horizontal(|ui| {
@@ -809,11 +854,11 @@ impl WorkbookView {
                 picker_queries,
             ) {
                 target_value = next;
-                changed = true;
+                activity.merge(RowEditActivity::immediate_change());
             }
             if ui.small_button("Infer").clicked() {
                 target_value.clear();
-                changed = true;
+                activity.merge(RowEditActivity::immediate_change());
             }
         });
         c.target = non_empty_option(target_value);
@@ -839,11 +884,11 @@ impl WorkbookView {
                     picker_queries,
                 ) {
                     branch = next;
-                    changed = true;
+                    activity.merge(RowEditActivity::immediate_change());
                 }
                 if ui.small_button("Clear").clicked() {
                     branch.clear();
-                    changed = true;
+                    activity.merge(RowEditActivity::immediate_change());
                 }
                 c.branch = non_empty_option(branch);
             });
@@ -861,15 +906,11 @@ impl WorkbookView {
                 ui.horizontal(|ui| {
                     ui.label(egui::RichText::new(&field.key).strong());
                     let entry = c.inputs.entry(field.key.clone()).or_default();
-                    if ui
-                        .add(
-                            egui::TextEdit::singleline(entry)
-                                .desired_width(ui.available_width() * 0.55),
-                        )
-                        .changed()
-                    {
-                        changed = true;
-                    }
+                    let response = ui.add(
+                        egui::TextEdit::singleline(entry)
+                            .desired_width(ui.available_width() * 0.55),
+                    );
+                    activity.merge(text_response_activity(&response, true));
                     if let Some(unit) = &field.unit {
                         ui.small(unit);
                     }
@@ -897,7 +938,7 @@ impl WorkbookView {
             };
         }
 
-        changed
+        activity
     }
 
     fn render_study_row(
@@ -906,19 +947,22 @@ impl WorkbookView {
         c: &mut StudyRowContent,
         targets: &[StudyTargetDescriptor],
         picker_queries: &mut HashMap<String, String>,
-    ) -> bool {
-        let mut changed = false;
+    ) -> RowEditActivity {
+        let mut activity = RowEditActivity::default();
         ui.horizontal(|ui| {
             ui.label("Kind");
-            changed |= ui
-                .selectable_value(&mut c.kind, StudyTargetKind::Equation, "equation")
-                .changed();
-            changed |= ui
-                .selectable_value(&mut c.kind, StudyTargetKind::Device, "device")
-                .changed();
-            changed |= ui
-                .selectable_value(&mut c.kind, StudyTargetKind::Workflow, "workflow")
-                .changed();
+            activity.merge(immediate_change(
+                ui.selectable_value(&mut c.kind, StudyTargetKind::Equation, "equation")
+                    .changed(),
+            ));
+            activity.merge(immediate_change(
+                ui.selectable_value(&mut c.kind, StudyTargetKind::Device, "device")
+                    .changed(),
+            ));
+            activity.merge(immediate_change(
+                ui.selectable_value(&mut c.kind, StudyTargetKind::Workflow, "workflow")
+                    .changed(),
+            ));
         });
 
         let target_options = targets
@@ -940,7 +984,7 @@ impl WorkbookView {
                 picker_queries,
             ) {
                 c.target_id = next;
-                changed = true;
+                activity.merge(RowEditActivity::immediate_change());
             }
         });
 
@@ -949,7 +993,7 @@ impl WorkbookView {
             .find(|target| target.kind == c.kind && target.id == c.target_id)
         else {
             ui.small("Unknown study target");
-            return changed;
+            return activity;
         };
 
         ui.horizontal(|ui| {
@@ -971,7 +1015,7 @@ impl WorkbookView {
                 picker_queries,
             ) {
                 c.sweep_field = next;
-                changed = true;
+                activity.merge(RowEditActivity::immediate_change());
             }
         });
 
@@ -995,7 +1039,7 @@ impl WorkbookView {
                 picker_queries,
             ) {
                 c.output_key = next;
-                changed = true;
+                activity.merge(RowEditActivity::immediate_change());
             }
         });
 
@@ -1009,12 +1053,11 @@ impl WorkbookView {
                     ui.horizontal(|ui| {
                         ui.label(&field.key);
                         let entry = c.fixed_inputs.entry(field.key.clone()).or_default();
-                        changed |= ui
-                            .add(
-                                egui::TextEdit::singleline(entry)
-                                    .desired_width(ui.available_width() * 0.55),
-                            )
-                            .changed();
+                        let response = ui.add(
+                            egui::TextEdit::singleline(entry)
+                                .desired_width(ui.available_width() * 0.55),
+                        );
+                        activity.merge(text_response_activity(&response, true));
                         if let Some(unit) = &field.unit {
                             ui.small(unit);
                         }
@@ -1032,14 +1075,16 @@ impl WorkbookView {
                         .map(|value| value.to_string())
                         .collect::<Vec<_>>()
                         .join(", ");
-                    if ui.text_edit_singleline(&mut text).changed() {
+                    let response = ui.text_edit_singleline(&mut text);
+                    activity.merge(text_response_activity(&response, true));
+                    if response.changed() {
                         let parsed = text
                             .split(',')
                             .filter_map(|chunk| chunk.trim().parse::<f64>().ok())
                             .collect::<Vec<_>>();
                         if !parsed.is_empty() {
                             *values = parsed;
-                            changed = true;
+                            activity.changed = true;
                         }
                     }
                 });
@@ -1048,16 +1093,22 @@ impl WorkbookView {
             | WorkbookSweepAxis::Logspace { start, end, count } => {
                 ui.horizontal(|ui| {
                     ui.label("start");
-                    changed |= ui.add(egui::DragValue::new(start)).changed();
+                    activity.merge(immediate_change(
+                        ui.add(egui::DragValue::new(start)).changed(),
+                    ));
                     ui.label("end");
-                    changed |= ui.add(egui::DragValue::new(end)).changed();
+                    activity.merge(immediate_change(
+                        ui.add(egui::DragValue::new(end)).changed(),
+                    ));
                     ui.label("count");
-                    changed |= ui.add(egui::DragValue::new(count).range(2..=500)).changed();
+                    activity.merge(immediate_change(
+                        ui.add(egui::DragValue::new(count).range(2..=500)).changed(),
+                    ));
                 });
             }
         });
 
-        changed
+        activity
     }
 
     fn render_plot_row(
@@ -1067,8 +1118,8 @@ impl WorkbookView {
         source_options: &[PlotSourceOption],
         valid_keys: &[String],
         picker_queries: &mut HashMap<String, String>,
-    ) -> bool {
-        let mut changed = false;
+    ) -> RowEditActivity {
+        let mut activity = RowEditActivity::default();
         ui.horizontal(|ui| {
             ui.label("Source");
             let source_items = source_options
@@ -1087,11 +1138,11 @@ impl WorkbookView {
                 picker_queries,
             ) {
                 c.source_row = next;
-                changed = true;
+                activity.merge(RowEditActivity::immediate_change());
             }
-            changed |= ui
-                .add(egui::TextEdit::singleline(&mut c.source_row).desired_width(180.0))
-                .changed();
+            let response =
+                ui.add(egui::TextEdit::singleline(&mut c.source_row).desired_width(180.0));
+            activity.merge(text_response_activity(&response, true));
         });
 
         if let Some(key) = parse_ref_key(&c.source_row) {
@@ -1105,18 +1156,67 @@ impl WorkbookView {
 
         ui.horizontal(|ui| {
             ui.label("x");
-            changed |= ui.text_edit_singleline(&mut c.x).changed();
+            let x_response = ui.text_edit_singleline(&mut c.x);
+            activity.merge(text_response_activity(&x_response, true));
             ui.label("y");
-            changed |= ui.text_edit_singleline(&mut c.y).changed();
+            let y_response = ui.text_edit_singleline(&mut c.y);
+            activity.merge(text_response_activity(&y_response, true));
         });
         ui.horizontal(|ui| {
             ui.label("title");
-            changed |= ui
-                .text_edit_singleline(c.title.get_or_insert_with(String::new))
-                .changed();
+            let response = ui.text_edit_singleline(c.title.get_or_insert_with(String::new));
+            activity.merge(text_response_activity(&response, true));
+        });
+        ui.horizontal(|ui| {
+            ui.label("x label");
+            let response = ui.text_edit_singleline(c.x_label.get_or_insert_with(String::new));
+            activity.merge(text_response_activity(&response, true));
+            ui.label("y label");
+            let response = ui.text_edit_singleline(c.y_label.get_or_insert_with(String::new));
+            activity.merge(text_response_activity(&response, true));
+        });
+        ui.horizontal(|ui| {
+            let legend = c.legend.get_or_insert(true);
+            activity.merge(immediate_change(
+                ui.checkbox(legend, "show legend").changed(),
+            ));
+        });
+        ui.collapsing("Bounds", |ui| {
+            ui.horizontal(|ui| {
+                let auto_x = c.x_bounds.is_none();
+                let mut manual_x = !auto_x;
+                if ui.checkbox(&mut manual_x, "manual x").changed() {
+                    c.x_bounds = if manual_x { Some([0.0, 1.0]) } else { None };
+                    activity.merge(RowEditActivity::immediate_change());
+                }
+                if let Some(bounds) = &mut c.x_bounds {
+                    activity.merge(immediate_change(
+                        ui.add(egui::DragValue::new(&mut bounds[0])).changed(),
+                    ));
+                    activity.merge(immediate_change(
+                        ui.add(egui::DragValue::new(&mut bounds[1])).changed(),
+                    ));
+                }
+            });
+            ui.horizontal(|ui| {
+                let auto_y = c.y_bounds.is_none();
+                let mut manual_y = !auto_y;
+                if ui.checkbox(&mut manual_y, "manual y").changed() {
+                    c.y_bounds = if manual_y { Some([0.0, 1.0]) } else { None };
+                    activity.merge(RowEditActivity::immediate_change());
+                }
+                if let Some(bounds) = &mut c.y_bounds {
+                    activity.merge(immediate_change(
+                        ui.add(egui::DragValue::new(&mut bounds[0])).changed(),
+                    ));
+                    activity.merge(immediate_change(
+                        ui.add(egui::DragValue::new(&mut bounds[1])).changed(),
+                    ));
+                }
+            });
         });
 
-        changed
+        activity
     }
 
     fn render_text_row(
@@ -1124,9 +1224,8 @@ impl WorkbookView {
         row_id: &str,
         c: &mut TextRowContent,
         highlighter: &mut egui_demo_lib::easy_mark::MemoizedEasymarkHighlighter,
-    ) -> bool {
-        let mut changed = false;
-        c.render_mode = TextRenderMode::EasyMark;
+    ) -> RowEditActivity {
+        let mut activity = RowEditActivity::default();
 
         let editor_id = egui::Id::new(("workbook_text_editor", row_id));
         ui.horizontal_wrapped(|ui| {
@@ -1145,7 +1244,7 @@ impl WorkbookView {
                 if ui.small_button(label).clicked()
                     && apply_text_command(ui.ctx(), editor_id, &mut c.content, command)
                 {
-                    changed = true;
+                    activity.merge(RowEditActivity::immediate_change());
                 }
             }
         });
@@ -1169,8 +1268,10 @@ impl WorkbookView {
                             .font(egui::TextStyle::Monospace)
                             .layouter(&mut layouter),
                     );
-                    changed |= response.changed();
-                    changed |= apply_text_shortcuts(ui, editor_id, &mut c.content);
+                    activity.merge(text_response_activity(&response, false));
+                    if apply_text_shortcuts(ui, editor_id, &mut c.content) {
+                        activity.merge(RowEditActivity::immediate_change());
+                    }
                 });
             egui::ScrollArea::vertical()
                 .id_salt(("text_rendered", row_id))
@@ -1180,36 +1281,39 @@ impl WorkbookView {
                 });
         });
 
-        changed
+        activity
     }
 
-    fn render_constant_row(ui: &mut egui::Ui, row_id: &str, c: &mut ConstantRowContent) -> bool {
-        let mut changed = false;
+    fn render_constant_row(
+        ui: &mut egui::Ui,
+        row_id: &str,
+        c: &mut ConstantRowContent,
+    ) -> RowEditActivity {
+        let mut activity = RowEditActivity::default();
         ui.label(egui::RichText::new("Value").strong());
         let mut layouter = |ui: &egui::Ui, text: &str, wrap_width: f32| {
             let mut job = constant_layout_job(ui, text);
             job.wrap.max_width = wrap_width;
             ui.fonts(|fonts| fonts.layout_job(job))
         };
-        changed |= ui
-            .add(
-                egui::TextEdit::multiline(&mut c.value)
-                    .id_source(("constant_editor", row_id))
-                    .desired_rows(3)
-                    .desired_width(f32::INFINITY)
-                    .font(egui::TextStyle::Monospace)
-                    .layouter(&mut layouter)
-                    .code_editor(),
-            )
-            .changed();
+        let response = ui.add(
+            egui::TextEdit::multiline(&mut c.value)
+                .id_source(("constant_editor", row_id))
+                .desired_rows(3)
+                .desired_width(f32::INFINITY)
+                .font(egui::TextStyle::Monospace)
+                .layouter(&mut layouter)
+                .code_editor(),
+        );
+        activity.merge(text_response_activity(&response, false));
         ui.small("Number or any-unit string parsed by eng-core.");
         ui.horizontal(|ui| {
             ui.label("Dimension hint");
-            changed |= ui
-                .text_edit_singleline(c.dimension_hint.get_or_insert_with(String::new))
-                .changed();
+            let response =
+                ui.text_edit_singleline(c.dimension_hint.get_or_insert_with(String::new));
+            activity.merge(text_response_activity(&response, true));
         });
-        changed
+        activity
     }
 
     fn render_row_result(
@@ -1253,14 +1357,20 @@ impl WorkbookView {
                         }
                         WorkbookRowResult::Study(result) => {
                             ui.label(format!(
-                                "Study rows: {} ({} ok / {} fail)",
+                                "Sweep: {} samples ({} ok / {} fail)",
                                 result.table.rows.len(),
                                 result.meta.n_ok,
                                 result.meta.n_fail
                             ));
                         }
                         WorkbookRowResult::Plot(result) => {
-                            ui.label(format!("Series: {}", result.series.len()));
+                            render_plot_preview(ui, exec, 240.0);
+                            ui.small(format!(
+                                "{} series | {} vs {}",
+                                result.series.len(),
+                                result.y_label,
+                                result.x_label
+                            ));
                         }
                         WorkbookRowResult::Text { .. } => {}
                     }
@@ -1294,10 +1404,12 @@ impl WorkbookView {
             Ok(run) => {
                 self.run_result = Some(run);
                 self.last_error = None;
+                self.pending_recompute = false;
             }
             Err(e) => {
                 self.run_result = None;
                 self.last_error = Some(e.to_string());
+                self.pending_recompute = false;
             }
         }
     }
@@ -1324,7 +1436,7 @@ impl WorkbookView {
         .default_open(self.show_execution_results)
         .show(ui, |ui| {
             for tab in &run.tabs {
-                ui.collapsing(format!("{} ({})", tab.name, tab.file), |ui| {
+                ui.collapsing(format!("{} ({})", tab.title, tab.file), |ui| {
                     for row in &tab.rows {
                         ui.horizontal(|ui| {
                             let label = row.key.clone().unwrap_or_else(|| "row".to_string());
@@ -1406,7 +1518,7 @@ fn row_kind_options() -> Vec<PickerOption> {
 
 fn row_type_badge(kind: &WorkbookRowKind) -> &'static str {
     match kind {
-        WorkbookRowKind::Text(_) | WorkbookRowKind::Markdown(_) => "text",
+        WorkbookRowKind::Text(_) => "text",
         WorkbookRowKind::Constant(_) => "constant",
         WorkbookRowKind::EquationSolve(_) => "equation",
         WorkbookRowKind::Study(_) => "study",
@@ -1416,7 +1528,7 @@ fn row_type_badge(kind: &WorkbookRowKind) -> &'static str {
 
 fn row_type_badge_label(kind: &WorkbookRowKind) -> &'static str {
     match kind {
-        WorkbookRowKind::Text(_) | WorkbookRowKind::Markdown(_) => "Text",
+        WorkbookRowKind::Text(_) => "Text",
         WorkbookRowKind::Constant(_) => "Constant",
         WorkbookRowKind::EquationSolve(_) => "Equation",
         WorkbookRowKind::Study(_) => "Study",
@@ -1428,10 +1540,6 @@ fn default_row_kind_for_picker(next: &str, targets: &[StudyTargetDescriptor]) ->
     match next {
         "text" => WorkbookRowKind::Text(TextRowContent {
             content: String::new(),
-            render_mode: TextRenderMode::EasyMark,
-            style: Default::default(),
-            legacy_header: false,
-            legacy_mono: false,
         }),
         "constant" => WorkbookRowKind::Constant(ConstantRowContent {
             value: String::new(),
@@ -1462,13 +1570,12 @@ fn default_row_kind_for_picker(next: &str, targets: &[StudyTargetDescriptor]) ->
             title: Some("Plot".to_string()),
             x_label: None,
             y_label: None,
+            x_bounds: None,
+            y_bounds: None,
+            legend: None,
         }),
         _ => WorkbookRowKind::Text(TextRowContent {
             content: String::new(),
-            render_mode: TextRenderMode::EasyMark,
-            style: Default::default(),
-            legacy_header: false,
-            legacy_mono: false,
         }),
     }
 }
@@ -1518,6 +1625,7 @@ fn draw_drag_handle(ui: &mut egui::Ui) {
 
 fn draw_status_circle(ui: &mut egui::Ui, status: &RowVisualStatus) -> egui::Response {
     let color = match status.state {
+        RowVisualState::Editing => egui::Color32::from_rgb(120, 170, 255),
         RowVisualState::Ok => egui::Color32::from_rgb(72, 192, 110),
         RowVisualState::Warning => egui::Color32::from_rgb(230, 191, 76),
         RowVisualState::Error => egui::Color32::from_rgb(220, 92, 92),
@@ -1532,11 +1640,25 @@ fn row_visual_status(
     row: &WorkbookRow,
     exec: Option<&WorkbookRowExecution>,
     duplicate_keys: &BTreeSet<String>,
+    pending_recompute: bool,
+    editing: bool,
 ) -> RowVisualStatus {
     if let Some(message) = key_validation_message(row, duplicate_keys) {
         return RowVisualStatus {
             state: RowVisualState::Error,
             message,
+        };
+    }
+    if editing {
+        return RowVisualStatus {
+            state: RowVisualState::Editing,
+            message: "Editing; commit with Enter or focus loss to recompute.".to_string(),
+        };
+    }
+    if pending_recompute {
+        return RowVisualStatus {
+            state: RowVisualState::Warning,
+            message: "Stale while edits are pending commit.".to_string(),
         };
     }
     if let Some(exec) = exec {
@@ -1654,7 +1776,6 @@ fn row_summary_preview(
             content.x,
             preview_plot_source(&content.source_row)
         ),
-        WorkbookRowKind::Markdown(content) => preview_text_line(&content.markdown),
     }
 }
 
@@ -1669,6 +1790,39 @@ fn output_preview(exec: Option<&WorkbookRowExecution>) -> Option<String> {
         WorkbookRowResult::Study(result) => Some(format!("{} samples", result.table.rows.len())),
         WorkbookRowResult::Plot(result) => Some(format!("{} series", result.series.len())),
         WorkbookRowResult::Text { .. } => None,
+    }
+}
+
+fn render_plot_result(ui: &mut egui::Ui, plot: &tf_workbook::WorkbookPlotResult, height: f32) {
+    let mut widget = Plot::new(("workbook_plot", &plot.source_row_id, &plot.x, &plot.y))
+        .height(height)
+        .allow_scroll(false)
+        .allow_zoom(true)
+        .allow_drag(true);
+    if plot.legend {
+        widget = widget.legend(Legend::default());
+    }
+    widget.show(ui, |plot_ui| {
+        if plot.x_bounds.is_some() || plot.y_bounds.is_some() {
+            let [xmin, xmax] = plot.x_bounds.unwrap_or([f64::NEG_INFINITY, f64::INFINITY]);
+            let [ymin, ymax] = plot.y_bounds.unwrap_or([f64::NEG_INFINITY, f64::INFINITY]);
+            plot_ui.set_plot_bounds(PlotBounds::from_min_max([xmin, ymin], [xmax, ymax]));
+        }
+        for series in &plot.series {
+            let points = series
+                .x
+                .iter()
+                .zip(&series.y)
+                .map(|(x, y)| [*x, *y])
+                .collect::<Vec<_>>();
+            plot_ui.line(Line::new(PlotPoints::from(points)).name(series.name.clone()));
+        }
+    });
+}
+
+fn render_plot_preview(ui: &mut egui::Ui, exec: &WorkbookRowExecution, height: f32) {
+    if let Some(WorkbookRowResult::Plot(plot)) = &exec.result {
+        render_plot_result(ui, plot, height);
     }
 }
 
@@ -1766,6 +1920,41 @@ fn constant_layout_job(ui: &egui::Ui, text: &str) -> egui::text::LayoutJob {
         job.append("\n", 0.0, monospace.clone());
     }
     job
+}
+
+fn immediate_change(changed: bool) -> RowEditActivity {
+    if changed {
+        RowEditActivity::immediate_change()
+    } else {
+        RowEditActivity::default()
+    }
+}
+
+fn compute_edit_activity(
+    changed: bool,
+    lost_focus: bool,
+    has_focus: bool,
+    enter_pressed: bool,
+    commit_on_enter: bool,
+) -> RowEditActivity {
+    let committed = changed && (lost_focus || (commit_on_enter && has_focus && enter_pressed));
+    RowEditActivity {
+        changed,
+        committed,
+        editing: has_focus,
+    }
+}
+
+fn text_response_activity(response: &egui::Response, commit_on_enter: bool) -> RowEditActivity {
+    compute_edit_activity(
+        response.changed(),
+        response.lost_focus(),
+        response.has_focus(),
+        response
+            .ctx
+            .input(|input| input.key_pressed(egui::Key::Enter)),
+        commit_on_enter,
+    )
 }
 
 fn apply_text_shortcuts(ui: &egui::Ui, editor_id: egui::Id, content: &mut String) -> bool {
@@ -1939,12 +2128,6 @@ fn toggle_surrounding(
 
 fn parse_ref_key(expr: &str) -> Option<&str> {
     let trimmed = expr.trim();
-    if let Some(key) = trimmed.strip_prefix("ref:") {
-        let key = key.trim();
-        if !key.is_empty() {
-            return Some(key);
-        }
-    }
     if let Some(key) = trimmed.strip_prefix('@') {
         let key = key.trim();
         if !key.is_empty() {
@@ -1997,10 +2180,6 @@ mod tests {
         let row_a = new_row(
             WorkbookRowKind::Text(TextRowContent {
                 content: "a".to_string(),
-                render_mode: TextRenderMode::EasyMark,
-                style: Default::default(),
-                legacy_header: false,
-                legacy_mono: false,
             }),
             false,
         );
@@ -2020,10 +2199,6 @@ mod tests {
                 freeze: false,
                 kind: WorkbookRowKind::Text(TextRowContent {
                     content: String::new(),
-                    render_mode: TextRenderMode::EasyMark,
-                    style: Default::default(),
-                    legacy_header: false,
-                    legacy_mono: false,
                 }),
             },
             WorkbookRow {
@@ -2059,10 +2234,6 @@ mod tests {
         let text_row = new_row(
             WorkbookRowKind::Text(TextRowContent {
                 content: "notes".to_string(),
-                render_mode: TextRenderMode::EasyMark,
-                style: Default::default(),
-                legacy_header: false,
-                legacy_mono: false,
             }),
             false,
         );
@@ -2086,5 +2257,17 @@ mod tests {
         );
         toggle_surrounding(&mut content, &mut range, "*");
         assert_eq!(content, "h*ell*o");
+    }
+
+    #[test]
+    fn compute_edit_activity_waits_for_commit() {
+        let typing = compute_edit_activity(true, false, true, false, true);
+        assert!(typing.changed);
+        assert!(typing.editing);
+        assert!(!typing.committed);
+
+        let committed = compute_edit_activity(true, true, false, false, true);
+        assert!(committed.committed);
+        assert!(!committed.editing);
     }
 }

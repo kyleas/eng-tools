@@ -13,11 +13,11 @@
         "branch": null,
         "inputs": {
           "delta_p": "",
-          "f": "ref:f_fixed",
-          "L": "ref:l_line",
-          "D": "ref:d_pipe",
-          "rho": "ref:rho_liq",
-          "V": "ref:v_line"
+          "f": "@f_fixed",
+          "L": "@l_line",
+          "D": "@d_pipe",
+          "rho": "@rho_liq",
+          "V": "@v_line"
         }
       }
     }

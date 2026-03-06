@@ -84,7 +84,7 @@
         "target": null,
         "branch": "supersonic",
         "inputs": {
-          "area_ratio": "ref:ae_at",
+          "area_ratio": "@ae_at",
           "M": "",
           "gamma": "@gamma"
         }
@@ -103,8 +103,8 @@
         "branch": null,
         "inputs": {
           "p_p0": "",
-          "M": "ref:m_exit_isen",
-          "gamma": "ref:gamma"
+          "M": "@m_exit_isen",
+          "gamma": "@gamma"
         }
       }
     },
@@ -122,7 +122,7 @@
         "inputs": {
           "p2_p1": "",
           "M1": "0.7",
-          "gamma": "ref:gamma"
+          "gamma": "@gamma"
         }
       }
     }

@@ -12,11 +12,11 @@
         "target": null,
         "branch": null,
         "inputs": {
-          "m_dot": "ref:mdot_per_orifice",
+          "m_dot": "@mdot_per_orifice",
           "C_d": "@cd_orifice",
           "A": "",
-          "rho": "ref:rho_propellant",
-          "delta_p": "ref:dp_orifice"
+          "rho": "@rho_propellant",
+          "delta_p": "@dp_orifice"
         }
       }
     },
@@ -49,10 +49,10 @@
         "target": null,
         "branch": null,
         "inputs": {
-          "m_dot": "ref:mdot_per_orifice",
-          "C_d": "ref:cd_orifice",
+          "m_dot": "@mdot_per_orifice",
+          "C_d": "@cd_orifice",
           "A": "",
-          "rho": "ref:rho_propellant",
+          "rho": "@rho_propellant",
           "delta_p": "-50 psi"
         }
       }

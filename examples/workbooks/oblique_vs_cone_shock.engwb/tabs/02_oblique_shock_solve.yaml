@@ -85,7 +85,7 @@
         "branch": "weak",
         "inputs": {
           "theta": "",
-          "beta": "ref:beta_guess_deg",
+          "beta": "@beta_guess_deg",
           "m1": "2.6",
           "gamma": "@gamma"
         }
@@ -123,7 +123,7 @@
           "theta": "",
           "beta": "92 deg",
           "m1": "0.8",
-          "gamma": "ref:gamma"
+          "gamma": "@gamma"
         }
       }
     }

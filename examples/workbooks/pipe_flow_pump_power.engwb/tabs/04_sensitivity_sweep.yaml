@@ -34,7 +34,7 @@
       "freeze": false,
       "type": "plot",
       "content": {
-        "source_row": "ref:diameter_sensitivity_sweep",
+        "source_row": "@diameter_sensitivity_sweep",
         "x": "input_value",
         "y": "value",
         "title": "Sensitivity curve",

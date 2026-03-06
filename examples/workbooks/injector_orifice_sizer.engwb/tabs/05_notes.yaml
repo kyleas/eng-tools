@@ -8,7 +8,7 @@
       "freeze": false,
       "type": "text",
       "content": {
-        "content": "Use `ref:orifice_area` and `@cd_orifice` patterns as templates for new rows.",
+        "content": "Use `@orifice_area` and `@cd_orifice` patterns as templates for new rows.",
         "render_mode": "easy_mark",
         "style": {
           "header": false,

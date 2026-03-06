@@ -38,9 +38,9 @@ fn default_auto_run() -> bool {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WorkbookTabEntry {
-    pub name: String,
+    pub id: String,
+    pub title: String,
     pub file: String,
-    pub title: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -57,31 +57,10 @@ pub struct WorkbookDocument {
 
 #[derive(Debug, Clone)]
 pub struct WorkbookTab {
-    pub name: String,
+    pub id: String,
+    pub title: String,
     pub file: String,
-    pub title: Option<String>,
     pub rows: Vec<WorkbookRow>,
-}
-
-fn normalize_row_kind(kind: WorkbookRowKind) -> WorkbookRowKind {
-    match kind {
-        WorkbookRowKind::Text(mut c) => {
-            c.render_mode = TextRenderMode::EasyMark;
-            if !c.style.header && !c.style.mono && !c.style.muted {
-                c.style.header = c.legacy_header;
-                c.style.mono = c.legacy_mono;
-            }
-            WorkbookRowKind::Text(c)
-        }
-        WorkbookRowKind::Markdown(c) => WorkbookRowKind::Text(TextRowContent {
-            content: c.markdown,
-            render_mode: TextRenderMode::EasyMark,
-            style: TextStyle::default(),
-            legacy_header: false,
-            legacy_mono: false,
-        }),
-        other => other,
-    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -100,64 +79,18 @@ pub struct WorkbookRow {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", content = "content", rename_all = "snake_case")]
 pub enum WorkbookRowKind {
-    #[serde(alias = "narrative")]
+    #[serde(alias = "narrative", alias = "markdown")]
     Text(TextRowContent),
-    Markdown(LegacyMarkdownRowContent),
     Constant(ConstantRowContent),
     EquationSolve(EquationSolveRowContent),
     Study(StudyRowContent),
     Plot(PlotRowContent),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-#[serde(rename_all = "snake_case")]
-pub enum TextRenderMode {
-    #[default]
-    Plain,
-    EasyMark,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct TextStyle {
-    #[serde(default)]
-    pub header: bool,
-    #[serde(default)]
-    pub mono: bool,
-    #[serde(default)]
-    pub muted: bool,
-}
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TextRowContent {
     #[serde(default, alias = "text")]
     pub content: String,
-    #[serde(default)]
-    pub render_mode: TextRenderMode,
-    #[serde(default)]
-    pub style: TextStyle,
-    #[serde(default, alias = "header", skip_serializing)]
-    pub legacy_header: bool,
-    #[serde(default, alias = "mono", skip_serializing)]
-    pub legacy_mono: bool,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct LegacyMarkdownRowContent {
-    pub markdown: String,
-    #[serde(default)]
-    pub preview: bool,
-}
-
-impl TextRowContent {
-    pub fn from_markdown(markdown: String) -> Self {
-        Self {
-            content: markdown,
-            render_mode: TextRenderMode::EasyMark,
-            style: TextStyle::default(),
-            legacy_header: false,
-            legacy_mono: false,
-        }
-    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -217,6 +150,12 @@ pub struct PlotRowContent {
     pub title: Option<String>,
     pub x_label: Option<String>,
     pub y_label: Option<String>,
+    #[serde(default)]
+    pub x_bounds: Option<[f64; 2]>,
+    #[serde(default)]
+    pub y_bounds: Option<[f64; 2]>,
+    #[serde(default)]
+    pub legend: Option<bool>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -243,11 +182,7 @@ pub struct WorkbookRowExecution {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "kind", content = "data", rename_all = "snake_case")]
 pub enum WorkbookRowResult {
-    Text {
-        content: String,
-        render_mode: TextRenderMode,
-        style: TextStyle,
-    },
+    Text { content: String },
     Constant(ConstantRowResult),
     Equation(EquationRowResult),
     Study(StudyResult),
@@ -281,12 +216,18 @@ pub struct WorkbookPlotResult {
     pub x: String,
     pub y: String,
     pub title: Option<String>,
+    pub x_label: String,
+    pub y_label: String,
+    pub x_bounds: Option<[f64; 2]>,
+    pub y_bounds: Option<[f64; 2]>,
+    pub legend: bool,
     pub series: Vec<WorkbookPlotSeries>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WorkbookTabExecution {
-    pub name: String,
+    pub id: String,
+    pub title: String,
     pub file: String,
     pub rows: Vec<WorkbookRowExecution>,
 }
@@ -325,17 +266,17 @@ pub fn create_workbook_skeleton(
         schema_version: WORKBOOK_SCHEMA_VERSION,
         title: title.to_string(),
         tabs: vec![WorkbookTabEntry {
-            name: "inputs".to_string(),
+            id: "inputs".to_string(),
+            title: "Inputs".to_string(),
             file: "01_inputs.yaml".to_string(),
-            title: Some("Inputs".to_string()),
         }],
         preferred_display_units: BTreeMap::new(),
         execution: WorkbookExecutionDefaults::default(),
     };
     let tabs = vec![WorkbookTab {
-        name: "inputs".to_string(),
+        id: "inputs".to_string(),
+        title: "Inputs".to_string(),
         file: "01_inputs.yaml".to_string(),
-        title: Some("Inputs".to_string()),
         rows: Vec::new(),
     }];
     let doc = WorkbookDocument {
@@ -360,14 +301,11 @@ pub fn load_workbook_dir(dir: &Path) -> Result<WorkbookDocument, WorkbookError> 
     let mut tabs = Vec::new();
     for entry in &manifest.tabs {
         let tab_path = dir.join("tabs").join(&entry.file);
-        let mut tab_file: WorkbookTabFile = serde_yaml::from_str(&fs::read_to_string(tab_path)?)?;
-        for row in &mut tab_file.rows {
-            row.kind = normalize_row_kind(row.kind.clone());
-        }
+        let tab_file: WorkbookTabFile = serde_yaml::from_str(&fs::read_to_string(tab_path)?)?;
         tabs.push(WorkbookTab {
-            name: entry.name.clone(),
-            file: entry.file.clone(),
+            id: entry.id.clone(),
             title: entry.title.clone(),
+            file: entry.file.clone(),
             rows: tab_file.rows,
         });
     }
@@ -383,22 +321,26 @@ pub fn save_workbook_dir(doc: &WorkbookDocument) -> Result<(), WorkbookError> {
     fs::create_dir_all(doc.root_dir.join("tabs"))?;
     fs::create_dir_all(doc.root_dir.join("assets"))?;
 
+    let mut manifest = doc.manifest.clone();
+    manifest.tabs = doc
+        .tabs
+        .iter()
+        .map(|tab| WorkbookTabEntry {
+            id: tab.id.clone(),
+            title: tab.title.clone(),
+            file: tab.file.clone(),
+        })
+        .collect();
+
     fs::write(
         doc.root_dir.join("workbook.yaml"),
-        serde_yaml::to_string(&doc.manifest)?,
+        serde_yaml::to_string(&manifest)?,
     )?;
 
     for tab in &doc.tabs {
-        let rows = tab
-            .rows
-            .iter()
-            .cloned()
-            .map(|mut r| {
-                r.kind = normalize_row_kind(r.kind);
-                r
-            })
-            .collect::<Vec<_>>();
-        let f = WorkbookTabFile { rows };
+        let f = WorkbookTabFile {
+            rows: tab.rows.clone(),
+        };
         fs::write(
             doc.root_dir.join("tabs").join(&tab.file),
             serde_yaml::to_string(&f)?,
@@ -524,14 +466,27 @@ pub fn execute_workbook(
         let row = rows_by_id
             .get(&row_id)
             .ok_or_else(|| WorkbookError::Execution(format!("missing row '{}'", row_id)))?;
-        let exec = execute_row(row, &executed, &key_to_id)?;
+        let exec = match execute_row(row, &executed, &key_to_id) {
+            Ok(exec) => exec,
+            Err(error) => WorkbookRowExecution {
+                id: row.id.clone(),
+                key: row.key.clone(),
+                state: match error {
+                    WorkbookError::Invalid(_) => WorkbookRowState::Invalid,
+                    WorkbookError::Execution(_) => WorkbookRowState::Error,
+                    WorkbookError::Io(_) | WorkbookError::Yaml(_) => WorkbookRowState::Error,
+                },
+                messages: vec![error.to_string()],
+                result: None,
+            },
+        };
         executed.insert(row_id, exec);
     }
 
     let mut tabs = Vec::new();
     for tab in &doc.tabs {
         if let Some(sel) = selected_tab {
-            if sel != tab.name && sel != tab.file {
+            if sel != tab.id && sel != tab.title && sel != tab.file {
                 continue;
             }
         }
@@ -542,7 +497,8 @@ pub fn execute_workbook(
             }
         }
         tabs.push(WorkbookTabExecution {
-            name: tab.name.clone(),
+            id: tab.id.clone(),
+            title: tab.title.clone(),
             file: tab.file.clone(),
             rows,
         });
@@ -620,16 +576,6 @@ fn execute_row(
             out.state = WorkbookRowState::Ok;
             out.result = Some(WorkbookRowResult::Text {
                 content: c.content.clone(),
-                render_mode: c.render_mode.clone(),
-                style: c.style.clone(),
-            });
-        }
-        WorkbookRowKind::Markdown(c) => {
-            out.state = WorkbookRowState::Ok;
-            out.result = Some(WorkbookRowResult::Text {
-                content: c.markdown.clone(),
-                render_mode: TextRenderMode::EasyMark,
-                style: TextStyle::default(),
             });
         }
         WorkbookRowKind::Constant(c) => match parse_constant(&c.value) {
@@ -754,6 +700,11 @@ fn build_plot_from_source(
         x: content.x.clone(),
         y: content.y.clone(),
         title: content.title.clone(),
+        x_label: content.x_label.clone().unwrap_or_else(|| content.x.clone()),
+        y_label: content.y_label.clone().unwrap_or_else(|| content.y.clone()),
+        x_bounds: content.x_bounds,
+        y_bounds: content.y_bounds,
+        legend: content.legend.unwrap_or(true),
         series: vec![WorkbookPlotSeries {
             name: content
                 .title
@@ -860,8 +811,6 @@ fn row_dependencies(row: &WorkbookRow) -> Vec<String> {
         WorkbookRowKind::Plot(c) => {
             if let Some(k) = parse_ref_key(&c.source_row) {
                 deps.push(k.to_string());
-            } else {
-                deps.push(c.source_row.clone());
             }
         }
         _ => {}
@@ -871,7 +820,7 @@ fn row_dependencies(row: &WorkbookRow) -> Vec<String> {
 
 pub fn row_requires_key(row: &WorkbookRow) -> bool {
     match row.kind {
-        WorkbookRowKind::Text(_) | WorkbookRowKind::Markdown(_) => false,
+        WorkbookRowKind::Text(_) => false,
         WorkbookRowKind::Constant(_)
         | WorkbookRowKind::EquationSolve(_)
         | WorkbookRowKind::Study(_)
@@ -881,12 +830,6 @@ pub fn row_requires_key(row: &WorkbookRow) -> bool {
 
 fn parse_ref_key(expr: &str) -> Option<&str> {
     let t = expr.trim();
-    if let Some(k) = t.strip_prefix("ref:") {
-        let k = k.trim();
-        if !k.is_empty() {
-            return Some(k);
-        }
-    }
     if let Some(k) = t.strip_prefix('@') {
         let k = k.trim();
         if !k.is_empty() {
@@ -897,18 +840,15 @@ fn parse_ref_key(expr: &str) -> Option<&str> {
 }
 
 fn resolve_ref_to_id(expr: &str, key_to_id: &HashMap<String, String>) -> Option<String> {
-    if let Some(k) = parse_ref_key(expr) {
-        return key_to_id.get(k).cloned();
-    }
-    key_to_id.get(expr.trim()).cloned()
+    parse_ref_key(expr).and_then(|k| key_to_id.get(k).cloned())
 }
 
 fn rewrite_refs_in_row(row: &mut WorkbookRow, old: &str, new: &str) -> usize {
     let mut count = 0usize;
     let rewrite = |expr: &mut String, count: &mut usize| {
         let t = expr.trim();
-        if t == format!("ref:{old}") || t == format!("@{old}") {
-            *expr = format!("ref:{new}");
+        if t == format!("@{old}") {
+            *expr = format!("@{new}");
             *count += 1;
         }
     };
@@ -937,7 +877,7 @@ pub fn run_result_to_csv_map(run: &WorkbookRunResult) -> BTreeMap<String, String
             let msg = row.messages.join(" | ").replace(',', " ");
             summary.push_str(&format!(
                 "{},{},{},{:?},{}\n",
-                tab.name,
+                tab.title,
                 row.id,
                 row.key.clone().unwrap_or_default(),
                 row.state,
@@ -954,7 +894,7 @@ pub fn run_result_to_csv_map(run: &WorkbookRunResult) -> BTreeMap<String, String
                 out.insert(
                     format!(
                         "{}__{}.csv",
-                        sanitize_name(&tab.name),
+                        sanitize_name(&tab.title),
                         sanitize_name(row.key.as_deref().unwrap_or(&row.id))
                     ),
                     csv,
@@ -984,17 +924,17 @@ mod tests {
                 schema_version: 1,
                 title: "Sample".to_string(),
                 tabs: vec![WorkbookTabEntry {
-                    name: "analysis".to_string(),
+                    id: "analysis".to_string(),
+                    title: "Analysis".to_string(),
                     file: "01_analysis.yaml".to_string(),
-                    title: Some("Analysis".to_string()),
                 }],
                 preferred_display_units: BTreeMap::new(),
                 execution: WorkbookExecutionDefaults::default(),
             },
             tabs: vec![WorkbookTab {
-                name: "analysis".to_string(),
+                id: "analysis".to_string(),
+                title: "Analysis".to_string(),
                 file: "01_analysis.yaml".to_string(),
-                title: Some("Analysis".to_string()),
                 rows: Vec::new(),
             }],
         }
@@ -1012,10 +952,6 @@ mod tests {
             freeze: false,
             kind: WorkbookRowKind::Text(TextRowContent {
                 content: "hello".to_string(),
-                render_mode: TextRenderMode::Plain,
-                style: TextStyle::default(),
-                legacy_header: false,
-                legacy_mono: false,
             }),
         });
         save_workbook_dir(&doc).expect("save");
@@ -1042,7 +978,7 @@ mod tests {
                 target: None,
                 branch: None,
                 inputs: BTreeMap::from([
-                    ("P".to_string(), "ref:p".to_string()),
+                    ("P".to_string(), "@p".to_string()),
                     ("r".to_string(), "1.2 in".to_string()),
                     ("t".to_string(), "0.12 in".to_string()),
                 ]),
@@ -1079,7 +1015,7 @@ mod tests {
                     target: None,
                     branch: None,
                     inputs: BTreeMap::from([
-                        ("P".to_string(), "ref:p".to_string()),
+                        ("P".to_string(), "@p".to_string()),
                         ("r".to_string(), "1.2 in".to_string()),
                         ("t".to_string(), "0.12 in".to_string()),
                     ]),
@@ -1108,7 +1044,7 @@ mod tests {
                     target: Some("sigma_h".to_string()),
                     branch: None,
                     inputs: BTreeMap::from([
-                        ("P".to_string(), "ref:b".to_string()),
+                        ("P".to_string(), "@b".to_string()),
                         ("r".to_string(), "1.0 in".to_string()),
                         ("t".to_string(), "0.1 in".to_string()),
                     ]),
@@ -1125,7 +1061,7 @@ mod tests {
                     target: Some("sigma_h".to_string()),
                     branch: None,
                     inputs: BTreeMap::from([
-                        ("P".to_string(), "ref:a".to_string()),
+                        ("P".to_string(), "@a".to_string()),
                         ("r".to_string(), "1.0 in".to_string()),
                         ("t".to_string(), "0.1 in".to_string()),
                     ]),
@@ -1164,7 +1100,7 @@ mod tests {
                     target: None,
                     branch: None,
                     inputs: BTreeMap::from([
-                        ("P".to_string(), "ref:p".to_string()),
+                        ("P".to_string(), "@p".to_string()),
                         ("r".to_string(), "1.2 in".to_string()),
                         ("t".to_string(), "0.12 in".to_string()),
                     ]),
@@ -1200,12 +1136,15 @@ mod tests {
                 collapsed: false,
                 freeze: false,
                 kind: WorkbookRowKind::Plot(PlotRowContent {
-                    source_row: "ref:study".to_string(),
+                    source_row: "@study".to_string(),
                     x: "input_value".to_string(),
                     y: "value".to_string(),
                     title: Some("Isentropic".to_string()),
                     x_label: None,
                     y_label: None,
+                    x_bounds: None,
+                    y_bounds: None,
+                    legend: None,
                 }),
             },
         ];
@@ -1228,12 +1167,15 @@ mod tests {
             collapsed: false,
             freeze: false,
             kind: WorkbookRowKind::Plot(PlotRowContent {
-                source_row: "ref:missing".to_string(),
+                source_row: "@missing".to_string(),
                 x: "x".to_string(),
                 y: "y".to_string(),
                 title: None,
                 x_label: None,
                 y_label: None,
+                x_bounds: None,
+                y_bounds: None,
+                legend: None,
             }),
         });
         let v = validate_workbook(&doc);
@@ -1257,10 +1199,6 @@ mod tests {
             freeze: true,
             kind: WorkbookRowKind::Text(TextRowContent {
                 content: "hello".to_string(),
-                render_mode: TextRenderMode::Plain,
-                style: TextStyle::default(),
-                legacy_header: false,
-                legacy_mono: false,
             }),
         });
         save_workbook_dir(&doc).expect("save");
@@ -1281,10 +1219,6 @@ mod tests {
             freeze: false,
             kind: WorkbookRowKind::Text(TextRowContent {
                 content: "notes".to_string(),
-                render_mode: TextRenderMode::Plain,
-                style: TextStyle::default(),
-                legacy_header: false,
-                legacy_mono: false,
             }),
         });
         let validation = validate_workbook(&doc);
@@ -1356,10 +1290,6 @@ mod tests {
                 freeze: false,
                 kind: WorkbookRowKind::Text(TextRowContent {
                     content: "b".to_string(),
-                    render_mode: TextRenderMode::Plain,
-                    style: TextStyle::default(),
-                    legacy_header: false,
-                    legacy_mono: false,
                 }),
             },
             WorkbookRow {
@@ -1370,10 +1300,6 @@ mod tests {
                 freeze: false,
                 kind: WorkbookRowKind::Text(TextRowContent {
                     content: "a".to_string(),
-                    render_mode: TextRenderMode::Plain,
-                    style: TextStyle::default(),
-                    legacy_header: false,
-                    legacy_mono: false,
                 }),
             },
         ];
@@ -1388,32 +1314,29 @@ mod tests {
     }
 
     #[test]
-    fn markdown_legacy_rows_normalize_to_text() {
+    fn text_rows_roundtrip_without_legacy_render_flags() {
         let dir = tempdir().expect("temp");
         let mut doc = sample_doc(dir.path());
         doc.tabs[0].rows.push(WorkbookRow {
-            id: "m1".to_string(),
+            id: "t1".to_string(),
             key: None,
             title: None,
             collapsed: false,
             freeze: false,
-            kind: WorkbookRowKind::Markdown(LegacyMarkdownRowContent {
-                markdown: "# heading".to_string(),
-                preview: true,
+            kind: WorkbookRowKind::Text(TextRowContent {
+                content: "# heading".to_string(),
             }),
         });
         save_workbook_dir(&doc).expect("save");
         let loaded = load_workbook_dir(dir.path()).expect("load");
         match &loaded.tabs[0].rows[0].kind {
-            WorkbookRowKind::Text(n) => {
-                assert_eq!(n.render_mode, TextRenderMode::EasyMark);
-            }
+            WorkbookRowKind::Text(n) => assert_eq!(n.content, "# heading"),
             other => panic!("expected text, got {other:?}"),
         }
     }
 
     #[test]
-    fn text_rows_normalize_to_easymark_on_load() {
+    fn text_rows_allow_title_without_affecting_content_roundtrip() {
         let dir = tempdir().expect("temp");
         let mut doc = sample_doc(dir.path());
         doc.tabs[0].rows.push(WorkbookRow {
@@ -1424,17 +1347,87 @@ mod tests {
             freeze: false,
             kind: WorkbookRowKind::Text(TextRowContent {
                 content: "plain text".to_string(),
-                render_mode: TextRenderMode::Plain,
-                style: TextStyle::default(),
-                legacy_header: false,
-                legacy_mono: false,
             }),
         });
         save_workbook_dir(&doc).expect("save");
         let loaded = load_workbook_dir(dir.path()).expect("load");
         match &loaded.tabs[0].rows[0].kind {
-            WorkbookRowKind::Text(n) => assert_eq!(n.render_mode, TextRenderMode::EasyMark),
+            WorkbookRowKind::Text(n) => assert_eq!(n.content, "plain text"),
             other => panic!("expected text, got {other:?}"),
         }
+    }
+
+    #[test]
+    fn workbook_tabs_roundtrip_with_id_title_and_file() {
+        let dir = tempdir().expect("temp");
+        let doc = sample_doc(dir.path());
+        save_workbook_dir(&doc).expect("save");
+        let loaded = load_workbook_dir(dir.path()).expect("load");
+        assert_eq!(loaded.tabs[0].id, "analysis");
+        assert_eq!(loaded.tabs[0].title, "Analysis");
+        assert_eq!(loaded.tabs[0].file, "01_analysis.yaml");
+    }
+
+    #[test]
+    fn only_at_key_reference_syntax_is_accepted() {
+        assert_eq!(parse_ref_key("@gamma"), Some("gamma"));
+        assert_eq!(parse_ref_key("ref:gamma"), None);
+    }
+
+    #[test]
+    fn plot_rows_derive_default_labels_and_legend() {
+        let dir = tempdir().expect("temp");
+        let mut doc = sample_doc(dir.path());
+        doc.tabs[0].rows = vec![
+            WorkbookRow {
+                id: "study".to_string(),
+                key: Some("study".to_string()),
+                title: None,
+                collapsed: false,
+                freeze: false,
+                kind: WorkbookRowKind::Study(StudyRowContent {
+                    kind: StudyTargetKind::Device,
+                    target_id: "normal_shock_calc".to_string(),
+                    sweep_field: "input_value".to_string(),
+                    sweep: WorkbookSweepAxis::Linspace {
+                        start: 1.2,
+                        end: 2.0,
+                        count: 6,
+                    },
+                    fixed_inputs: BTreeMap::from([
+                        ("input_kind".to_string(), "m1".to_string()),
+                        ("target_kind".to_string(), "p2_p1".to_string()),
+                        ("gamma".to_string(), "1.4".to_string()),
+                    ]),
+                    output_key: "value".to_string(),
+                }),
+            },
+            WorkbookRow {
+                id: "plot".to_string(),
+                key: Some("plot".to_string()),
+                title: None,
+                collapsed: false,
+                freeze: false,
+                kind: WorkbookRowKind::Plot(PlotRowContent {
+                    source_row: "@study".to_string(),
+                    x: "input_value".to_string(),
+                    y: "value".to_string(),
+                    title: None,
+                    x_label: None,
+                    y_label: None,
+                    x_bounds: None,
+                    y_bounds: None,
+                    legend: None,
+                }),
+            },
+        ];
+        let run = execute_workbook(&doc, None).expect("run");
+        let plot = match &run.tabs[0].rows[1].result {
+            Some(WorkbookRowResult::Plot(plot)) => plot,
+            other => panic!("expected plot result, got {other:?}"),
+        };
+        assert_eq!(plot.x_label, "input_value");
+        assert_eq!(plot.y_label, "value");
+        assert!(plot.legend);
     }
 }
