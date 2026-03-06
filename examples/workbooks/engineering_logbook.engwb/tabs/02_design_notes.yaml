@@ -4,7 +4,7 @@
       "id": "log_eq_01",
       "key": "sigma_hoop",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "equation_solve",
       "content": {
@@ -23,7 +23,7 @@
       "id": "log_eq_02",
       "key": "mach_wave_angle",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "equation_solve",
       "content": {
@@ -40,7 +40,7 @@
       "id": "log_eq_bad",
       "key": "invalid_parse_case",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "equation_solve",
       "content": {

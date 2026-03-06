@@ -4,7 +4,7 @@
       "id": "inj_eq_01",
       "key": "orifice_area",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "equation_solve",
       "content": {
@@ -24,7 +24,7 @@
       "id": "inj_eq_02",
       "key": "orifice_diameter",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "equation_solve",
       "content": {
@@ -32,7 +32,7 @@
         "target": null,
         "branch": null,
         "inputs": {
-          "A": "20 mm^2",
+          "A": "2 * @orifice_area / 2",
           "D": ""
         }
       }
@@ -41,7 +41,7 @@
       "id": "inj_eq_bad",
       "key": "invalid_negative_dp",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "equation_solve",
       "content": {
@@ -53,7 +53,7 @@
           "C_d": "@cd_orifice",
           "A": "",
           "rho": "@rho_propellant",
-          "delta_p": "-50 psi"
+          "delta_p": "@p_downstream - @p_upstream"
         }
       }
     }

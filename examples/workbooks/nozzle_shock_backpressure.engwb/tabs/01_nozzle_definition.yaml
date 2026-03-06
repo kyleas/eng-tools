@@ -4,51 +4,33 @@
       "id": "nz_txt_01",
       "key": null,
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "text",
       "content": {
-        "content": "# Nozzle + Normal Shock Backpressure Sweep\n\nUses workflow studies to map shock-sensitive behavior.",
-        "render_mode": "easy_mark",
-        "style": {
-          "header": false,
-          "mono": false,
-          "muted": false
-        }
+        "content": "# Nozzle + Normal Shock Backpressure Sweep\n\nUses workflow studies to map shock-sensitive behavior."
       }
     },
     {
       "id": "nz_txt_02",
       "key": null,
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "text",
       "content": {
-        "content": "## Rename demo\n\nRename `ae_at` and re-run to verify reference rewriting and stable row ids.",
-        "render_mode": "easy_mark",
-        "style": {
-          "header": false,
-          "mono": false,
-          "muted": true
-        }
+        "content": "## Rename demo\n\nRename `ae_at` and re-run to verify reference rewriting and stable row ids."
       }
     },
     {
       "id": "nz_txt_03",
       "key": null,
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "text",
       "content": {
-        "content": "## Branch note\n\n`nozzle_normal_shock_chain` supports `subsonic` and `supersonic` branch choices.",
-        "render_mode": "easy_mark",
-        "style": {
-          "header": false,
-          "mono": false,
-          "muted": false
-        }
+        "content": "## Branch note\n\n`nozzle_normal_shock_chain` supports `subsonic` and `supersonic` branch choices."
       }
     }
   ]

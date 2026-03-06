@@ -4,7 +4,7 @@
       "id": "nz_st_02",
       "key": "nozzle_device_sweep",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "study",
       "content": {

@@ -4,51 +4,33 @@
       "id": "sh_txt_01",
       "key": null,
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "text",
       "content": {
-        "content": "# Oblique vs Conical Shock\n\nCompare branch-sensitive oblique and conical shock behavior.",
-        "render_mode": "easy_mark",
-        "style": {
-          "header": false,
-          "mono": false,
-          "muted": false
-        }
+        "content": "# Oblique vs Conical Shock\n\nCompare branch-sensitive oblique and conical shock behavior."
       }
     },
     {
       "id": "sh_txt_02",
       "key": null,
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "text",
       "content": {
-        "content": "## Rename demo\n\nRename `theta_input_deg` and confirm references in study rows update automatically.",
-        "render_mode": "easy_mark",
-        "style": {
-          "header": false,
-          "mono": false,
-          "muted": true
-        }
+        "content": "## Rename demo\n\nRename `theta_input_deg` and confirm references in study rows update automatically."
       }
     },
     {
       "id": "sh_txt_03",
       "key": null,
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "text",
       "content": {
-        "content": "## Inputs\n\nAngles are entered as degree-bearing constants for unit parsing checks.",
-        "render_mode": "easy_mark",
-        "style": {
-          "header": false,
-          "mono": false,
-          "muted": false
-        }
+        "content": "## Inputs\n\nAngles are entered as degree-bearing constants for unit parsing checks."
       }
     }
   ]

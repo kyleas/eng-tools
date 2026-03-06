@@ -4,72 +4,108 @@
       "id": "inj_c_01",
       "key": "rho_propellant",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "constant",
       "content": {
         "value": "890 kg/m^3",
-        "dimension_hint": "density"
+        "dimension": "density"
       }
     },
     {
       "id": "inj_c_02",
       "key": "cd_orifice",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "constant",
       "content": {
         "value": "0.82",
-        "dimension_hint": "dimensionless"
+        "dimension": "dimensionless"
       }
     },
     {
       "id": "inj_c_03",
-      "key": "dp_orifice",
+      "key": "p_upstream",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "constant",
       "content": {
-        "value": "220 psia",
-        "dimension_hint": "pressure"
+        "value": "260 psia",
+        "dimension": "pressure"
       }
     },
     {
       "id": "inj_c_04",
-      "key": "mdot_per_orifice",
+      "key": "p_downstream",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "constant",
       "content": {
-        "value": "0.08 kg/s",
-        "dimension_hint": "mass_flow"
+        "value": "40 psia",
+        "dimension": "pressure"
       }
     },
     {
       "id": "inj_c_05",
-      "key": "n_orifices",
+      "key": "dp_orifice",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "constant",
       "content": {
-        "value": "12",
-        "dimension_hint": "count"
+        "value": "abs(@p_upstream - @p_downstream)",
+        "dimension": "pressure"
       }
     },
     {
       "id": "inj_c_06",
+      "key": "mdot_total",
+      "title": null,
+      "collapsed": true,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "0.96 kg/s",
+        "dimension": "mass_flow"
+      }
+    },
+    {
+      "id": "inj_c_07",
+      "key": "n_orifices",
+      "title": null,
+      "collapsed": true,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "12",
+        "dimension": "count"
+      }
+    },
+    {
+      "id": "inj_c_08",
+      "key": "mdot_per_orifice",
+      "title": null,
+      "collapsed": true,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "@mdot_total / @n_orifices",
+        "dimension": "mass_flow"
+      }
+    },
+    {
+      "id": "inj_c_09",
       "key": "t_feed",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "constant",
       "content": {
         "value": "110 K",
-        "dimension_hint": "temperature"
+        "dimension": "temperature"
       }
     }
   ]

@@ -4,123 +4,105 @@
       "id": "log_txt_01",
       "key": null,
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "text",
       "content": {
-        "content": "# Engineering Logbook\n\nUse this as a daily **live script**: notes + quick calculations + plots.",
-        "render_mode": "easy_mark",
-        "style": {
-          "header": false,
-          "mono": false,
-          "muted": false
-        }
+        "content": "# Engineering Logbook\n\nUse this as a daily **live script**: notes + quick calculations + plots."
       }
     },
     {
       "id": "log_txt_02",
       "key": null,
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "text",
       "content": {
-        "content": "## Rename demo\n\nTry renaming `gamma` to `gamma_air` and re-run. Refs should update.",
-        "render_mode": "easy_mark",
-        "style": {
-          "header": false,
-          "mono": false,
-          "muted": true
-        }
+        "content": "## Rename demo\n\nTry renaming `gamma` to `gamma_air` and re-run. Refs should update."
       }
     },
     {
       "id": "log_txt_03",
       "key": null,
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "text",
       "content": {
-        "content": "## Reference note\n\nCurrent gamma setting is `@gamma`.",
-        "render_mode": "easy_mark",
-        "style": {
-          "header": false,
-          "mono": false,
-          "muted": false
-        }
+        "content": "## Reference note\n\nCurrent gamma setting is `@gamma`."
       }
     },
     {
       "id": "log_c_01",
       "key": "gamma",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "constant",
       "content": {
         "value": "1.4",
-        "dimension_hint": "gamma"
+        "dimension": "gamma"
       }
     },
     {
       "id": "log_c_02",
       "key": "mach_case",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "constant",
       "content": {
         "value": "2.2",
-        "dimension_hint": "mach"
+        "dimension": "mach"
       }
     },
     {
       "id": "log_c_03",
       "key": "p_case",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "constant",
       "content": {
         "value": "500 psia",
-        "dimension_hint": "pressure"
+        "dimension": "pressure"
       }
     },
     {
       "id": "log_c_04",
       "key": "r_case",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "constant",
       "content": {
         "value": "1.2 in",
-        "dimension_hint": "length"
+        "dimension": "length"
       }
     },
     {
       "id": "log_c_05",
       "key": "t_case",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "constant",
       "content": {
         "value": "0.12 in",
-        "dimension_hint": "length"
+        "dimension": "length"
       }
     },
     {
       "id": "log_c_06",
       "key": "beta_case",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "constant",
       "content": {
         "value": "40 deg",
-        "dimension_hint": "angle"
+        "dimension": "angle"
       }
     }
   ]

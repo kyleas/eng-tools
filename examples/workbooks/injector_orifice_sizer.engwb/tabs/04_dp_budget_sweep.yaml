@@ -4,7 +4,7 @@
       "id": "inj_st_01",
       "key": "dp_budget_sweep",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "study",
       "content": {
@@ -29,7 +29,7 @@
       "id": "inj_plot_01",
       "key": "dp_budget_plot",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "plot",
       "content": {

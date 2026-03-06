@@ -2,7 +2,10 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use eng_core::units::parse_quantity_expression;
+use eng_core::units::{
+    default_unit_for_dimension, parse_equation_quantity_to_si, parse_quantity_expression,
+    signature_for_dimension,
+};
 use petgraph::algo::toposort;
 use petgraph::graph::DiGraph;
 use serde::{Deserialize, Serialize};
@@ -96,7 +99,8 @@ pub struct TextRowContent {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ConstantRowContent {
     pub value: String,
-    pub dimension_hint: Option<String>,
+    #[serde(default, alias = "dimension_hint")]
+    pub dimension: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -194,7 +198,30 @@ pub struct ConstantRowResult {
     pub raw: String,
     pub value: Value,
     pub normalized_si: Option<f64>,
+    pub dimension: Option<String>,
     pub unit: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct WorkbookReferenceMatch {
+    pub start: usize,
+    pub end: usize,
+    pub key: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct WorkbookReferenceCandidate {
+    pub row_id: String,
+    pub key: String,
+    pub row_type: String,
+    pub preview: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct WorkbookDimensionOption {
+    pub key: &'static str,
+    pub label: &'static str,
+    pub default_unit: &'static str,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -223,6 +250,139 @@ pub struct WorkbookPlotResult {
     pub legend: bool,
     pub series: Vec<WorkbookPlotSeries>,
 }
+
+const WORKBOOK_DIMENSIONS: &[WorkbookDimensionOption] = &[
+    WorkbookDimensionOption {
+        key: "dimensionless",
+        label: "Dimensionless",
+        default_unit: "1",
+    },
+    WorkbookDimensionOption {
+        key: "ratio",
+        label: "Ratio",
+        default_unit: "1",
+    },
+    WorkbookDimensionOption {
+        key: "count",
+        label: "Count",
+        default_unit: "1",
+    },
+    WorkbookDimensionOption {
+        key: "gamma",
+        label: "Gamma",
+        default_unit: "1",
+    },
+    WorkbookDimensionOption {
+        key: "mach",
+        label: "Mach",
+        default_unit: "1",
+    },
+    WorkbookDimensionOption {
+        key: "angle",
+        label: "Angle",
+        default_unit: "rad",
+    },
+    WorkbookDimensionOption {
+        key: "pressure",
+        label: "Pressure",
+        default_unit: "Pa",
+    },
+    WorkbookDimensionOption {
+        key: "stress",
+        label: "Stress",
+        default_unit: "Pa",
+    },
+    WorkbookDimensionOption {
+        key: "temperature",
+        label: "Temperature",
+        default_unit: "K",
+    },
+    WorkbookDimensionOption {
+        key: "density",
+        label: "Density",
+        default_unit: "kg/m3",
+    },
+    WorkbookDimensionOption {
+        key: "length",
+        label: "Length",
+        default_unit: "m",
+    },
+    WorkbookDimensionOption {
+        key: "diameter",
+        label: "Diameter",
+        default_unit: "m",
+    },
+    WorkbookDimensionOption {
+        key: "roughness",
+        label: "Roughness",
+        default_unit: "m",
+    },
+    WorkbookDimensionOption {
+        key: "area",
+        label: "Area",
+        default_unit: "m2",
+    },
+    WorkbookDimensionOption {
+        key: "volume",
+        label: "Volume",
+        default_unit: "m3",
+    },
+    WorkbookDimensionOption {
+        key: "velocity",
+        label: "Velocity",
+        default_unit: "m/s",
+    },
+    WorkbookDimensionOption {
+        key: "mass",
+        label: "Mass",
+        default_unit: "kg",
+    },
+    WorkbookDimensionOption {
+        key: "mass_flow",
+        label: "Mass Flow",
+        default_unit: "kg/s",
+    },
+    WorkbookDimensionOption {
+        key: "mass_flow_rate",
+        label: "Mass Flow Rate",
+        default_unit: "kg/s",
+    },
+    WorkbookDimensionOption {
+        key: "volumetric_flow",
+        label: "Volumetric Flow",
+        default_unit: "m3/s",
+    },
+    WorkbookDimensionOption {
+        key: "volumetric_flow_rate",
+        label: "Volumetric Flow Rate",
+        default_unit: "m3/s",
+    },
+    WorkbookDimensionOption {
+        key: "dynamic_viscosity",
+        label: "Dynamic Viscosity",
+        default_unit: "Pa*s",
+    },
+    WorkbookDimensionOption {
+        key: "viscosity",
+        label: "Viscosity",
+        default_unit: "Pa*s",
+    },
+    WorkbookDimensionOption {
+        key: "friction_factor",
+        label: "Friction Factor",
+        default_unit: "1",
+    },
+    WorkbookDimensionOption {
+        key: "efficiency",
+        label: "Efficiency",
+        default_unit: "1",
+    },
+    WorkbookDimensionOption {
+        key: "branch",
+        label: "Branch",
+        default_unit: "1",
+    },
+];
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WorkbookTabExecution {
@@ -254,6 +414,123 @@ pub enum WorkbookError {
     Invalid(String),
     #[error("execution failed: {0}")]
     Execution(String),
+}
+
+pub fn workbook_dimension_options() -> &'static [WorkbookDimensionOption] {
+    WORKBOOK_DIMENSIONS
+}
+
+pub fn reference_candidates(doc: &WorkbookDocument) -> Vec<WorkbookReferenceCandidate> {
+    let mut out = Vec::new();
+    for tab in &doc.tabs {
+        for row in &tab.rows {
+            let Some(key) = row.key.as_deref().map(str::trim).filter(|k| !k.is_empty()) else {
+                continue;
+            };
+            out.push(WorkbookReferenceCandidate {
+                row_id: row.id.clone(),
+                key: key.to_string(),
+                row_type: match row.kind {
+                    WorkbookRowKind::Text(_) => "text",
+                    WorkbookRowKind::Constant(_) => "constant",
+                    WorkbookRowKind::EquationSolve(_) => "equation",
+                    WorkbookRowKind::Study(_) => "study",
+                    WorkbookRowKind::Plot(_) => "plot",
+                }
+                .to_string(),
+                preview: row_preview_seed(row),
+            });
+        }
+    }
+    out
+}
+
+pub fn find_reference_matches(text: &str) -> Vec<WorkbookReferenceMatch> {
+    find_reference_matches_with_mode(text, true)
+}
+
+fn find_reference_matches_all(text: &str) -> Vec<WorkbookReferenceMatch> {
+    find_reference_matches_with_mode(text, false)
+}
+
+fn find_reference_matches_with_mode(
+    text: &str,
+    ignore_backticks: bool,
+) -> Vec<WorkbookReferenceMatch> {
+    let bytes = text.as_bytes();
+    let mut out = Vec::new();
+    let mut i = 0usize;
+    let mut in_code = false;
+    while i < bytes.len() {
+        if ignore_backticks && bytes[i] == b'`' {
+            in_code = !in_code;
+            i += 1;
+            continue;
+        }
+        if ignore_backticks && in_code {
+            i += 1;
+            continue;
+        }
+        if bytes[i] != b'@' {
+            i += 1;
+            continue;
+        }
+        let start = i;
+        i += 1;
+        let key_start = i;
+        while i < bytes.len() {
+            let ch = bytes[i] as char;
+            if ch.is_ascii_alphanumeric() || ch == '_' {
+                i += 1;
+            } else {
+                break;
+            }
+        }
+        if i > key_start {
+            out.push(WorkbookReferenceMatch {
+                start,
+                end: i,
+                key: text[key_start..i].to_string(),
+            });
+        }
+    }
+    out
+}
+
+pub fn format_engineering_number(value: f64) -> String {
+    if !value.is_finite() {
+        return value.to_string();
+    }
+    let abs = value.abs();
+    if abs == 0.0 {
+        return "0".to_string();
+    }
+    if !(1.0e-3..1.0e4).contains(&abs) {
+        return format!("{value:.4e}")
+            .replace("e+0", "e")
+            .replace("e+", "e")
+            .replace("e0", "e0");
+    }
+    if abs >= 1000.0 {
+        return format!("{value:.0}");
+    }
+    if abs >= 100.0 {
+        return format!("{value:.1}");
+    }
+    if abs >= 10.0 {
+        return format!("{value:.2}");
+    }
+    format!("{value:.3}")
+}
+
+pub fn format_scalar_display(label: Option<&str>, value_si: f64, unit: Option<&str>) -> String {
+    let number = format_engineering_number(value_si);
+    match (label, unit.filter(|u| !u.is_empty() && *u != "1")) {
+        (Some(label), Some(unit)) => format!("{label} = {number} [{unit}]"),
+        (Some(label), None) => format!("{label} = {number}"),
+        (None, Some(unit)) => format!("{number} [{unit}]"),
+        (None, None) => number,
+    }
 }
 
 pub fn create_workbook_skeleton(
@@ -578,7 +855,7 @@ fn execute_row(
                 content: c.content.clone(),
             });
         }
-        WorkbookRowKind::Constant(c) => match parse_constant(&c.value) {
+        WorkbookRowKind::Constant(c) => match parse_constant(c, executed, key_to_id) {
             Ok(r) => {
                 out.state = WorkbookRowState::Ok;
                 out.result = Some(WorkbookRowResult::Constant(r));
@@ -716,24 +993,54 @@ fn build_plot_from_source(
     })
 }
 
-fn parse_constant(raw: &str) -> Result<ConstantRowResult, String> {
-    if let Ok(v) = raw.trim().parse::<f64>() {
-        return Ok(ConstantRowResult {
-            raw: raw.to_string(),
-            value: Value::from(v),
-            normalized_si: Some(v),
-            unit: None,
-        });
+fn parse_constant(
+    content: &ConstantRowContent,
+    executed: &HashMap<String, WorkbookRowExecution>,
+    key_to_id: &HashMap<String, String>,
+) -> Result<ConstantRowResult, String> {
+    let raw = content.value.trim();
+    if raw.is_empty() {
+        return Err("constant is empty".to_string());
     }
-    match parse_quantity_expression(raw.trim()) {
-        Ok(expr) => Ok(ConstantRowResult {
-            raw: raw.to_string(),
-            value: Value::from(expr.value_si),
-            normalized_si: Some(expr.value_si),
-            unit: Some("SI".to_string()),
-        }),
-        Err(e) => Err(format!("invalid constant '{}': {}", raw, e)),
+
+    let dimension = non_empty_trimmed(content.dimension.as_deref()).map(str::to_string);
+    let normalized_dimension = dimension
+        .as_deref()
+        .and_then(normalized_dimension_key)
+        .map(str::to_string);
+    let resolved =
+        evaluate_numeric_expression(raw, executed, key_to_id, normalized_dimension.as_deref())
+            .map_err(|e| format!("invalid constant '{}': {}", raw, e))?;
+
+    let explicit_sig = normalized_dimension
+        .as_deref()
+        .and_then(|dim| signature_for_dimension(dim).ok());
+    let inferred_dimension = dimension
+        .clone()
+        .or_else(|| infer_dimension_from_signature(resolved.signature));
+
+    if let (Some(dim), Some(sig)) = (&dimension, explicit_sig)
+        && sig != resolved.signature
+    {
+        return Err(format!(
+            "dimension '{}' conflicts with parsed units/expression",
+            dim
+        ));
     }
+
+    let display_unit = inferred_dimension
+        .as_deref()
+        .and_then(normalized_dimension_key)
+        .and_then(default_unit_for_dimension)
+        .map(str::to_string);
+
+    Ok(ConstantRowResult {
+        raw: raw.to_string(),
+        value: Value::from(resolved.value_si),
+        normalized_si: Some(resolved.value_si),
+        dimension: inferred_dimension,
+        unit: display_unit,
+    })
 }
 
 fn eval_expr_to_value(
@@ -741,24 +1048,153 @@ fn eval_expr_to_value(
     executed: &HashMap<String, WorkbookRowExecution>,
     key_to_id: &HashMap<String, String>,
 ) -> Result<Value, WorkbookError> {
-    if let Some(ref_id) = resolve_ref_to_id(expr, key_to_id) {
-        let row = executed.get(&ref_id).ok_or_else(|| {
-            WorkbookError::Execution(format!("referenced row '{}' has no result", ref_id))
-        })?;
-        return extract_scalar_value(row).ok_or_else(|| {
-            WorkbookError::Execution(format!("referenced row '{}' is not scalar", ref_id))
-        });
-    }
-    if let Ok(v) = expr.trim().parse::<f64>() {
-        return Ok(Value::from(v));
-    }
-    if let Ok(expr_input) = parse_quantity_expression(expr.trim()) {
-        return Ok(Value::from(expr_input.value_si));
+    if let Ok(resolved) = evaluate_numeric_expression(expr, executed, key_to_id, None) {
+        return Ok(Value::from(resolved.value_si));
     }
     if expr.eq_ignore_ascii_case("true") || expr.eq_ignore_ascii_case("false") {
         return Ok(Value::from(expr.eq_ignore_ascii_case("true")));
     }
     Ok(Value::from(expr.to_string()))
+}
+
+struct ResolvedExpression {
+    value_si: f64,
+    signature: eng_core::units::typed::DimensionSignature,
+}
+
+fn evaluate_numeric_expression(
+    expr: &str,
+    executed: &HashMap<String, WorkbookRowExecution>,
+    key_to_id: &HashMap<String, String>,
+    expected_dimension: Option<&str>,
+) -> Result<ResolvedExpression, WorkbookError> {
+    let trimmed = expr.trim();
+    if trimmed.is_empty() {
+        return Err(WorkbookError::Invalid("empty expression".to_string()));
+    }
+
+    let expanded = expand_expression_refs_and_constants(trimmed, executed, key_to_id)?;
+    if let Some(dim) = expected_dimension {
+        let signature =
+            signature_for_dimension(dim).map_err(|e| WorkbookError::Invalid(e.to_string()))?;
+        let value_si = if let Ok(v) = expanded.trim().parse::<f64>() {
+            v
+        } else if let Ok(parsed) = parse_quantity_expression(&expanded) {
+            if parsed.signature == signature
+                || parsed.signature == eng_core::units::typed::DimensionSignature::dimless()
+            {
+                parsed.value_si
+            } else {
+                return Err(WorkbookError::Invalid(format!(
+                    "expression units conflicts with expected dimension '{}'",
+                    dim
+                )));
+            }
+        } else {
+            parse_equation_quantity_to_si(dim, &expanded)
+                .map_err(|e| WorkbookError::Invalid(e.to_string()))?
+        };
+        return Ok(ResolvedExpression {
+            value_si,
+            signature,
+        });
+    }
+
+    let evaluated =
+        parse_quantity_expression(&expanded).map_err(|e| WorkbookError::Invalid(e.to_string()))?;
+    Ok(ResolvedExpression {
+        value_si: evaluated.value_si,
+        signature: evaluated.signature,
+    })
+}
+
+fn expand_expression_refs_and_constants(
+    expr: &str,
+    executed: &HashMap<String, WorkbookRowExecution>,
+    key_to_id: &HashMap<String, String>,
+) -> Result<String, WorkbookError> {
+    let mut expanded = replace_reference_tokens(expr, |key| {
+        let ref_id = key_to_id
+            .get(key)
+            .ok_or_else(|| WorkbookError::Execution(format!("unknown key '{}'", key)))?;
+        let row = executed.get(ref_id).ok_or_else(|| {
+            WorkbookError::Execution(format!("referenced row '{}' has no result", ref_id))
+        })?;
+        let scalar = extract_scalar_value(row).ok_or_else(|| {
+            WorkbookError::Execution(format!("referenced row '{}' is not scalar", ref_id))
+        })?;
+        scalar
+            .as_f64()
+            .map(format_engineering_number)
+            .ok_or_else(|| {
+                WorkbookError::Execution(format!("referenced row '{}' is not numeric", ref_id))
+            })
+    })?;
+    expanded = rewrite_builtin_constants(&expanded);
+    expand_abs_function(&expanded, executed, key_to_id)
+}
+
+fn rewrite_builtin_constants(expr: &str) -> String {
+    let mut out = String::new();
+    let chars = expr.chars().collect::<Vec<_>>();
+    let mut i = 0usize;
+    while i < chars.len() {
+        let ch = chars[i];
+        if ch.is_ascii_alphabetic() || ch == '_' {
+            let start = i;
+            i += 1;
+            while i < chars.len() && (chars[i].is_ascii_alphanumeric() || chars[i] == '_') {
+                i += 1;
+            }
+            let ident = chars[start..i].iter().collect::<String>();
+            match ident.as_str() {
+                "pi" | "PI" | "Pi" => out.push_str(&std::f64::consts::PI.to_string()),
+                _ => out.push_str(&ident),
+            }
+        } else {
+            out.push(ch);
+            i += 1;
+        }
+    }
+    out
+}
+
+fn expand_abs_function(
+    expr: &str,
+    executed: &HashMap<String, WorkbookRowExecution>,
+    key_to_id: &HashMap<String, String>,
+) -> Result<String, WorkbookError> {
+    let mut current = expr.to_string();
+    while let Some(start) = current.find("abs(") {
+        let open = start + 3;
+        let close = find_matching_paren(&current, open)
+            .ok_or_else(|| WorkbookError::Invalid("unclosed abs(...) expression".to_string()))?;
+        let inner = &current[(open + 1)..close];
+        let resolved = evaluate_numeric_expression(inner, executed, key_to_id, None)?;
+        current.replace_range(
+            start..=close,
+            &format_engineering_number(resolved.value_si.abs()),
+        );
+    }
+    Ok(current)
+}
+
+fn find_matching_paren(text: &str, open_index: usize) -> Option<usize> {
+    let chars = text.chars().collect::<Vec<_>>();
+    let mut depth = 0i32;
+    for (idx, ch) in chars.iter().enumerate().skip(open_index) {
+        match ch {
+            '(' => depth += 1,
+            ')' => {
+                depth -= 1;
+                if depth == 0 {
+                    return Some(idx);
+                }
+            }
+            _ => {}
+        }
+    }
+    None
 }
 
 fn extract_scalar_value(row: &WorkbookRowExecution) -> Option<Value> {
@@ -794,27 +1230,24 @@ fn map_solve_state(state: &SolveRowState) -> WorkbookRowState {
 fn row_dependencies(row: &WorkbookRow) -> Vec<String> {
     let mut deps = Vec::new();
     match &row.kind {
+        WorkbookRowKind::Text(c) => deps.extend(extract_reference_keys(&c.content)),
+        WorkbookRowKind::Constant(c) => deps.extend(extract_reference_keys(&c.value)),
         WorkbookRowKind::EquationSolve(c) => {
             for expr in c.inputs.values() {
-                if let Some(k) = parse_ref_key(expr) {
-                    deps.push(k.to_string());
-                }
+                deps.extend(extract_reference_keys(expr));
             }
         }
         WorkbookRowKind::Study(c) => {
             for expr in c.fixed_inputs.values() {
-                if let Some(k) = parse_ref_key(expr) {
-                    deps.push(k.to_string());
-                }
+                deps.extend(extract_reference_keys(expr));
             }
         }
         WorkbookRowKind::Plot(c) => {
-            if let Some(k) = parse_ref_key(&c.source_row) {
-                deps.push(k.to_string());
-            }
+            deps.extend(extract_reference_keys(&c.source_row));
         }
-        _ => {}
     }
+    deps.sort();
+    deps.dedup();
     deps
 }
 
@@ -839,32 +1272,142 @@ fn parse_ref_key(expr: &str) -> Option<&str> {
     None
 }
 
+fn extract_reference_keys(text: &str) -> Vec<String> {
+    find_reference_matches(text)
+        .into_iter()
+        .map(|m| m.key)
+        .collect()
+}
+
+fn replace_reference_tokens(
+    text: &str,
+    mut resolver: impl FnMut(&str) -> Result<String, WorkbookError>,
+) -> Result<String, WorkbookError> {
+    let matches = find_reference_matches(text);
+    if matches.is_empty() {
+        return Ok(text.to_string());
+    }
+    let mut out = String::with_capacity(text.len());
+    let mut cursor = 0usize;
+    for m in matches {
+        out.push_str(&text[cursor..m.start]);
+        out.push_str(&resolver(&m.key)?);
+        cursor = m.end;
+    }
+    out.push_str(&text[cursor..]);
+    Ok(out)
+}
+
+fn rewrite_reference_tokens_in_place(text: &mut String, old: &str, new: &str) -> usize {
+    let matches = find_reference_matches_all(text);
+    if matches.is_empty() {
+        return 0;
+    }
+    let new_ref = format!("@{new}");
+    let mut out = String::with_capacity(text.len());
+    let mut cursor = 0usize;
+    let mut count = 0usize;
+    for m in matches {
+        out.push_str(&text[cursor..m.start]);
+        if m.key == old {
+            out.push_str(&new_ref);
+            count += 1;
+        } else {
+            out.push_str(&text[m.start..m.end]);
+        }
+        cursor = m.end;
+    }
+    out.push_str(&text[cursor..]);
+    *text = out;
+    count
+}
+
+fn infer_dimension_from_signature(
+    signature: eng_core::units::typed::DimensionSignature,
+) -> Option<String> {
+    for key in [
+        "pressure",
+        "temperature",
+        "density",
+        "length",
+        "area",
+        "volume",
+        "velocity",
+        "mass",
+        "mass_flow",
+        "volumetric_flow",
+        "dynamic_viscosity",
+        "dimensionless",
+        "angle",
+    ] {
+        if normalized_dimension_key(key).and_then(|dim| signature_for_dimension(dim).ok())
+            == Some(signature)
+        {
+            return Some(key.to_string());
+        }
+    }
+    None
+}
+
+fn row_preview_seed(row: &WorkbookRow) -> String {
+    match &row.kind {
+        WorkbookRowKind::Text(c) => preview_seed(&c.content),
+        WorkbookRowKind::Constant(c) => preview_seed(&c.value),
+        WorkbookRowKind::EquationSolve(c) => c.path_id.clone(),
+        WorkbookRowKind::Study(c) => c.target_id.clone(),
+        WorkbookRowKind::Plot(c) => c
+            .title
+            .as_deref()
+            .map(str::to_string)
+            .unwrap_or_else(|| format!("{} vs {}", c.y, c.x)),
+    }
+}
+
+fn preview_seed(text: &str) -> String {
+    text.lines()
+        .map(str::trim)
+        .find(|line| !line.is_empty())
+        .map(|line| line.chars().take(64).collect())
+        .unwrap_or_default()
+}
+
+fn non_empty_trimmed(text: Option<&str>) -> Option<&str> {
+    text.map(str::trim).filter(|s| !s.is_empty())
+}
+
+fn normalized_dimension_key(dimension: &str) -> Option<&str> {
+    match dimension.trim() {
+        "" => None,
+        "gamma" | "mach" | "count" | "efficiency" | "branch" => Some("dimensionless"),
+        "mass_flow" => Some("mass_flow_rate"),
+        "volumetric_flow" => Some("volumetric_flow_rate"),
+        other => Some(other),
+    }
+}
+
 fn resolve_ref_to_id(expr: &str, key_to_id: &HashMap<String, String>) -> Option<String> {
     parse_ref_key(expr).and_then(|k| key_to_id.get(k).cloned())
 }
 
 fn rewrite_refs_in_row(row: &mut WorkbookRow, old: &str, new: &str) -> usize {
     let mut count = 0usize;
-    let rewrite = |expr: &mut String, count: &mut usize| {
-        let t = expr.trim();
-        if t == format!("@{old}") {
-            *expr = format!("@{new}");
-            *count += 1;
-        }
+    let mut rewrite = |expr: &mut String| {
+        count += rewrite_reference_tokens_in_place(expr, old, new);
     };
     match &mut row.kind {
+        WorkbookRowKind::Text(c) => rewrite(&mut c.content),
+        WorkbookRowKind::Constant(c) => rewrite(&mut c.value),
         WorkbookRowKind::EquationSolve(c) => {
             for expr in c.inputs.values_mut() {
-                rewrite(expr, &mut count);
+                rewrite(expr);
             }
         }
         WorkbookRowKind::Study(c) => {
             for expr in c.fixed_inputs.values_mut() {
-                rewrite(expr, &mut count);
+                rewrite(expr);
             }
         }
-        WorkbookRowKind::Plot(c) => rewrite(&mut c.source_row, &mut count),
-        _ => {}
+        WorkbookRowKind::Plot(c) => rewrite(&mut c.source_row),
     }
     count
 }
@@ -1001,7 +1544,7 @@ mod tests {
                 freeze: false,
                 kind: WorkbookRowKind::Constant(ConstantRowContent {
                     value: "500 psia".to_string(),
-                    dimension_hint: None,
+                    dimension: None,
                 }),
             },
             WorkbookRow {
@@ -1086,7 +1629,7 @@ mod tests {
                 freeze: false,
                 kind: WorkbookRowKind::Constant(ConstantRowContent {
                     value: "500 psia".to_string(),
-                    dimension_hint: Some("pressure".to_string()),
+                    dimension: Some("pressure".to_string()),
                 }),
             },
             WorkbookRow {
@@ -1237,7 +1780,7 @@ mod tests {
             freeze: false,
             kind: WorkbookRowKind::Constant(ConstantRowContent {
                 value: "1.4".to_string(),
-                dimension_hint: None,
+                dimension: None,
             }),
         });
         let validation = validate_workbook(&doc);
@@ -1263,7 +1806,7 @@ mod tests {
                 freeze: false,
                 kind: WorkbookRowKind::Constant(ConstantRowContent {
                     value: "1.4".to_string(),
-                    dimension_hint: None,
+                    dimension: None,
                 }),
             });
         }
@@ -1429,5 +1972,137 @@ mod tests {
         assert_eq!(plot.x_label, "input_value");
         assert_eq!(plot.y_label, "value");
         assert!(plot.legend);
+    }
+
+    #[test]
+    fn reference_candidates_include_referenceable_rows() {
+        let dir = tempdir().expect("temp");
+        let mut doc = sample_doc(dir.path());
+        doc.tabs[0].rows = vec![
+            WorkbookRow {
+                id: "c1".to_string(),
+                key: Some("gamma".to_string()),
+                title: None,
+                collapsed: true,
+                freeze: false,
+                kind: WorkbookRowKind::Constant(ConstantRowContent {
+                    value: "1.4".to_string(),
+                    dimension: Some("dimensionless".to_string()),
+                }),
+            },
+            WorkbookRow {
+                id: "t1".to_string(),
+                key: None,
+                title: None,
+                collapsed: true,
+                freeze: false,
+                kind: WorkbookRowKind::Text(TextRowContent {
+                    content: "see @gamma".to_string(),
+                }),
+            },
+        ];
+        let candidates = reference_candidates(&doc);
+        assert_eq!(candidates.len(), 1);
+        assert_eq!(candidates[0].key, "gamma");
+    }
+
+    #[test]
+    fn find_reference_matches_extracts_inline_refs() {
+        let refs = find_reference_matches("Use @gamma with @p_upstream - @p_downstream.");
+        let keys = refs.into_iter().map(|m| m.key).collect::<Vec<_>>();
+        assert_eq!(keys, vec!["gamma", "p_upstream", "p_downstream"]);
+    }
+
+    #[test]
+    fn numeric_expression_supports_refs_pi_and_abs() {
+        let executed = HashMap::from([
+            (
+                "p1".to_string(),
+                WorkbookRowExecution {
+                    id: "p1".to_string(),
+                    key: Some("p_upstream".to_string()),
+                    state: WorkbookRowState::Ok,
+                    messages: vec![],
+                    result: Some(WorkbookRowResult::Constant(ConstantRowResult {
+                        raw: "260 psia".to_string(),
+                        value: Value::from(260.0 * 6_894.757_293_168_f64),
+                        normalized_si: Some(260.0 * 6_894.757_293_168_f64),
+                        dimension: Some("pressure".to_string()),
+                        unit: Some("Pa".to_string()),
+                    })),
+                },
+            ),
+            (
+                "p2".to_string(),
+                WorkbookRowExecution {
+                    id: "p2".to_string(),
+                    key: Some("p_downstream".to_string()),
+                    state: WorkbookRowState::Ok,
+                    messages: vec![],
+                    result: Some(WorkbookRowResult::Constant(ConstantRowResult {
+                        raw: "40 psia".to_string(),
+                        value: Value::from(40.0 * 6_894.757_293_168_f64),
+                        normalized_si: Some(40.0 * 6_894.757_293_168_f64),
+                        dimension: Some("pressure".to_string()),
+                        unit: Some("Pa".to_string()),
+                    })),
+                },
+            ),
+        ]);
+        let key_to_id = HashMap::from([
+            ("p_upstream".to_string(), "p1".to_string()),
+            ("p_downstream".to_string(), "p2".to_string()),
+        ]);
+        let resolved = evaluate_numeric_expression(
+            "abs(@p_upstream - @p_downstream) + pi/4 * 0",
+            &executed,
+            &key_to_id,
+            Some("pressure"),
+        )
+        .expect("expression");
+        assert!(resolved.value_si > 0.0);
+    }
+
+    #[test]
+    fn constant_dimension_is_inferred_from_units() {
+        let executed = HashMap::new();
+        let key_to_id = HashMap::new();
+        let result = parse_constant(
+            &ConstantRowContent {
+                value: "220 psia".to_string(),
+                dimension: None,
+            },
+            &executed,
+            &key_to_id,
+        )
+        .expect("constant");
+        assert_eq!(result.dimension.as_deref(), Some("pressure"));
+        assert_eq!(result.unit.as_deref(), Some("Pa"));
+    }
+
+    #[test]
+    fn conflicting_explicit_dimension_is_invalid() {
+        let executed = HashMap::new();
+        let key_to_id = HashMap::new();
+        let err = parse_constant(
+            &ConstantRowContent {
+                value: "220 psia".to_string(),
+                dimension: Some("length".to_string()),
+            },
+            &executed,
+            &key_to_id,
+        )
+        .expect_err("expected conflict");
+        assert!(err.contains("conflicts"));
+    }
+
+    #[test]
+    fn engineering_number_formatting_uses_compact_policy() {
+        assert_eq!(
+            format_engineering_number(1_516_846.604_496_959_8),
+            "1.5168e6"
+        );
+        assert_eq!(format_engineering_number(12.3456), "12.35");
+        assert_eq!(format_engineering_number(0.000_42), "4.2000e-4");
     }
 }

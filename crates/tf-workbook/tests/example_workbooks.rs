@@ -93,7 +93,29 @@ fn examples_load_validate_and_roundtrip() {
                 wb_path.display(),
                 tab.file
             );
+            assert!(
+                !raw.contains("dimension_hint"),
+                "legacy dimension_hint field still present in {} / {}",
+                wb_path.display(),
+                tab.file
+            );
+            assert!(
+                !raw.contains("render_mode") && !raw.contains("\"style\""),
+                "legacy text-row render flags still present in {} / {}",
+                wb_path.display(),
+                tab.file
+            );
         }
+
+        assert!(
+            doc_reloaded
+                .tabs
+                .iter()
+                .flat_map(|tab| &tab.rows)
+                .all(|row| row.collapsed),
+            "expected all example rows to start collapsed in {}",
+            wb_path.display()
+        );
     }
 }
 
@@ -185,4 +207,19 @@ fn injector_rename_rewrites_refs_and_still_executes() {
         !all_text.contains("@dp_orifice"),
         "old reference key still present after rename"
     );
+}
+
+#[test]
+fn examples_use_only_explicit_pressure_units() {
+    for wb_path in workbook_paths() {
+        for entry in fs::read_dir(wb_path.join("tabs")).expect("tab dir") {
+            let entry = entry.expect("entry");
+            let raw = fs::read_to_string(entry.path()).expect("read tab");
+            assert!(
+                !raw.contains(" psi\"") && !raw.contains(" psi\n"),
+                "ambiguous psi unit still present in {}",
+                entry.path().display()
+            );
+        }
+    }
 }

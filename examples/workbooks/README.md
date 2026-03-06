@@ -1,12 +1,13 @@
 # Engineering Workbook Templates
 
-This directory contains production-style `.engwb` workbook templates for Thermoflow's Engineering Workbook.
+This directory contains production-style `.engwb` templates for Thermoflow's Engineering Workbook.
 
 ## Templates
 
 - `injector_orifice_sizer.engwb`
-  - Demonstrates: EasyMark narrative rows, unit-aware constants, equation solves, device study + plot, cross-row refs, intentional invalid row.
+  - Demonstrates: EasyMark narrative rows, unit-aware constants, `@key` expressions, equation solves, study + plot, cross-row refs, intentional invalid row.
   - Key targets: `fluids.orifice_mass_flow_incompressible`, `fluids.circular_pipe_area`, `normal_shock_calc`.
+  - Notes: uses explicit pressure-drop magnitude via `abs(@p_upstream - @p_downstream)`.
 
 - `pipe_flow_pump_power.engwb`
   - Demonstrates: pipe sizing constants, equation solves, study + plot, invalid row handling, rename-safe refs.
@@ -21,10 +22,10 @@ This directory contains production-style `.engwb` workbook templates for Thermof
   - Key targets: `compressible.oblique_shock_theta_beta_m`, `compressible.mach_angle`, `normal_shock_calc`, `nozzle_flow_calc`.
 
 - `engineering_logbook.engwb`
-  - Demonstrates: narrative-first logbook style, quick equation solves with one-unknown inference, device study + plot, and intentional parse failure row.
+  - Demonstrates: narrative-first logbook style, quick equation solves with one-unknown inference, device study + plot, intentional parse failure row.
   - Key targets: `structures.hoop_stress`, `compressible.mach_angle`, `isentropic_calc`.
 
-## CLI usage
+## CLI Usage
 
 Validate a workbook:
 
@@ -49,5 +50,3 @@ Rename a key and rewrite downstream refs:
 ```powershell
 cargo run -p tf-cli -- workbook rename examples/workbooks/injector_orifice_sizer.engwb dp_orifice dp_injector
 ```
-
-

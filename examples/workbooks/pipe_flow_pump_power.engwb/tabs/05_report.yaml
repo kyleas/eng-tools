@@ -4,17 +4,11 @@
       "id": "pipe_txt_04",
       "key": null,
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "text",
       "content": {
-        "content": "Use this worksheet for quick diameter trades and to capture assumptions inline.",
-        "render_mode": "easy_mark",
-        "style": {
-          "header": false,
-          "mono": false,
-          "muted": false
-        }
+        "content": "Use this worksheet for quick diameter trades and to capture assumptions inline."
       }
     }
   ]

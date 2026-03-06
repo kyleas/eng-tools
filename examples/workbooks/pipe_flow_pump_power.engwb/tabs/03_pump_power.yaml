@@ -4,7 +4,7 @@
       "id": "pipe_eq_03",
       "key": "dp_line",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "equation_solve",
       "content": {

@@ -4,17 +4,11 @@
       "id": "nz_txt_04",
       "key": null,
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "text",
       "content": {
-        "content": "Set `branch_mode` to `subsonic` to compare alternate inversion behavior.",
-        "render_mode": "easy_mark",
-        "style": {
-          "header": false,
-          "mono": false,
-          "muted": false
-        }
+        "content": "Set `branch_mode` to `subsonic` to compare alternate inversion behavior."
       }
     }
   ]

@@ -4,7 +4,7 @@
       "id": "sh_plot_01",
       "key": "shock_plot",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "plot",
       "content": {
@@ -20,7 +20,7 @@
       "id": "sh_plot_02",
       "key": "nozzle_plot",
       "title": null,
-      "collapsed": false,
+      "collapsed": true,
       "freeze": false,
       "type": "plot",
       "content": {

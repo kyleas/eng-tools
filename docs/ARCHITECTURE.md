@@ -780,8 +780,25 @@ No workbook math is evaluated in the UI layer.
 ### References and rename safety
 
 - References use `@key` only.
+- Reference-bearing authoring fields use the same token model across text, constants, equation inputs, study inputs, and plot sources.
+- `@key` autocomplete is driven from workbook-level reference candidates, not ad hoc per widget lists.
 - Rows keep immutable `id`; `key` is user-facing and renameable.
 - Rename rewrites dependent references while preserving row IDs.
+
+### Expressions, units, and dimensions
+
+- Workbook scalar authoring uses one shared engineering expression path in `tf-workbook`.
+- Constants and equation/study input expressions can combine:
+  - literals
+  - unit-bearing values
+  - arithmetic
+  - `@key` references
+  - selected built-ins such as `pi` and `abs(...)`
+- Expressions are resolved to scalar SI values before being handed to `tf-eng`; the UI does not interpret engineering math on its own.
+- Constant rows use a searchable dimension selector instead of freeform dimension text.
+- If no dimension is selected, the workbook tries to infer one from parsed units/signature.
+- If an explicit dimension conflicts with parsed units, the row is invalid.
+- Workbook display uses one centralized engineering number formatter for compact summaries/results.
 
 ### CLI commands
 
@@ -800,11 +817,20 @@ No workbook math is evaluated in the UI layer.
 - Global execution summaries are secondary and primarily for tab-level rollups/navigation.
 - Row reordering is implemented with reusable UI helpers (`ui::drag_reorder`) and immutable row IDs (never index-based drag identity).
 - Searchable pickers are reusable (`ui::search_picker`) and drive equation/device/workflow target selection.
+- `@key` autocomplete is available in workbook reference-bearing text inputs and is backed by workbook-level reference discovery.
 - Workbook row actions (duplicate/delete/move/collapse) are toolbar-first; row cards stay focused on content, target selection, and results.
-- Freeze is an expanded-row utility only and is described inline as pausing auto-run for that row.
+- Advanced row controls belong in the workbook Inspector panel when they would otherwise clutter the card surface (for example: key editing, freeze, dimension selection, and plot overrides).
 - Status indicators are compact solid circles with stable meanings: green `ok`, yellow `warning/ambiguous/ready`, red `invalid/error`, gray `incomplete/not run`.
 - Editable fields use commit semantics: workbook recompute happens on commit (focus loss / Enter for single-line fields), not on every keystroke. While a field is actively being edited, rows show a pending/stale status instead of thrashing recomputation.
 - Plot rows are display-first: collapsed rows render the plot inline, expanded rows expose source/config overrides and the full plot.
+- Equation rows visually separate the solved variable from editable known inputs so “known vs solved” is explicit.
+- Text rows have one authoritative body. Collapsed text rows render the body once; expanded text rows show source on the left and rendered output on the right.
+
+### Orifice pressure-drop convention
+
+- Workbook authoring treats incompressible orifice sizing as a magnitude-based workflow.
+- If a worksheet wants flow magnitude from two pressure states, it should state that explicitly with `abs(@p_upstream - @p_downstream)`.
+- Negative `delta_p` without an explicit magnitude transform remains invalid; the sign convention is not hidden in the UI layer.
 
 ### Egui ID stability invariant
 
