@@ -1,0 +1,21 @@
+{
+  "rows": [
+    {
+      "id": "sh_txt_04",
+      "key": null,
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "text",
+      "content": {
+        "content": "Conical shocks are not interchangeable with oblique shocks; compare `@oblique_plot` and `@conical_plot` trends.",
+        "render_mode": "easy_mark",
+        "style": {
+          "header": false,
+          "mono": false,
+          "muted": false
+        }
+      }
+    }
+  ]
+}

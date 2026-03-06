@@ -1,0 +1,55 @@
+{
+  "rows": [
+    {
+      "id": "sh_st_01",
+      "key": "shock_pressure_sweep",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "study",
+      "content": {
+        "kind": "device",
+        "target_id": "normal_shock_calc",
+        "sweep_field": "input_value",
+        "sweep": {
+          "mode": "linspace",
+          "start": 1.2,
+          "end": 3.5,
+          "count": 25
+        },
+        "fixed_inputs": {
+          "input_kind": "m1",
+          "target_kind": "p2_p1",
+          "gamma": "1.4"
+        },
+        "output_key": "value"
+      }
+    },
+    {
+      "id": "sh_st_02",
+      "key": "nozzle_mach_sweep",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "study",
+      "content": {
+        "kind": "device",
+        "target_id": "nozzle_flow_calc",
+        "sweep_field": "input_value",
+        "sweep": {
+          "mode": "linspace",
+          "start": 1.1,
+          "end": 4.0,
+          "count": 25
+        },
+        "fixed_inputs": {
+          "input_kind": "area_ratio",
+          "target_kind": "mach",
+          "gamma": "1.4",
+          "branch": "supersonic"
+        },
+        "output_key": "value"
+      }
+    }
+  ]
+}

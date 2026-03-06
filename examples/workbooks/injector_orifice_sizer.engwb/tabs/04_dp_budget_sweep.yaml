@@ -1,0 +1,45 @@
+{
+  "rows": [
+    {
+      "id": "inj_st_01",
+      "key": "dp_budget_sweep",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "study",
+      "content": {
+        "kind": "device",
+        "target_id": "normal_shock_calc",
+        "sweep_field": "input_value",
+        "sweep": {
+          "mode": "linspace",
+          "start": 1.1,
+          "end": 3.0,
+          "count": 25
+        },
+        "fixed_inputs": {
+          "input_kind": "m1",
+          "target_kind": "p2_p1",
+          "gamma": "1.4"
+        },
+        "output_key": "value"
+      }
+    },
+    {
+      "id": "inj_plot_01",
+      "key": "dp_budget_plot",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "plot",
+      "content": {
+        "source_row": "ref:dp_budget_sweep",
+        "x": "input_value",
+        "y": "value",
+        "title": "Normal shock pressure ratio sweep",
+        "x_label": "M1",
+        "y_label": "p2/p1"
+      }
+    }
+  ]
+}

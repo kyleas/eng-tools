@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "title": "Injector Orifice Sizer and Delta-P Budget",
+  "tabs": [
+    {
+      "name": "overview",
+      "file": "01_overview.yaml",
+      "title": "Overview"
+    },
+    {
+      "name": "inputs",
+      "file": "02_inputs.yaml",
+      "title": "Inputs"
+    },
+    {
+      "name": "orifice_sizing",
+      "file": "03_orifice_sizing.yaml",
+      "title": "Orifice sizing"
+    },
+    {
+      "name": "dp_budget_sweep",
+      "file": "04_dp_budget_sweep.yaml",
+      "title": "Delta-P budget sweep"
+    },
+    {
+      "name": "notes",
+      "file": "05_notes.yaml",
+      "title": "Notes & assumptions"
+    }
+  ],
+  "preferred_display_units": {},
+  "execution": {
+    "auto_run": true
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "rows": [
+    {
+      "id": "nz_st_02",
+      "key": "nozzle_device_sweep",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "study",
+      "content": {
+        "kind": "device",
+        "target_id": "nozzle_flow_calc",
+        "sweep_field": "input_value",
+        "sweep": {
+          "mode": "linspace",
+          "start": 1.1,
+          "end": 5.0,
+          "count": 20
+        },
+        "fixed_inputs": {
+          "input_kind": "area_ratio",
+          "target_kind": "mach",
+          "gamma": "ref:gamma",
+          "branch": "supersonic"
+        },
+        "output_key": "value"
+      }
+    }
+  ]
+}

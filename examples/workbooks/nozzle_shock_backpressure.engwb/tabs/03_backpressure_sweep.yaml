@@ -1,0 +1,44 @@
+{
+  "rows": [
+    {
+      "id": "nz_st_01",
+      "key": "nozzle_chain_sweep",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "study",
+      "content": {
+        "kind": "workflow",
+        "target_id": "nozzle_normal_shock_chain",
+        "sweep_field": "area_ratio",
+        "sweep": {
+          "mode": "linspace",
+          "start": 1.2,
+          "end": 5.0,
+          "count": 30
+        },
+        "fixed_inputs": {
+          "gamma": "ref:gamma",
+          "branch": "supersonic"
+        },
+        "output_key": "pre_shock_mach"
+      }
+    },
+    {
+      "id": "nz_plot_01",
+      "key": "nozzle_chain_plot",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "plot",
+      "content": {
+        "source_row": "ref:nozzle_chain_sweep",
+        "x": "area_ratio",
+        "y": "pre_shock_mach",
+        "title": "Pre-shock Mach vs area ratio",
+        "x_label": "A/A*",
+        "y_label": "M_pre"
+      }
+    }
+  ]
+}

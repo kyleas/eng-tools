@@ -1,0 +1,46 @@
+{
+  "rows": [
+    {
+      "id": "pipe_st_01",
+      "key": "diameter_sensitivity_sweep",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "study",
+      "content": {
+        "kind": "device",
+        "target_id": "nozzle_flow_calc",
+        "sweep_field": "input_value",
+        "sweep": {
+          "mode": "linspace",
+          "start": 1.1,
+          "end": 4.0,
+          "count": 30
+        },
+        "fixed_inputs": {
+          "input_kind": "area_ratio",
+          "target_kind": "mach",
+          "gamma": "1.4",
+          "branch": "supersonic"
+        },
+        "output_key": "value"
+      }
+    },
+    {
+      "id": "pipe_plot_01",
+      "key": "diameter_sensitivity_plot",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "plot",
+      "content": {
+        "source_row": "ref:diameter_sensitivity_sweep",
+        "x": "input_value",
+        "y": "value",
+        "title": "Sensitivity curve",
+        "x_label": "sweep_input",
+        "y_label": "output_value"
+      }
+    }
+  ]
+}

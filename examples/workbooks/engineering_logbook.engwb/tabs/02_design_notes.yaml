@@ -1,0 +1,59 @@
+{
+  "rows": [
+    {
+      "id": "log_eq_01",
+      "key": "sigma_hoop",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "equation_solve",
+      "content": {
+        "path_id": "structures.hoop_stress",
+        "target": null,
+        "branch": null,
+        "inputs": {
+          "sigma_h": "",
+          "P": "ref:p_case",
+          "r": "ref:r_case",
+          "t": "ref:t_case"
+        }
+      }
+    },
+    {
+      "id": "log_eq_02",
+      "key": "mach_wave_angle",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "equation_solve",
+      "content": {
+        "path_id": "compressible.mach_angle",
+        "target": null,
+        "branch": null,
+        "inputs": {
+          "mu": "",
+          "M": "ref:mach_case"
+        }
+      }
+    },
+    {
+      "id": "log_eq_bad",
+      "key": "invalid_parse_case",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "equation_solve",
+      "content": {
+        "path_id": "structures.hoop_stress",
+        "target": null,
+        "branch": null,
+        "inputs": {
+          "sigma_h": "",
+          "P": "bad_pressure_value",
+          "r": "ref:r_case",
+          "t": "ref:t_case"
+        }
+      }
+    }
+  ]
+}

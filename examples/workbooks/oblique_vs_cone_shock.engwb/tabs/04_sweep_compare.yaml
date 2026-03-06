@@ -1,0 +1,36 @@
+{
+  "rows": [
+    {
+      "id": "sh_plot_01",
+      "key": "shock_plot",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "plot",
+      "content": {
+        "source_row": "ref:shock_pressure_sweep",
+        "x": "input_value",
+        "y": "value",
+        "title": "Normal shock p2/p1 vs M1",
+        "x_label": "M1",
+        "y_label": "p2/p1"
+      }
+    },
+    {
+      "id": "sh_plot_02",
+      "key": "nozzle_plot",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "plot",
+      "content": {
+        "source_row": "ref:nozzle_mach_sweep",
+        "x": "input_value",
+        "y": "value",
+        "title": "Nozzle Mach vs area ratio",
+        "x_label": "A/A*",
+        "y_label": "Mach"
+      }
+    }
+  ]
+}

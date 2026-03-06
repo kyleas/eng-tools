@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "title": "Nozzle + Shock Backpressure Sweep",
+  "tabs": [
+    {
+      "name": "nozzle_definition",
+      "file": "01_nozzle_definition.yaml",
+      "title": "Nozzle definition"
+    },
+    {
+      "name": "operating_point_solve",
+      "file": "02_operating_point_solve.yaml",
+      "title": "Operating point solve"
+    },
+    {
+      "name": "backpressure_sweep",
+      "file": "03_backpressure_sweep.yaml",
+      "title": "Backpressure sweep"
+    },
+    {
+      "name": "design_space",
+      "file": "04_design_space.yaml",
+      "title": "Design space"
+    },
+    {
+      "name": "notes",
+      "file": "05_notes.yaml",
+      "title": "Notes"
+    }
+  ],
+  "preferred_display_units": {},
+  "execution": {
+    "auto_run": true
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "rows": [
+    {
+      "id": "sh_c_01",
+      "key": "m1_case",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "2.6",
+        "dimension_hint": "mach"
+      }
+    },
+    {
+      "id": "sh_c_02",
+      "key": "gamma",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "1.4",
+        "dimension_hint": "gamma"
+      }
+    },
+    {
+      "id": "sh_c_03",
+      "key": "theta_input_deg",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "12 deg",
+        "dimension_hint": "angle"
+      }
+    },
+    {
+      "id": "sh_c_04",
+      "key": "beta_guess_deg",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "36 deg",
+        "dimension_hint": "angle"
+      }
+    },
+    {
+      "id": "sh_c_05",
+      "key": "cone_angle_deg",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "14 deg",
+        "dimension_hint": "angle"
+      }
+    },
+    {
+      "id": "sh_c_06",
+      "key": "branch_weak",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "weak",
+        "dimension_hint": "branch"
+      }
+    },
+    {
+      "id": "sh_eq_01",
+      "key": "theta_from_beta",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "equation_solve",
+      "content": {
+        "path_id": "compressible.oblique_shock_theta_beta_m",
+        "target": null,
+        "branch": "weak",
+        "inputs": {
+          "theta": "",
+          "beta": "ref:beta_guess_deg",
+          "m1": "2.6",
+          "gamma": "@gamma"
+        }
+      }
+    },
+    {
+      "id": "sh_eq_02",
+      "key": "mach_angle",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "equation_solve",
+      "content": {
+        "path_id": "compressible.mach_angle",
+        "target": null,
+        "branch": null,
+        "inputs": {
+          "mu": "",
+          "M": "2.6"
+        }
+      }
+    },
+    {
+      "id": "sh_eq_bad",
+      "key": "invalid_oblique_case",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "equation_solve",
+      "content": {
+        "path_id": "compressible.oblique_shock_theta_beta_m",
+        "target": null,
+        "branch": "weak",
+        "inputs": {
+          "theta": "",
+          "beta": "92 deg",
+          "m1": "0.8",
+          "gamma": "ref:gamma"
+        }
+      }
+    }
+  ]
+}

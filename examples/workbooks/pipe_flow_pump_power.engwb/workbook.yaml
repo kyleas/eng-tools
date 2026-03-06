@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "title": "Pipe Flow, Pressure Loss, and Pump Power",
+  "tabs": [
+    {
+      "name": "system_definition",
+      "file": "01_system_definition.yaml",
+      "title": "System definition"
+    },
+    {
+      "name": "pipe_sizing",
+      "file": "02_pipe_sizing.yaml",
+      "title": "Pipe sizing"
+    },
+    {
+      "name": "pump_power",
+      "file": "03_pump_power.yaml",
+      "title": "Pump power"
+    },
+    {
+      "name": "sensitivity_sweep",
+      "file": "04_sensitivity_sweep.yaml",
+      "title": "Sensitivity sweep"
+    },
+    {
+      "name": "report",
+      "file": "05_report.yaml",
+      "title": "Report"
+    }
+  ],
+  "preferred_display_units": {},
+  "execution": {
+    "auto_run": true
+  }
+}

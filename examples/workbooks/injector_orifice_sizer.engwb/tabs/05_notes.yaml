@@ -1,0 +1,21 @@
+{
+  "rows": [
+    {
+      "id": "inj_txt_04",
+      "key": null,
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "text",
+      "content": {
+        "content": "Use `ref:orifice_area` and `@cd_orifice` patterns as templates for new rows.",
+        "render_mode": "easy_mark",
+        "style": {
+          "header": false,
+          "mono": false,
+          "muted": false
+        }
+      }
+    }
+  ]
+}

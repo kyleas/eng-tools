@@ -1,0 +1,55 @@
+{
+  "rows": [
+    {
+      "id": "inj_txt_01",
+      "key": null,
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "text",
+      "content": {
+        "content": "# Injector Orifice Sizer\n\nUse this worksheet to size injector orifices with **unit-aware constants**, equation solves, a study sweep, and a plot.\n\n- Fill all known inputs\n- Leave one unknown blank for automatic inference\n- Keep refs stable with `ref:<key>` or `@key`",
+        "render_mode": "easy_mark",
+        "style": {
+          "header": false,
+          "mono": false,
+          "muted": false
+        }
+      }
+    },
+    {
+      "id": "inj_txt_02",
+      "key": null,
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "text",
+      "content": {
+        "content": "## Rename demo\n\nRename key `dp_orifice` to `dp_injector` with:\n\n`tf-cli workbook rename examples/workbooks/injector_orifice_sizer.engwb dp_orifice dp_injector`\n\nThen re-run. Downstream refs update automatically.",
+        "render_mode": "easy_mark",
+        "style": {
+          "header": false,
+          "mono": false,
+          "muted": true
+        }
+      }
+    },
+    {
+      "id": "inj_txt_03",
+      "key": null,
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "text",
+      "content": {
+        "content": "## Assumptions\n\n- Incompressible orifice relation\n- Constant discharge coefficient\n- Per-orifice sizing from total flow split",
+        "render_mode": "easy_mark",
+        "style": {
+          "header": false,
+          "mono": false,
+          "muted": false
+        }
+      }
+    }
+  ]
+}

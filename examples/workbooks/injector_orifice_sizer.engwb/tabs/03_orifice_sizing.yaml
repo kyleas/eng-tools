@@ -1,0 +1,61 @@
+{
+  "rows": [
+    {
+      "id": "inj_eq_01",
+      "key": "orifice_area",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "equation_solve",
+      "content": {
+        "path_id": "fluids.orifice_mass_flow_incompressible",
+        "target": null,
+        "branch": null,
+        "inputs": {
+          "m_dot": "ref:mdot_per_orifice",
+          "C_d": "@cd_orifice",
+          "A": "",
+          "rho": "ref:rho_propellant",
+          "delta_p": "ref:dp_orifice"
+        }
+      }
+    },
+    {
+      "id": "inj_eq_02",
+      "key": "orifice_diameter",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "equation_solve",
+      "content": {
+        "path_id": "fluids.circular_pipe_area",
+        "target": null,
+        "branch": null,
+        "inputs": {
+          "A": "20 mm^2",
+          "D": ""
+        }
+      }
+    },
+    {
+      "id": "inj_eq_bad",
+      "key": "invalid_negative_dp",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "equation_solve",
+      "content": {
+        "path_id": "fluids.orifice_mass_flow_incompressible",
+        "target": null,
+        "branch": null,
+        "inputs": {
+          "m_dot": "ref:mdot_per_orifice",
+          "C_d": "ref:cd_orifice",
+          "A": "",
+          "rho": "ref:rho_propellant",
+          "delta_p": "-50 psi"
+        }
+      }
+    }
+  ]
+}

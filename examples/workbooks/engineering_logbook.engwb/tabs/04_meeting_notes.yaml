@@ -1,0 +1,21 @@
+{
+  "rows": [
+    {
+      "id": "log_txt_04",
+      "key": null,
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "text",
+      "content": {
+        "content": "### Action items\n\n- Verify pressure drop margins\n- Compare weak/strong shock branches\n- Capture assumptions beside each calc",
+        "render_mode": "easy_mark",
+        "style": {
+          "header": false,
+          "mono": false,
+          "muted": false
+        }
+      }
+    }
+  ]
+}

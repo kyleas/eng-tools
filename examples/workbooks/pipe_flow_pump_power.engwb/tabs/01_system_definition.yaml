@@ -1,0 +1,55 @@
+{
+  "rows": [
+    {
+      "id": "pipe_txt_01",
+      "key": null,
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "text",
+      "content": {
+        "content": "# Pipe Flow + Pump Power\n\nThis template demonstrates pipe hydraulics, pressure-drop equations, and device studies.",
+        "render_mode": "easy_mark",
+        "style": {
+          "header": false,
+          "mono": false,
+          "muted": false
+        }
+      }
+    },
+    {
+      "id": "pipe_txt_02",
+      "key": null,
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "text",
+      "content": {
+        "content": "## Rename demo\n\nRename `d_pipe` to `d_line` and verify refs in study/plot rows are rewritten.",
+        "render_mode": "easy_mark",
+        "style": {
+          "header": false,
+          "mono": false,
+          "muted": true
+        }
+      }
+    },
+    {
+      "id": "pipe_txt_03",
+      "key": null,
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "text",
+      "content": {
+        "content": "## Workflow\n\n1. Define constants with units\n2. Solve equations with one blank\n3. Sweep diameter and inspect sensitivity",
+        "render_mode": "easy_mark",
+        "style": {
+          "header": false,
+          "mono": false,
+          "muted": false
+        }
+      }
+    }
+  ]
+}

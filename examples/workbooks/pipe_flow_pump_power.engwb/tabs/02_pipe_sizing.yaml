@@ -1,0 +1,158 @@
+{
+  "rows": [
+    {
+      "id": "pipe_c_01",
+      "key": "q_vol",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "180 gpm",
+        "dimension_hint": "volumetric_flow"
+      }
+    },
+    {
+      "id": "pipe_c_02",
+      "key": "l_line",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "240 ft",
+        "dimension_hint": "length"
+      }
+    },
+    {
+      "id": "pipe_c_03",
+      "key": "d_pipe",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "2.5 in",
+        "dimension_hint": "length"
+      }
+    },
+    {
+      "id": "pipe_c_04",
+      "key": "rho_liq",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "998 kg/m^3",
+        "dimension_hint": "density"
+      }
+    },
+    {
+      "id": "pipe_c_05",
+      "key": "mu_liq",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "1.1 mPa*s",
+        "dimension_hint": "dynamic_viscosity"
+      }
+    },
+    {
+      "id": "pipe_c_06",
+      "key": "eps_pipe",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "0.000045 m",
+        "dimension_hint": "length"
+      }
+    },
+    {
+      "id": "pipe_c_07",
+      "key": "v_line",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "3.2 m/s",
+        "dimension_hint": "velocity"
+      }
+    },
+    {
+      "id": "pipe_c_08",
+      "key": "f_fixed",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "0.021",
+        "dimension_hint": "friction_factor"
+      }
+    },
+    {
+      "id": "pipe_eq_01",
+      "key": "pipe_area",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "equation_solve",
+      "content": {
+        "path_id": "fluids.circular_pipe_area",
+        "target": null,
+        "branch": null,
+        "inputs": {
+          "A": "",
+          "D": "ref:d_pipe"
+        }
+      }
+    },
+    {
+      "id": "pipe_eq_02",
+      "key": "re_line",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "equation_solve",
+      "content": {
+        "path_id": "fluids.reynolds_number",
+        "target": null,
+        "branch": null,
+        "inputs": {
+          "Re": "",
+          "rho": "@rho_liq",
+          "V": "ref:v_line",
+          "D": "ref:d_pipe",
+          "mu": "ref:mu_liq"
+        }
+      }
+    },
+    {
+      "id": "pipe_eq_bad",
+      "key": "invalid_zero_d",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "equation_solve",
+      "content": {
+        "path_id": "fluids.darcy_weisbach_pressure_drop",
+        "target": null,
+        "branch": null,
+        "inputs": {
+          "delta_p": "",
+          "f": "ref:f_fixed",
+          "L": "ref:l_line",
+          "D": "0 in",
+          "rho": "ref:rho_liq",
+          "V": "ref:v_line"
+        }
+      }
+    }
+  ]
+}

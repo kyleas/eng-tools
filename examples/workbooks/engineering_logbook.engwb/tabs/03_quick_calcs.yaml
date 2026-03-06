@@ -1,0 +1,45 @@
+{
+  "rows": [
+    {
+      "id": "log_st_01",
+      "key": "isentropic_device_sweep",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "study",
+      "content": {
+        "kind": "device",
+        "target_id": "isentropic_calc",
+        "sweep_field": "input_value",
+        "sweep": {
+          "mode": "linspace",
+          "start": 1.1,
+          "end": 4.0,
+          "count": 35
+        },
+        "fixed_inputs": {
+          "input_kind": "mach",
+          "target_kind": "pressure_ratio",
+          "gamma": "@gamma"
+        },
+        "output_key": "value"
+      }
+    },
+    {
+      "id": "log_plot_01",
+      "key": "isentropic_plot",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "plot",
+      "content": {
+        "source_row": "ref:isentropic_device_sweep",
+        "x": "input_value",
+        "y": "value",
+        "title": "Isentropic pressure ratio vs Mach",
+        "x_label": "M",
+        "y_label": "p/p0"
+      }
+    }
+  ]
+}

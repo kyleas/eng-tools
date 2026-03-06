@@ -1,0 +1,130 @@
+{
+  "rows": [
+    {
+      "id": "nz_c_01",
+      "key": "gamma",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "1.4",
+        "dimension_hint": "gamma"
+      }
+    },
+    {
+      "id": "nz_c_02",
+      "key": "p0_chamber",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "45 bar",
+        "dimension_hint": "pressure"
+      }
+    },
+    {
+      "id": "nz_c_03",
+      "key": "t0_chamber",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "3400 K",
+        "dimension_hint": "temperature"
+      }
+    },
+    {
+      "id": "nz_c_04",
+      "key": "ae_at",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "3.0",
+        "dimension_hint": "ratio"
+      }
+    },
+    {
+      "id": "nz_c_05",
+      "key": "pb_ambient",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "1.2 bar",
+        "dimension_hint": "pressure"
+      }
+    },
+    {
+      "id": "nz_c_06",
+      "key": "throat_eff",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "constant",
+      "content": {
+        "value": "0.98",
+        "dimension_hint": "efficiency"
+      }
+    },
+    {
+      "id": "nz_eq_01",
+      "key": "m_exit_isen",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "equation_solve",
+      "content": {
+        "path_id": "compressible.area_mach",
+        "target": null,
+        "branch": "supersonic",
+        "inputs": {
+          "area_ratio": "ref:ae_at",
+          "M": "",
+          "gamma": "@gamma"
+        }
+      }
+    },
+    {
+      "id": "nz_eq_02",
+      "key": "p_ratio_exit",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "equation_solve",
+      "content": {
+        "path_id": "compressible.isentropic_pressure_ratio",
+        "target": null,
+        "branch": null,
+        "inputs": {
+          "p_p0": "",
+          "M": "ref:m_exit_isen",
+          "gamma": "ref:gamma"
+        }
+      }
+    },
+    {
+      "id": "nz_eq_bad",
+      "key": "invalid_subsonic_shock",
+      "title": null,
+      "collapsed": false,
+      "freeze": false,
+      "type": "equation_solve",
+      "content": {
+        "path_id": "compressible.normal_shock_pressure_ratio",
+        "target": null,
+        "branch": null,
+        "inputs": {
+          "p2_p1": "",
+          "M1": "0.7",
+          "gamma": "ref:gamma"
+        }
+      }
+    }
+  ]
+}
