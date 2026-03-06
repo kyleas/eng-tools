@@ -1,0 +1,9 @@
+schema_version: 1
+title: Engineering Workbook
+tabs:
+- name: inputs
+  file: 01_inputs.yaml
+  title: Inputs
+preferred_display_units: {}
+execution:
+  auto_run: false

@@ -49,11 +49,7 @@ fn device_studies_produce_table_outputs() {
             .iter()
             .all(|r| matches!(r.status, StudySampleStatus::Ok))
     );
-    assert!(
-        isen.rows
-            .iter()
-            .all(|r| r.outputs.contains_key("value"))
-    );
+    assert!(isen.rows.iter().all(|r| r.outputs.contains_key("value")));
 
     let nozzle = study_nozzle_flow_area_ratio(
         1.4,
@@ -61,12 +57,7 @@ fn device_studies_produce_table_outputs() {
         NozzleFlowBranch::Supersonic,
     );
     assert_eq!(nozzle.rows.len(), 4);
-    assert!(
-        nozzle
-            .rows
-            .iter()
-            .all(|r| r.outputs.contains_key("value"))
-    );
+    assert!(nozzle.rows.iter().all(|r| r.outputs.contains_key("value")));
 
     let normal = study_normal_shock_m1(1.4, SweepAxis::linspace(1.1, 2.0, 4));
     assert_eq!(normal.rows.len(), 4);
