@@ -30,31 +30,38 @@ pub fn searchable_picker(
     ui.push_id(id, |ui| {
         ui.menu_button(selected_label, |ui| {
             let query = picker_queries.entry(query_key.clone()).or_default();
-            ui.label("Search");
-            ui.text_edit_singleline(query);
+            ui.add(
+                egui::TextEdit::singleline(query)
+                    .hint_text("Search")
+                    .desired_width(ui.available_width()),
+            );
             ui.separator();
-            let filtered = filter_options(options, query);
-            let mut grouped: BTreeMap<String, Vec<&PickerOption>> = BTreeMap::new();
-            for opt in filtered {
-                let group = opt.group.clone().unwrap_or_else(|| "Other".to_string());
-                grouped.entry(group).or_default().push(opt);
-            }
-            for (group, group_items) in grouped {
-                ui.small(egui::RichText::new(group).italics());
-                for opt in group_items {
-                    if ui
-                        .selectable_label(
-                            *selected_id == opt.id,
-                            format!("{} ({})", opt.label, opt.id),
-                        )
-                        .clicked()
-                    {
-                        picked = Some(opt.id.clone());
-                        ui.close_menu();
+            egui::ScrollArea::vertical()
+                .max_height(280.0)
+                .show(ui, |ui| {
+                    let filtered = filter_options(options, query);
+                    let mut grouped: BTreeMap<String, Vec<&PickerOption>> = BTreeMap::new();
+                    for opt in filtered {
+                        let group = opt.group.clone().unwrap_or_else(|| "Other".to_string());
+                        grouped.entry(group).or_default().push(opt);
                     }
-                }
-                ui.add_space(4.0);
-            }
+                    for (group, group_items) in grouped {
+                        ui.small(egui::RichText::new(group).italics());
+                        for opt in group_items {
+                            if ui
+                                .selectable_label(
+                                    *selected_id == opt.id,
+                                    format!("{} ({})", opt.label, opt.id),
+                                )
+                                .clicked()
+                            {
+                                picked = Some(opt.id.clone());
+                                ui.close_menu();
+                            }
+                        }
+                        ui.add_space(4.0);
+                    }
+                });
         });
     });
     picked

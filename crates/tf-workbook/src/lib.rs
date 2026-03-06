@@ -66,9 +66,8 @@ pub struct WorkbookTab {
 fn normalize_row_kind(kind: WorkbookRowKind) -> WorkbookRowKind {
     match kind {
         WorkbookRowKind::Text(mut c) => {
-            if c.style.header || c.style.mono {
-                // already normalized
-            } else {
+            c.render_mode = TextRenderMode::EasyMark;
+            if !c.style.header && !c.style.mono && !c.style.muted {
                 c.style.header = c.legacy_header;
                 c.style.mono = c.legacy_mono;
             }
@@ -458,11 +457,18 @@ pub fn validate_workbook(doc: &WorkbookDocument) -> WorkbookValidation {
             if !ids.insert(row.id.clone()) {
                 messages.push(format!("duplicate row id '{}'", row.id));
             }
-            if let Some(key) = &row.key {
-                if !keys.insert(key.clone()) {
-                    messages.push(format!("duplicate key '{}'", key));
+            let trimmed_key = row.key.as_deref().map(str::trim).unwrap_or_default();
+            if row_requires_key(row) && trimmed_key.is_empty() {
+                messages.push(format!(
+                    "row '{}' requires a non-empty key because it is referenceable",
+                    row.id
+                ));
+            }
+            if !trimmed_key.is_empty() {
+                if !keys.insert(trimmed_key.to_string()) {
+                    messages.push(format!("duplicate key '{}'", trimmed_key));
                 }
-                key_to_id.insert(key.clone(), row.id.clone());
+                key_to_id.insert(trimmed_key.to_string(), row.id.clone());
             }
         }
     }
@@ -861,6 +867,16 @@ fn row_dependencies(row: &WorkbookRow) -> Vec<String> {
         _ => {}
     }
     deps
+}
+
+pub fn row_requires_key(row: &WorkbookRow) -> bool {
+    match row.kind {
+        WorkbookRowKind::Text(_) | WorkbookRowKind::Markdown(_) => false,
+        WorkbookRowKind::Constant(_)
+        | WorkbookRowKind::EquationSolve(_)
+        | WorkbookRowKind::Study(_)
+        | WorkbookRowKind::Plot(_) => true,
+    }
 }
 
 fn parse_ref_key(expr: &str) -> Option<&str> {
@@ -1276,6 +1292,58 @@ mod tests {
     }
 
     #[test]
+    fn constant_without_key_is_invalid() {
+        let dir = tempdir().expect("temp");
+        let mut doc = sample_doc(dir.path());
+        doc.tabs[0].rows.push(WorkbookRow {
+            id: "c1".to_string(),
+            key: None,
+            title: None,
+            collapsed: false,
+            freeze: false,
+            kind: WorkbookRowKind::Constant(ConstantRowContent {
+                value: "1.4".to_string(),
+                dimension_hint: None,
+            }),
+        });
+        let validation = validate_workbook(&doc);
+        assert!(!validation.ok);
+        assert!(
+            validation
+                .messages
+                .iter()
+                .any(|m| m.contains("requires a non-empty key"))
+        );
+    }
+
+    #[test]
+    fn duplicate_keys_are_invalid_after_trim() {
+        let dir = tempdir().expect("temp");
+        let mut doc = sample_doc(dir.path());
+        for id in ["a", "b"] {
+            doc.tabs[0].rows.push(WorkbookRow {
+                id: id.to_string(),
+                key: Some(" gamma ".to_string()),
+                title: None,
+                collapsed: false,
+                freeze: false,
+                kind: WorkbookRowKind::Constant(ConstantRowContent {
+                    value: "1.4".to_string(),
+                    dimension_hint: None,
+                }),
+            });
+        }
+        let validation = validate_workbook(&doc);
+        assert!(!validation.ok);
+        assert!(
+            validation
+                .messages
+                .iter()
+                .any(|m| m.contains("duplicate key"))
+        );
+    }
+
+    #[test]
     fn row_order_roundtrip_persists() {
         let dir = tempdir().expect("temp");
         let mut doc = sample_doc(dir.path());
@@ -1340,6 +1408,32 @@ mod tests {
             WorkbookRowKind::Text(n) => {
                 assert_eq!(n.render_mode, TextRenderMode::EasyMark);
             }
+            other => panic!("expected text, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn text_rows_normalize_to_easymark_on_load() {
+        let dir = tempdir().expect("temp");
+        let mut doc = sample_doc(dir.path());
+        doc.tabs[0].rows.push(WorkbookRow {
+            id: "t1".to_string(),
+            key: None,
+            title: Some("legacy".to_string()),
+            collapsed: false,
+            freeze: false,
+            kind: WorkbookRowKind::Text(TextRowContent {
+                content: "plain text".to_string(),
+                render_mode: TextRenderMode::Plain,
+                style: TextStyle::default(),
+                legacy_header: false,
+                legacy_mono: false,
+            }),
+        });
+        save_workbook_dir(&doc).expect("save");
+        let loaded = load_workbook_dir(dir.path()).expect("load");
+        match &loaded.tabs[0].rows[0].kind {
+            WorkbookRowKind::Text(n) => assert_eq!(n.render_mode, TextRenderMode::EasyMark),
             other => panic!("expected text, got {other:?}"),
         }
     }

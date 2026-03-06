@@ -785,12 +785,15 @@ No workbook math is evaluated in the UI layer.
 
 - Header + row-add toolbar are pinned above a dedicated vertical `ScrollArea` for rows.
 - Workbook rows are cell-like cards: primary feedback is shown on each row, not only in global panels.
-- Text rows are content-first (EasyMark-capable), with minimal chrome and optional keys for referenceable outputs.
+- Text rows are content-first and EasyMark-backed by default: the expanded state is a split source/render view, while collapsed state shows rendered document content instead of source text.
+- Text rows do not require keys; referenceable/executable rows do require non-empty unique keys.
 - Result/status on each row must remain visible and actionable (`ok`, `invalid`, `incomplete`, `error`).
 - Global execution summaries are secondary and primarily for tab-level rollups/navigation.
 - Row reordering is implemented with reusable UI helpers (`ui::drag_reorder`) and immutable row IDs (never index-based drag identity).
 - Searchable pickers are reusable (`ui::search_picker`) and drive equation/device/workflow target selection.
-- Workbook row actions (duplicate/delete/move/collapse) are toolbar-first; row cards stay focused on content and results.
+- Workbook row actions (duplicate/delete/move/collapse) are toolbar-first; row cards stay focused on content, target selection, and results.
+- Freeze is an expanded-row utility only and is described inline as pausing auto-run for that row.
+- Status indicators are compact solid circles with stable meanings: green `ok`, yellow `warning/ambiguous/ready`, red `invalid/error`, gray `incomplete/not run`.
 
 ### Egui ID stability invariant
 
@@ -798,3 +801,9 @@ No workbook math is evaluated in the UI layer.
   - row scope: `ui.push_id(row.id, ..)`
   - repeated field scope: `ui.push_id((row.id, field_key), ..)` or equivalent stable ID source
 - Never key repeated widgets by list index (indices change with reorder and can cause ID collisions).
+- Drag affordances and collapse controls are rendered with ASCII-safe or custom-painted widgets; do not rely on fragile glyph fallback for core row interactions.
+
+### Egui version baseline
+
+- Workbook UI is implemented against the current coherent workspace egui baseline (`0.29.x`).
+- A larger egui-stack upgrade is intentionally deferred until `egui_graph`, `egui_graphs`, and the rest of the Thermoflow UI dependency set move together.
