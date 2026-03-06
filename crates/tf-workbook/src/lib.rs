@@ -65,23 +65,21 @@ pub struct WorkbookTab {
 
 fn normalize_row_kind(kind: WorkbookRowKind) -> WorkbookRowKind {
     match kind {
-        WorkbookRowKind::Text(c) => WorkbookRowKind::Narrative(NarrativeRowContent {
-            content: c.text,
-            render_mode: NarrativeRenderMode::Plain,
-            style: NarrativeStyle {
-                header: c.header,
-                mono: c.mono,
-                muted: false,
-            },
-        }),
-        WorkbookRowKind::Markdown(c) => WorkbookRowKind::Narrative(NarrativeRowContent {
+        WorkbookRowKind::Text(mut c) => {
+            if c.style.header || c.style.mono {
+                // already normalized
+            } else {
+                c.style.header = c.legacy_header;
+                c.style.mono = c.legacy_mono;
+            }
+            WorkbookRowKind::Text(c)
+        }
+        WorkbookRowKind::Markdown(c) => WorkbookRowKind::Text(TextRowContent {
             content: c.markdown,
-            render_mode: NarrativeRenderMode::Markdown,
-            style: NarrativeStyle {
-                header: false,
-                mono: false,
-                muted: false,
-            },
+            render_mode: TextRenderMode::EasyMark,
+            style: TextStyle::default(),
+            legacy_header: false,
+            legacy_mono: false,
         }),
         other => other,
     }
@@ -103,11 +101,9 @@ pub struct WorkbookRow {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", content = "content", rename_all = "snake_case")]
 pub enum WorkbookRowKind {
-    Narrative(NarrativeRowContent),
-    #[serde(alias = "narrative_legacy_text")]
+    #[serde(alias = "narrative")]
     Text(TextRowContent),
-    #[serde(alias = "narrative_legacy_markdown")]
-    Markdown(MarkdownRowContent),
+    Markdown(LegacyMarkdownRowContent),
     Constant(ConstantRowContent),
     EquationSolve(EquationSolveRowContent),
     Study(StudyRowContent),
@@ -116,14 +112,14 @@ pub enum WorkbookRowKind {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "snake_case")]
-pub enum NarrativeRenderMode {
+pub enum TextRenderMode {
     #[default]
     Plain,
-    Markdown,
+    EasyMark,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct NarrativeStyle {
+pub struct TextStyle {
     #[serde(default)]
     pub header: bool,
     #[serde(default)]
@@ -133,28 +129,36 @@ pub struct NarrativeStyle {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct NarrativeRowContent {
+pub struct TextRowContent {
+    #[serde(default, alias = "text")]
     pub content: String,
     #[serde(default)]
-    pub render_mode: NarrativeRenderMode,
+    pub render_mode: TextRenderMode,
     #[serde(default)]
-    pub style: NarrativeStyle,
+    pub style: TextStyle,
+    #[serde(default, alias = "header", skip_serializing)]
+    pub legacy_header: bool,
+    #[serde(default, alias = "mono", skip_serializing)]
+    pub legacy_mono: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct TextRowContent {
-    pub text: String,
-    #[serde(default)]
-    pub header: bool,
-    #[serde(default)]
-    pub mono: bool,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct MarkdownRowContent {
+pub struct LegacyMarkdownRowContent {
     pub markdown: String,
     #[serde(default)]
     pub preview: bool,
+}
+
+impl TextRowContent {
+    pub fn from_markdown(markdown: String) -> Self {
+        Self {
+            content: markdown,
+            render_mode: TextRenderMode::EasyMark,
+            style: TextStyle::default(),
+            legacy_header: false,
+            legacy_mono: false,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -240,16 +244,10 @@ pub struct WorkbookRowExecution {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "kind", content = "data", rename_all = "snake_case")]
 pub enum WorkbookRowResult {
-    Narrative {
-        content: String,
-        render_mode: NarrativeRenderMode,
-        style: NarrativeStyle,
-    },
     Text {
-        text: String,
-    },
-    Markdown {
-        markdown: String,
+        content: String,
+        render_mode: TextRenderMode,
+        style: TextStyle,
     },
     Constant(ConstantRowResult),
     Equation(EquationRowResult),
@@ -612,24 +610,20 @@ fn execute_row(
     }
 
     match &row.kind {
-        WorkbookRowKind::Narrative(c) => {
+        WorkbookRowKind::Text(c) => {
             out.state = WorkbookRowState::Ok;
-            out.result = Some(WorkbookRowResult::Narrative {
+            out.result = Some(WorkbookRowResult::Text {
                 content: c.content.clone(),
                 render_mode: c.render_mode.clone(),
                 style: c.style.clone(),
             });
         }
-        WorkbookRowKind::Text(c) => {
-            out.state = WorkbookRowState::Ok;
-            out.result = Some(WorkbookRowResult::Text {
-                text: c.text.clone(),
-            });
-        }
         WorkbookRowKind::Markdown(c) => {
             out.state = WorkbookRowState::Ok;
-            out.result = Some(WorkbookRowResult::Markdown {
-                markdown: c.markdown.clone(),
+            out.result = Some(WorkbookRowResult::Text {
+                content: c.markdown.clone(),
+                render_mode: TextRenderMode::EasyMark,
+                style: TextStyle::default(),
             });
         }
         WorkbookRowKind::Constant(c) => match parse_constant(&c.value) {
@@ -1001,9 +995,11 @@ mod tests {
             collapsed: false,
             freeze: false,
             kind: WorkbookRowKind::Text(TextRowContent {
-                text: "hello".to_string(),
-                header: false,
-                mono: false,
+                content: "hello".to_string(),
+                render_mode: TextRenderMode::Plain,
+                style: TextStyle::default(),
+                legacy_header: false,
+                legacy_mono: false,
             }),
         });
         save_workbook_dir(&doc).expect("save");
@@ -1011,7 +1007,7 @@ mod tests {
         assert_eq!(loaded.tabs[0].rows.len(), 1);
         assert!(matches!(
             loaded.tabs[0].rows[0].kind,
-            WorkbookRowKind::Narrative(_)
+            WorkbookRowKind::Text(_)
         ));
     }
 
@@ -1244,9 +1240,11 @@ mod tests {
             collapsed: true,
             freeze: true,
             kind: WorkbookRowKind::Text(TextRowContent {
-                text: "hello".to_string(),
-                header: false,
-                mono: false,
+                content: "hello".to_string(),
+                render_mode: TextRenderMode::Plain,
+                style: TextStyle::default(),
+                legacy_header: false,
+                legacy_mono: false,
             }),
         });
         save_workbook_dir(&doc).expect("save");
@@ -1266,9 +1264,11 @@ mod tests {
             collapsed: false,
             freeze: false,
             kind: WorkbookRowKind::Text(TextRowContent {
-                text: "notes".to_string(),
-                header: false,
-                mono: false,
+                content: "notes".to_string(),
+                render_mode: TextRenderMode::Plain,
+                style: TextStyle::default(),
+                legacy_header: false,
+                legacy_mono: false,
             }),
         });
         let validation = validate_workbook(&doc);
@@ -1287,9 +1287,11 @@ mod tests {
                 collapsed: false,
                 freeze: false,
                 kind: WorkbookRowKind::Text(TextRowContent {
-                    text: "b".to_string(),
-                    header: false,
-                    mono: false,
+                    content: "b".to_string(),
+                    render_mode: TextRenderMode::Plain,
+                    style: TextStyle::default(),
+                    legacy_header: false,
+                    legacy_mono: false,
                 }),
             },
             WorkbookRow {
@@ -1299,9 +1301,11 @@ mod tests {
                 collapsed: false,
                 freeze: false,
                 kind: WorkbookRowKind::Text(TextRowContent {
-                    text: "a".to_string(),
-                    header: false,
-                    mono: false,
+                    content: "a".to_string(),
+                    render_mode: TextRenderMode::Plain,
+                    style: TextStyle::default(),
+                    legacy_header: false,
+                    legacy_mono: false,
                 }),
             },
         ];
@@ -1316,7 +1320,7 @@ mod tests {
     }
 
     #[test]
-    fn markdown_legacy_rows_normalize_to_narrative() {
+    fn markdown_legacy_rows_normalize_to_text() {
         let dir = tempdir().expect("temp");
         let mut doc = sample_doc(dir.path());
         doc.tabs[0].rows.push(WorkbookRow {
@@ -1325,7 +1329,7 @@ mod tests {
             title: None,
             collapsed: false,
             freeze: false,
-            kind: WorkbookRowKind::Markdown(MarkdownRowContent {
+            kind: WorkbookRowKind::Markdown(LegacyMarkdownRowContent {
                 markdown: "# heading".to_string(),
                 preview: true,
             }),
@@ -1333,10 +1337,10 @@ mod tests {
         save_workbook_dir(&doc).expect("save");
         let loaded = load_workbook_dir(dir.path()).expect("load");
         match &loaded.tabs[0].rows[0].kind {
-            WorkbookRowKind::Narrative(n) => {
-                assert_eq!(n.render_mode, NarrativeRenderMode::Markdown);
+            WorkbookRowKind::Text(n) => {
+                assert_eq!(n.render_mode, TextRenderMode::EasyMark);
             }
-            other => panic!("expected narrative, got {other:?}"),
+            other => panic!("expected text, got {other:?}"),
         }
     }
 }

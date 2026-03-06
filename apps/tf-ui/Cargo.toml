@@ -11,6 +11,7 @@ egui_extras = { workspace = true }
 egui_graphs = { workspace = true, features = ["events"] }
 egui_graph = { workspace = true }
 egui-file-dialog = { workspace = true }
+egui_demo_lib = "0.29"
 serde = { workspace = true }
 serde_json = { workspace = true }
 serde_yaml = { workspace = true }

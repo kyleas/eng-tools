@@ -762,7 +762,7 @@ No workbook math is evaluated in the UI layer.
 
 ### Row types (v1)
 
-- `narrative` (`render_mode: plain|markdown`, style flags)
+- `text` (`render_mode: plain|easy_mark`, style flags; legacy `markdown` rows auto-migrate to `text`)
 - `constant`
 - `equation_solve`
 - `study`
@@ -785,10 +785,12 @@ No workbook math is evaluated in the UI layer.
 
 - Header + row-add toolbar are pinned above a dedicated vertical `ScrollArea` for rows.
 - Workbook rows are cell-like cards: primary feedback is shown on each row, not only in global panels.
-- Narrative rows are content-first, with minimal chrome and optional keys for referenceable outputs.
+- Text rows are content-first (EasyMark-capable), with minimal chrome and optional keys for referenceable outputs.
 - Result/status on each row must remain visible and actionable (`ok`, `invalid`, `incomplete`, `error`).
 - Global execution summaries are secondary and primarily for tab-level rollups/navigation.
-- Row reordering is implemented with `egui_dnd` and immutable row IDs (never index-based drag identity).
+- Row reordering is implemented with reusable UI helpers (`ui::drag_reorder`) and immutable row IDs (never index-based drag identity).
+- Searchable pickers are reusable (`ui::search_picker`) and drive equation/device/workflow target selection.
+- Workbook row actions (duplicate/delete/move/collapse) are toolbar-first; row cards stay focused on content and results.
 
 ### Egui ID stability invariant
 

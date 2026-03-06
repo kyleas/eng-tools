@@ -15,6 +15,7 @@ mod property_metadata;
 mod rocket_workspace;
 mod run_worker;
 mod transient_model;
+mod ui;
 mod views;
 
 use app::ThermoflowApp;
